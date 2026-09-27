@@ -1,5 +1,5 @@
 import 'server-only';
-import { and, desc, eq, inArray, lt, sql } from 'drizzle-orm';
+import { and, desc, eq, inArray, isNotNull, lt, sql } from 'drizzle-orm';
 import { db } from '@/db/client';
 import { adminUsers, contentSections, contentVersions } from '@/db/schema';
 import { schemaFor } from '@/content/fields';
@@ -222,7 +222,7 @@ export async function versionData(page: string, section: string, versionId: stri
   return row ?? null;
 }
 
-/** Sections with unpublished changes or copy awaiting review, for the dashboard. */
+/** The last few content publishes, newest first, for the dashboard. */
 export async function recentPublishes(limit = 5) {
   return db
     .select({
@@ -231,12 +231,14 @@ export async function recentPublishes(limit = 5) {
       version: contentVersions.version,
       note: contentVersions.note,
       publishedAt: contentVersions.publishedAt,
-      publishedBy: adminUsers.email,
+      publisherName: adminUsers.name,
+      publisherEmail: adminUsers.email,
     })
     .from(contentVersions)
     .innerJoin(contentSections, eq(contentVersions.sectionId, contentSections.id))
     .leftJoin(adminUsers, eq(contentVersions.publishedBy, adminUsers.id))
-    .where(inArray(contentSections.page, Object.keys(pages)))
+    // Publishes made by people; the initial content seeded at first run has no publisher.
+    .where(and(inArray(contentSections.page, Object.keys(pages)), isNotNull(contentVersions.publishedBy)))
     .orderBy(desc(contentVersions.publishedAt))
     .limit(limit);
 }

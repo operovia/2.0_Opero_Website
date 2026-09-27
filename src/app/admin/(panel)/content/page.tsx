@@ -21,7 +21,7 @@ export default async function ContentPage() {
       <Card>
         <ul className="divide-y divide-line">
           {pages.map((page) => (
-            <li key={page.key}>
+            <li key={page.key} className="first:*:rounded-t-xl last:*:rounded-b-xl">
               <Link href={`/admin/content/${page.key}`} className="group flex items-center justify-between gap-4 px-6 py-5 hover:bg-accent-soft">
                 <div className="min-w-0">
                   <p className="font-semibold text-fg">{page.label}</p>

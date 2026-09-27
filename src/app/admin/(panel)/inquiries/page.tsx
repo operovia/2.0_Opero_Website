@@ -80,8 +80,8 @@ export default async function InquiriesPage({ searchParams }: PageProps<'/admin/
         <Card>
           <ul className="divide-y divide-line">
             {rows.map((row) => (
-              <li key={row.id}>
-                <Link href={`/admin/inquiries/${row.id}`} className="grid gap-1 px-6 py-4 hover:bg-accent-soft sm:grid-cols-[minmax(0,1fr)_auto] sm:gap-6">
+              <li key={row.id} className="first:*:rounded-t-xl last:*:rounded-b-xl">
+                <Link href={`/admin/inquiries/${row.id}`} className="grid grid-cols-1 gap-1 px-6 py-4 hover:bg-accent-soft sm:grid-cols-[minmax(0,1fr)_auto] sm:gap-6">
                   <div className="min-w-0">
                     <p className="flex flex-wrap items-center gap-2">
                       <span className={cn('truncate text-fg', row.status === 'new' ? 'font-semibold' : 'font-medium')}>

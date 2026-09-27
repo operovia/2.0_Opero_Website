@@ -77,7 +77,7 @@ export default async function ActivityPage({ searchParams }: PageProps<'/admin/a
             {entries.map((entry) => {
               const detail = describe(entry.details);
               return (
-                <li key={entry.id} className="grid gap-1 px-6 py-4 sm:grid-cols-[1fr_auto] sm:gap-6">
+                <li key={entry.id} className="grid grid-cols-1 gap-1 px-6 py-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:gap-6">
                   <div className="min-w-0">
                     <p className="text-sm text-fg">
                       <span className="font-medium">{entry.actorEmail || 'Unknown'}</span>{' '}

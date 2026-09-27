@@ -16,7 +16,7 @@ export const metadata: Metadata = { title: 'Inquiry' };
 
 function Detail({ label, value }: { label: string; value: React.ReactNode }) {
   return (
-    <div className="grid gap-1 py-3 sm:grid-cols-[12rem_minmax(0,1fr)] sm:gap-6">
+    <div className="grid grid-cols-1 gap-1 py-3 sm:grid-cols-[12rem_minmax(0,1fr)] sm:gap-6">
       <dt className="text-sm text-fg-subtle">{label}</dt>
       <dd className="text-base whitespace-pre-line text-fg">{value || <span className="text-fg-subtle">Not provided</span>}</dd>
     </div>

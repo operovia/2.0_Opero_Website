@@ -51,7 +51,7 @@ export default async function ContentPageSections({ params }: PageProps<'/admin/
       <Card>
         <ul className="divide-y divide-line">
           {status.sections.map((section) => (
-            <li key={section.key}>
+            <li key={section.key} className="first:*:rounded-t-xl last:*:rounded-b-xl">
               <Link
                 href={`/admin/content/${page}/${section.key}`}
                 className="group flex items-center justify-between gap-4 px-6 py-5 hover:bg-accent-soft"
