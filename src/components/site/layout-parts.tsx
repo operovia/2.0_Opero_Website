@@ -5,8 +5,17 @@ import { cn } from '@/lib/cn';
 import type { RichDoc } from '@/lib/rich-text';
 import { SiteLink } from './site-link';
 
-export function Container({ className, ...props }: ComponentProps<'div'>) {
-  return <div className={cn('mx-auto w-full max-w-content px-gutter', className)} {...props} />;
+const containerSizes = {
+  content: 'max-w-content',
+  '5xl': 'max-w-5xl',
+  '4xl': 'max-w-4xl',
+  '3xl': 'max-w-3xl',
+  '2xl': 'max-w-2xl',
+} as const;
+
+/** The page's centered column. Choose a narrower column with `size`, not a max-w class (cn() does not resolve conflicts). */
+export function Container({ size = 'content', className, ...props }: ComponentProps<'div'> & { size?: keyof typeof containerSizes }) {
+  return <div className={cn('mx-auto w-full px-gutter', containerSizes[size], className)} {...props} />;
 }
 
 export function Eyebrow({ children, className }: { children: ReactNode; className?: string }) {

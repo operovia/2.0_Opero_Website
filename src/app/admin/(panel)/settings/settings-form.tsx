@@ -109,7 +109,7 @@ export function SettingsForm({ values, images }: { values: SettingsFormValues; i
         <CardHeader title="Analytics" description="Optional. Paste the snippet from your analytics provider." />
         <CardBody>
           <Field name="analyticsSnippet" label="Analytics snippet" hint="Added to every public page. Leave empty for no analytics." error={e.analyticsSnippet}>
-            {(p) => <Textarea {...p} rows={5} spellCheck={false} className="font-mono text-sm" defaultValue={v.analyticsSnippet} />}
+            {(p) => <Textarea {...p} rows={5} spellCheck={false} className="font-mono" defaultValue={v.analyticsSnippet} />}
           </Field>
         </CardBody>
       </Card>

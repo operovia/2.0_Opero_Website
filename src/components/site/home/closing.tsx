@@ -7,7 +7,7 @@ export function Closing({ content }: { content: SectionData<'home', 'closing'> }
   return (
     <section id="book-demo" aria-labelledby="closing-title" className="relative isolate overflow-hidden py-section">
       <Aurora intensity={0.8} className="aurora-bottom" />
-      <Container className="max-w-3xl text-center">
+      <Container size="3xl" className="text-center">
         <Reveal>
           <h2 id="closing-title" className="text-display-lg font-medium text-metal">
             {content.headline}

@@ -22,7 +22,7 @@ export default async function PartnersPage() {
     <>
       <section aria-labelledby="partners-title" className="relative isolate -mt-18 overflow-hidden pt-18">
         <Aurora intensity={0.85} />
-        <Container className="max-w-4xl pt-16 pb-16 sm:pt-24 sm:pb-20">
+        <Container size="4xl" className="pt-16 pb-16 sm:pt-24 sm:pb-20">
           {intro.eyebrow ? <Eyebrow className="hero-fade">{intro.eyebrow}</Eyebrow> : null}
           <h1 id="partners-title" className="hero-rise mt-5 text-display-lg font-medium text-metal">
             {intro.headline}
@@ -32,7 +32,7 @@ export default async function PartnersPage() {
       </section>
 
       <section aria-labelledby="gets-title" className="py-section">
-        <Container className="max-w-5xl">
+        <Container size="5xl">
           <Reveal>
             <h2 id="gets-title" className="text-display-sm font-medium text-metal">
               {gets.headline}
@@ -51,7 +51,7 @@ export default async function PartnersPage() {
       </section>
 
       <section aria-labelledby="asks-title" className="border-y border-line bg-canvas-raised py-section">
-        <Container className="max-w-5xl">
+        <Container size="5xl">
           <Reveal>
             <h2 id="asks-title" className="text-display-sm font-medium text-metal">
               {asks.headline}
@@ -74,7 +74,7 @@ export default async function PartnersPage() {
       </section>
 
       <section aria-labelledby="selection-title" className="py-section">
-        <Container className="max-w-3xl text-center">
+        <Container size="3xl" className="text-center">
           <Reveal>
             <h2 id="selection-title" className="text-display-sm font-medium text-metal">
               {selection.headline}
@@ -87,7 +87,7 @@ export default async function PartnersPage() {
       </section>
 
       <section id="apply" aria-labelledby="apply-title" className="scroll-mt-18 pb-section">
-        <Container className="max-w-3xl">
+        <Container size="3xl">
           <div className="rounded-2xl border border-line-strong bg-surface p-6 shadow-lg sm:p-10">
             <h2 id="apply-title" className="text-display-sm font-medium text-metal">
               {apply.headline}

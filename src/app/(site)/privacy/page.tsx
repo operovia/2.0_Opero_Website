@@ -12,7 +12,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function PrivacyPage() {
   const { notice } = await getPage('privacy');
   return (
-    <Container className="max-w-3xl py-section">
+    <Container size="3xl" className="py-section">
       <h1 className="text-display-md font-medium text-metal">{notice.headline}</h1>
       <RichText doc={notice.intro} className="mt-8 text-lg text-fg-muted sm:text-xl" />
       <div className="mt-14 space-y-12">
