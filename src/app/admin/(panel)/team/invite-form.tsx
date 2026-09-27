@@ -17,7 +17,7 @@ export function InviteForm() {
         <CardHeader title="Invite an admin" description="They receive an email with a one-time link to set a password. The link expires in 7 days." />
         <CardBody className="space-y-5">
           {state.message ? <Notice tone={state.status === 'error' ? 'danger' : 'success'}>{state.message}</Notice> : null}
-          <div className="grid gap-5 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
             <Field name="name" label="Name" optionalLabel="(optional)" error={e.name}>
               {(p) => <Input {...p} autoComplete="off" defaultValue={state.values?.name ?? ''} />}
             </Field>

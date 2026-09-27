@@ -212,9 +212,11 @@ export const tokens = {
     '3xl': { size: '2rem', lineHeight: '1.28', tracking: '0.002em' },
     'display-sm': { size: 'clamp(1.875rem, 1.35rem + 1.9vw, 2.75rem)', lineHeight: '1.22', tracking: '0.004em' },
     'display-md': { size: 'clamp(2.25rem, 1.5rem + 2.9vw, 3.75rem)', lineHeight: '1.18', tracking: '0.006em' },
-    'display-lg': { size: 'clamp(2.625rem, 1.55rem + 4.4vw, 5.125rem)', lineHeight: '1.14', tracking: '0.008em' },
+    'display-lg': { size: 'clamp(2.5rem, 1.65rem + 3.2vw, 4.25rem)', lineHeight: '1.14', tracking: '0.008em' },
     /** Small uppercase labels: eyebrows, console tags. */
     eyebrow: { size: '0.8125rem', lineHeight: '1.4', tracking: '0.16em' },
+    /** The smallest uppercase labels, such as the console's badge and footer. */
+    micro: { size: '0.6875rem', lineHeight: '1.4', tracking: '0.16em' },
   },
 
   radius: {
@@ -249,7 +251,7 @@ export const tokens = {
     /** Horizontal page gutter. */
     gutter: 'clamp(1.25rem, 0.8rem + 2vw, 2.5rem)',
     /** Vertical padding for a full page section. */
-    section: 'clamp(5.5rem, 3.75rem + 7.5vw, 10rem)',
+    section: 'clamp(4.5rem, 3rem + 5vw, 7.5rem)',
     /** Max width of page content. */
     container: '76rem',
     /** Max width of a readable text column. */

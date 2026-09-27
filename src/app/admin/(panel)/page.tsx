@@ -18,7 +18,7 @@ export default async function DashboardPage() {
   return (
     <div className="space-y-8">
       <PageHeader title={firstName ? `Welcome, ${firstName}` : 'Welcome'} description="Manage the Opero site from here." />
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         {shortcuts.map((item) => (
           <Link key={item.href} href={item.href} className="group rounded-xl focus-visible:outline-offset-4">
             <Card className="h-full transition-colors duration-150 group-hover:border-line-strong">

@@ -42,7 +42,7 @@ export function SettingsForm({ values, images }: { values: SettingsFormValues; i
 
       <Card>
         <CardHeader title="Site" description="Basics used across the public site and in emails." />
-        <CardBody className="grid gap-6 sm:grid-cols-2">
+        <CardBody className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           <Field name="siteName" label="Site name" error={e.siteName} required>
             {(p) => <Input {...p} defaultValue={v.siteName} />}
           </Field>

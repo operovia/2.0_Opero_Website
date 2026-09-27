@@ -1,6 +1,8 @@
 import { count, eq } from 'drizzle-orm';
+import { allSections } from '@/content/registry';
+import { seedScenes } from '@/content/seed-scenes';
 import type { Db } from '@/db/client';
-import { adminUsers, siteSettings, siteState } from '@/db/schema';
+import { adminUsers, consoleScenes, contentSections, contentVersions, siteSettings, siteState } from '@/db/schema';
 import { hashPassword, MIN_PASSWORD_LENGTH } from '@/server/auth/password';
 import { adminSeed } from '@/server/env';
 
@@ -55,8 +57,35 @@ async function seedSiteState(db: Db): Promise<void> {
   await db.insert(siteState).values({ id: 1 }).onConflictDoNothing();
 }
 
+/**
+ * Inserts any content section that does not exist yet, as version 1. The
+ * console scenes are seeded only on the very first run, so deleting them
+ * later does not bring them back.
+ */
+async function seedContent(db: Db): Promise<void> {
+  const [{ sections }] = await db.select({ sections: count() }).from(contentSections);
+  const firstRun = sections === 0;
+
+  for (const { page, section, def } of allSections()) {
+    const [inserted] = await db
+      .insert(contentSections)
+      .values({ page, section, draft: def.seed, published: def.seed, version: 1, needsReview: Boolean(def.draftCopy) })
+      .onConflictDoNothing()
+      .returning({ id: contentSections.id });
+    if (inserted) {
+      await db.insert(contentVersions).values({ sectionId: inserted.id, version: 1, data: def.seed, note: 'Initial content' });
+    }
+  }
+
+  if (firstRun) {
+    const [{ scenes }] = await db.select({ scenes: count() }).from(consoleScenes);
+    if (scenes === 0) await db.insert(consoleScenes).values(seedScenes.map((scene, position) => ({ ...scene, position })));
+  }
+}
+
 export async function seed(db: Db): Promise<void> {
   await seedSiteState(db);
   await seedSettings(db);
   await seedAdmin(db);
+  await seedContent(db);
 }

@@ -97,6 +97,9 @@
   --text-eyebrow: var(--o-text-eyebrow);
   --text-eyebrow--line-height: var(--o-text-eyebrow-lh);
   --text-eyebrow--letter-spacing: var(--o-text-eyebrow-tracking);
+  --text-micro: var(--o-text-micro);
+  --text-micro--line-height: var(--o-text-micro-lh);
+  --text-micro--letter-spacing: var(--o-text-micro-tracking);
 
   --radius-xs: var(--o-radius-xs);
   --radius-sm: var(--o-radius-sm);
@@ -205,6 +208,7 @@
 
 @layer base {
   html {
+    scroll-behavior: smooth;
     font-family: var(--font-sans);
     font-optical-sizing: auto;
     -webkit-font-smoothing: antialiased;
@@ -218,6 +222,8 @@
   }
 
   body {
+    /* Decorative layers must never cause sideways scrolling; clip keeps sticky headers working. */
+    overflow-x: clip;
     font-size: var(--text-base);
     line-height: var(--text-base--line-height);
   }
@@ -254,4 +260,346 @@
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/*
+ * Aurora (src/components/site/aurora.tsx): soft glows in the jewel colors,
+ * drifting slowly. Radial gradients instead of blur filters keep it cheap;
+ * only transform is animated.
+ */
+.aurora {
+  mask-image: radial-gradient(130% 90% at 50% 0%, black 40%, transparent 100%);
+}
+
+.aurora-glow {
+  position: absolute;
+  width: 62vmax;
+  height: 62vmax;
+  border-radius: 9999px;
+  background: radial-gradient(circle at center, var(--glow) 0%, transparent 62%);
+  will-change: transform;
+  animation: aurora-drift var(--drift) var(--o-ease-in-out) infinite alternate;
+}
+
+.aurora-glow-1 {
+  --glow: var(--o-aurora-1);
+  --drift: 38s;
+  top: -34vmax;
+  left: -18vmax;
+}
+.aurora-glow-2 {
+  --glow: var(--o-aurora-2);
+  --drift: 46s;
+  top: -30vmax;
+  right: -22vmax;
+  animation-direction: alternate-reverse;
+}
+.aurora-glow-3 {
+  --glow: var(--o-aurora-3);
+  --drift: 54s;
+  top: -8vmax;
+  left: 28%;
+  width: 44vmax;
+  height: 44vmax;
+}
+.aurora-glow-4 {
+  --glow: var(--o-aurora-4);
+  --drift: 60s;
+  top: 6vmax;
+  left: -24vmax;
+  width: 48vmax;
+  height: 48vmax;
+  animation-direction: alternate-reverse;
+}
+.aurora-glow-5 {
+  --glow: var(--o-aurora-5);
+  --drift: 66s;
+  top: 2vmax;
+  right: -16vmax;
+  width: 40vmax;
+  height: 40vmax;
+}
+
+@keyframes aurora-drift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(7vmax, 4vmax, 0) scale(1.12);
+  }
+  100% {
+    transform: translate3d(-5vmax, 8vmax, 0) scale(0.92);
+  }
+}
+
+@media (max-width: 40rem) {
+  .aurora-glow-4,
+  .aurora-glow-5 {
+    display: none;
+  }
+}
+
+/*
+ * Oppie orb stand-in (src/components/site/oppie-orb.tsx) until the supplied
+ * artwork arrives. Transform and opacity animation only.
+ */
+.oppie-orb-body {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 9999px;
+  box-shadow: var(--o-shadow-glow);
+}
+.oppie-orb-core {
+  position: absolute;
+  inset: -25%;
+  background: conic-gradient(
+    from 0deg,
+    var(--o-jewel-crimson-base),
+    var(--o-jewel-violet-base),
+    var(--o-jewel-teal-base),
+    var(--o-jewel-green-base),
+    var(--o-jewel-gold-base),
+    var(--o-jewel-crimson-base)
+  );
+  filter: blur(var(--orb-blur, 18px));
+  will-change: transform;
+  animation: orb-spin 16s linear infinite;
+}
+.oppie-orb-shade {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background:
+    radial-gradient(60% 55% at 32% 26%, var(--o-jewel-light-specular) 0%, transparent 60%),
+    radial-gradient(90% 90% at 30% 24%, transparent 50%, var(--o-jewel-light-edge) 100%);
+}
+.oppie-orb-shine {
+  position: absolute;
+  top: 16%;
+  left: 22%;
+  width: 22%;
+  height: 16%;
+  border-radius: 9999px;
+  background: radial-gradient(closest-side, var(--o-jewel-light-specular), transparent);
+}
+.oppie-orb-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  border: 1px solid var(--o-line-strong);
+  opacity: 0;
+  will-change: transform, opacity;
+  animation: orb-ring 3.2s var(--o-ease-out) infinite;
+}
+.oppie-orb-ring-delayed {
+  animation-delay: 1.6s;
+}
+.oppie-orb-animated .oppie-orb-body {
+  will-change: transform;
+  animation: orb-breathe 4.8s var(--o-ease-in-out) infinite;
+}
+
+@keyframes orb-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes orb-ring {
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1.65);
+    opacity: 0;
+  }
+}
+@keyframes orb-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.04);
+  }
+}
+
+/* Console details (src/components/site/oppie-console.tsx). */
+.console-live-dot::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: var(--o-success);
+  animation: live-pulse 2s var(--o-ease-out) infinite;
+}
+@keyframes live-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(3);
+    opacity: 0;
+  }
+}
+.console-caret {
+  display: inline-block;
+  width: 2px;
+  height: 1.1em;
+  margin-left: 1px;
+  vertical-align: -0.15em;
+  background: var(--o-fg);
+  animation: caret-blink 1s steps(1) infinite;
+}
+@keyframes caret-blink {
+  50% {
+    opacity: 0;
+  }
+}
+.console-rest {
+  visibility: hidden;
+}
+.console-thinking > span {
+  animation: thinking 1.2s var(--o-ease-in-out) infinite;
+}
+.console-thinking > span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.console-thinking > span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+@keyframes thinking {
+  0%,
+  100% {
+    transform: scale(0.7);
+    opacity: 0.4;
+  }
+  50% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Without JavaScript, show the first console scene complete. */
+@media (scripting: none) {
+  .console-rest.console-first {
+    visibility: visible;
+  }
+}
+
+/*
+ * Hero entrance. The headline only moves (it never starts invisible), so the
+ * largest paint on the page happens immediately.
+ */
+.hero-rise {
+  animation: hero-rise 900ms var(--o-ease-out) both;
+}
+.hero-fade {
+  animation: hero-fade 900ms var(--o-ease-out) both;
+}
+@keyframes hero-rise {
+  from {
+    transform: translate3d(0, 14px, 0);
+  }
+}
+@keyframes hero-fade {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0);
+  }
+}
+
+/* Module cards: each glows softly in its jewel's color, brighter on hover. */
+.module-glow-build {
+  --module-glow: var(--o-module-build-base);
+}
+.module-glow-studios {
+  --module-glow: var(--o-module-studios-base);
+}
+.module-glow-playbook {
+  --module-glow: var(--o-module-playbook-base);
+}
+.module-glow-university {
+  --module-glow: var(--o-module-university-base);
+}
+.module-glow-compass {
+  --module-glow: var(--o-module-compass-base);
+}
+.module-card {
+  transition: transform var(--o-duration-slow) var(--o-ease-out);
+}
+.module-card::before {
+  content: '';
+  position: absolute;
+  top: -45%;
+  left: -35%;
+  width: 130%;
+  height: 90%;
+  background: radial-gradient(closest-side, var(--module-glow), transparent);
+  opacity: 0.2;
+  pointer-events: none;
+  transition: opacity var(--o-duration-slow) var(--o-ease-out);
+}
+.module-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 1px solid var(--module-glow);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--o-duration-slow) var(--o-ease-out);
+}
+@media (hover: hover) {
+  .module-card:hover {
+    transform: translate3d(0, -4px, 0);
+  }
+  .module-card:hover::before {
+    opacity: 0.4;
+  }
+  .module-card:hover::after {
+    opacity: 0.6;
+  }
+}
+
+/* Design partner card: a border of jewel light that turns slowly. */
+.partner-frame {
+  background: var(--o-line-strong);
+}
+.partner-frame::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: 50%;
+  left: -50%;
+  width: 200%;
+  aspect-ratio: 1;
+  background: conic-gradient(
+    from 0deg,
+    var(--o-jewel-crimson-base),
+    var(--o-jewel-violet-base),
+    transparent 30%,
+    var(--o-jewel-gold-base),
+    var(--o-jewel-green-base),
+    transparent 65%,
+    var(--o-jewel-teal-base),
+    var(--o-jewel-crimson-base)
+  );
+  will-change: transform;
+  animation: frame-spin 18s linear infinite;
+}
+@keyframes frame-spin {
+  from {
+    transform: translate3d(0, -50%, 0) rotate(0deg);
+  }
+  to {
+    transform: translate3d(0, -50%, 0) rotate(360deg);
+  }
+}
+
+/* The closing section's aurora rises from the bottom. */
+.aurora-bottom {
+  transform: scaleY(-1);
 }

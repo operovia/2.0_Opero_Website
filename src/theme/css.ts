@@ -43,6 +43,8 @@ function themeDeclarations(theme: ThemeName): string {
   for (const [key, value] of Object.entries(tokens.shadow[theme])) vars[`shadow-${key}`] = value;
 
   vars['metal'] = metalGradient(theme);
+  vars['jewel-light-specular'] = tokens.brand.jewelLight.specular;
+  vars['jewel-light-edge'] = tokens.brand.jewelLight.edge[theme];
   vars['aurora-opacity'] = tokens.brand.aurora.opacity[theme];
 
   for (const [name, jewel] of Object.entries(tokens.brand.jewels)) {
