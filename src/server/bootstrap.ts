@@ -1,5 +1,5 @@
 import { db, pool } from '@/db/client';
-import { runMigrations } from '@/db/migrate';
+import { DatabaseMismatchError, runMigrations } from '@/db/migrate';
 import { seed } from '@/server/seed';
 
 /** Arbitrary constant identifying this app's startup lock in Postgres. */
@@ -32,6 +32,10 @@ export async function bootstrap(): Promise<void> {
       console.log('[opero] Database is ready.');
       return;
     } catch (error) {
+      if (error instanceof DatabaseMismatchError) {
+        console.error(`[opero] ${error.message}`);
+        return;
+      }
       if (attempt >= 4) {
         console.error('[opero] Could not prepare the database:', error);
         return;
