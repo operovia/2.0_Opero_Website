@@ -2,8 +2,8 @@ import Link from 'next/link';
 import type { ComponentProps } from 'react';
 import { cn } from '@/lib/cn';
 
-type Variant = 'primary' | 'secondary' | 'ghost' | 'danger';
-type Size = 'sm' | 'md' | 'lg';
+type Variant = 'primary' | 'secondary' | 'ghost' | 'ghost-danger' | 'danger';
+type Size = 'sm' | 'md' | 'lg' | 'icon';
 
 const base =
   'inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-full font-medium transition-[background-color,color,border-color,box-shadow,opacity] duration-150 disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50';
@@ -12,6 +12,7 @@ const variants: Record<Variant, string> = {
   primary: 'bg-accent text-on-accent shadow-sm hover:bg-accent-hover',
   secondary: 'border border-line-strong bg-surface text-fg hover:border-line-input hover:bg-surface-raised',
   ghost: 'text-fg-muted hover:bg-accent-soft hover:text-fg',
+  'ghost-danger': 'text-fg-muted hover:bg-danger-soft hover:text-danger',
   danger: 'border border-danger/40 bg-danger-soft text-danger hover:border-danger',
 };
 
@@ -19,6 +20,8 @@ const sizes: Record<Size, string> = {
   sm: 'h-8 px-3.5 text-sm',
   md: 'h-10 px-5 text-sm',
   lg: 'h-12 px-7 text-base',
+  /** A square button holding just an icon; give it a text label for screen readers. */
+  icon: 'size-8',
 };
 
 export function buttonClasses({ variant = 'primary', size = 'md', className }: { variant?: Variant; size?: Size; className?: string } = {}) {

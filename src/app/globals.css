@@ -639,3 +639,17 @@
 html:has(dialog[open]) {
   overflow: hidden;
 }
+
+/* Media library (src/app/admin/(panel)/media/media-library.tsx). */
+.media-thumb {
+  /* A checkerboard, so transparent images read as transparent. */
+  background: repeating-conic-gradient(var(--o-surface-raised) 0 25%, var(--o-canvas-raised) 0 50%) 0 0 / 16px 16px;
+}
+.spin {
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

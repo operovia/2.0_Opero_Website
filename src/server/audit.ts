@@ -14,6 +14,8 @@ export type AuditAction =
   | 'content.publish'
   | 'content.rollback'
   | 'scenes.update'
+  | 'media.upload'
+  | 'media.delete'
   | 'survey.send';
 
 type Actor = { id: string; email: string } | null;

@@ -21,14 +21,17 @@ try {
 // Classes that are not Tailwind utilities: hooks for CSS in globals.css, or markers.
 const allow = new Set(['group', 'peer', 'brand-on-dark', 'brand-on-light', 'dark', 'light']);
 
+// Folders with no Tailwind classes: token names, server code, and the database layer.
+const skipDirs = new Set(['src/theme', 'src/server', 'src/db'].map((d) => join(root, d)));
+
 function walk(dir, out) {
   for (const name of readdirSync(dir)) {
     const full = join(dir, name);
-    // The theme folder holds token names, not class names.
     if (statSync(full).isDirectory()) {
-      if (full !== join(root, 'src/theme')) walk(full, out);
+      if (!skipDirs.has(full)) walk(full, out);
     }
-    else if (/\.(tsx|ts)$/.test(name) && !name.endsWith('.test.ts')) out.push(full);
+    // Route handlers return data, not markup.
+    else if (/\.(tsx|ts)$/.test(name) && !name.endsWith('.test.ts') && name !== 'route.ts') out.push(full);
   }
   return out;
 }

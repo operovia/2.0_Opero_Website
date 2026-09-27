@@ -13,13 +13,15 @@ export const auditLabels: Record<AuditAction, string> = {
   'content.publish': 'Published content',
   'content.rollback': 'Rolled back content',
   'scenes.update': 'Updated the Oppie console',
+  'media.upload': 'Uploaded an image',
+  'media.delete': 'Deleted an image',
   'survey.send': 'Sent survey emails',
 };
 
 export const auditFilters = {
   all: { label: 'All activity', actions: null },
   signins: { label: 'Sign-ins', actions: ['login', 'login.failed', 'logout'] },
-  content: { label: 'Content', actions: ['content.publish', 'content.rollback', 'scenes.update'] },
+  content: { label: 'Content', actions: ['content.publish', 'content.rollback', 'scenes.update', 'media.upload', 'media.delete'] },
   admin: {
     label: 'Team and settings',
     actions: ['password.change', 'admin.invite', 'admin.invite.revoke', 'admin.invite.accept', 'admin.remove', 'settings.update'],
