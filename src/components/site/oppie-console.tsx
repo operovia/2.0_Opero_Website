@@ -3,10 +3,10 @@
 import { Pause, Play, Sparkles } from 'lucide-react';
 import { m, useInView, useReducedMotion } from 'motion/react';
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
+import { OppieMark } from '@/components/brand/oppie-mark';
 import type { ConsoleScene } from '@/content/store';
 import { cn } from '@/lib/cn';
 import { tokens } from '@/theme/tokens';
-import { OppieOrb } from './oppie-orb';
 
 export type ConsoleLabels = { badge: string; footerLeft: string; footerRight: string; note: string };
 
@@ -79,8 +79,9 @@ export function OppieConsole({ scenes, labels }: { scenes: ConsoleScene[]; label
       >
         {/* Header */}
         <div className="flex items-center justify-between border-b border-line px-5 py-3.5">
-          <div className="flex items-center gap-2.5">
-            <OppieOrb size="sm" />
+          <div className="flex items-center gap-2">
+            {/* The mark's box leaves room around the pie; the negative margins keep the header its usual height. */}
+            <OppieMark decorative still className="-my-1 -ml-1 size-7" />
             <span className="text-sm font-semibold text-fg">Oppie</span>
           </div>
           <span className="inline-flex items-center gap-2 rounded-full border border-line-strong px-2.5 py-1 text-micro font-semibold text-fg-muted uppercase">
@@ -115,15 +116,19 @@ export function OppieConsole({ scenes, labels }: { scenes: ConsoleScene[]; label
                 </div>
 
                 <div className="relative mt-4">
+                  {/* Oppie thinking. It keeps moving while the answer is up (hidden by then), so it never snaps to rest mid-fade. */}
                   <div
                     className={cn(
-                      'console-thinking absolute top-1 left-1 flex gap-1.5 transition-opacity duration-300',
+                      'absolute -top-1 -left-1 transition-opacity duration-300',
                       active && state.phase === 'thinking' ? 'opacity-100' : 'opacity-0',
                     )}
                   >
-                    <span className="jewel-crimson size-2 rounded-full" />
-                    <span className="jewel-violet size-2 rounded-full" />
-                    <span className="jewel-gold size-2 rounded-full" />
+                    <OppieMark
+                      decorative
+                      state="thinking"
+                      still={!running || !active || (state.phase !== 'thinking' && state.phase !== 'answer')}
+                      className="size-10"
+                    />
                   </div>
 
                   <m.div

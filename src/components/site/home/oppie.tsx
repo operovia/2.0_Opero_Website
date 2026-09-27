@@ -1,15 +1,15 @@
+import { OppieMark } from '@/components/brand/oppie-mark';
 import { Reveal } from '@/components/motion/reveal';
 import { RichText } from '@/components/rich-text';
 import type { SectionData } from '@/content/registry';
 import { Container, Eyebrow } from '../layout-parts';
-import { OppieOrb } from '../oppie-orb';
 
 export function OppieSection({ content }: { content: SectionData<'home', 'oppie'> }) {
   return (
     <section id="oppie" aria-labelledby="oppie-title" className="relative scroll-mt-18 overflow-hidden border-y border-line bg-canvas-raised py-section">
       <Container className="grid grid-cols-1 items-center gap-16 lg:grid-cols-2">
-        <Reveal className="flex justify-center py-8">
-          <OppieOrb animated />
+        <Reveal className="flex justify-center">
+          <OppieMark decorative className="size-60 sm:size-80" />
         </Reveal>
         <div>
           {content.eyebrow ? (

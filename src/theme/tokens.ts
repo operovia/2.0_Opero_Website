@@ -176,6 +176,39 @@ export const tokens = {
       /** The fine ring just inside the jewel's outline (12% black; 16% on light backgrounds). */
       ring: { dark: '#0000001F', light: '#00000029' },
     },
+    /**
+     * Oppie's mark, from the supplied artwork (public/brand/oppie): a pie of
+     * five slices in module colors, clockwise from the top in brand order.
+     * Each slice is a radial gradient from highlight through base to shadow,
+     * under a white shine.
+     */
+    oppie: {
+      slices: {
+        build: ['#FF5444', '#D43A2F', '#83241D'],
+        studios: ['#9B5BE8', '#6B3FA0', '#422763'],
+        playbook: ['#FFCA26', '#C58B1A', '#7A5610'],
+        university: ['#44CF84', '#2F8F5B', '#1D5938'],
+        compass: ['#2CCEDF', '#1E8E9A', '#13585F'],
+      },
+      /** The shine: white, fading out from each slice's lit corner. */
+      shine: {
+        color: '#FFFFFF',
+        stops: [
+          { offset: 0, opacity: 0.6 },
+          { offset: 0.45, opacity: 0.1 },
+          { offset: 1, opacity: 0 },
+        ],
+      },
+      /** The halo that breathes around the mark at rest. */
+      halo: { dark: { color: '#FFFFFF', opacity: 0.35 }, light: { color: '#6B3FA0', opacity: 0.25 } },
+      /** The shadow under the pie, in the mark's own units (it is 160 wide). */
+      shadow: {
+        dark: { color: '#000000', opacity: 0.5, blur: 5, offset: 3 },
+        light: { color: '#000000', opacity: 0.18, blur: 3, offset: 3 },
+      },
+      /** How much brighter a slice gets as the thinking relay reaches it. */
+      litBrightness: 1.35,
+    },
     /** Aurora background: the jewels' base colors and how strongly they show per theme. */
     aurora: {
       colors: [jewels.violet.dark[1], jewels.teal.dark[1], jewels.crimson.dark[1], jewels.green.dark[1], jewels.gold.dark[1]],
@@ -297,6 +330,12 @@ export const tokens = {
     },
     /** Distance revealed elements travel, in pixels. */
     revealDistance: 24,
+    /** Oppie's motion, from the supplied mark: one breath at rest, one round of the relay while thinking. */
+    oppie: {
+      idle: 2400,
+      thinking: 2000,
+      ease: [0.42, 0, 0.58, 1],
+    },
   },
 } as const;
 

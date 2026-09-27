@@ -340,88 +340,65 @@
 }
 
 /*
- * Oppie orb stand-in (src/components/site/oppie-orb.tsx) until the supplied
- * artwork arrives. Transform and opacity animation only.
+ * Oppie's mark (src/components/brand/oppie-mark.tsx), moving as the supplied
+ * artwork does. At rest it breathes: the pie swells 6% while its halo fades
+ * in and out. Thinking, each slice in turn pushes outward and lights up,
+ * clockwise. The resting styles are the still mark, so reduced motion and
+ * `still` show it exactly as drawn.
  */
-.oppie-orb-body {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  border-radius: 9999px;
-  box-shadow: var(--o-shadow-glow);
-}
-.oppie-orb-core {
-  position: absolute;
-  inset: -25%;
-  background: conic-gradient(
-    from 0deg,
-    var(--o-jewel-crimson-base),
-    var(--o-jewel-violet-base),
-    var(--o-jewel-teal-base),
-    var(--o-jewel-green-base),
-    var(--o-jewel-gold-base),
-    var(--o-jewel-crimson-base)
-  );
-  filter: blur(var(--orb-blur, 18px));
-  will-change: transform;
-  animation: orb-spin 16s linear infinite;
-}
-.oppie-orb-shade {
-  position: absolute;
-  inset: 0;
-  border-radius: 9999px;
-  background:
-    radial-gradient(60% 55% at 32% 26%, var(--o-jewel-light-specular) 0%, transparent 60%),
-    radial-gradient(90% 90% at 30% 24%, transparent 50%, var(--o-jewel-light-edge) 100%);
-}
-.oppie-orb-shine {
-  position: absolute;
-  top: 16%;
-  left: 22%;
-  width: 22%;
-  height: 16%;
-  border-radius: 9999px;
-  background: radial-gradient(closest-side, var(--o-jewel-light-specular), transparent);
-}
-.oppie-orb-ring {
-  position: absolute;
-  inset: 0;
-  border-radius: 9999px;
-  border: 1px solid var(--o-line-strong);
+.oppie-halo,
+.oppie-lit {
   opacity: 0;
-  will-change: transform, opacity;
-  animation: orb-ring 3.2s var(--o-ease-out) infinite;
 }
-.oppie-orb-ring-delayed {
-  animation-delay: 1.6s;
+.oppie:not([data-still])[data-state='idle'] .oppie-halo {
+  animation: oppie-halo var(--o-oppie-idle) var(--o-ease-oppie) infinite;
 }
-.oppie-orb-animated .oppie-orb-body {
-  will-change: transform;
-  animation: orb-breathe 4.8s var(--o-ease-in-out) infinite;
+.oppie:not([data-still])[data-state='idle'] .oppie-pie {
+  animation: oppie-breathe var(--o-oppie-idle) var(--o-ease-oppie) infinite;
+}
+.oppie:not([data-still])[data-state='thinking'] .oppie-slice {
+  animation: oppie-push var(--o-oppie-thinking) var(--o-ease-oppie) calc(var(--o-oppie-thinking) * var(--oppie-turn)) infinite;
+}
+.oppie:not([data-still])[data-state='thinking'] .oppie-lit {
+  animation: oppie-lit var(--o-oppie-thinking) var(--o-ease-oppie) calc(var(--o-oppie-thinking) * var(--oppie-turn)) infinite;
 }
 
-@keyframes orb-spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-@keyframes orb-ring {
-  0% {
-    transform: scale(1);
-    opacity: 0.7;
-  }
+@keyframes oppie-halo {
+  0%,
   100% {
-    transform: scale(1.65);
     opacity: 0;
   }
+  50% {
+    opacity: 0.55;
+  }
 }
-@keyframes orb-breathe {
+@keyframes oppie-breathe {
   0%,
   100% {
     transform: scale(1);
   }
   50% {
-    transform: scale(1.04);
+    transform: scale(1.06);
+  }
+}
+@keyframes oppie-push {
+  0%,
+  60%,
+  100% {
+    transform: translate(0, 0);
+  }
+  20% {
+    transform: translate(var(--oppie-x), var(--oppie-y));
+  }
+}
+@keyframes oppie-lit {
+  0%,
+  60%,
+  100% {
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
   }
 }
 
@@ -460,26 +437,6 @@
 }
 .console-rest {
   visibility: hidden;
-}
-.console-thinking > span {
-  animation: thinking 1.2s var(--o-ease-in-out) infinite;
-}
-.console-thinking > span:nth-child(2) {
-  animation-delay: 0.15s;
-}
-.console-thinking > span:nth-child(3) {
-  animation-delay: 0.3s;
-}
-@keyframes thinking {
-  0%,
-  100% {
-    transform: scale(0.7);
-    opacity: 0.4;
-  }
-  50% {
-    transform: scale(1);
-    opacity: 1;
-  }
 }
 
 /* Without JavaScript, show the first console scene complete. */
