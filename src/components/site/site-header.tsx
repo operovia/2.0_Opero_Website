@@ -42,7 +42,7 @@ export function SiteHeader({ content }: Props) {
     >
       <Container className="flex h-18 items-center justify-between gap-3 sm:gap-6">
         <Link href="/" aria-label="Opero home" className="rounded-sm">
-          <BrandMark name="opero" className="h-9 sm:h-11" decorative priority />
+          <BrandMark name="opero" className="h-9 sm:h-11 lg:h-13" decorative priority />
         </Link>
 
         <nav aria-label="Main" className="hidden md:block">

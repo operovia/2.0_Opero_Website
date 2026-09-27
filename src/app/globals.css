@@ -284,7 +284,8 @@
 .aurora-glow-1 {
   --glow: var(--o-aurora-1);
   --drift: 38s;
-  top: -34vmax;
+  /* Low enough that the header logo sits on darker ground. */
+  top: -18vmax;
   left: -18vmax;
 }
 .aurora-glow-2 {
