@@ -1,0 +1,176 @@
+@import "tailwindcss";
+
+/*
+ * Tailwind is limited to the design tokens. Default palettes and scales are
+ * cleared, then every utility is mapped onto the CSS variables generated from
+ * src/theme/tokens.ts (see src/theme/css.ts). Never add literal values here.
+ */
+@theme {
+  --color-*: initial;
+  --font-*: initial;
+  --font-weight-*: initial;
+  --text-*: initial;
+  --leading-*: initial;
+  --tracking-*: initial;
+  --radius-*: initial;
+  --shadow-*: initial;
+  --inset-shadow-*: initial;
+  --drop-shadow-*: initial;
+  --text-shadow-*: initial;
+  --ease-*: initial;
+  --animate-*: initial;
+  --container-*: initial;
+}
+
+@theme inline {
+  --color-canvas: var(--o-canvas);
+  --color-canvas-raised: var(--o-canvas-raised);
+  --color-surface: var(--o-surface);
+  --color-surface-raised: var(--o-surface-raised);
+  --color-line: var(--o-line);
+  --color-line-strong: var(--o-line-strong);
+  --color-line-input: var(--o-line-input);
+  --color-fg: var(--o-fg);
+  --color-fg-muted: var(--o-fg-muted);
+  --color-fg-subtle: var(--o-fg-subtle);
+  --color-accent: var(--o-accent);
+  --color-accent-hover: var(--o-accent-hover);
+  --color-on-accent: var(--o-on-accent);
+  --color-accent-soft: var(--o-accent-soft);
+  --color-focus-ring: var(--o-focus-ring);
+  --color-success: var(--o-success);
+  --color-success-soft: var(--o-success-soft);
+  --color-warning: var(--o-warning);
+  --color-warning-soft: var(--o-warning-soft);
+  --color-danger: var(--o-danger);
+  --color-danger-soft: var(--o-danger-soft);
+  --color-overlay: var(--o-overlay);
+  --color-aurora-1: var(--o-aurora-1);
+  --color-aurora-2: var(--o-aurora-2);
+  --color-aurora-3: var(--o-aurora-3);
+  --color-module-studios: var(--o-module-studios);
+  --color-module-playbook: var(--o-module-playbook);
+  --color-module-university: var(--o-module-university);
+  --color-module-compass: var(--o-module-compass);
+  --color-module-build: var(--o-module-build);
+
+  --font-sans: var(--o-font-sans);
+  --font-display: var(--o-font-display);
+  --font-mono: var(--o-font-mono);
+  --font-weight-regular: var(--o-weight-regular);
+  --font-weight-medium: var(--o-weight-medium);
+  --font-weight-semibold: var(--o-weight-semibold);
+  --font-weight-bold: var(--o-weight-bold);
+
+  --text-xs: var(--o-text-xs);
+  --text-xs--line-height: var(--o-text-xs-lh);
+  --text-xs--letter-spacing: var(--o-text-xs-tracking);
+  --text-sm: var(--o-text-sm);
+  --text-sm--line-height: var(--o-text-sm-lh);
+  --text-sm--letter-spacing: var(--o-text-sm-tracking);
+  --text-base: var(--o-text-base);
+  --text-base--line-height: var(--o-text-base-lh);
+  --text-base--letter-spacing: var(--o-text-base-tracking);
+  --text-lg: var(--o-text-lg);
+  --text-lg--line-height: var(--o-text-lg-lh);
+  --text-lg--letter-spacing: var(--o-text-lg-tracking);
+  --text-xl: var(--o-text-xl);
+  --text-xl--line-height: var(--o-text-xl-lh);
+  --text-xl--letter-spacing: var(--o-text-xl-tracking);
+  --text-2xl: var(--o-text-2xl);
+  --text-2xl--line-height: var(--o-text-2xl-lh);
+  --text-2xl--letter-spacing: var(--o-text-2xl-tracking);
+  --text-3xl: var(--o-text-3xl);
+  --text-3xl--line-height: var(--o-text-3xl-lh);
+  --text-3xl--letter-spacing: var(--o-text-3xl-tracking);
+  --text-display-sm: var(--o-text-display-sm);
+  --text-display-sm--line-height: var(--o-text-display-sm-lh);
+  --text-display-sm--letter-spacing: var(--o-text-display-sm-tracking);
+  --text-display-md: var(--o-text-display-md);
+  --text-display-md--line-height: var(--o-text-display-md-lh);
+  --text-display-md--letter-spacing: var(--o-text-display-md-tracking);
+  --text-display-lg: var(--o-text-display-lg);
+  --text-display-lg--line-height: var(--o-text-display-lg-lh);
+  --text-display-lg--letter-spacing: var(--o-text-display-lg-tracking);
+  --text-eyebrow: var(--o-text-eyebrow);
+  --text-eyebrow--line-height: var(--o-text-eyebrow-lh);
+  --text-eyebrow--letter-spacing: var(--o-text-eyebrow-tracking);
+
+  --radius-xs: var(--o-radius-xs);
+  --radius-sm: var(--o-radius-sm);
+  --radius-md: var(--o-radius-md);
+  --radius-lg: var(--o-radius-lg);
+  --radius-xl: var(--o-radius-xl);
+  --radius-2xl: var(--o-radius-2xl);
+  --radius-full: var(--o-radius-full);
+
+  --shadow-sm: var(--o-shadow-sm);
+  --shadow-md: var(--o-shadow-md);
+  --shadow-lg: var(--o-shadow-lg);
+  --shadow-glow: var(--o-shadow-glow);
+
+  --spacing: var(--o-space-unit);
+  --spacing-gutter: var(--o-gutter);
+  --spacing-section: var(--o-section);
+  --container-content: var(--o-container);
+  --container-prose: var(--o-prose);
+
+  --ease-standard: var(--o-ease-standard);
+  --ease-out: var(--o-ease-out);
+  --ease-in-out: var(--o-ease-in-out);
+  --default-transition-duration: var(--o-duration-base);
+  --default-transition-timing-function: var(--o-ease-standard);
+}
+
+@layer base {
+  html {
+    font-family: var(--font-sans);
+    font-optical-sizing: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  [data-theme] {
+    background-color: var(--color-canvas);
+    color: var(--color-fg);
+  }
+
+  body {
+    font-size: var(--text-base);
+    line-height: var(--text-base--line-height);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: 3px;
+  }
+
+  ::selection {
+    background-color: var(--color-accent);
+    color: var(--color-on-accent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
