@@ -173,16 +173,16 @@ export const tokens = {
   },
 
   /**
-   * Which jewel each module wears. PROVISIONAL: assumed to follow the order of
-   * the jewels under the wordmark and the module order in the brief. Confirm
-   * with the brand owner (listed in PLACEHOLDERS.md).
+   * Which jewel each module wears, confirmed by the brand owner: the jewels
+   * under the wordmark read left to right as Build, Studios, Playbook,
+   * University, Compass. Keys are listed in that brand order.
    */
   modules: {
-    studios: 'crimson',
-    playbook: 'violet',
-    university: 'gold',
-    compass: 'green',
-    build: 'teal',
+    build: 'crimson',
+    studios: 'violet',
+    playbook: 'gold',
+    university: 'green',
+    compass: 'teal',
   } satisfies Record<string, JewelName>,
 
   font: {

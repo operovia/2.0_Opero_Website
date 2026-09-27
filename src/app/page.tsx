@@ -1,6 +1,6 @@
 import { BrandMark } from '@/components/brand/brand-mark';
 
-const modules = ['studios', 'playbook', 'university', 'compass', 'build'] as const;
+const modules = ['build', 'studios', 'playbook', 'university', 'compass'] as const;
 
 const jewelClass = {
   studios: 'jewel-studios',
