@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { MotionRoot } from '@/components/motion/motion-root';
+import { DemoDialog } from '@/components/site/demo-dialog';
 import { MaintenancePage } from '@/components/site/maintenance-page';
 import { PreviewBanner } from '@/components/site/preview-banner';
 import { SiteFooter } from '@/components/site/site-footer';
@@ -53,6 +54,7 @@ export default async function SiteLayout({ children }: LayoutProps<'/'>) {
         {children}
       </main>
       <SiteFooter content={site.footer} email={settings.contactEmail} />
+      <DemoDialog content={site.demoForm} />
       {settings.analyticsSnippet ? <div hidden dangerouslySetInnerHTML={{ __html: settings.analyticsSnippet }} /> : null}
     </MotionRoot>
   );

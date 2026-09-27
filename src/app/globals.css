@@ -615,3 +615,27 @@
 .rich-editor strong {
   font-weight: var(--o-weight-semibold);
 }
+
+/* Demo request dialog (src/components/site/demo-dialog.tsx). */
+.demo-dialog[open] {
+  animation: dialog-in var(--o-duration-slow) var(--o-ease-out);
+}
+.demo-dialog[open]::backdrop {
+  backdrop-filter: blur(6px);
+  animation: backdrop-in var(--o-duration-slow) var(--o-ease-out);
+}
+@keyframes dialog-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 16px, 0) scale(0.98);
+  }
+}
+@keyframes backdrop-in {
+  from {
+    opacity: 0;
+  }
+}
+/* Keep the page still behind an open dialog. */
+html:has(dialog[open]) {
+  overflow: hidden;
+}

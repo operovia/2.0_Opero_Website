@@ -7,13 +7,15 @@ import { AdminShell } from '@/components/admin/shell';
 import { ThemeSwitch } from '@/components/admin/theme-switch';
 import { ADMIN_THEME_COOKIE, parseAdminTheme } from '@/server/admin-theme';
 import { requireAdmin } from '@/server/auth/session';
+import { newInquiryCount } from '@/server/inquiries-admin';
 
 /** Admin sections that exist so far; the list grows as each section ships. */
-const enabled: NavKey[] = ['dashboard', 'content', 'console', 'settings', 'team', 'activity'];
+const enabled: NavKey[] = ['dashboard', 'inquiries', 'content', 'console', 'settings', 'team', 'activity'];
 
 export default async function PanelLayout({ children }: LayoutProps<'/admin'>) {
   const { user } = await requireAdmin();
   const theme = parseAdminTheme((await cookies()).get(ADMIN_THEME_COOKIE)?.value);
+  const newInquiries = await newInquiryCount();
 
   const account = (
     <div className="space-y-4">
@@ -48,7 +50,7 @@ export default async function PanelLayout({ children }: LayoutProps<'/admin'>) {
   );
 
   return (
-    <AdminShell enabled={enabled} account={account}>
+    <AdminShell enabled={enabled} badges={{ inquiries: newInquiries }} account={account}>
       {children}
     </AdminShell>
   );
