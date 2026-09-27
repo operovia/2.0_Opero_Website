@@ -10,6 +10,7 @@ import { requireAdmin } from '@/server/auth/session';
 import { allPagesStatus, recentPublishes } from '@/server/content-admin';
 import { newInquiryCount, recentNewInquiries, typeLabel } from '@/server/inquiries-admin';
 import { getSettings } from '@/server/settings';
+import { surveysWithRecentResponses } from '@/server/surveys';
 
 export const metadata: Metadata = { title: 'Dashboard' };
 
@@ -17,12 +18,13 @@ const linkClass = 'text-sm font-medium text-fg underline underline-offset-4 hove
 
 export default async function DashboardPage() {
   const { user } = await requireAdmin();
-  const [settings, newCount, inquiries, publishes, pages] = await Promise.all([
+  const [settings, newCount, inquiries, publishes, pages, surveys] = await Promise.all([
     getSettings(),
     newInquiryCount(),
     recentNewInquiries(5),
     recentPublishes(5),
     allPagesStatus(),
+    surveysWithRecentResponses(30, 5),
   ]);
   const firstName = user.name.split(' ')[0];
   const toReview = pages.reduce((sum, page) => sum + page.needsReview, 0);
@@ -76,6 +78,33 @@ export default async function DashboardPage() {
             </ul>
           ) : (
             <p className="px-6 py-5 text-sm text-fg-muted">Demo requests and partner applications appear here as they arrive.</p>
+          )}
+        </Card>
+
+        <Card>
+          <CardHeader
+            title="Survey responses"
+            description="Surveys that received responses in the last 30 days."
+            actions={
+              <Link href="/admin/surveys" className={linkClass}>
+                All surveys
+              </Link>
+            }
+          />
+          {surveys.length ? (
+            <ul className="divide-y divide-line">
+              {surveys.map((survey) => (
+                <Row
+                  key={survey.id}
+                  href={`/admin/surveys/${survey.id}/results`}
+                  title={survey.title}
+                  detail={`${survey.recent.toLocaleString('en-US')} ${survey.recent === 1 ? 'response' : 'responses'} in the last 30 days`}
+                  time={survey.lastResponseAt}
+                />
+              ))}
+            </ul>
+          ) : (
+            <p className="px-6 py-5 text-sm text-fg-muted">No survey responses in the last 30 days.</p>
           )}
         </Card>
 

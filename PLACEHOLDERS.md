@@ -28,6 +28,11 @@ Review each in Admin, Content. Publishing a section clears its flag.
 
 - **Oppie console answers.** The three questions are from the brief. The answers are invented for a Midwest office portfolio: Horizon Suite 200 (10 ft finished ceilings, 4,280 RSF, floor 2), three Guardian Building suites (910, 1400, 2215 with sizes), and seven expiring leases with sample tenants Aldergrove Dental, Pinecrest Analytics, and Stonebridge Legal. Replace them in Admin, Oppie console.
 
+## Surveys
+
+- **Starting wording for each new survey:** the thank-you message ("Thank you. Your answers have been recorded.") and the invitation and reminder emails. Every survey's own copy is edited in its Settings and Recipients tabs; the starting text is in `src/surveys/defaults.ts`.
+- **Fixed wording on survey pages:** the messages for a closed survey, an invitation-only survey, a link that does not work, and someone who has already responded; the scale notes ("1 is the lowest, 5 the highest" and "0 is not at all likely, 10 is extremely likely"); and the email line "This link is personal to you, so please do not forward this email." These live in `src/app/s/[slug]` and `src/server/surveys.ts`.
+
 ## Settings
 
 - **Contact email** is seeded as hello@operovia.com. Confirm or change it in Admin, Settings.

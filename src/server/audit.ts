@@ -16,7 +16,12 @@ export type AuditAction =
   | 'scenes.update'
   | 'media.upload'
   | 'media.delete'
-  | 'survey.send';
+  | 'survey.create'
+  | 'survey.status'
+  | 'survey.delete'
+  | 'survey.send'
+  | 'survey.export'
+  | 'survey.responses.delete';
 
 type Actor = { id: string; email: string } | null;
 

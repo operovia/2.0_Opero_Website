@@ -17,6 +17,17 @@ The product brief is in [docs/brief.md](docs/brief.md). Anything still waiting o
 
 Everything else is optional until you publish.
 
+## Surveys
+
+In the admin, open Surveys.
+
+1. **Write it.** Create a survey and add its questions. Preview shows it exactly as respondents will see it, without saving answers.
+2. **Open it and send it.** Press Open survey. On the Recipients tab, paste names and email addresses, check the email wording, and send the invitations. Each person gets their own link, which works once. You can see who opened and who finished, and remind anyone who has not.
+3. **Or share one link.** Turn on the open link in the survey's Settings to let anyone with the address respond.
+4. **Read the results** as they arrive: a summary per question (including the Net Promoter Score), each individual response, and a CSV download of everything.
+
+Once a survey has responses, only the wording of its questions can change, so every answer keeps its meaning. Deleting the responses (Settings tab) unlocks it again. Surveys are never linked from the site and never appear in search results.
+
 ## Email
 
 Until email is set up, every email the site would send (invitations, notifications, surveys) is printed in the Replit console instead, so you can test everything.

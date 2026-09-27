@@ -15,7 +15,12 @@ export const auditLabels: Record<AuditAction, string> = {
   'scenes.update': 'Updated the Oppie console',
   'media.upload': 'Uploaded an image',
   'media.delete': 'Deleted an image',
+  'survey.create': 'Created a survey',
+  'survey.status': "Changed a survey's status",
+  'survey.delete': 'Deleted a survey',
   'survey.send': 'Sent survey emails',
+  'survey.export': 'Exported survey responses',
+  'survey.responses.delete': 'Deleted survey responses',
 };
 
 export const auditFilters = {
@@ -26,7 +31,7 @@ export const auditFilters = {
     label: 'Team and settings',
     actions: ['password.change', 'admin.invite', 'admin.invite.revoke', 'admin.invite.accept', 'admin.remove', 'settings.update'],
   },
-  surveys: { label: 'Surveys', actions: ['survey.send'] },
+  surveys: { label: 'Surveys', actions: ['survey.create', 'survey.status', 'survey.delete', 'survey.send', 'survey.export', 'survey.responses.delete'] },
 } as const satisfies Record<string, { label: string; actions: readonly AuditAction[] | null }>;
 
 export type AuditFilter = keyof typeof auditFilters;
