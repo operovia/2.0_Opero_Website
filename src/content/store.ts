@@ -190,9 +190,9 @@ export async function getScenes(): Promise<ConsoleScene[]> {
   return (await snapshotForRequest()).scenes;
 }
 
-export async function getPublicSettings(): Promise<{ settings: SiteSettings; socialImage: SocialImage }> {
+export async function getPublicSettings(): Promise<{ settings: SiteSettings; socialImage: SocialImage; version: number }> {
   const snapshot = await snapshotForRequest();
-  return { settings: snapshot.settings, socialImage: snapshot.socialImage };
+  return { settings: snapshot.settings, socialImage: snapshot.socialImage, version: snapshot.version };
 }
 
 /** Validates data for one section, for the admin editor. */

@@ -7,7 +7,7 @@ export function MaintenancePage({ content }: { content: SectionData<'site', 'mai
   return (
     <main className="relative isolate flex min-h-dvh flex-col items-center justify-center overflow-hidden px-gutter text-center">
       <Aurora />
-      <BrandMark name="opero" className="h-16 sm:h-20" />
+      <BrandMark name="opero" className="h-16 sm:h-20" priority />
       <h1 className="mt-12 max-w-2xl text-display-sm font-medium text-metal">{content.headline}</h1>
       <p className="mt-5 max-w-xl text-lg text-fg-muted">{content.body}</p>
     </main>

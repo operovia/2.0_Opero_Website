@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
-import { DEMO_TARGET } from '@/content/registry';
+import { DEMO_TARGET } from '@/content/constants';
 
 type Props = { href: string; className?: string; children: ReactNode; 'aria-label'?: string };
 

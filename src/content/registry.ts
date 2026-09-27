@@ -1,6 +1,7 @@
 import { textToRich } from '@/lib/rich-text';
 import { choice, link, list, rich, text, type Fields, type Values } from './fields';
 import { tokenHelp } from './tokens';
+import { DEMO_TARGET } from './constants';
 
 /**
  * Every editable section of every public page: its fields and its seed copy.
@@ -31,7 +32,7 @@ export type PageDef = {
 
 const section = <F extends Fields>(def: SectionDef<F>): SectionDef<F> => def;
 
-export const DEMO_TARGET = '#book-demo';
+export { DEMO_TARGET };
 
 const buttonTargetHint = `A path on this site (like /partners), a full web address, or ${DEMO_TARGET} to open the demo form.`;
 

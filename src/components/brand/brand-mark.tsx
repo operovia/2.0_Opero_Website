@@ -1,3 +1,4 @@
+import { preload } from 'react-dom';
 import { brandMark, type Box, type MarkName } from '@/brand';
 import { cn } from '@/lib/cn';
 
@@ -16,6 +17,8 @@ type Props = {
   decorative?: boolean;
   /** Keep the file's built-in clear space instead of trimming to the artwork. */
   untrimmed?: boolean;
+  /** Fetch the file early and first: for a mark at the top of the page, which is often the largest thing painted first. */
+  priority?: boolean;
 };
 
 /**
@@ -23,7 +26,7 @@ type Props = {
  * inside an SVG whose viewBox is the mark's visible bounds, which trims built-in
  * clear space without editing the artwork.
  */
-export function BrandMark({ name, on = 'dark', className, decorative, untrimmed }: Props) {
+export function BrandMark({ name, on = 'dark', className, decorative, untrimmed, priority }: Props) {
   if (on === 'auto') {
     return (
       <>
@@ -44,6 +47,9 @@ export function BrandMark({ name, on = 'dark', className, decorative, untrimmed 
       </span>
     );
   }
+
+  // Inside an svg, the image is only found once styles load; a preload lets the browser start at once.
+  if (priority) preload(src, { as: 'image', fetchPriority: 'high' });
 
   const box: Box = untrimmed ? mark.viewBox : mark.bounds;
   const [x, y, width, height] = mark.viewBox;

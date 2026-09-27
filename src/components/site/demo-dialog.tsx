@@ -6,7 +6,8 @@ import { requestDemo } from '@/app/(site)/inquiry-actions';
 import { Field, Input, Textarea } from '@/components/ui/field';
 import { Notice } from '@/components/ui/notice';
 import { SubmitButton } from '@/components/ui/submit-button';
-import { DEMO_TARGET, type SectionData } from '@/content/registry';
+import { DEMO_TARGET } from '@/content/constants';
+import type { SectionData } from '@/content/registry';
 import { idleState } from '@/lib/forms';
 import { SpamTraps, stampElapsed } from './spam-traps';
 

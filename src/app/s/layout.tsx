@@ -22,7 +22,7 @@ export default async function SurveyLayout({ children }: { children: ReactNode }
       </a>
       <header className="border-b border-line">
         <Container size="2xl" className="flex h-16 items-center">
-          <BrandMark name="opero-small" className="h-7" />
+          <BrandMark name="opero-small" className="h-7" priority />
         </Container>
       </header>
       <main id="main" className="flex-1 py-12 sm:py-16">
