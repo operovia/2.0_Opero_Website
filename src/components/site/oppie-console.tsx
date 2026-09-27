@@ -88,16 +88,16 @@ export function OppieConsole({ scenes, labels }: { scenes: ConsoleScene[]; label
         role="group"
         aria-roledescription="demo"
         aria-label="Oppie answering portfolio questions"
-        className="relative overflow-hidden rounded-2xl border border-line-strong bg-surface/80 shadow-lg backdrop-blur-xl"
+        className="console-glass relative overflow-hidden rounded-2xl"
       >
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-line px-5 py-3.5">
+        <div className="console-rule flex items-center justify-between border-b px-5 py-3.5">
           <div className="flex items-center gap-1">
             {/* Oppie's pace follows the conversation. The mark's box leaves room around the pie; the negative margins keep the header its usual height. */}
             <OppieMark decorative compact state={oppieStates[state.phase]} paused={!running} className="-my-1.5 -ml-1 size-9" />
             <span className="text-sm font-semibold text-fg">Oppie</span>
           </div>
-          <span className="inline-flex items-center gap-2 rounded-full border border-line-strong px-2.5 py-1 text-micro font-semibold text-fg-muted uppercase">
+          <span className="console-rule inline-flex items-center gap-2 rounded-full border px-2.5 py-1 text-micro font-semibold text-fg-muted uppercase">
             <span className="console-live-dot relative inline-flex size-1.5 rounded-full bg-success" aria-hidden />
             {labels.badge}
           </span>
@@ -119,7 +119,7 @@ export function OppieConsole({ scenes, labels }: { scenes: ConsoleScene[]; label
                   !active && 'invisible',
                 )}
               >
-                <div className="flex items-start gap-3 rounded-xl border border-line bg-canvas/60 px-4 py-3.5">
+                <div className="console-pane flex items-start gap-3 rounded-xl border px-4 py-3.5">
                   <Sparkles className="mt-0.5 size-4 shrink-0 text-fg-subtle" />
                   <p className="text-base text-fg">
                     <span>{s.question.slice(0, typed)}</span>
@@ -134,7 +134,7 @@ export function OppieConsole({ scenes, labels }: { scenes: ConsoleScene[]; label
                     initial={false}
                     animate={showAnswer ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
                     transition={{ duration: 0.5, ease: tokens.motion.ease.out }}
-                    className="rounded-xl border border-line bg-surface-raised/70 p-5"
+                    className="console-pane rounded-xl border p-5"
                   >
                     {s.answerTag ? <p className="text-eyebrow font-semibold text-fg-subtle uppercase">{s.answerTag}</p> : null}
                     <p className="mt-2 text-2xl font-semibold text-metal">{s.answerMain}</p>
@@ -148,7 +148,7 @@ export function OppieConsole({ scenes, labels }: { scenes: ConsoleScene[]; label
                             animate={showAnswer ? { opacity: 1, y: 0 } : { opacity: 0, y: 6 }}
                             transition={{ duration: 0.4, delay: showAnswer ? 0.15 + c * 0.07 : 0, ease: tokens.motion.ease.out }}
                             data-reveal={i === 0 ? '' : undefined}
-                            className="rounded-full border border-line-strong bg-canvas/50 px-3 py-1 text-xs font-medium text-fg-muted"
+                            className="console-pane rounded-full border px-3 py-1 text-xs font-medium text-fg-muted"
                           >
                             {chip}
                           </m.li>
@@ -163,7 +163,7 @@ export function OppieConsole({ scenes, labels }: { scenes: ConsoleScene[]; label
         </div>
 
         {/* Footer */}
-        <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-t border-line px-5 py-3">
+        <div className="console-rule flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-t px-5 py-3">
           <p className="flex flex-wrap gap-x-3 gap-y-1 text-micro font-semibold text-fg-subtle uppercase">
             <span className="whitespace-nowrap">{labels.footerLeft}</span>
             <span className="whitespace-nowrap">{labels.footerRight}</span>
