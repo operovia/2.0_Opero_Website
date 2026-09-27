@@ -191,7 +191,7 @@ export const tokens = {
     display: 'var(--font-jakarta), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif',
     mono: 'ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace',
     weight: {
-      regular: '400',
+      normal: '400',
       medium: '500',
       semibold: '600',
       bold: '700',
@@ -254,6 +254,19 @@ export const tokens = {
     container: '76rem',
     /** Max width of a readable text column. */
     prose: '42rem',
+    /** Width scale for cards, dialogs, and columns (Tailwind's max-w-sm and so on). */
+    widths: {
+      xs: '20rem',
+      sm: '24rem',
+      md: '28rem',
+      lg: '32rem',
+      xl: '36rem',
+      '2xl': '42rem',
+      '3xl': '48rem',
+      '4xl': '56rem',
+      '5xl': '64rem',
+      '6xl': '72rem',
+    },
   },
 
   motion: {

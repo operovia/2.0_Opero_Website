@@ -7,7 +7,7 @@ Next.js notes (managed by Next.js itself): @AGENTS.md
 ## How to work
 
 - Work in small, verified units. Each unit is one coherent change that typechecks and builds. Commit after every unit with a clear message. Never leave the repo in a state that does not build.
-- Before committing, run `npm run check` (typecheck, lint, copy rules) and `npm run build`.
+- Before committing, run `npm run verify`: typecheck, lint, copy rules, unit tests, production build, and a check that every Tailwind class used actually exists (Tailwind is limited to the tokens, so a missing token fails silently otherwise).
 - Collect questions instead of scattering them through prose. Present each with the choices and a recommended answer. Proceed on the recommendation for anything low-risk while waiting. Stop and ask before any decision that is hard to reverse.
 - Do not invent copy, numbers, names, or claims about the product beyond what `docs/brief.md` gives. Where placeholder text is needed, make it obviously placeholder and list it in `PLACEHOLDERS.md`.
 - Report in plain language: what changed and what the owner can now do, not how the internals are wired.
@@ -32,6 +32,7 @@ Next.js notes (managed by Next.js itself): @AGENTS.md
 - Brand assets live in `public/brand/` and are mapped in `public/brand/manifest.json`. Components render marks with `<BrandMark name="...">` (via `src/brand`), never by file path, so swapping a file never touches a component. Never edit the supplied artwork files. Do not draw logos; artwork still pending (the Oppie orb) uses a clearly marked placeholder.
 - Brand colors come from the supplied artwork: the wordmark's metal gradient (`text-metal`), the five jewels (`jewel-*` utilities), and the favicon ground for the dark canvas. The jewels read left to right as Build, Studios, Playbook, University, Compass; that is also the brand order for showing the modules.
 - In hand-written CSS, reference the per-theme `--o-*` variables, not Tailwind's `--color-*` variables, so nested `data-theme` regions resolve correctly.
+- Form actions return the submitted `values` and forms render `defaultValue` from `state.values ?? saved`, because React resets uncontrolled fields after every form action.
 - Light and dark themes are both wired. The public site defaults to dark.
 - Headline type must feel open and generous: loosen line height and tracking, never condense. Body type must be comfortable at length.
 - Motion uses transform and opacity only, holds 60fps, and fully respects `prefers-reduced-motion`. Anything that auto-cycles needs a pause control.

@@ -82,6 +82,7 @@ function sharedDeclarations(): string {
   vars['section'] = tokens.space.section;
   vars['container'] = tokens.space.container;
   vars['prose'] = tokens.space.prose;
+  for (const [key, value] of Object.entries(tokens.space.widths)) vars[`width-${key}`] = value;
 
   for (const [key, value] of Object.entries(tokens.motion.duration)) vars[`duration-${key}`] = `${value}ms`;
   for (const [key, value] of Object.entries(tokens.motion.ease)) vars[`ease-${kebab(key)}`] = cubic(value);

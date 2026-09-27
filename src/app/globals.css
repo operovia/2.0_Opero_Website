@@ -59,7 +59,7 @@
   --font-sans: var(--o-font-sans);
   --font-display: var(--o-font-display);
   --font-mono: var(--o-font-mono);
-  --font-weight-regular: var(--o-weight-regular);
+  --font-weight-normal: var(--o-weight-normal);
   --font-weight-medium: var(--o-weight-medium);
   --font-weight-semibold: var(--o-weight-semibold);
   --font-weight-bold: var(--o-weight-bold);
@@ -116,6 +116,16 @@
   --spacing-section: var(--o-section);
   --container-content: var(--o-container);
   --container-prose: var(--o-prose);
+  --container-xs: var(--o-width-xs);
+  --container-sm: var(--o-width-sm);
+  --container-md: var(--o-width-md);
+  --container-lg: var(--o-width-lg);
+  --container-xl: var(--o-width-xl);
+  --container-2xl: var(--o-width-2xl);
+  --container-3xl: var(--o-width-3xl);
+  --container-4xl: var(--o-width-4xl);
+  --container-5xl: var(--o-width-5xl);
+  --container-6xl: var(--o-width-6xl);
 
   --ease-standard: var(--o-ease-standard);
   --ease-out: var(--o-ease-out);

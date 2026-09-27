@@ -17,7 +17,9 @@
     "db:migrate": "tsx scripts/migrate.ts",
     "db:studio": "drizzle-kit studio",
     "admin:reset-password": "tsx scripts/reset-admin-password.ts",
-    "test": "vitest run"
+    "test": "vitest run",
+    "check:classes": "node scripts/check-classes.mjs",
+    "verify": "npm run check && npm test && npm run build && npm run check:classes"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1141.0",
