@@ -2,7 +2,7 @@
 # repository root (see README.md and replit.md); nothing in it depends on
 # Replit, and other hosts run the same npm commands.
 run = "npm install && npm run dev"
-hidden = [".config", ".next", "uploads"]
+hidden = [".config", ".next", "uploads", ".claude-tools"]
 modules = ["nodejs-22", "postgresql-16"]
 
 [nix]

@@ -1,7 +1,7 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# dependencies
-/node_modules
+# dependencies (anywhere, so leftover folders from other setups never show up as new files)
+node_modules/
 /.pnp
 .pnp.*
 .yarn/*
@@ -49,3 +49,9 @@ next-env.d.ts
 /.local/
 /.upm/
 /.config/
+
+# Claude Code installed by ./cc, with its sign-in and settings: never commit
+/.claude-tools/
+
+# Build output from the earlier pnpm workspace setup
+dist/
