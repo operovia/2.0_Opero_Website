@@ -16,13 +16,16 @@ Next.js notes (managed by Next.js itself): @AGENTS.md
 
 ## Sessions in the Replit shell
 
-The owner also runs Claude Code in the Replit shell, and watches changes land in a browser tab. You are in Replit when `REPLIT_DEV_DOMAIN` is set. There, at the start of every session, before other work:
+The owner runs Claude Code in the Replit shell (started with `./cc`) and watches changes land in a browser tab. You are in Replit when `REPLIT_DEV_DOMAIN` is set. There, before anything else in every session:
 
-1. Make sure the dev server is running. `curl -s -o /dev/null -w '%{http_code}' http://localhost:3000/` prints `000` when nothing is listening. Only then start it: `npm install`, then `npm run dev` as a background command (for example `nohup npm run dev > /tmp/opero-dev.log 2>&1 &`), and wait until it answers. Never start a second server; the Run button starts the same one.
-2. Tell the owner the live preview address, `https://` followed by the actual value of `$REPLIT_DEV_DOMAIN`, to keep open in its own browser tab. Every saved change hot reloads there. The admin (`/admin`) only signs in at that address in its own tab, not in Replit's embedded preview.
-3. If the server log shows errors, deal with them or report them first.
+1. Run `node scripts/dev-server.mjs`. It checks the site's dev server (running, hot reloading, reachable through the dev URL), prints the dev URL, and exits 1 when something needs attention. Do what its messages say:
+   - **DOWN:** run `node scripts/dev-server.mjs serve` as a background task (`run_in_background`), wait for `[serve] up`, then check again. Only ever run one `serve`; the server it starts stops when the session ends.
+   - **STARTING:** the server is starting or recompiling. Check again in about 10 seconds.
+   - **NO HOT RELOAD, PORT TAKEN, dev URL FAILS, or MISROUTED:** something else holds the port or the dev URL, usually the Run button or a workflow left from an earlier setup. Claude Code cannot stop those, so ask the owner to stop them in Replit, then check again.
+2. Give the owner the dev URL and say whether the site is live there. The admin (`/admin`) signs in only at that address in its own tab, not in Replit's embedded preview.
+3. If the site shows errors, deal with them or report them before other work. The dev server writes its errors to `.next/dev/logs/next-development.log`.
 
-After pulling changes that touch `package.json` or `drizzle/`, restart the dev server so new packages install and migrations apply. Replit Agent must not restructure this project; `replit.md` tells it so.
+While `serve` runs, the owner should not press Run: Next.js allows one dev server per folder, so that second copy just stops. Code changes hot reload; after pulling changes that touch `package.json`, `next.config.ts`, environment variables, or `drizzle/`, restart the dev server (stop the `serve` task and start it again, or ask the owner to stop and press Run) so packages install, settings reload, and migrations apply. Replit Agent must not restructure this project; `replit.md` tells it so.
 
 ## Facts and copy rules
 

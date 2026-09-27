@@ -15,7 +15,9 @@ The product brief is in [docs/brief.md](docs/brief.md). Anything still waiting o
 4. **Run.** Press Run. The first start creates the database tables, the default content, and your admin account. The console shows `[opero] Database is ready.` when it is done.
 5. **Sign in.** Open the site in its own browser tab (the arrow icon on the preview), then go to `/admin`. The admin cannot sign in inside Replit's small preview pane, because browsers block sign-in cookies inside embedded frames.
 
-Keep that tab open while you or Claude Code work: every saved change appears there within a second or two. Claude Code sessions in the Replit shell start the server if needed and give you this address.
+Keep that tab open while you or Claude Code work: every saved change appears there within a second or two.
+
+To work with Claude Code in Replit, type `./cc` in the Shell. The first time, it installs Claude Code into the `.claude-tools` folder, which is kept out of GitHub because it holds your sign-in. Each session starts by checking that the site is running (starting it if needed) and giving you this address.
 
 Everything else is optional until you publish.
 
