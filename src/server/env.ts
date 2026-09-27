@@ -11,8 +11,8 @@ function trimmed(name: string): string {
 export function siteUrl(): string {
   const explicit = trimmed('SITE_URL');
   if (explicit) return explicit.replace(/\/+$/, '');
-  // Replit exposes the preview domain; any other host should set SITE_URL.
-  const replitDomain = trimmed('REPLIT_DEV_DOMAIN');
+  // Replit exposes its domains; any other host should set SITE_URL.
+  const replitDomain = trimmed('REPLIT_DOMAINS').split(',')[0]?.trim() || trimmed('REPLIT_DEV_DOMAIN');
   if (replitDomain) return `https://${replitDomain}`;
   return `http://localhost:${trimmed('PORT') || '3000'}`;
 }

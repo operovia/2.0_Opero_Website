@@ -1,0 +1,17 @@
+# Replit configuration, based on the official Next.js template for Replit.
+# Nothing in the app depends on Replit; other hosts use `npm run build` and `npm run start`.
+run = "npm install && npm run dev"
+hidden = [".config", ".next", "uploads"]
+modules = ["nodejs-22"]
+
+[nix]
+channel = "stable-24_11"
+
+[deployment]
+deploymentTarget = "cloudrun"
+build = ["npm", "run", "build"]
+run = ["npm", "run", "start"]
+
+[[ports]]
+localPort = 3000
+externalPort = 80

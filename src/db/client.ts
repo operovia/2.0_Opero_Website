@@ -11,7 +11,7 @@ import * as schema from './schema';
 const globalForDb = globalThis as unknown as { operoPool?: Pool };
 
 function createPool(): Pool {
-  if (!process.env.DATABASE_URL) {
+  if (!process.env.DATABASE_URL && process.env.NEXT_PHASE !== 'phase-production-build') {
     console.error('[opero] DATABASE_URL is not set. Add it to your environment (see .env.example).');
   }
   return new Pool({
