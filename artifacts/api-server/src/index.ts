@@ -1,5 +1,6 @@
 import app from "./app";
 import { logger } from "./lib/logger";
+import { bootstrap } from "./server/bootstrap";
 
 const rawPort = process.env["PORT"];
 
@@ -14,6 +15,8 @@ const port = Number(rawPort);
 if (Number.isNaN(port) || port <= 0) {
   throw new Error(`Invalid PORT value: "${rawPort}"`);
 }
+
+void bootstrap().catch((err) => logger.error({ err }, "Backend initialization failed"));
 
 app.listen(port, (err) => {
   if (err) {

@@ -3,34 +3,374 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Opero public content, forms, surveys, and authenticated administration API.
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
-    description: Health operations
+  - name: public
+  - name: admin
+security: []
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
-      summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
           content:
             application/json:
-              schema:
-                $ref: "#/components/schemas/HealthStatus"
+              schema: { $ref: "#/components/schemas/HealthStatus" }
+  /opero/site:
+    get:
+      operationId: getOperoSite
+      tags: [public]
+      responses:
+        "200":
+          description: Published Opero site data.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/SiteResponse" }
+  /opero/inquiries:
+    post:
+      operationId: submitInquiry
+      tags: [public]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/InquirySubmission" }
+      responses:
+        "201":
+          description: Inquiry stored.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/SubmissionAccepted" }
+        "400": { $ref: "#/components/responses/Error" }
+        "429": { $ref: "#/components/responses/Error" }
+  /opero/surveys/{slug}:
+    get:
+      operationId: getPublicSurvey
+      tags: [public]
+      parameters:
+        - { name: slug, in: path, required: true, schema: { type: string } }
+        - { name: token, in: query, required: false, schema: { type: string } }
+      responses:
+        "200":
+          description: Public survey state and questions.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/JsonObject" }
+        "404": { $ref: "#/components/responses/Error" }
+  /opero/surveys/{slug}/respond:
+    post:
+      operationId: submitSurveyResponse
+      tags: [public]
+      parameters:
+        - { name: slug, in: path, required: true, schema: { type: string } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/SurveyResponseSubmission" }
+      responses:
+        "201":
+          description: Response saved.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/SubmissionAccepted" }
+        "400": { $ref: "#/components/responses/Error" }
+        "409": { $ref: "#/components/responses/Error" }
+        "410": { $ref: "#/components/responses/Error" }
+  /opero/admin/login:
+    post:
+      operationId: operoAdminLogin
+      tags: [admin]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/LoginRequest" }
+      responses:
+        "200":
+          description: Session established with an httpOnly secure cookie.
+          headers:
+            Set-Cookie: { schema: { type: string } }
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/SessionResponse" }
+        "401": { $ref: "#/components/responses/Error" }
+        "429": { $ref: "#/components/responses/Error" }
+  /opero/admin/logout:
+    post:
+      operationId: operoAdminLogout
+      tags: [admin]
+      responses:
+        "200":
+          description: Current session destroyed.
+          content:
+            application/json:
+              schema: { type: object, properties: { loggedOut: { type: boolean } }, required: [loggedOut] }
+  /opero/admin/session:
+    get:
+      operationId: operoAdminSession
+      tags: [admin]
+      responses:
+        "200":
+          description: Current authenticated admin.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/SessionResponse" }
+        "401": { $ref: "#/components/responses/Error" }
+  /opero/admin:
+    get:
+      operationId: getOperoAdminDashboard
+      tags: [admin]
+      security: [{ OperoSession: [] }]
+      responses:
+        "200": { $ref: "#/components/responses/Json" }
+        "401": { $ref: "#/components/responses/Error" }
+  /opero/admin/inquiries:
+    get:
+      operationId: listOperoInquiries
+      tags: [admin]
+      security: [{ OperoSession: [] }]
+      parameters:
+        - { name: type, in: query, required: false, schema: { type: string, enum: [demo, partner] } }
+        - { name: status, in: query, required: false, schema: { type: string, enum: [new, contacted, closed] } }
+        - { name: page, in: query, required: false, schema: { type: integer, minimum: 1 } }
+      responses:
+        "200": { $ref: "#/components/responses/Json" }
+        "401": { $ref: "#/components/responses/Error" }
+  /opero/admin/inquiries/{id}:
+    get:
+      operationId: getOperoInquiry
+      tags: [admin]
+      security: [{ OperoSession: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string, format: uuid } }]
+      responses:
+        "200": { $ref: "#/components/responses/Json" }
+        "404": { $ref: "#/components/responses/Error" }
+    patch:
+      operationId: updateOperoInquiry
+      tags: [admin]
+      security: [{ OperoSession: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string, format: uuid } }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status: { type: string, enum: [new, contacted, closed] }
+                notes: { type: string }
+      responses:
+        "200": { $ref: "#/components/responses/Json" }
+        "400": { $ref: "#/components/responses/Error" }
+  /opero/admin/content:
+    get:
+      operationId: getOperoContent
+      tags: [admin]
+      security: [{ OperoSession: [] }]
+      responses:
+        "200": { $ref: "#/components/responses/Json" }
+  /opero/admin/content/{page}:
+    get:
+      operationId: getOperoContentPage
+      tags: [admin]
+      security: [{ OperoSession: [] }]
+      parameters: [{ name: page, in: path, required: true, schema: { type: string } }]
+      responses:
+        "200": { $ref: "#/components/responses/Json" }
+        "404": { $ref: "#/components/responses/Error" }
+  /opero/admin/content/{page}/{section}:
+    put:
+      operationId: saveOperoContent
+      tags: [admin]
+      security: [{ OperoSession: [] }]
+      parameters:
+        - { name: page, in: path, required: true, schema: { type: string } }
+        - { name: section, in: path, required: true, schema: { type: string } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/JsonObject" }
+      responses:
+        "200": { $ref: "#/components/responses/Json" }
+        "400": { $ref: "#/components/responses/Error" }
+  /opero/admin/surveys:
+    get:
+      operationId: listOperoSurveys
+      tags: [admin]
+      security: [{ OperoSession: [] }]
+      responses:
+        "200": { $ref: "#/components/responses/Json" }
+    post:
+      operationId: createOperoSurvey
+      tags: [admin]
+      security: [{ OperoSession: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [title, slug]
+              properties:
+                title: { type: string }
+                slug: { type: string }
+      responses:
+        "201": { $ref: "#/components/responses/Json" }
+  /opero/admin/surveys/{id}:
+    get:
+      operationId: getOperoSurvey
+      tags: [admin]
+      security: [{ OperoSession: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string, format: uuid } }]
+      responses:
+        "200": { $ref: "#/components/responses/Json" }
+    patch:
+      operationId: updateOperoSurvey
+      tags: [admin]
+      security: [{ OperoSession: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string, format: uuid } }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/JsonObject" }
+      responses:
+        "200": { $ref: "#/components/responses/Json" }
+    delete:
+      operationId: deleteOperoSurvey
+      tags: [admin]
+      security: [{ OperoSession: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string, format: uuid } }]
+      responses:
+        "204": { description: Survey and dependent records removed. }
+  /opero/admin/surveys/{id}/questions:
+    put:
+      operationId: saveOperoSurveyQuestions
+      tags: [admin]
+      security: [{ OperoSession: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string, format: uuid } }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: array, items: { $ref: "#/components/schemas/JsonObject" } }
+      responses:
+        "200": { $ref: "#/components/responses/Json" }
+  /opero/admin/surveys/{id}/recipients:
+    get:
+      operationId: listOperoSurveyRecipients
+      tags: [admin]
+      security: [{ OperoSession: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string, format: uuid } }]
+      responses:
+        "200": { $ref: "#/components/responses/Json" }
+    post:
+      operationId: addOperoSurveyRecipients
+      tags: [admin]
+      security: [{ OperoSession: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string, format: uuid } }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object, required: [text], properties: { text: { type: string } } }
+      responses:
+        "201": { $ref: "#/components/responses/Json" }
 components:
+  securitySchemes:
+    OperoSession:
+      type: apiKey
+      in: cookie
+      name: __Host-opero_session
+      description: HttpOnly, SameSite=Lax session cookie; insecure-cookie variant is used only on local HTTP.
+  responses:
+    Error:
+      description: Request failed.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/ErrorResponse" }
+    Json:
+      description: JSON data.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/JsonObject" }
   schemas:
     HealthStatus:
       type: object
+      properties: { status: { type: string } }
+      required: [status]
+    JsonObject:
+      type: object
+      additionalProperties: true
+    ErrorResponse:
+      type: object
+      properties: { error: { type: string } }
+      required: [error]
+    SubmissionAccepted:
+      type: object
       properties:
-        status:
-          type: string
-      required:
-        - status
-
+        id: { type: string }
+        accepted: { type: boolean }
+        submitted: { type: boolean }
+      additionalProperties: true
+    SiteResponse:
+      type: object
+      properties:
+        home: { $ref: "#/components/schemas/JsonObject" }
+        site: { $ref: "#/components/schemas/JsonObject" }
+        partners: { $ref: "#/components/schemas/JsonObject" }
+        privacy: { $ref: "#/components/schemas/JsonObject" }
+        scenes: { type: array, items: { $ref: "#/components/schemas/JsonObject" } }
+        settings: { $ref: "#/components/schemas/JsonObject" }
+      required: [home, site, partners, privacy, scenes, settings]
+    InquirySubmission:
+      type: object
+      required: [type, name, firm, email]
+      properties:
+        type: { type: string, enum: [demo, partner] }
+        name: { type: string }
+        firm: { type: string }
+        email: { type: string, format: email }
+        phone: { type: string }
+        role: { type: string }
+        commercialSqft: { oneOf: [{ type: integer }, { type: string }] }
+        residentialUnits: { oneOf: [{ type: integer }, { type: string }] }
+        systems: { type: string }
+        interest: { type: string }
+        message: { type: string }
+        website: { type: string, description: Honeypot field }
+        elapsedMs: { type: integer, description: Minimum form completion time in milliseconds }
+    SurveyResponseSubmission:
+      type: object
+      required: [answers]
+      properties:
+        token: { type: string }
+        answers:
+          type: object
+          additionalProperties: { oneOf: [{ type: string }, { type: number }, { type: boolean }, { type: array, items: { type: string } }] }
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email: { type: string, format: email }
+        password: { type: string, minLength: 1, maxLength: 200 }
+    SessionResponse:
+      type: object
+      properties:
+        user:
+          type: object
+          properties:
+            id: { type: string, format: uuid }
+            email: { type: string, format: email }
+            name: { type: string }
+          required: [id, email, name]
+      required: [user]

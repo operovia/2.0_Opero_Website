@@ -1,0 +1,655 @@
+@import "tailwindcss";
+
+/*
+ * Tailwind is limited to the design tokens. Default palettes and scales are
+ * cleared, then every utility is mapped onto the CSS variables generated from
+ * src/theme/tokens.ts (see src/theme/css.ts). Never add literal values here.
+ */
+@theme {
+  --color-*: initial;
+  --font-*: initial;
+  --font-weight-*: initial;
+  --text-*: initial;
+  --leading-*: initial;
+  --tracking-*: initial;
+  --radius-*: initial;
+  --shadow-*: initial;
+  --inset-shadow-*: initial;
+  --drop-shadow-*: initial;
+  --text-shadow-*: initial;
+  --ease-*: initial;
+  --animate-*: initial;
+  --container-*: initial;
+}
+
+@theme inline {
+  --color-canvas: var(--o-canvas);
+  --color-canvas-raised: var(--o-canvas-raised);
+  --color-surface: var(--o-surface);
+  --color-surface-raised: var(--o-surface-raised);
+  --color-line: var(--o-line);
+  --color-line-strong: var(--o-line-strong);
+  --color-line-input: var(--o-line-input);
+  --color-fg: var(--o-fg);
+  --color-fg-muted: var(--o-fg-muted);
+  --color-fg-subtle: var(--o-fg-subtle);
+  --color-accent: var(--o-accent);
+  --color-accent-hover: var(--o-accent-hover);
+  --color-on-accent: var(--o-on-accent);
+  --color-accent-soft: var(--o-accent-soft);
+  --color-focus-ring: var(--o-focus-ring);
+  --color-success: var(--o-success);
+  --color-success-soft: var(--o-success-soft);
+  --color-warning: var(--o-warning);
+  --color-warning-soft: var(--o-warning-soft);
+  --color-danger: var(--o-danger);
+  --color-danger-soft: var(--o-danger-soft);
+  --color-overlay: var(--o-overlay);
+  --color-aurora-1: var(--o-aurora-1);
+  --color-aurora-2: var(--o-aurora-2);
+  --color-aurora-3: var(--o-aurora-3);
+  --color-aurora-4: var(--o-aurora-4);
+  --color-aurora-5: var(--o-aurora-5);
+  --color-module-studios: var(--o-module-studios-base);
+  --color-module-playbook: var(--o-module-playbook-base);
+  --color-module-university: var(--o-module-university-base);
+  --color-module-compass: var(--o-module-compass-base);
+  --color-module-build: var(--o-module-build-base);
+
+  --font-sans: var(--o-font-sans);
+  --font-display: var(--o-font-display);
+  --font-mono: var(--o-font-mono);
+  --font-weight-normal: var(--o-weight-normal);
+  --font-weight-medium: var(--o-weight-medium);
+  --font-weight-semibold: var(--o-weight-semibold);
+  --font-weight-bold: var(--o-weight-bold);
+
+  --text-xs: var(--o-text-xs);
+  --text-xs--line-height: var(--o-text-xs-lh);
+  --text-xs--letter-spacing: var(--o-text-xs-tracking);
+  --text-sm: var(--o-text-sm);
+  --text-sm--line-height: var(--o-text-sm-lh);
+  --text-sm--letter-spacing: var(--o-text-sm-tracking);
+  --text-base: var(--o-text-base);
+  --text-base--line-height: var(--o-text-base-lh);
+  --text-base--letter-spacing: var(--o-text-base-tracking);
+  --text-lg: var(--o-text-lg);
+  --text-lg--line-height: var(--o-text-lg-lh);
+  --text-lg--letter-spacing: var(--o-text-lg-tracking);
+  --text-xl: var(--o-text-xl);
+  --text-xl--line-height: var(--o-text-xl-lh);
+  --text-xl--letter-spacing: var(--o-text-xl-tracking);
+  --text-2xl: var(--o-text-2xl);
+  --text-2xl--line-height: var(--o-text-2xl-lh);
+  --text-2xl--letter-spacing: var(--o-text-2xl-tracking);
+  --text-3xl: var(--o-text-3xl);
+  --text-3xl--line-height: var(--o-text-3xl-lh);
+  --text-3xl--letter-spacing: var(--o-text-3xl-tracking);
+  --text-display-sm: var(--o-text-display-sm);
+  --text-display-sm--line-height: var(--o-text-display-sm-lh);
+  --text-display-sm--letter-spacing: var(--o-text-display-sm-tracking);
+  --text-display-md: var(--o-text-display-md);
+  --text-display-md--line-height: var(--o-text-display-md-lh);
+  --text-display-md--letter-spacing: var(--o-text-display-md-tracking);
+  --text-display-lg: var(--o-text-display-lg);
+  --text-display-lg--line-height: var(--o-text-display-lg-lh);
+  --text-display-lg--letter-spacing: var(--o-text-display-lg-tracking);
+  --text-eyebrow: var(--o-text-eyebrow);
+  --text-eyebrow--line-height: var(--o-text-eyebrow-lh);
+  --text-eyebrow--letter-spacing: var(--o-text-eyebrow-tracking);
+  --text-micro: var(--o-text-micro);
+  --text-micro--line-height: var(--o-text-micro-lh);
+  --text-micro--letter-spacing: var(--o-text-micro-tracking);
+
+  --radius-xs: var(--o-radius-xs);
+  --radius-sm: var(--o-radius-sm);
+  --radius-md: var(--o-radius-md);
+  --radius-lg: var(--o-radius-lg);
+  --radius-xl: var(--o-radius-xl);
+  --radius-2xl: var(--o-radius-2xl);
+  --radius-full: var(--o-radius-full);
+
+  --shadow-sm: var(--o-shadow-sm);
+  --shadow-md: var(--o-shadow-md);
+  --shadow-lg: var(--o-shadow-lg);
+  --shadow-glow: var(--o-shadow-glow);
+
+  --spacing: var(--o-space-unit);
+  --spacing-gutter: var(--o-gutter);
+  --spacing-section: var(--o-section);
+  --container-content: var(--o-container);
+  --container-prose: var(--o-prose);
+  --container-xs: var(--o-width-xs);
+  --container-sm: var(--o-width-sm);
+  --container-md: var(--o-width-md);
+  --container-lg: var(--o-width-lg);
+  --container-xl: var(--o-width-xl);
+  --container-2xl: var(--o-width-2xl);
+  --container-3xl: var(--o-width-3xl);
+  --container-4xl: var(--o-width-4xl);
+  --container-5xl: var(--o-width-5xl);
+  --container-6xl: var(--o-width-6xl);
+
+  --ease-standard: var(--o-ease-standard);
+  --ease-out: var(--o-ease-out);
+  --ease-in-out: var(--o-ease-in-out);
+  --default-transition-duration: var(--o-duration-base);
+  --default-transition-timing-function: var(--o-ease-standard);
+}
+
+/* Display type in the wordmark's metal. Falls back to plain text color. */
+@utility text-metal {
+  color: var(--o-fg);
+  @supports (background-clip: text) or (-webkit-background-clip: text) {
+    background-image: var(--o-metal);
+    background-size: 100% 1.2em;
+    background-size: 100% 1lh;
+    background-repeat: repeat-y;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  @media (forced-colors: active) {
+    background-image: none;
+    color: CanvasText;
+  }
+}
+
+/* A brand jewel, by module (`jewel-studios`) or by name (`jewel-teal`). Pair with a size and rounded-full. */
+@utility jewel-crimson {
+  background-image: var(--o-jewel-crimson);
+}
+@utility jewel-violet {
+  background-image: var(--o-jewel-violet);
+}
+@utility jewel-gold {
+  background-image: var(--o-jewel-gold);
+}
+@utility jewel-green {
+  background-image: var(--o-jewel-green);
+}
+@utility jewel-teal {
+  background-image: var(--o-jewel-teal);
+}
+@utility jewel-studios {
+  background-image: var(--o-module-studios);
+}
+@utility jewel-playbook {
+  background-image: var(--o-module-playbook);
+}
+@utility jewel-university {
+  background-image: var(--o-module-university);
+}
+@utility jewel-compass {
+  background-image: var(--o-module-compass);
+}
+@utility jewel-build {
+  background-image: var(--o-module-build);
+}
+
+/* BrandMark on="auto": show the artwork drawn for the current theme. */
+.brand-on-light {
+  display: none;
+}
+[data-theme='light'] .brand-on-dark {
+  display: none;
+}
+[data-theme='light'] .brand-on-light {
+  display: block;
+}
+@media (prefers-color-scheme: light) {
+  [data-theme='system'] .brand-on-dark {
+    display: none;
+  }
+  [data-theme='system'] .brand-on-light {
+    display: block;
+  }
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    font-family: var(--font-sans);
+    font-optical-sizing: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  [data-theme] {
+    background-color: var(--o-canvas);
+    color: var(--o-fg);
+  }
+
+  body {
+    /* Decorative layers must never cause sideways scrolling; clip keeps sticky headers working. */
+    overflow-x: clip;
+    font-size: var(--text-base);
+    line-height: var(--text-base--line-height);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--o-focus-ring);
+    outline-offset: 3px;
+  }
+
+  ::selection {
+    background-color: var(--o-accent);
+    color: var(--o-on-accent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/*
+ * Aurora (src/components/site/aurora.tsx): soft glows in the jewel colors,
+ * drifting slowly. Radial gradients instead of blur filters keep it cheap;
+ * only transform is animated.
+ */
+.aurora {
+  mask-image: radial-gradient(130% 90% at 50% 0%, black 40%, transparent 100%);
+}
+
+.aurora-glow {
+  position: absolute;
+  width: 62vmax;
+  height: 62vmax;
+  border-radius: 9999px;
+  background: radial-gradient(circle at center, var(--glow) 0%, transparent 62%);
+  will-change: transform;
+  animation: aurora-drift var(--drift) var(--o-ease-in-out) infinite alternate;
+}
+
+.aurora-glow-1 {
+  --glow: var(--o-aurora-1);
+  --drift: 38s;
+  top: -34vmax;
+  left: -18vmax;
+}
+.aurora-glow-2 {
+  --glow: var(--o-aurora-2);
+  --drift: 46s;
+  top: -30vmax;
+  right: -22vmax;
+  animation-direction: alternate-reverse;
+}
+.aurora-glow-3 {
+  --glow: var(--o-aurora-3);
+  --drift: 54s;
+  top: -8vmax;
+  left: 28%;
+  width: 44vmax;
+  height: 44vmax;
+}
+.aurora-glow-4 {
+  --glow: var(--o-aurora-4);
+  --drift: 60s;
+  top: 6vmax;
+  left: -24vmax;
+  width: 48vmax;
+  height: 48vmax;
+  animation-direction: alternate-reverse;
+}
+.aurora-glow-5 {
+  --glow: var(--o-aurora-5);
+  --drift: 66s;
+  top: 2vmax;
+  right: -16vmax;
+  width: 40vmax;
+  height: 40vmax;
+}
+
+@keyframes aurora-drift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(7vmax, 4vmax, 0) scale(1.12);
+  }
+  100% {
+    transform: translate3d(-5vmax, 8vmax, 0) scale(0.92);
+  }
+}
+
+@media (max-width: 40rem) {
+  .aurora-glow-4,
+  .aurora-glow-5 {
+    display: none;
+  }
+}
+
+/*
+ * Oppie orb stand-in (src/components/site/oppie-orb.tsx) until the supplied
+ * artwork arrives. Transform and opacity animation only.
+ */
+.oppie-orb-body {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 9999px;
+  box-shadow: var(--o-shadow-glow);
+}
+.oppie-orb-core {
+  position: absolute;
+  inset: -25%;
+  background: conic-gradient(
+    from 0deg,
+    var(--o-jewel-crimson-base),
+    var(--o-jewel-violet-base),
+    var(--o-jewel-teal-base),
+    var(--o-jewel-green-base),
+    var(--o-jewel-gold-base),
+    var(--o-jewel-crimson-base)
+  );
+  filter: blur(var(--orb-blur, 18px));
+  will-change: transform;
+  animation: orb-spin 16s linear infinite;
+}
+.oppie-orb-shade {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background:
+    radial-gradient(60% 55% at 32% 26%, var(--o-jewel-light-specular) 0%, transparent 60%),
+    radial-gradient(90% 90% at 30% 24%, transparent 50%, var(--o-jewel-light-edge) 100%);
+}
+.oppie-orb-shine {
+  position: absolute;
+  top: 16%;
+  left: 22%;
+  width: 22%;
+  height: 16%;
+  border-radius: 9999px;
+  background: radial-gradient(closest-side, var(--o-jewel-light-specular), transparent);
+}
+.oppie-orb-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  border: 1px solid var(--o-line-strong);
+  opacity: 0;
+  will-change: transform, opacity;
+  animation: orb-ring 3.2s var(--o-ease-out) infinite;
+}
+.oppie-orb-ring-delayed {
+  animation-delay: 1.6s;
+}
+.oppie-orb-animated .oppie-orb-body {
+  will-change: transform;
+  animation: orb-breathe 4.8s var(--o-ease-in-out) infinite;
+}
+
+@keyframes orb-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes orb-ring {
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1.65);
+    opacity: 0;
+  }
+}
+@keyframes orb-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.04);
+  }
+}
+
+/* Console details (src/components/site/oppie-console.tsx). */
+.console-live-dot::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: var(--o-success);
+  animation: live-pulse 2s var(--o-ease-out) infinite;
+}
+@keyframes live-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(3);
+    opacity: 0;
+  }
+}
+.console-caret {
+  display: inline-block;
+  width: 2px;
+  height: 1.1em;
+  margin-left: 1px;
+  vertical-align: -0.15em;
+  background: var(--o-fg);
+  animation: caret-blink 1s steps(1) infinite;
+}
+@keyframes caret-blink {
+  50% {
+    opacity: 0;
+  }
+}
+.console-rest {
+  visibility: hidden;
+}
+.console-thinking > span {
+  animation: thinking 1.2s var(--o-ease-in-out) infinite;
+}
+.console-thinking > span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.console-thinking > span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+@keyframes thinking {
+  0%,
+  100% {
+    transform: scale(0.7);
+    opacity: 0.4;
+  }
+  50% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Without JavaScript, show the first console scene complete. */
+@media (scripting: none) {
+  .console-rest.console-first {
+    visibility: visible;
+  }
+}
+
+/*
+ * Hero entrance. The headline only moves (it never starts invisible), so the
+ * largest paint on the page happens immediately.
+ */
+.hero-rise {
+  animation: hero-rise 900ms var(--o-ease-out) both;
+}
+.hero-fade {
+  animation: hero-fade 900ms var(--o-ease-out) both;
+}
+@keyframes hero-rise {
+  from {
+    transform: translate3d(0, 14px, 0);
+  }
+}
+@keyframes hero-fade {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0);
+  }
+}
+
+/* Module cards: each glows softly in its jewel's color, brighter on hover. */
+.module-glow-build {
+  --module-glow: var(--o-module-build-base);
+}
+.module-glow-studios {
+  --module-glow: var(--o-module-studios-base);
+}
+.module-glow-playbook {
+  --module-glow: var(--o-module-playbook-base);
+}
+.module-glow-university {
+  --module-glow: var(--o-module-university-base);
+}
+.module-glow-compass {
+  --module-glow: var(--o-module-compass-base);
+}
+.module-card {
+  transition: transform var(--o-duration-slow) var(--o-ease-out);
+}
+.module-card::before {
+  content: '';
+  position: absolute;
+  top: -45%;
+  left: -35%;
+  width: 130%;
+  height: 90%;
+  background: radial-gradient(closest-side, var(--module-glow), transparent);
+  opacity: 0.2;
+  pointer-events: none;
+  transition: opacity var(--o-duration-slow) var(--o-ease-out);
+}
+.module-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 1px solid var(--module-glow);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--o-duration-slow) var(--o-ease-out);
+}
+@media (hover: hover) {
+  .module-card:hover {
+    transform: translate3d(0, -4px, 0);
+  }
+  .module-card:hover::before {
+    opacity: 0.4;
+  }
+  .module-card:hover::after {
+    opacity: 0.6;
+  }
+}
+
+/* Design partner card: a border of jewel light that turns slowly. */
+.partner-frame {
+  background: var(--o-line-strong);
+}
+.partner-frame::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: 50%;
+  left: -50%;
+  width: 200%;
+  aspect-ratio: 1;
+  background: conic-gradient(
+    from 0deg,
+    var(--o-jewel-crimson-base),
+    var(--o-jewel-violet-base),
+    transparent 30%,
+    var(--o-jewel-gold-base),
+    var(--o-jewel-green-base),
+    transparent 65%,
+    var(--o-jewel-teal-base),
+    var(--o-jewel-crimson-base)
+  );
+  will-change: transform;
+  animation: frame-spin 18s linear infinite;
+}
+@keyframes frame-spin {
+  from {
+    transform: translate3d(0, -50%, 0) rotate(0deg);
+  }
+  to {
+    transform: translate3d(0, -50%, 0) rotate(360deg);
+  }
+}
+
+/* The closing section's aurora rises from the bottom. */
+.aurora-bottom {
+  transform: scaleY(-1);
+}
+
+/* The admin's paragraph editor (src/components/admin/content/rich-text-editor.tsx). */
+.rich-editor p + p {
+  margin-top: 0.75em;
+}
+.rich-editor a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.rich-editor strong {
+  font-weight: var(--o-weight-semibold);
+}
+
+/* Demo request dialog (src/components/site/demo-dialog.tsx). */
+.demo-dialog[open] {
+  animation: dialog-in var(--o-duration-slow) var(--o-ease-out);
+}
+.demo-dialog[open]::backdrop {
+  backdrop-filter: blur(6px);
+  animation: backdrop-in var(--o-duration-slow) var(--o-ease-out);
+}
+@keyframes dialog-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 16px, 0) scale(0.98);
+  }
+}
+@keyframes backdrop-in {
+  from {
+    opacity: 0;
+  }
+}
+/* Keep the page still behind an open dialog. */
+html:has(dialog[open]) {
+  overflow: hidden;
+}
+
+/* Media library (src/app/admin/(panel)/media/media-library.tsx). */
+.media-thumb {
+  /* A checkerboard, so transparent images read as transparent. */
+  background: repeating-conic-gradient(var(--o-surface-raised) 0 25%, var(--o-canvas-raised) 0 50%) 0 0 / 16px 16px;
+}
+.spin {
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
