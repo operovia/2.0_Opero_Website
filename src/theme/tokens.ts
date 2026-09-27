@@ -159,11 +159,22 @@ export const tokens = {
       ],
     },
     jewels,
-    /** Lighting layered over every jewel, as drawn in the mark. */
+    /**
+     * Lighting layered over every jewel, taken from the jewels in the full
+     * Opero mark (opero-dark.svg and opero-light.svg). The small and flat
+     * exports of the mark leave these out.
+     */
     jewelLight: {
+      /** The crisp highlight dot (82% white). */
       specular: '#FFFFFFD1',
+      /** The soft glow around the highlight (52% white). */
+      glow: '#FFFFFF85',
+      /** Faint light bouncing back at the lower right (10% white). */
       rim: '#FFFFFF1A',
+      /** Shading that deepens toward the edge (22% black; 30% on light backgrounds). */
       edge: { dark: '#00000038', light: '#0000004D' },
+      /** The fine ring just inside the jewel's outline (12% black; 16% on light backgrounds). */
+      ring: { dark: '#0000001F', light: '#00000029' },
     },
     /** Aurora background: the jewels' base colors and how strongly they show per theme. */
     aurora: {

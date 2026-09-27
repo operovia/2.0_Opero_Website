@@ -32,7 +32,7 @@ export function AdminShell({ enabled, badges, account, children }: Props) {
       </a>
 
       <header className="flex h-16 items-center justify-between border-b border-line px-gutter lg:hidden">
-        <BrandMark name="opero-small" on="auto" className="h-7" />
+        <BrandMark name="opero" on="auto" className="h-7" />
         <button
           type="button"
           onClick={() => setOpen(!open)}
@@ -54,7 +54,7 @@ export function AdminShell({ enabled, badges, account, children }: Props) {
         )}
       >
         <div className="hidden h-20 items-center px-6 lg:flex">
-          <BrandMark name="opero-small" on="auto" className="h-8" />
+          <BrandMark name="opero" on="auto" className="h-8" />
         </div>
         <div className="flex-1 overflow-y-auto px-3 py-4 lg:py-2">
           <AdminNav enabled={enabled} badges={badges} onNavigate={() => setOpen(false)} />

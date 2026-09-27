@@ -15,7 +15,7 @@ export default async function LoginPage({ searchParams }: PageProps<'/admin/logi
   return (
     <main className="flex min-h-dvh items-center justify-center px-gutter py-16">
       <div className="w-full max-w-sm">
-        <BrandMark name="opero-small" on="auto" className="mx-auto h-10" />
+        <BrandMark name="opero" on="auto" className="mx-auto h-10" />
         <div className="mt-10 rounded-2xl border border-line bg-surface p-8 shadow-lg">
           <h1 className="text-xl font-semibold text-fg">Sign in</h1>
           <p className="mt-1 text-sm text-fg-muted">Admin access for the Opero site.</p>

@@ -23,13 +23,19 @@ function metalGradient(theme: ThemeName): string {
 }
 
 /**
- * A jewel as layered CSS gradients, following the Opero mark's own recipe:
- * the body gradient, a darkened edge, a soft rim light, and a specular spot.
+ * A jewel as layered CSS gradients, drawn layer for layer like the jewels in
+ * the full Opero mark (public/brand/opero/opero-dark.svg): from the top, the
+ * crisp highlight dot, its soft glow, the fine ring inside the outline, rim
+ * light, edge shading, and the colored body. Every position and size is the
+ * mark's own, as a share of the jewel's width, so a jewel of any size matches
+ * the logo. The crisp dot and the ring are what make it read as polished.
  */
 function jewelGradient([highlight, base, shade, deep]: JewelStops, theme: ThemeName): string {
-  const { specular, rim, edge } = tokens.brand.jewelLight;
+  const { specular, glow, rim, edge, ring } = tokens.brand.jewelLight;
   return [
-    `radial-gradient(18% 15% at 33% 28%, ${specular} 0%, transparent 100%)`,
+    `radial-gradient(6% 6% at 31% 26%, ${specular} 80%, transparent 100%)`,
+    `radial-gradient(18% 15.5% at 33% 26.5%, ${glow} 0%, transparent 100%)`,
+    `radial-gradient(circle closest-side, transparent 94%, ${ring[theme]} 96%)`,
     `radial-gradient(40% 40% at 74% 82%, ${rim} 0%, transparent 100%)`,
     `radial-gradient(86% 86% at 30% 24%, transparent 55%, ${edge[theme]} 100%)`,
     `radial-gradient(103.3% 103.3% at 30% 24%, ${highlight} 0%, ${base} 38%, ${shade} 72%, ${deep} 100%)`,

@@ -39,6 +39,7 @@ Next.js notes (managed by Next.js itself): @AGENTS.md
 - Browser code (`'use client'` and anything it imports) must not import values from `src/content/registry.ts`: it carries every section's validation and seed copy, which would ship to every visitor. Put small values the browser needs in `src/content/constants.ts`; type-only imports are fine.
 - For narrower page columns use `<Container size="3xl">` and similar, never a `max-w-*` class on Container.
 - A brand mark at the top of a page gets `priority` on `<BrandMark>`, which preloads it: on phones the header wordmark is the largest thing painted first.
+- Use the full marks (`opero`, `operovia`): they carry the glossy jewels and the brushed-metal wordmark. The small exports (`-small`, `-tiny`, the xh16/xh22 and flat files) have flat jewels and a flat wordmark; keep them for tiny sizes only. CSS jewels (`jewel-*`) are built layer for layer from the full mark's jewels (`jewelGradient` in `src/theme/css.ts`), so they match the logo at any size.
 - Anything that changes what the public site shows must go through `changeContent()` (`src/server/content-version.ts`) so every server instance refreshes.
 - `npm run typecheck` regenerates route types first; after adding a route, run it before trusting TypeScript errors about `PageProps`.
 - Light and dark themes are both wired. The public site defaults to dark.

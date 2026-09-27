@@ -30,8 +30,8 @@ function walk(dir, out) {
     if (statSync(full).isDirectory()) {
       if (!skipDirs.has(full)) walk(full, out);
     }
-    // Route handlers return data, not markup.
-    else if (/\.(tsx|ts)$/.test(name) && !name.endsWith('.test.ts') && name !== 'route.ts') out.push(full);
+    // Route handlers return data or images (inline styles), not Tailwind markup.
+    else if (/\.(tsx|ts)$/.test(name) && !name.endsWith('.test.ts') && !/^route\.tsx?$/.test(name)) out.push(full);
   }
   return out;
 }

@@ -8,7 +8,7 @@ export function SiteFooter({ content, email }: { content: SectionData<'site', 'f
     <footer className="border-t border-line">
       <Container className="flex flex-col gap-10 py-14 md:flex-row md:items-end md:justify-between">
         <div className="space-y-5">
-          <BrandMark name="operovia-small" className="h-6" />
+          <BrandMark name="operovia" className="h-6" />
           <address className="text-sm text-fg-muted not-italic">
             <span className="block text-fg">{content.companyName}</span>
             <span className="block">{content.location}</span>
