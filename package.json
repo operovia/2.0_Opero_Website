@@ -10,7 +10,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "next typegen && tsc --noEmit",
     "check:copy": "node scripts/check-copy.mjs",
     "check": "npm run typecheck && npm run lint && npm run check:copy",
     "db:generate": "drizzle-kit generate",

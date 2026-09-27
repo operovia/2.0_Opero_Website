@@ -9,7 +9,7 @@ import { ADMIN_THEME_COOKIE, parseAdminTheme } from '@/server/admin-theme';
 import { requireAdmin } from '@/server/auth/session';
 
 /** Admin sections that exist so far; the list grows as each section ships. */
-const enabled: NavKey[] = ['dashboard', 'settings', 'team', 'activity'];
+const enabled: NavKey[] = ['dashboard', 'content', 'console', 'settings', 'team', 'activity'];
 
 export default async function PanelLayout({ children }: LayoutProps<'/admin'>) {
   const { user } = await requireAdmin();

@@ -33,6 +33,9 @@ Next.js notes (managed by Next.js itself): @AGENTS.md
 - Brand colors come from the supplied artwork: the wordmark's metal gradient (`text-metal`), the five jewels (`jewel-*` utilities), and the favicon ground for the dark canvas. The jewels read left to right as Build, Studios, Playbook, University, Compass; that is also the brand order for showing the modules.
 - In hand-written CSS, reference the per-theme `--o-*` variables, not Tailwind's `--color-*` variables, so nested `data-theme` regions resolve correctly.
 - Form actions return the submitted `values` and forms render `defaultValue` from `state.values ?? saved`, because React resets uncontrolled fields after every form action.
+- Editable copy lives in `src/content/registry.ts` (fields plus seed copy per section). Pages read it with `getPage()` from `src/content/store.ts`; never hardcode public copy in components.
+- Anything that changes what the public site shows must go through `changeContent()` (`src/server/content-version.ts`) so every server instance refreshes.
+- `npm run typecheck` regenerates route types first; after adding a route, run it before trusting TypeScript errors about `PageProps`.
 - Light and dark themes are both wired. The public site defaults to dark.
 - Headline type must feel open and generous: loosen line height and tracking, never condense. Body type must be comfortable at length.
 - Motion uses transform and opacity only, holds 60fps, and fully respects `prefers-reduced-motion`. Anything that auto-cycles needs a pause control.

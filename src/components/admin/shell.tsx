@@ -47,6 +47,7 @@ export function AdminShell({ enabled, badges, account, children }: Props) {
 
       <aside
         id="admin-sidebar"
+        aria-label="Admin menu"
         className={cn(
           'border-line bg-canvas-raised lg:sticky lg:top-0 lg:flex lg:h-dvh lg:flex-col lg:border-r',
           open ? 'flex flex-col border-b' : 'hidden',

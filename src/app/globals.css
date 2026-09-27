@@ -603,3 +603,15 @@
 .aurora-bottom {
   transform: scaleY(-1);
 }
+
+/* The admin's paragraph editor (src/components/admin/content/rich-text-editor.tsx). */
+.rich-editor p + p {
+  margin-top: 0.75em;
+}
+.rich-editor a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.rich-editor strong {
+  font-weight: var(--o-weight-semibold);
+}
