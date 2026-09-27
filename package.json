@@ -1,65 +1,19 @@
 {
-  "name": "opero-site",
-  "version": "0.1.0",
-  "private": true,
-  "engines": {
-    "node": ">=20.9.0"
-  },
+  "name": "workspace",
+  "version": "0.0.0",
+  "license": "MIT",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint",
-    "typecheck": "next typegen && tsc --noEmit",
-    "check:copy": "node scripts/check-copy.mjs",
-    "check": "npm run typecheck && npm run lint && npm run check:copy",
-    "db:generate": "drizzle-kit generate",
-    "db:migrate": "tsx scripts/migrate.ts",
-    "db:studio": "drizzle-kit studio",
-    "admin:reset-password": "tsx scripts/reset-admin-password.ts",
-    "test": "vitest run",
-    "check:classes": "node scripts/check-classes.mjs",
-    "verify": "npm run check && npm test && npm run build && npm run check:classes"
+    "preinstall": "sh -c 'rm -f package-lock.json yarn.lock; case \"$npm_config_user_agent\" in pnpm/*) ;; *) echo \"Use pnpm instead\" >&2; exit 1 ;; esac'",
+    "build": "pnpm run typecheck && pnpm -r --if-present run build",
+    "typecheck:libs": "tsc --build",
+    "typecheck": "pnpm run typecheck:libs && pnpm -r --filter \"./artifacts/**\" --filter \"./scripts\" --if-present run typecheck"
   },
+  "private": true,
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.1141.0",
-    "@node-rs/argon2": "^2.2.1",
-    "@tiptap/core": "^3.31.3",
-    "@tiptap/extension-bold": "^3.31.3",
-    "@tiptap/extension-document": "^3.31.3",
-    "@tiptap/extension-hard-break": "^3.31.3",
-    "@tiptap/extension-italic": "^3.31.3",
-    "@tiptap/extension-link": "^3.31.3",
-    "@tiptap/extension-paragraph": "^3.31.3",
-    "@tiptap/extension-text": "^3.31.3",
-    "@tiptap/extensions": "^3.31.3",
-    "@tiptap/pm": "^3.31.3",
-    "@tiptap/react": "^3.31.3",
-    "clsx": "^2.1.1",
-    "drizzle-orm": "^0.45.3",
-    "lucide-react": "^1.48.0",
-    "motion": "^13.4.4",
-    "next": "^16.3.6",
-    "pg": "^8.23.0",
-    "react": "^19.2.8",
-    "react-dom": "^19.2.8",
-    "resend": "^6.30.0",
-    "server-only": "^0.0.1",
-    "sharp": "^0.35.4",
-    "zod": "^4.6.5"
+    "@replit/connectors-sdk": "^0.4.3"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4.3.3",
-    "@types/node": "^22.20.4",
-    "@types/pg": "^8.23.1",
-    "@types/react": "^19.3.0",
-    "@types/react-dom": "^19.3.0",
-    "drizzle-kit": "^0.31.11",
-    "eslint": "^9.39.5",
-    "eslint-config-next": "^16.3.6",
-    "tailwindcss": "^4.3.3",
-    "tsx": "^4.23.15",
-    "typescript": "^5.9.3",
-    "vitest": "^5.0.2"
+    "prettier": "^3.9.6",
+    "typescript": "~5.9.3"
   }
 }
