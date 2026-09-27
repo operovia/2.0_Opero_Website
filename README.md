@@ -41,7 +41,7 @@ The app is a standard Node.js server, so any host that can run `npm run build` a
 
 ## Locked out?
 
-From the Replit shell, with your email and a new password:
+After six wrong passwords in fifteen minutes, sign-in pauses for that account from that connection; it lifts by itself within fifteen minutes. If you have forgotten the password, run this from the Replit shell with your email and a new password. It also lifts any pause straight away:
 
 ```
 ADMIN_EMAIL=you@operovia.com ADMIN_PASSWORD='a new long password' npm run admin:reset-password

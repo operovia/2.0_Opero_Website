@@ -4,13 +4,14 @@ import { RichText } from '@/components/rich-text';
 import { Aurora } from '@/components/site/aurora';
 import { Container, Eyebrow } from '@/components/site/layout-parts';
 import { PartnerApplicationForm } from '@/components/site/partner-application-form';
+import { openGraph } from '@/content/metadata';
 import { getPage } from '@/content/store';
 import { cn } from '@/lib/cn';
 
 export async function generateMetadata(): Promise<Metadata> {
   const { intro } = await getPage('partners');
   const title = intro.headline.replace(/[.!]$/, '');
-  return { title, alternates: { canonical: '/partners' }, openGraph: { title, url: '/partners' } };
+  return { title, alternates: { canonical: '/partners' }, openGraph: await openGraph({ title, url: '/partners' }) };
 }
 
 const jewels = ['jewel-crimson', 'jewel-violet', 'jewel-gold', 'jewel-green', 'jewel-teal'];

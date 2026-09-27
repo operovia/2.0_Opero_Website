@@ -6,6 +6,7 @@ import { PartnerInvite } from '@/components/site/home/partner';
 import { Platform } from '@/components/site/home/platform';
 import { Problem } from '@/components/site/home/problem';
 import { Proof } from '@/components/site/home/proof';
+import { openGraph } from '@/content/metadata';
 import { getPage, getPublicSettings, getScenes } from '@/content/store';
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -13,7 +14,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: { absolute: settings.homeMetaTitle },
     alternates: { canonical: '/' },
-    openGraph: { title: settings.homeMetaTitle, description: settings.homeMetaDescription, url: '/' },
+    openGraph: await openGraph({ title: settings.homeMetaTitle, description: settings.homeMetaDescription, url: '/' }),
   };
 }
 

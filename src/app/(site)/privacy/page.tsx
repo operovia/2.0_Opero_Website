@@ -1,11 +1,12 @@
 import type { Metadata } from 'next';
 import { RichText } from '@/components/rich-text';
 import { Container } from '@/components/site/layout-parts';
+import { openGraph } from '@/content/metadata';
 import { getPage } from '@/content/store';
 
 export async function generateMetadata(): Promise<Metadata> {
   const { notice } = await getPage('privacy');
-  return { title: notice.headline, alternates: { canonical: '/privacy' } };
+  return { title: notice.headline, alternates: { canonical: '/privacy' }, openGraph: await openGraph({ title: notice.headline, url: '/privacy' }) };
 }
 
 export default async function PrivacyPage() {

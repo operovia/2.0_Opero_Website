@@ -1,7 +1,8 @@
 /**
  * Sets the password of the admin account named by ADMIN_EMAIL to
- * ADMIN_PASSWORD, creating or re-enabling the account if needed, and signs
- * that account out everywhere. For recovering access if you are locked out.
+ * ADMIN_PASSWORD, creating or re-enabling the account if needed, signs that
+ * account out everywhere, and lifts any sign-in lockout on it. For recovering
+ * access if you are locked out.
  *
  *   ADMIN_EMAIL=you@example.com ADMIN_PASSWORD='a new long password' npm run admin:reset-password
  */
@@ -10,9 +11,9 @@ import { loadEnvConfig } from '@next/env';
 loadEnvConfig(process.cwd());
 
 async function main() {
-  const { eq } = await import('drizzle-orm');
+  const { eq, like, or } = await import('drizzle-orm');
   const { db, pool } = await import('../src/db/client');
-  const { adminSessions, adminUsers } = await import('../src/db/schema');
+  const { adminSessions, adminUsers, rateLimits } = await import('../src/db/schema');
   const { hashPassword, MIN_PASSWORD_LENGTH } = await import('../src/server/auth/password');
   const { adminSeed } = await import('../src/server/env');
 
@@ -36,6 +37,8 @@ async function main() {
     await db.insert(adminUsers).values({ email: seed.email, name: seed.name, passwordHash, passwordChangedAt: new Date() });
     console.log(`Created admin account ${seed.email}.`);
   }
+  // Too many wrong passwords block sign-in for a while; clear that for this account.
+  await db.delete(rateLimits).where(or(eq(rateLimits.key, `login:email:${seed.email}`), like(rateLimits.key, `login:email-ip:${seed.email}|%`)));
   await pool.end();
 }
 

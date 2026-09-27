@@ -5,21 +5,18 @@ import { MaintenancePage } from '@/components/site/maintenance-page';
 import { PreviewBanner } from '@/components/site/preview-banner';
 import { SiteFooter } from '@/components/site/site-footer';
 import { SiteHeader } from '@/components/site/site-header';
+import { openGraph } from '@/content/metadata';
 import { getPage, getPublicSettings, isPreview } from '@/content/store';
 import { getSession } from '@/server/auth/session';
 import { siteUrl } from '@/server/env';
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { settings, socialImage } = await getPublicSettings();
+  const { settings } = await getPublicSettings();
   return {
     metadataBase: new URL(siteUrl()),
     title: { template: `%s | ${settings.siteName}`, default: settings.homeMetaTitle },
     description: settings.homeMetaDescription,
-    openGraph: {
-      type: 'website',
-      siteName: settings.siteName,
-      ...(socialImage ? { images: [{ url: socialImage.url, width: socialImage.width ?? undefined, height: socialImage.height ?? undefined }] } : {}),
-    },
+    openGraph: await openGraph(),
     twitter: { card: 'summary_large_image' },
     // A holding page must not replace the real site in search results.
     ...(settings.maintenanceMode ? { robots: { index: false, follow: false } } : {}),

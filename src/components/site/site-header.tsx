@@ -58,9 +58,7 @@ export function SiteHeader({ content }: Props) {
         </nav>
 
         <div className="flex items-center gap-2">
-          <SiteButton href={content.buttonTarget} className="hidden sm:inline-flex">
-            {content.buttonLabel}
-          </SiteButton>
+          <SiteButton href={content.buttonTarget}>{content.buttonLabel}</SiteButton>
           {content.links.length ? (
             <button
               type="button"
@@ -91,9 +89,6 @@ export function SiteHeader({ content }: Props) {
                 </li>
               ))}
             </ul>
-            <SiteButton href={content.buttonTarget} className="mt-4 w-full sm:hidden">
-              {content.buttonLabel}
-            </SiteButton>
           </Container>
         </div>
       ) : null}

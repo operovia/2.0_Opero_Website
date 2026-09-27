@@ -27,11 +27,16 @@ export async function login(_prev: FormState, formData: FormData): Promise<FormS
   if (!parsed.success) return failure('Check the highlighted fields.', { fieldErrors: fieldErrors(parsed.error), values });
   const { email, password, next } = parsed.data;
 
+  // Three limits: guessing from one place is stopped quickly (per address and account), while
+  // a wider attack on one account is capped without letting it lock the owner out everywhere.
   const ip = await clientIp();
-  const byIp = await hit(`login:ip:${ip}`, 30, WINDOW_SECONDS);
-  const byEmail = await hit(`login:email:${email}`, 6, WINDOW_SECONDS);
-  if (!byIp.ok || !byEmail.ok) {
-    const wait = Math.max(byIp.retryAfterSeconds, byEmail.retryAfterSeconds);
+  const limits = await Promise.all([
+    hit(`login:ip:${ip}`, 30, WINDOW_SECONDS),
+    hit(`login:email-ip:${email}|${ip}`, 6, WINDOW_SECONDS),
+    hit(`login:email:${email}`, 50, WINDOW_SECONDS),
+  ]);
+  if (limits.some((limit) => !limit.ok)) {
+    const wait = Math.max(...limits.filter((limit) => !limit.ok).map((limit) => limit.retryAfterSeconds));
     return failure(`Too many sign-in attempts. Try again in ${retryWording(wait)}.`, { values });
   }
 
@@ -50,7 +55,7 @@ export async function login(_prev: FormState, formData: FormData): Promise<FormS
 
   await createSession(user.id);
   await db.update(adminUsers).set({ lastLoginAt: new Date() }).where(eq(adminUsers.id, user.id));
-  await clear(`login:email:${email}`);
+  await Promise.all([clear(`login:email-ip:${email}|${ip}`), clear(`login:email:${email}`)]);
   await audit({ id: user.id, email: user.email }, 'login', { ip });
   redirect(safeAdminRedirect(next));
 }
