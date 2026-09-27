@@ -12,6 +12,8 @@ export default async function NotFound() {
   if (settings.maintenanceMode && !session) return <MaintenancePage content={site.maintenance} />;
   return (
     <>
+      {/* Not-found pages take no metadata export; React moves this title into the head. */}
+      <title>{`${site.notFound.headline.replace(/[.!]$/, '')} | ${settings.siteName}`}</title>
       <SiteHeader content={site.header} />
       <main id="main" className="relative isolate overflow-hidden">
         <Aurora intensity={0.6} />
