@@ -34,6 +34,11 @@ type Props = {
   on?: 'dark' | 'light';
   /** Hold still, for example while a demo is paused. Motion also stops for visitors who ask for reduced motion. */
   still?: boolean;
+  /**
+   * Close the small gaps the slices sit apart at rest, so the rim reads as
+   * one smooth circle. At small sizes the gaps look like cracks.
+   */
+  joined?: boolean;
   /** Size with a size class, e.g. `size-10`. The pie fills the middle 73%; the rest is room for motion and shadow. */
   className?: string;
   /** Hide from assistive tech when a surrounding label already names it. */
@@ -48,13 +53,15 @@ type Props = {
  * brightens a slice with a filter, this fades in a copy of the slice with
  * every color and its shine made that much brighter, which looks the same.
  */
-export function OppieMark({ state = 'idle', on = 'dark', still = false, className, decorative }: Props) {
+export function OppieMark({ state = 'idle', on = 'dark', still = false, joined = false, className, decorative }: Props) {
   // Gradient and filter ids must be unique on the page, and plain enough for url(#...).
   const id = `oppie${useId().replace(/[^a-zA-Z0-9_-]/g, '')}`;
   const { oppie } = tokens.brand;
   const halo = oppie.halo[on];
   const shadow = oppie.shadow[on];
   const a11y = decorative ? { 'aria-hidden': true } : { role: 'img', 'aria-label': 'Oppie' };
+  // Joined slices also get a hairline of their own color, so no seam shows where two meet.
+  const seam = (fill: string) => (joined ? { stroke: fill, strokeWidth: 0.6, strokeLinejoin: 'round' as const } : {});
 
   return (
     <span className={cn('oppie relative inline-block shrink-0', className)} data-state={state} data-still={still ? '' : undefined} {...a11y}>
@@ -92,15 +99,15 @@ export function OppieMark({ state = 'idle', on = 'dark', still = false, classNam
         </defs>
         <g filter={`url(#${id}-shadow)`}>
           {slices.map(({ module, d, rest, push }, turn) => (
-            <g key={module} transform={`translate(${rest[0]} ${rest[1]})`}>
+            <g key={module} transform={joined ? undefined : `translate(${rest[0]} ${rest[1]})`}>
               <g
                 className="oppie-slice"
                 style={{ '--oppie-x': `${push[0]}px`, '--oppie-y': `${push[1]}px`, '--oppie-turn': turn / slices.length } as CSSProperties}
               >
-                <path d={d} fill={`url(#${id}-${module})`} />
+                <path d={d} fill={`url(#${id}-${module})`} {...seam(`url(#${id}-${module})`)} />
                 <path d={d} fill={`url(#${id}-shine)`} />
                 <g className="oppie-lit">
-                  <path d={d} fill={`url(#${id}-${module}-lit)`} />
+                  <path d={d} fill={`url(#${id}-${module}-lit)`} {...seam(`url(#${id}-${module}-lit)`)} />
                   <path d={d} fill={`url(#${id}-shine-lit)`} />
                 </g>
               </g>
