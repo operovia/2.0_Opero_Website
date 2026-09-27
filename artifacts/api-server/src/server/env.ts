@@ -37,6 +37,7 @@ export function emailConfig(): { apiKey: string; from: string; replyTo: string }
 
 export type StorageConfig =
   | { driver: 'local'; directory: string }
+  | { driver: 'gcs'; bucket: string }
   | {
       driver: 's3';
       bucket: string;
@@ -49,7 +50,12 @@ export type StorageConfig =
 
 export function storageConfig(): StorageConfig {
   const bucket = trimmed('S3_BUCKET');
-  if (!bucket) return { driver: 'local', directory: trimmed('UPLOADS_DIR') || 'uploads' };
+  if (!bucket) {
+    const appStorageBucket = trimmed('DEFAULT_OBJECT_STORAGE_BUCKET_ID');
+    if (appStorageBucket) return { driver: 'gcs', bucket: appStorageBucket };
+    if (isProduction) throw new Error('Persistent media storage is required in production. Configure App Storage or an S3 bucket.');
+    return { driver: 'local', directory: trimmed('UPLOADS_DIR') || 'uploads' };
+  }
   return {
     driver: 's3',
     bucket,

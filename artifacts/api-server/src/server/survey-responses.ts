@@ -22,7 +22,7 @@ async function readRespondentKey(): Promise<string | null> {
   return value && TOKEN.test(value) ? value : null;
 }
 
-/** Returns this browser's respondent key, creating the cookie if needed. Call only from a Server Action. */
+/** Returns this browser's respondent key, creating the cookie if needed. */
 async function respondentKey(): Promise<string> {
   const existing = await readRespondentKey();
   if (existing) return existing;
@@ -31,7 +31,8 @@ async function respondentKey(): Promise<string> {
     httpOnly: true,
     secure: await isHttps(),
     sameSite: 'lax',
-    path: '/s',
+    // Both survey pages and their API routes must receive this cookie.
+    path: '/',
     maxAge: 365 * 24 * 60 * 60,
   });
   return key;

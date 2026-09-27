@@ -1,12 +1,12 @@
 import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { DeleteObjectCommand, GetObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { Storage as GoogleStorage } from '@google-cloud/storage';
 import { storageConfig, type StorageConfig } from '@/server/env';
 
 /**
- * Where uploaded media lives. One small interface with two drivers: a local
- * folder for development, and any S3-compatible bucket (AWS S3, Cloudflare
- * R2, and others) for production. Chosen by environment variables.
+ * Where uploaded media lives. App Storage and S3 are persistent across
+ * restarts and replicas; local files are only permitted in development.
  */
 export interface Storage {
   put(key: string, body: Buffer, contentType: string): Promise<void>;
@@ -84,12 +84,58 @@ function s3Storage(config: Extract<StorageConfig, { driver: 's3' }>): Storage {
   };
 }
 
+function appStorage(config: Extract<StorageConfig, { driver: 'gcs' }>): Storage {
+  const client = new GoogleStorage({
+    credentials: {
+      audience: 'replit',
+      subject_token_type: 'access_token',
+      token_url: 'http://127.0.0.1:1106/token',
+      type: 'external_account',
+      credential_source: {
+        url: 'http://127.0.0.1:1106/credential',
+        format: { type: 'json', subject_token_field_name: 'access_token' },
+      },
+      universe_domain: 'googleapis.com',
+    },
+    projectId: '',
+  });
+  const fileFor = (key: string) => {
+    assertKey(key);
+    return client.bucket(config.bucket).file(`opero-media/${key}`);
+  };
+  return {
+    async put(key, body, contentType) {
+      await fileFor(key).save(body, {
+        resumable: false,
+        contentType,
+        metadata: { cacheControl: 'public, max-age=31536000, immutable' },
+      });
+    },
+    async get(key) {
+      try {
+        const [body] = await fileFor(key).download();
+        return body;
+      } catch (error) {
+        if ((error as { code?: number }).code === 404) return null;
+        throw error;
+      }
+    },
+    async remove(key) {
+      try {
+        await fileFor(key).delete();
+      } catch (error) {
+        if ((error as { code?: number }).code !== 404) throw error;
+      }
+    },
+  };
+}
+
 let storage: Storage | undefined;
 
 export function getStorage(): Storage {
   if (!storage) {
     const config = storageConfig();
-    storage = config.driver === 's3' ? s3Storage(config) : localStorage(config.directory);
+    storage = config.driver === 's3' ? s3Storage(config) : config.driver === 'gcs' ? appStorage(config) : localStorage(config.directory);
   }
   return storage;
 }
