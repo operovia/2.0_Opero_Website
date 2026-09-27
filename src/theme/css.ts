@@ -1,4 +1,4 @@
-import { tokens, type ThemeColors, type ThemeName } from './tokens';
+import { tokens, type JewelStops, type ThemeColors, type ThemeName } from './tokens';
 
 /**
  * Turns the design tokens into CSS custom properties. The root layout inlines
@@ -16,20 +16,53 @@ function declarations(entries: Record<string, string | number>): string {
     .join('');
 }
 
-function themeDeclarations(name: ThemeName): string {
-  const colors: ThemeColors = tokens.color[name];
+/** The wordmark's vertical metal gradient. */
+function metalGradient(theme: ThemeName): string {
+  const stops = tokens.brand.metal[theme].map(([offset, color]) => `${color} ${offset}`);
+  return `linear-gradient(180deg, ${stops.join(', ')})`;
+}
+
+/**
+ * A jewel as layered CSS gradients, following the Opero mark's own recipe:
+ * the body gradient, a darkened edge, a soft rim light, and a specular spot.
+ */
+function jewelGradient([highlight, base, shade, deep]: JewelStops, theme: ThemeName): string {
+  const { specular, rim, edge } = tokens.brand.jewelLight;
+  return [
+    `radial-gradient(18% 15% at 33% 28%, ${specular} 0%, transparent 100%)`,
+    `radial-gradient(40% 40% at 74% 82%, ${rim} 0%, transparent 100%)`,
+    `radial-gradient(86% 86% at 30% 24%, transparent 55%, ${edge[theme]} 100%)`,
+    `radial-gradient(103.3% 103.3% at 30% 24%, ${highlight} 0%, ${base} 38%, ${shade} 72%, ${deep} 100%)`,
+  ].join(', ');
+}
+
+function themeDeclarations(theme: ThemeName): string {
+  const colors: ThemeColors = tokens.color[theme];
   const vars: Record<string, string | number> = {};
   for (const [key, value] of Object.entries(colors)) vars[kebab(key)] = value;
-  for (const [key, value] of Object.entries(tokens.shadow[name])) vars[`shadow-${key}`] = value;
-  vars['aurora-opacity'] = tokens.palette.auroraOpacity[name];
-  return `color-scheme: ${name};${declarations(vars)}`;
+  for (const [key, value] of Object.entries(tokens.shadow[theme])) vars[`shadow-${key}`] = value;
+
+  vars['metal'] = metalGradient(theme);
+  vars['aurora-opacity'] = tokens.brand.aurora.opacity[theme];
+
+  for (const [name, jewel] of Object.entries(tokens.brand.jewels)) {
+    vars[`jewel-${name}`] = jewelGradient(jewel[theme], theme);
+    vars[`jewel-${name}-base`] = jewel[theme][1];
+    vars[`jewel-${name}-highlight`] = jewel[theme][0];
+  }
+  for (const [module, jewel] of Object.entries(tokens.modules)) {
+    vars[`module-${module}`] = `var(--o-jewel-${jewel})`;
+    vars[`module-${module}-base`] = `var(--o-jewel-${jewel}-base)`;
+    vars[`module-${module}-highlight`] = `var(--o-jewel-${jewel}-highlight)`;
+  }
+
+  return `color-scheme: ${theme};${declarations(vars)}`;
 }
 
 function sharedDeclarations(): string {
   const vars: Record<string, string | number> = {};
 
-  tokens.palette.aurora.forEach((color, i) => (vars[`aurora-${i + 1}`] = color));
-  for (const [key, value] of Object.entries(tokens.modules)) vars[`module-${key}`] = value;
+  tokens.brand.aurora.colors.forEach((color, i) => (vars[`aurora-${i + 1}`] = color));
 
   vars['font-sans'] = tokens.font.sans;
   vars['font-display'] = tokens.font.display;

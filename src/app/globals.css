@@ -48,11 +48,13 @@
   --color-aurora-1: var(--o-aurora-1);
   --color-aurora-2: var(--o-aurora-2);
   --color-aurora-3: var(--o-aurora-3);
-  --color-module-studios: var(--o-module-studios);
-  --color-module-playbook: var(--o-module-playbook);
-  --color-module-university: var(--o-module-university);
-  --color-module-compass: var(--o-module-compass);
-  --color-module-build: var(--o-module-build);
+  --color-aurora-4: var(--o-aurora-4);
+  --color-aurora-5: var(--o-aurora-5);
+  --color-module-studios: var(--o-module-studios-base);
+  --color-module-playbook: var(--o-module-playbook-base);
+  --color-module-university: var(--o-module-university-base);
+  --color-module-compass: var(--o-module-compass-base);
+  --color-module-build: var(--o-module-build-base);
 
   --font-sans: var(--o-font-sans);
   --font-display: var(--o-font-display);
@@ -122,6 +124,75 @@
   --default-transition-timing-function: var(--o-ease-standard);
 }
 
+/* Display type in the wordmark's metal. Falls back to plain text color. */
+@utility text-metal {
+  color: var(--o-fg);
+  @supports (background-clip: text) or (-webkit-background-clip: text) {
+    background-image: var(--o-metal);
+    background-size: 100% 1.2em;
+    background-size: 100% 1lh;
+    background-repeat: repeat-y;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  @media (forced-colors: active) {
+    background-image: none;
+    color: CanvasText;
+  }
+}
+
+/* A brand jewel, by module (`jewel-studios`) or by name (`jewel-teal`). Pair with a size and rounded-full. */
+@utility jewel-crimson {
+  background-image: var(--o-jewel-crimson);
+}
+@utility jewel-violet {
+  background-image: var(--o-jewel-violet);
+}
+@utility jewel-gold {
+  background-image: var(--o-jewel-gold);
+}
+@utility jewel-green {
+  background-image: var(--o-jewel-green);
+}
+@utility jewel-teal {
+  background-image: var(--o-jewel-teal);
+}
+@utility jewel-studios {
+  background-image: var(--o-module-studios);
+}
+@utility jewel-playbook {
+  background-image: var(--o-module-playbook);
+}
+@utility jewel-university {
+  background-image: var(--o-module-university);
+}
+@utility jewel-compass {
+  background-image: var(--o-module-compass);
+}
+@utility jewel-build {
+  background-image: var(--o-module-build);
+}
+
+/* BrandMark on="auto": show the artwork drawn for the current theme. */
+.brand-on-light {
+  display: none;
+}
+[data-theme='light'] .brand-on-dark {
+  display: none;
+}
+[data-theme='light'] .brand-on-light {
+  display: block;
+}
+@media (prefers-color-scheme: light) {
+  [data-theme='system'] .brand-on-dark {
+    display: none;
+  }
+  [data-theme='system'] .brand-on-light {
+    display: block;
+  }
+}
+
 @layer base {
   html {
     font-family: var(--font-sans);
@@ -132,8 +203,8 @@
   }
 
   [data-theme] {
-    background-color: var(--color-canvas);
-    color: var(--color-fg);
+    background-color: var(--o-canvas);
+    color: var(--o-fg);
   }
 
   body {
@@ -154,13 +225,13 @@
   }
 
   :focus-visible {
-    outline: 2px solid var(--color-focus-ring);
+    outline: 2px solid var(--o-focus-ring);
     outline-offset: 3px;
   }
 
   ::selection {
-    background-color: var(--color-accent);
-    color: var(--color-on-accent);
+    background-color: var(--o-accent);
+    color: var(--o-on-accent);
   }
 }
 

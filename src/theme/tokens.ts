@@ -7,9 +7,10 @@
  * variables written by src/theme/css.ts. Emails and generated images import
  * this file directly.
  *
- * PLACEHOLDER THEME: every value below is a neutral stand-in until the brand
- * color and type specification arrives. Swap values here; nothing else
- * should need to change.
+ * Source: colors are taken from the supplied artwork in public/brand (the
+ * wordmark's metal gradients, the five jewels, and the favicon ground). The
+ * written color and type specification has not arrived yet; when it does,
+ * adjust values here and nothing else should need to change.
  */
 
 export type ThemeName = 'dark' | 'light';
@@ -35,11 +36,12 @@ export type ThemeColors = {
   fgMuted: string;
   /** Tertiary text for captions and metadata. Must meet 4.5:1 on canvas. */
   fgSubtle: string;
+  /** Primary action color: the wordmark's silver on dark, its charcoal on light. */
   accent: string;
   accentHover: string;
   /** Text and icons placed on top of `accent`. */
   onAccent: string;
-  /** Tinted background for accent-colored chips and highlights. */
+  /** Tinted background for highlighted chips and rows. */
   accentSoft: string;
   focusRing: string;
   success: string;
@@ -52,82 +54,141 @@ export type ThemeColors = {
   overlay: string;
 };
 
+/** A jewel's radial gradient stops, lightest to deepest, as drawn in the Opero mark. */
+export type JewelStops = readonly [highlight: string, base: string, shade: string, deep: string];
+
+export type Jewel = { dark: JewelStops; light: JewelStops };
+
+/** The five jewels, in the order they sit under the Opero wordmark. */
+const jewels = {
+  crimson: {
+    dark: ['#D2696C', '#A63F44', '#8A2930', '#6B1C22'],
+    light: ['#B2484E', '#841C28', '#6A0A1A', '#4E040F'],
+  },
+  violet: {
+    dark: ['#9878CC', '#7050A0', '#583A86', '#412968'],
+    light: ['#7A59AC', '#533180', '#3E1C66', '#2C1049'],
+  },
+  gold: {
+    dark: ['#D9A55E', '#AF843B', '#916C28', '#74521B'],
+    light: ['#BC8F42', '#8F6512', '#754E00', '#553800'],
+  },
+  green: {
+    dark: ['#63B08A', '#3A8864', '#24704E', '#16563A'],
+    light: ['#41946E', '#116947', '#005130', '#003A22'],
+  },
+  teal: {
+    dark: ['#5FA8BF', '#367F95', '#206678', '#144E5D'],
+    light: ['#3E89A0', '#0C6076', '#00485B', '#003341'],
+  },
+} as const satisfies Record<string, Jewel>;
+
+export type JewelName = keyof typeof jewels;
+
 export const tokens = {
   color: {
     dark: {
-      canvas: '#0B0D12',
-      canvasRaised: '#0F1219',
-      surface: '#151923',
-      surfaceRaised: '#1C2130',
-      line: '#252B38',
-      lineStrong: '#363E4F',
-      lineInput: '#626C82',
-      fg: '#F1F3F7',
-      fgMuted: '#AAB2C0',
-      fgSubtle: '#8A93A3',
-      accent: '#8FA8FF',
-      accentHover: '#A8BCFF',
-      onAccent: '#0B0D12',
-      accentSoft: '#8FA8FF1F',
-      focusRing: '#A8BCFF',
-      success: '#5FD68E',
-      successSoft: '#5FD68E1F',
-      warning: '#F2C14E',
-      warningSoft: '#F2C14E1F',
-      danger: '#FF8A8A',
-      dangerSoft: '#FF8A8A1F',
-      overlay: '#05060ACC',
+      canvas: '#0F1115',
+      canvasRaised: '#13161B',
+      surface: '#171A1F',
+      surfaceRaised: '#1E2127',
+      line: '#272A31',
+      lineStrong: '#363A42',
+      lineInput: '#6A6F79',
+      fg: '#F2F4F6',
+      fgMuted: '#B3B8C0',
+      fgSubtle: '#8E939C',
+      accent: '#E6E9EC',
+      accentHover: '#FFFFFF',
+      onAccent: '#0F1115',
+      accentSoft: '#F2F4F614',
+      focusRing: '#5FA8BF',
+      success: '#63B08A',
+      successSoft: '#63B08A1F',
+      warning: '#D9A55E',
+      warningSoft: '#D9A55E1F',
+      danger: '#E3787B',
+      dangerSoft: '#D2696C24',
+      overlay: '#08090BCC',
     },
     light: {
       canvas: '#FFFFFF',
-      canvasRaised: '#F5F6F8',
+      canvasRaised: '#F6F7F8',
       surface: '#FFFFFF',
-      surfaceRaised: '#F4F5F8',
-      line: '#E2E5EA',
-      lineStrong: '#C9CFD8',
-      lineInput: '#858E9C',
-      fg: '#0E1116',
-      fgMuted: '#4A5363',
-      fgSubtle: '#636C7C',
-      accent: '#3651C9',
-      accentHover: '#2C44AD',
+      surfaceRaised: '#F2F3F5',
+      line: '#E3E5E8',
+      lineStrong: '#CDD0D5',
+      lineInput: '#868A93',
+      fg: '#25272E',
+      fgMuted: '#50545E',
+      fgSubtle: '#656973',
+      accent: '#25272E',
+      accentHover: '#3E424C',
       onAccent: '#FFFFFF',
-      accentSoft: '#3651C914',
-      focusRing: '#3651C9',
-      success: '#1E7F4A',
-      successSoft: '#1E7F4A14',
-      warning: '#8A5A00',
-      warningSoft: '#8A5A0014',
-      danger: '#B42323',
-      dangerSoft: '#B4232314',
-      overlay: '#0E111666',
+      accentSoft: '#25272E0F',
+      focusRing: '#0C6076',
+      success: '#116947',
+      successSoft: '#11694714',
+      warning: '#754E00',
+      warningSoft: '#8F651214',
+      danger: '#841C28',
+      dangerSoft: '#841C2814',
+      overlay: '#25272E66',
     },
   } satisfies Record<ThemeName, ThemeColors>,
 
-  /**
-   * Brand palette. Drives the aurora background and decorative gradients.
-   * Placeholder hues until the brand palette arrives.
-   */
-  palette: {
-    aurora: ['#3D5BD9', '#14A38B', '#6E4ADB'],
-    /** Opacity of the aurora layer in each theme. */
-    auroraOpacity: { dark: 0.55, light: 0.22 },
+  brand: {
+    /**
+     * The wordmark's metal: a vertical gradient, top to bottom, as
+     * [offset, color] pairs. Used for display type.
+     */
+    metal: {
+      dark: [
+        ['0%', '#F2F4F6'],
+        ['24%', '#CFD3D8'],
+        ['52%', '#A9AEB6'],
+        ['80%', '#C6CBD1'],
+        ['100%', '#E6E9EC'],
+      ],
+      light: [
+        ['0%', '#5A5E68'],
+        ['22%', '#3E4350'],
+        ['48%', '#25272E'],
+        ['78%', '#33363F'],
+        ['100%', '#3E424C'],
+      ],
+    },
+    jewels,
+    /** Lighting layered over every jewel, as drawn in the mark. */
+    jewelLight: {
+      specular: '#FFFFFFD1',
+      rim: '#FFFFFF1A',
+      edge: { dark: '#00000038', light: '#0000004D' },
+    },
+    /** Aurora background: the jewels' base colors and how strongly they show per theme. */
+    aurora: {
+      colors: [jewels.violet.dark[1], jewels.teal.dark[1], jewels.crimson.dark[1], jewels.green.dark[1], jewels.gold.dark[1]],
+      opacity: { dark: 0.5, light: 0.16 },
+    },
   },
 
-  /** Accent color for each platform module (placeholders). */
+  /**
+   * Which jewel each module wears. PROVISIONAL: assumed to follow the order of
+   * the jewels under the wordmark and the module order in the brief. Confirm
+   * with the brand owner (listed in PLACEHOLDERS.md).
+   */
   modules: {
-    studios: '#5C7CFA',
-    playbook: '#20C997',
-    university: '#FAB005',
-    compass: '#F06595',
-    build: '#9775FA',
-  },
+    studios: 'crimson',
+    playbook: 'violet',
+    university: 'gold',
+    compass: 'green',
+    build: 'teal',
+  } satisfies Record<string, JewelName>,
 
   font: {
-    /** Body and interface text. `--font-inter` comes from next/font (src/theme/fonts.ts). */
-    sans: 'var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif',
-    /** Headlines. Same family as body until the brand type specification arrives. */
-    display: 'var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif',
+    /** Plus Jakarta Sans, self-hosted. `--font-jakarta` comes from next/font (src/theme/fonts.ts). */
+    sans: 'var(--font-jakarta), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif',
+    display: 'var(--font-jakarta), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif',
     mono: 'ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace',
     weight: {
       regular: '400',
@@ -143,17 +204,17 @@ export const tokens = {
    */
   text: {
     xs: { size: '0.75rem', lineHeight: '1.5', tracking: '0.01em' },
-    sm: { size: '0.875rem', lineHeight: '1.55', tracking: '0.005em' },
-    base: { size: '1rem', lineHeight: '1.65', tracking: '0em' },
-    lg: { size: '1.125rem', lineHeight: '1.7', tracking: '0em' },
-    xl: { size: '1.3125rem', lineHeight: '1.6', tracking: '0em' },
-    '2xl': { size: '1.625rem', lineHeight: '1.35', tracking: '0em' },
-    '3xl': { size: '2rem', lineHeight: '1.25', tracking: '0em' },
-    'display-sm': { size: 'clamp(1.875rem, 1.35rem + 1.9vw, 2.75rem)', lineHeight: '1.2', tracking: '0.002em' },
-    'display-md': { size: 'clamp(2.25rem, 1.5rem + 2.9vw, 3.75rem)', lineHeight: '1.16', tracking: '0.004em' },
-    'display-lg': { size: 'clamp(2.625rem, 1.6rem + 4.2vw, 5rem)', lineHeight: '1.12', tracking: '0.006em' },
+    sm: { size: '0.875rem', lineHeight: '1.6', tracking: '0.005em' },
+    base: { size: '1rem', lineHeight: '1.7', tracking: '0em' },
+    lg: { size: '1.125rem', lineHeight: '1.72', tracking: '0em' },
+    xl: { size: '1.3125rem', lineHeight: '1.62', tracking: '0em' },
+    '2xl': { size: '1.625rem', lineHeight: '1.38', tracking: '0em' },
+    '3xl': { size: '2rem', lineHeight: '1.28', tracking: '0.002em' },
+    'display-sm': { size: 'clamp(1.875rem, 1.35rem + 1.9vw, 2.75rem)', lineHeight: '1.22', tracking: '0.004em' },
+    'display-md': { size: 'clamp(2.25rem, 1.5rem + 2.9vw, 3.75rem)', lineHeight: '1.18', tracking: '0.006em' },
+    'display-lg': { size: 'clamp(2.625rem, 1.55rem + 4.4vw, 5.125rem)', lineHeight: '1.14', tracking: '0.008em' },
     /** Small uppercase labels: eyebrows, console tags. */
-    eyebrow: { size: '0.8125rem', lineHeight: '1.4', tracking: '0.14em' },
+    eyebrow: { size: '0.8125rem', lineHeight: '1.4', tracking: '0.16em' },
   },
 
   radius: {
@@ -171,14 +232,14 @@ export const tokens = {
     dark: {
       sm: '0 1px 2px #00000066',
       md: '0 8px 24px -8px #0000008C, 0 0 0 1px #FFFFFF0A',
-      lg: '0 24px 64px -16px #000000A6, 0 0 0 1px #FFFFFF0F',
-      glow: '0 0 0 1px #8FA8FF33, 0 12px 48px -12px #8FA8FF59',
+      lg: '0 30px 80px -24px #000000B3, 0 0 0 1px #FFFFFF0F',
+      glow: '0 0 0 1px #F2F4F61F, 0 18px 60px -18px #5FA8BF40',
     },
     light: {
-      sm: '0 1px 2px #0E11160F',
-      md: '0 8px 24px -10px #0E111626, 0 0 0 1px #0E11160A',
-      lg: '0 24px 64px -20px #0E111633, 0 0 0 1px #0E11160D',
-      glow: '0 0 0 1px #3651C926, 0 12px 40px -12px #3651C940',
+      sm: '0 1px 2px #25272E14',
+      md: '0 8px 24px -10px #25272E29, 0 0 0 1px #25272E0D',
+      lg: '0 28px 70px -24px #25272E3D, 0 0 0 1px #25272E0F',
+      glow: '0 0 0 1px #25272E14, 0 18px 50px -18px #0C607640',
     },
   },
 
@@ -188,7 +249,7 @@ export const tokens = {
     /** Horizontal page gutter. */
     gutter: 'clamp(1.25rem, 0.8rem + 2vw, 2.5rem)',
     /** Vertical padding for a full page section. */
-    section: 'clamp(5rem, 3.5rem + 7vw, 9.5rem)',
+    section: 'clamp(5.5rem, 3.75rem + 7.5vw, 10rem)',
     /** Max width of page content. */
     container: '76rem',
     /** Max width of a readable text column. */
@@ -214,3 +275,8 @@ export const tokens = {
 } as const;
 
 export type ModuleKey = keyof typeof tokens.modules;
+
+/** A module's jewel stops for the given theme. */
+export function moduleJewel(module: ModuleKey, theme: ThemeName = 'dark'): JewelStops {
+  return tokens.brand.jewels[tokens.modules[module]][theme];
+}

@@ -2,6 +2,8 @@
 
 Guidance for every Claude Code session in this repo. The full product brief lives in `docs/brief.md`; read it before any substantial change.
 
+Next.js notes (managed by Next.js itself): @AGENTS.md
+
 ## How to work
 
 - Work in small, verified units. Each unit is one coherent change that typechecks and builds. Commit after every unit with a clear message. Never leave the repo in a state that does not build.
@@ -27,7 +29,9 @@ Guidance for every Claude Code session in this repo. The full product brief live
 ## Design system rules
 
 - Every color, font, radius, shadow, spacing, and motion value lives in `src/theme/tokens.ts`. Components reference tokens only (Tailwind utilities generated from tokens, or CSS variables). No hex values, font stacks, or magic shadows in components.
-- Brand assets live in `public/brand/` and are mapped in `public/brand/manifest.json`. Components read marks through `src/brand`, never by file path, so swapping a file never touches a component. Do not draw logos; until assets arrive use the text wordmark and neutral placeholders.
+- Brand assets live in `public/brand/` and are mapped in `public/brand/manifest.json`. Components render marks with `<BrandMark name="...">` (via `src/brand`), never by file path, so swapping a file never touches a component. Never edit the supplied artwork files. Do not draw logos; artwork still pending (the Oppie orb) uses a clearly marked placeholder.
+- Brand colors come from the supplied artwork: the wordmark's metal gradient (`text-metal`), the five jewels (`jewel-*` utilities), and the favicon ground for the dark canvas. Which jewel belongs to which module is provisional (see `PLACEHOLDERS.md`).
+- In hand-written CSS, reference the per-theme `--o-*` variables, not Tailwind's `--color-*` variables, so nested `data-theme` regions resolve correctly.
 - Light and dark themes are both wired. The public site defaults to dark.
 - Headline type must feel open and generous: loosen line height and tracking, never condense. Body type must be comfortable at length.
 - Motion uses transform and opacity only, holds 60fps, and fully respects `prefers-reduced-motion`. Anything that auto-cycles needs a pause control.
