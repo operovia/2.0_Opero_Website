@@ -14,6 +14,16 @@ Next.js notes (managed by Next.js itself): @AGENTS.md
 - Report at the end of each build phase: what works, what is needed from the owner, and the current placeholder list.
 - When brand assets or mockups arrive, applying them takes priority over the current phase.
 
+## Sessions in the Replit shell
+
+The owner also runs Claude Code in the Replit shell, and watches changes land in a browser tab. You are in Replit when `REPLIT_DEV_DOMAIN` is set. There, at the start of every session, before other work:
+
+1. Make sure the dev server is running. `curl -s -o /dev/null -w '%{http_code}' http://localhost:3000/` prints `000` when nothing is listening. Only then start it: `npm install`, then `npm run dev` as a background command (for example `nohup npm run dev > /tmp/opero-dev.log 2>&1 &`), and wait until it answers. Never start a second server; the Run button starts the same one.
+2. Tell the owner the live preview address, `https://` followed by the actual value of `$REPLIT_DEV_DOMAIN`, to keep open in its own browser tab. Every saved change hot reloads there. The admin (`/admin`) only signs in at that address in its own tab, not in Replit's embedded preview.
+3. If the server log shows errors, deal with them or report them first.
+
+After pulling changes that touch `package.json` or `drizzle/`, restart the dev server so new packages install and migrations apply. Replit Agent must not restructure this project; `replit.md` tells it so.
+
 ## Facts and copy rules
 
 - **Opero** is the product. **Operovia, Inc.** is the company (Delaware corporation, Ann Arbor, Michigan). Use "Operovia" only for company contexts: footer, legal, contact.

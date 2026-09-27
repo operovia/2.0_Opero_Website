@@ -43,3 +43,9 @@ next-env.d.ts
 
 # local media uploads (development storage adapter)
 /uploads/
+
+# Replit workspace files
+/.cache/
+/.local/
+/.upm/
+/.config/

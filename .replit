@@ -1,14 +1,15 @@
-# Replit configuration, based on the official Next.js template for Replit.
-# Nothing in the app depends on Replit; other hosts use `npm run build` and `npm run start`.
+# Replit configuration. The site is one standard Next.js app at the
+# repository root (see README.md and replit.md); nothing in it depends on
+# Replit, and other hosts run the same npm commands.
 run = "npm install && npm run dev"
 hidden = [".config", ".next", "uploads"]
-modules = ["nodejs-22"]
+modules = ["nodejs-22", "postgresql-16"]
 
 [nix]
-channel = "stable-24_11"
+channel = "stable-25_05"
 
 [deployment]
-deploymentTarget = "cloudrun"
+deploymentTarget = "autoscale"
 build = ["npm", "run", "build"]
 run = ["npm", "run", "start"]
 

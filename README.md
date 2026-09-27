@@ -15,7 +15,11 @@ The product brief is in [docs/brief.md](docs/brief.md). Anything still waiting o
 4. **Run.** Press Run. The first start creates the database tables, the default content, and your admin account. The console shows `[opero] Database is ready.` when it is done.
 5. **Sign in.** Open the site in its own browser tab (the arrow icon on the preview), then go to `/admin`. The admin cannot sign in inside Replit's small preview pane, because browsers block sign-in cookies inside embedded frames.
 
+Keep that tab open while you or Claude Code work: every saved change appears there within a second or two. Claude Code sessions in the Replit shell start the server if needed and give you this address.
+
 Everything else is optional until you publish.
+
+This project is one Next.js app and must stay that way. `replit.md` tells Replit Agent not to restructure it; if Replit Agent ever proposes migrating or converting the project, decline.
 
 ## Surveys
 
