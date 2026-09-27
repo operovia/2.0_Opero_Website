@@ -3,17 +3,28 @@
 import { Pause, Play, Sparkles } from 'lucide-react';
 import { m, useInView, useReducedMotion } from 'motion/react';
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
-import { OppieMark } from '@/components/brand/oppie-mark';
+import { OppieMark, type OppieState } from '@/components/brand/oppie-mark';
 import type { ConsoleScene } from '@/content/store';
 import { cn } from '@/lib/cn';
 import { tokens } from '@/theme/tokens';
 
 export type ConsoleLabels = { badge: string; footerLeft: string; footerRight: string; note: string };
 
-type Phase = 'typing' | 'thinking' | 'answer' | 'leaving';
+type Phase = 'typing' | 'thinking' | 'answer' | 'shown' | 'leaving';
 type State = { index: number; phase: Phase; typed: number };
 
+/** How engaged Oppie is in each phase (docs/brand/oppie-motion-spec.md): working while the answer appears. */
+const oppieStates: Record<Phase, OppieState> = {
+  typing: 'listening',
+  thinking: 'thinking',
+  answer: 'working',
+  shown: 'listening',
+  leaving: 'listening',
+};
+
 const HOLD_MS = 4600;
+/** The part of the hold during which the answer card and its chips appear. */
+const REVEAL_MS = 900;
 const LEAVE_MS = 500;
 const AFTER_TYPING_MS = 380;
 
@@ -57,7 +68,9 @@ export function OppieConsole({ scenes, labels }: { scenes: ConsoleScene[]; label
       case 'thinking':
         return next({ phase: 'answer' }, reduce ? 500 : scene.thinkingMs);
       case 'answer':
-        return next({ phase: 'leaving' }, reduce ? HOLD_MS * 1.6 : HOLD_MS);
+        return next({ phase: 'shown' }, REVEAL_MS);
+      case 'shown':
+        return next({ phase: 'leaving' }, (reduce ? HOLD_MS * 1.6 : HOLD_MS) - REVEAL_MS);
       case 'leaving': {
         const index = (state.index + 1) % scenes.length;
         return next({ index, phase: 'typing', typed: 0 }, LEAVE_MS);
@@ -79,9 +92,9 @@ export function OppieConsole({ scenes, labels }: { scenes: ConsoleScene[]; label
       >
         {/* Header */}
         <div className="flex items-center justify-between border-b border-line px-5 py-3.5">
-          <div className="flex items-center gap-2">
-            {/* The mark's box leaves room around the pie; the negative margins keep the header its usual height. */}
-            <OppieMark decorative still className="-my-1 -ml-1 size-7" />
+          <div className="flex items-center gap-1">
+            {/* Oppie's pace follows the conversation. The mark's box leaves room around the pie; the negative margins keep the header its usual height. */}
+            <OppieMark decorative state={oppieStates[state.phase]} paused={!running} className="-my-2 -ml-1.5 size-10" />
             <span className="text-sm font-semibold text-fg">Oppie</span>
           </div>
           <span className="inline-flex items-center gap-2 rounded-full border border-line-strong px-2.5 py-1 text-micro font-semibold text-fg-muted uppercase">
@@ -95,7 +108,7 @@ export function OppieConsole({ scenes, labels }: { scenes: ConsoleScene[]; label
           {scenes.map((s, i) => {
             const active = i === state.index;
             const typed = active ? state.typed : 0;
-            const showAnswer = active && (state.phase === 'answer' || state.phase === 'leaving');
+            const showAnswer = active && (state.phase === 'answer' || state.phase === 'shown' || state.phase === 'leaving');
             const leaving = active && state.phase === 'leaving';
             return (
               <div
@@ -116,21 +129,6 @@ export function OppieConsole({ scenes, labels }: { scenes: ConsoleScene[]; label
                 </div>
 
                 <div className="relative mt-4">
-                  {/* Oppie thinking. It keeps moving while the answer is up (hidden by then), so it never snaps to rest mid-fade. */}
-                  <div
-                    className={cn(
-                      'absolute -top-1 -left-1 transition-opacity duration-300',
-                      active && state.phase === 'thinking' ? 'opacity-100' : 'opacity-0',
-                    )}
-                  >
-                    <OppieMark
-                      decorative
-                      state="thinking"
-                      still={!running || !active || (state.phase !== 'thinking' && state.phase !== 'answer')}
-                      className="size-10"
-                    />
-                  </div>
-
                   <m.div
                     data-reveal={i === 0 ? '' : undefined}
                     initial={false}

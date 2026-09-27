@@ -177,7 +177,7 @@ export const tokens = {
       ring: { dark: '#0000001F', light: '#00000029' },
     },
     /**
-     * Oppie's mark, from the supplied artwork (public/brand/oppie): a pie of
+     * Oppie's mark, as docs/brand/oppie-motion-spec.md describes it: a pie of
      * five slices in module colors, clockwise from the top in brand order.
      * Each slice is a radial gradient from highlight through base to shadow,
      * under a white shine.
@@ -186,9 +186,9 @@ export const tokens = {
       slices: {
         build: ['#FF5444', '#D43A2F', '#83241D'],
         studios: ['#9B5BE8', '#6B3FA0', '#422763'],
-        playbook: ['#FFCA26', '#C58B1A', '#7A5610'],
+        playbook: ['#FFC926', '#C58B1A', '#7A5610'],
         university: ['#44CF84', '#2F8F5B', '#1D5938'],
-        compass: ['#2CCEDF', '#1E8E9A', '#13585F'],
+        compass: ['#2BCEDF', '#1E8E9A', '#13585F'],
       },
       /** The shine: white, fading out from each slice's lit corner. */
       shine: {
@@ -199,15 +199,16 @@ export const tokens = {
           { offset: 1, opacity: 0 },
         ],
       },
-      /** The halo that breathes around the mark at rest. */
-      halo: { dark: { color: '#FFFFFF', opacity: 0.35 }, light: { color: '#6B3FA0', opacity: 0.25 } },
       /** The shadow under the pie, in the mark's own units (it is 160 wide). */
       shadow: {
         dark: { color: '#000000', opacity: 0.5, blur: 5, offset: 3 },
         light: { color: '#000000', opacity: 0.18, blur: 3, offset: 3 },
       },
-      /** How much brighter a slice gets as the thinking relay reaches it. */
+      /** How much brighter a slice gets as the relay reaches it. */
       litBrightness: 1.35,
+      /** In the mark's units: how far each slice sits out from the center, and how far the relay pushes it. */
+      gap: 3,
+      push: { full: 9, compact: 6 },
     },
     /** Aurora background: the jewels' base colors and how strongly they show per theme. */
     aurora: {
@@ -330,10 +331,15 @@ export const tokens = {
     },
     /** Distance revealed elements travel, in pixels. */
     revealDistance: 24,
-    /** Oppie's motion, from the supplied mark: one breath at rest, one round of the relay while thinking. */
+    /**
+     * Oppie's relay (docs/brand/oppie-motion-spec.md): one full lap per state,
+     * slow at rest and quick while thinking, and how long a change of speed
+     * takes. Waking up is quicker than winding down.
+     */
     oppie: {
-      idle: 2400,
-      thinking: 2000,
+      lap: { calm: 5600, listening: 3300, working: 2000, thinking: 1250 },
+      speedUp: 400,
+      slowDown: 1200,
       ease: [0.42, 0, 0.58, 1],
     },
   },

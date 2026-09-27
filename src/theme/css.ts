@@ -95,8 +95,7 @@ function sharedDeclarations(): string {
   for (const [key, value] of Object.entries(tokens.motion.duration)) vars[`duration-${key}`] = `${value}ms`;
   for (const [key, value] of Object.entries(tokens.motion.ease)) vars[`ease-${kebab(key)}`] = cubic(value);
   vars['reveal-distance'] = `${tokens.motion.revealDistance}px`;
-  vars['oppie-idle'] = `${tokens.motion.oppie.idle}ms`;
-  vars['oppie-thinking'] = `${tokens.motion.oppie.thinking}ms`;
+  vars['oppie-lap'] = `${tokens.motion.oppie.lap.calm}ms`;
   vars['ease-oppie'] = cubic(tokens.motion.oppie.ease);
 
   return declarations(vars);

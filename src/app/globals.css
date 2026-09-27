@@ -340,47 +340,27 @@
 }
 
 /*
- * Oppie's mark (src/components/brand/oppie-mark.tsx), moving as the supplied
- * artwork does. At rest it breathes: the pie swells 6% while its halo fades
- * in and out. Thinking, each slice in turn pushes outward and lights up,
- * clockwise. The resting styles are the still mark, so reduced motion and
+ * Oppie's relay (src/components/brand/oppie-mark.tsx, following
+ * docs/brand/oppie-motion-spec.md): one slice at a time, clockwise, each
+ * pushes out and brightens, then settles. The lap here is the calm one; the
+ * component changes the running animations' playback rate for the other
+ * states, so the relay speeds up and slows down from wherever it is and never
+ * restarts. The resting styles are the still mark, so reduced motion and
  * `still` show it exactly as drawn.
  */
-.oppie-halo,
 .oppie-lit {
   opacity: 0;
 }
-.oppie:not([data-still])[data-state='idle'] .oppie-halo {
-  animation: oppie-halo var(--o-oppie-idle) var(--o-ease-oppie) infinite;
+.oppie:not([data-still]) .oppie-slice {
+  animation: oppie-push var(--o-oppie-lap) var(--o-ease-oppie) calc(var(--o-oppie-lap) * var(--oppie-turn)) infinite;
 }
-.oppie:not([data-still])[data-state='idle'] .oppie-pie {
-  animation: oppie-breathe var(--o-oppie-idle) var(--o-ease-oppie) infinite;
+.oppie:not([data-still]) .oppie-lit {
+  animation: oppie-lit var(--o-oppie-lap) var(--o-ease-oppie) calc(var(--o-oppie-lap) * var(--oppie-turn)) infinite;
 }
-.oppie:not([data-still])[data-state='thinking'] .oppie-slice {
-  animation: oppie-push var(--o-oppie-thinking) var(--o-ease-oppie) calc(var(--o-oppie-thinking) * var(--oppie-turn)) infinite;
-}
-.oppie:not([data-still])[data-state='thinking'] .oppie-lit {
-  animation: oppie-lit var(--o-oppie-thinking) var(--o-ease-oppie) calc(var(--o-oppie-thinking) * var(--oppie-turn)) infinite;
+.oppie[data-paused] * {
+  animation-play-state: paused;
 }
 
-@keyframes oppie-halo {
-  0%,
-  100% {
-    opacity: 0;
-  }
-  50% {
-    opacity: 0.55;
-  }
-}
-@keyframes oppie-breathe {
-  0%,
-  100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.06);
-  }
-}
 @keyframes oppie-push {
   0%,
   60%,

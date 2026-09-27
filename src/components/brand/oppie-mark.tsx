@@ -1,23 +1,33 @@
-import { useId, type CSSProperties } from 'react';
+'use client';
+
+import { useEffect, useId, useRef, useState, type CSSProperties, type RefObject } from 'react';
 import { cn } from '@/lib/cn';
 import { tokens, type ModuleKey } from '@/theme/tokens';
 
-export type OppieState = 'idle' | 'thinking';
+/** How engaged Oppie is (docs/brand/oppie-motion-spec.md). Only the relay's speed changes between them. */
+export type OppieState = 'calm' | 'listening' | 'working' | 'thinking';
 
 /**
- * The mark's geometry, from the supplied component (docs/brand/oppie-2c.zip),
- * in its viewBox units: each slice's outline, the small gap it sits out from
- * the center at rest, and how far it pushes out while thinking.
+ * The slices' outlines, from the supplied component (docs/brand/oppie-2c.zip),
+ * in its viewBox units: five 72° slices from 12 o'clock, clockwise, in brand
+ * order. Each sits a little out from the center along its bisector, and the
+ * relay pushes it further out the same way.
  */
-const slices: { module: ModuleKey; d: string; rest: [number, number]; push: [number, number] }[] = [
-  { module: 'build', d: 'M100 100L100.00 20.00A80 80 0 0 1 176.08 75.28Z', rest: [1.76, -2.43], push: [5.29, -7.28] },
-  { module: 'studios', d: 'M100 100L176.08 75.28A80 80 0 0 1 147.02 164.72Z', rest: [2.85, 0.93], push: [8.56, 2.78] },
-  { module: 'playbook', d: 'M100 100L147.02 164.72A80 80 0 0 1 52.98 164.72Z', rest: [0, 3], push: [0, 9] },
-  { module: 'university', d: 'M100 100L52.98 164.72A80 80 0 0 1 23.92 75.28Z', rest: [-2.85, 0.93], push: [-8.56, 2.78] },
-  { module: 'compass', d: 'M100 100L23.92 75.28A80 80 0 0 1 100.00 20.00Z', rest: [-1.76, -2.43], push: [-5.29, -7.28] },
+const slices: { module: ModuleKey; d: string }[] = [
+  { module: 'build', d: 'M100 100L100.00 20.00A80 80 0 0 1 176.08 75.28Z' },
+  { module: 'studios', d: 'M100 100L176.08 75.28A80 80 0 0 1 147.02 164.72Z' },
+  { module: 'playbook', d: 'M100 100L147.02 164.72A80 80 0 0 1 52.98 164.72Z' },
+  { module: 'university', d: 'M100 100L52.98 164.72A80 80 0 0 1 23.92 75.28Z' },
+  { module: 'compass', d: 'M100 100L23.92 75.28A80 80 0 0 1 100.00 20.00Z' },
 ];
 
-/** Room around the pie for the halo, the push, and the shadow. Don't crop tighter. */
+/** A distance along slice `i`'s bisector as [x, y], rounded as in the supplied geometry. */
+function along(i: number, distance: number): [number, number] {
+  const angle = ((72 * i - 54) * Math.PI) / 180;
+  return [+(Math.cos(angle) * distance).toFixed(2), +(Math.sin(angle) * distance).toFixed(2)];
+}
+
+/** Room around the pie for the push and the shadow. Don't crop tighter. */
 const VIEW_BOX = '-10 -10 220 220';
 
 /** A #RRGGBB color with each channel multiplied, as a brightness filter does. */
@@ -27,18 +37,79 @@ function brighten(hex: string, amount: number): string {
   return `#${[16, 8, 0].map((shift) => channel(shift).toString(16).padStart(2, '0')).join('')}`;
 }
 
+const labels: Record<OppieState, string> = { calm: 'Oppie', listening: 'Oppie', working: 'Oppie is working', thinking: 'Oppie is thinking' };
+
+/**
+ * Eases the relay to the state's speed by changing the running animations'
+ * playback rate, so it speeds up or slows down from wherever it is and never
+ * restarts. The CSS runs it at the calm speed, which is also how it moves
+ * before this script loads.
+ */
+function useRelaySpeed(ref: RefObject<HTMLElement | null>, state: OppieState, still: boolean) {
+  const rate = useRef(1);
+  useEffect(() => {
+    const element = ref.current;
+    if (!element || still) return;
+    const { lap, speedUp, slowDown } = tokens.motion.oppie;
+    const from = rate.current;
+    const target = lap.calm / lap[state];
+    const apply = (value: number) => {
+      rate.current = value;
+      for (const animation of element.getAnimations({ subtree: true })) animation.playbackRate = value;
+    };
+    if (from === target || matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      apply(target);
+      return;
+    }
+    const duration = target > from ? speedUp : slowDown;
+    const start = performance.now();
+    let frame = requestAnimationFrame(function step(now) {
+      const t = Math.min(1, (now - start) / duration);
+      apply(from + (target - from) * t * t * (3 - 2 * t));
+      if (t < 1) frame = requestAnimationFrame(step);
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [ref, state, still]);
+}
+
+/** True while the tab is hidden or the mark is off screen: nobody sees it then, so it holds still and saves the battery. */
+function useAsleep(ref: RefObject<HTMLElement | null>, still: boolean): boolean {
+  const [asleep, setAsleep] = useState(false);
+  useEffect(() => {
+    const element = ref.current;
+    if (!element || still) return;
+    let hidden = document.visibilityState === 'hidden';
+    let offscreen = false;
+    const update = () => setAsleep(hidden || offscreen);
+    const onVisibility = () => {
+      hidden = document.visibilityState === 'hidden';
+      update();
+    };
+    const observer = new IntersectionObserver(([entry]) => {
+      offscreen = !entry?.isIntersecting;
+      update();
+    });
+    observer.observe(element);
+    document.addEventListener('visibilitychange', onVisibility);
+    return () => {
+      observer.disconnect();
+      document.removeEventListener('visibilitychange', onVisibility);
+    };
+  }, [ref, still]);
+  return asleep;
+}
+
 type Props = {
-  /** At rest the mark breathes; while thinking, its slices push out and light up in turn. */
+  /** How engaged Oppie is. Only the relay's speed changes: calm at rest, quickest while thinking. */
   state?: OppieState;
   /** The background the mark sits on. */
   on?: 'dark' | 'light';
-  /** Hold still, for example while a demo is paused. Motion also stops for visitors who ask for reduced motion. */
+  /** For a mark 24 to 39px across: a shorter push, so the relay stays within bounds. */
+  compact?: boolean;
+  /** The static mark, for marks under 24px and anywhere nothing may move. Reduced motion always gets it. */
   still?: boolean;
-  /**
-   * Close the small gaps the slices sit apart at rest, so the rim reads as
-   * one smooth circle. At small sizes the gaps look like cracks.
-   */
-  joined?: boolean;
+  /** Freeze the relay where it is, for example while a demo is paused. It carries on from there. */
+  paused?: boolean;
   /** Size with a size class, e.g. `size-10`. The pie fills the middle 73%; the rest is room for motion and shadow. */
   className?: string;
   /** Hide from assistive tech when a surrounding label already names it. */
@@ -46,35 +117,33 @@ type Props = {
 };
 
 /**
- * Oppie's mark, drawn from the supplied component with its two states.
- * Switch `state` on the same element rather than swapping marks, so it never
- * flickers or shifts. Motion is transform and opacity only: the halo and the
- * breathing pie are separate layers, and where the supplied component
- * brightens a slice with a filter, this fades in a copy of the slice with
- * every color and its shine made that much brighter, which looks the same.
+ * Oppie's mark, drawn and moved as docs/brand/oppie-motion-spec.md describes:
+ * the relay passes from slice to slice, and `state` only changes its speed.
+ * Change `state` on the same element rather than swapping marks. Motion is
+ * transform and opacity only: where a slice brightens, a copy of it with
+ * every color and its shine made that much brighter fades in, which looks the
+ * same as the brightness filter in the supplied component.
  */
-export function OppieMark({ state = 'idle', on = 'dark', still = false, joined = false, className, decorative }: Props) {
+export function OppieMark({ state = 'calm', on = 'dark', compact = false, still = false, paused = false, className, decorative }: Props) {
   // Gradient and filter ids must be unique on the page, and plain enough for url(#...).
   const id = `oppie${useId().replace(/[^a-zA-Z0-9_-]/g, '')}`;
+  const ref = useRef<HTMLSpanElement>(null);
+  useRelaySpeed(ref, state, still);
+  const asleep = useAsleep(ref, still);
   const { oppie } = tokens.brand;
-  const halo = oppie.halo[on];
   const shadow = oppie.shadow[on];
-  const a11y = decorative ? { 'aria-hidden': true } : { role: 'img', 'aria-label': 'Oppie' };
-  // Joined slices also get a hairline of their own color, so no seam shows where two meet.
-  const seam = (fill: string) => (joined ? { stroke: fill, strokeWidth: 0.6, strokeLinejoin: 'round' as const } : {});
+  const push = compact ? oppie.push.compact : oppie.push.full;
+  const a11y = decorative ? { 'aria-hidden': true } : { role: 'img', 'aria-label': labels[state] };
 
   return (
-    <span className={cn('oppie relative inline-block shrink-0', className)} data-state={state} data-still={still ? '' : undefined} {...a11y}>
-      <svg viewBox={VIEW_BOX} className="oppie-halo absolute inset-0 size-full" aria-hidden focusable="false">
-        <defs>
-          <radialGradient id={`${id}-halo`}>
-            <stop offset=".55" stopColor={halo.color} stopOpacity={halo.opacity} />
-            <stop offset="1" stopColor={halo.color} stopOpacity="0" />
-          </radialGradient>
-        </defs>
-        <circle cx="100" cy="100" r="98" fill={`url(#${id}-halo)`} />
-      </svg>
-      <svg viewBox={VIEW_BOX} className="oppie-pie relative block size-full" aria-hidden focusable="false">
+    <span
+      ref={ref}
+      className={cn('oppie inline-block shrink-0', className)}
+      data-still={still ? '' : undefined}
+      data-paused={paused || asleep ? '' : undefined}
+      {...a11y}
+    >
+      <svg viewBox={VIEW_BOX} className="block size-full" aria-hidden focusable="false">
         <defs>
           <filter id={`${id}-shadow`} x="-20%" y="-20%" width="140%" height="150%">
             <feDropShadow dx="0" dy={shadow.offset} stdDeviation={shadow.blur} floodColor={shadow.color} floodOpacity={shadow.opacity} />
@@ -98,21 +167,22 @@ export function OppieMark({ state = 'idle', on = 'dark', still = false, joined =
           })}
         </defs>
         <g filter={`url(#${id}-shadow)`}>
-          {slices.map(({ module, d, rest, push }, turn) => (
-            <g key={module} transform={joined ? undefined : `translate(${rest[0]} ${rest[1]})`}>
-              <g
-                className="oppie-slice"
-                style={{ '--oppie-x': `${push[0]}px`, '--oppie-y': `${push[1]}px`, '--oppie-turn': turn / slices.length } as CSSProperties}
-              >
-                <path d={d} fill={`url(#${id}-${module})`} {...seam(`url(#${id}-${module})`)} />
-                <path d={d} fill={`url(#${id}-shine)`} />
-                <g className="oppie-lit">
-                  <path d={d} fill={`url(#${id}-${module}-lit)`} {...seam(`url(#${id}-${module}-lit)`)} />
-                  <path d={d} fill={`url(#${id}-shine-lit)`} />
+          {slices.map(({ module, d }, turn) => {
+            const [x, y] = along(turn, oppie.gap);
+            const [pushX, pushY] = along(turn, push);
+            return (
+              <g key={module} transform={`translate(${x} ${y})`}>
+                <g className="oppie-slice" style={{ '--oppie-x': `${pushX}px`, '--oppie-y': `${pushY}px`, '--oppie-turn': turn / slices.length } as CSSProperties}>
+                  <path d={d} fill={`url(#${id}-${module})`} />
+                  <path d={d} fill={`url(#${id}-shine)`} />
+                  <g className="oppie-lit">
+                    <path d={d} fill={`url(#${id}-${module}-lit)`} />
+                    <path d={d} fill={`url(#${id}-shine-lit)`} />
+                  </g>
                 </g>
               </g>
-            </g>
-          ))}
+            );
+          })}
         </g>
       </svg>
     </span>
