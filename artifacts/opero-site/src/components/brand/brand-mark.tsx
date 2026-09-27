@@ -22,7 +22,7 @@ type Props = {
 };
 
 /**
- * Renders a brand mark from public/brand/manifest.json. The file is placed
+ * Renders a brand mark from the bundled manifest. The artwork is placed
  * inside an SVG whose viewBox is the mark's visible bounds, which trims built-in
  * clear space without editing the artwork.
  */

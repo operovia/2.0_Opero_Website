@@ -1,5 +1,5 @@
-import type { Metadata } from 'next';
 import { getPublicSettings } from '@/content/store';
+type OpenGraph = { type: 'website'; siteName: string; images: { url: string; width?: number; height?: number; alt?: string }[]; title?: string; description?: string; url?: string };
 
 type PageOpenGraph = { title?: string; description?: string; url?: string };
 
@@ -12,7 +12,7 @@ export const SHARE_IMAGE_SIZE = { width: 1200, height: 630 };
  * openGraph object wholesale when a page sets its own, so every page builds
  * on this to keep the site name and the social share image.
  */
-export async function openGraph(page: PageOpenGraph = {}): Promise<NonNullable<Metadata['openGraph']>> {
+export async function openGraph(page: PageOpenGraph = {}): Promise<OpenGraph> {
   const { settings, socialImage, version } = await getPublicSettings();
   return {
     type: 'website',

@@ -17,15 +17,16 @@ function resend(apiKey: string): Resend {
 }
 
 function logInstead(email: OutgoingEmail): SendResult {
-  const note = isProduction ? 'NOT SENT, RESEND_API_KEY is not set' : 'development, not sent';
-  console.log(`\n[opero] Email (${note})\nTo: ${email.to}\nSubject: ${email.subject}\n\n${email.text}\n`);
+  console.log(`\n[opero] Email (development, not sent)\nTo: ${email.to}\nSubject: ${email.subject}\n\n${email.text}\n`);
   return { ok: true, id: 'logged' };
 }
 
 /** Sends one email through Resend, or prints it to the server log when no API key is configured. */
 export async function sendEmail(email: OutgoingEmail): Promise<SendResult> {
   const { apiKey, from, replyTo } = emailConfig();
-  if (!apiKey) return logInstead(email);
+  if (!apiKey) return isProduction
+    ? { ok: false, error: 'Email delivery is not configured. Set RESEND_API_KEY.' }
+    : logInstead(email);
   try {
     const { data, error } = await resend(apiKey).emails.send({
       from,
@@ -51,7 +52,9 @@ const pause = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
  */
 export async function sendEmails(emails: OutgoingEmail[]): Promise<SendResult[]> {
   const { apiKey, from, replyTo } = emailConfig();
-  if (!apiKey) return emails.map(logInstead);
+  if (!apiKey) return isProduction
+    ? emails.map(() => ({ ok: false as const, error: 'Email delivery is not configured. Set RESEND_API_KEY.' }))
+    : emails.map(logInstead);
 
   const results: SendResult[] = [];
   for (let start = 0; start < emails.length; start += 100) {

@@ -18,7 +18,6 @@ export function OppieOrb({ size = 'lg', animated = false, className }: Props) {
   const sizeClass = size === 'sm' ? 'size-5 [--orb-blur:1.5px]' : 'size-44 sm:size-60';
 
   if (artwork) {
-    // eslint-disable-next-line @next/next/no-img-element -- brand artwork is served as-is from the manifest
     return <img src={artwork} alt="" aria-hidden className={cn(sizeClass, 'object-contain', className)} />;
   }
 

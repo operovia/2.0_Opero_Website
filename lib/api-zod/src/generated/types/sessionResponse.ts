@@ -5,7 +5,8 @@
  * Opero public content, forms, surveys, and authenticated administration API.
  * OpenAPI spec version: 0.1.0
  */
+import type { SessionResponseUser } from './sessionResponseUser';
 
-export interface HealthStatus {
-  status: string;
+export interface SessionResponse {
+  user: SessionResponseUser;
 }

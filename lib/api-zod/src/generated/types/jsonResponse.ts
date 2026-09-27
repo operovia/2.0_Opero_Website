@@ -5,7 +5,9 @@
  * Opero public content, forms, surveys, and authenticated administration API.
  * OpenAPI spec version: 0.1.0
  */
+import type { JsonObject } from './jsonObject';
 
-export interface HealthStatus {
-  status: string;
-}
+/**
+ * JSON data.
+ */
+export type JsonResponse = JsonObject;

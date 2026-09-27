@@ -38,7 +38,9 @@ export function SurveyForm({ surveyId, token, preview, title, intro, thankYou, q
 
   // The link counts as opened once the page is shown in a browser, not when a mail scanner fetches it.
   useEffect(() => {
-    if (token && !preview) void markSurveyOpened(token);
+    if (token && !preview) void markSurveyOpened(token).catch((error) => {
+      console.warn('Could not record the survey invitation opening.', error);
+    });
   }, [token, preview]);
 
   useEffect(() => {

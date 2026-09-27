@@ -186,7 +186,7 @@ export const tokens = {
   } satisfies Record<string, JewelName>,
 
   font: {
-    /** Plus Jakarta Sans, self-hosted. `--font-jakarta` comes from next/font (src/theme/fonts.ts). */
+    /** Plus Jakarta Sans, self-hosted via src/index.css. */
     sans: 'var(--font-jakarta), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif',
     display: 'var(--font-jakarta), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif',
     mono: 'ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace',

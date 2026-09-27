@@ -23,6 +23,10 @@ export async function submitSurvey(_previous: SurveyFormState, data: FormData): 
   }
 }
 
-export function markSurveyOpened(_token: string): Promise<void> {
-  return Promise.resolve();
+export function markSurveyOpened(token: string): Promise<void> {
+  const slug = window.location.pathname.split('/').filter(Boolean).pop() || '';
+  return api(`/surveys/${encodeURIComponent(slug)}/open`, {
+    method: 'POST',
+    body: JSON.stringify({ token }),
+  });
 }

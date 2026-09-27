@@ -1,7 +1,7 @@
-import manifest from '../../public/brand/manifest.json';
+import { manifest } from './manifest';
 
 /**
- * Typed access to public/brand/manifest.json. Components ask for brand marks
+ * Typed access to the bundled brand manifest. Components ask for brand marks
  * by name through this module and never reference artwork files directly.
  */
 

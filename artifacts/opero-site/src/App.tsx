@@ -16,6 +16,7 @@ import PrivacyPage from '@/app/(site)/privacy/page';
 import { SurveyForm } from '@/app/s/[slug]/survey-form';
 import { api } from '@/lib/opero-api';
 import { Admin } from '@/pages/admin-client';
+import { AcceptInvite } from '@/pages/admin-extras';
 
 const queryClient = new QueryClient({ defaultOptions: { queries: { retry: 1, staleTime: 30000 } } });
 const css = document.createElement('style');
@@ -73,7 +74,7 @@ function Public({ page }: { page: 'home' | 'partners' | 'privacy' }) {
 function Survey({ slug }: { slug: string }) {
   const token = new URLSearchParams(window.location.search).get('t');
   const preview = new URLSearchParams(window.location.search).get('preview') === '1';
-  const query = useQuery<any>({ queryKey: ['opero-survey', slug, token, preview], queryFn: () => api(`/surveys/${encodeURIComponent(slug)}${token ? `?t=${encodeURIComponent(token)}` : ''}`) });
+  const query = useQuery<any>({ queryKey: ['opero-survey', slug, token, preview], queryFn: () => api(`/surveys/${encodeURIComponent(slug)}?${new URLSearchParams({ ...(token ? { token } : {}), ...(preview ? { preview: '1' } : {}) })}`) });
   const site = useQuery<SiteData>({ queryKey: ['opero-site'], queryFn: () => api('/site') });
   if (query.isPending || site.isPending) return <Loading />;
   if (query.isError || site.isError) return <ErrorState retry={() => { query.refetch(); site.refetch(); }} />;
@@ -91,7 +92,7 @@ function Survey({ slug }: { slug: string }) {
     <div className="flex min-h-dvh flex-col">
       <header className="border-b border-line"><Container size="2xl" className="flex h-16 items-center"><BrandMark name="opero-small" className="h-7" /></Container></header>
       <main id="main" className="flex-1 py-12 sm:py-16"><Container size="2xl">
-        {view.kind && view.kind !== 'open' ? <div className="space-y-4 py-8"><h1 className="text-display-sm font-medium text-metal">{title}</h1><p className="text-lg text-fg-muted">{messages[view.kind] || 'This survey is unavailable.'}</p></div> :
+        {view.kind && view.kind !== 'form' ? <div className="space-y-4 py-8"><h1 className="text-display-sm font-medium text-metal">{title}</h1><p className="text-lg text-fg-muted">{messages[view.kind] || 'This survey is unavailable.'}</p></div> :
           <SurveyForm surveyId={survey.id} token={view.token || token} preview={Boolean(view.preview || preview)} title={title} intro={survey.intro?.content ? <RichText doc={survey.intro} className="text-lg text-fg-muted" /> : null} thankYou={survey.thankYou?.content ? <RichText doc={survey.thankYou} className="text-lg text-fg-muted" /> : null} questions={view.questions || survey.questions || []} />}
       </Container></main>
       <footer className="border-t border-line"><Container size="2xl" className="flex justify-between gap-3 py-6 text-xs text-fg-subtle"><span>© {site.data.site.footer.companyName}</span><a href="/privacy" target="_blank" className="underline">Privacy</a></Container></footer>
@@ -117,6 +118,7 @@ function App() {
         <Route path="/partners"><Public page="partners" /></Route>
         <Route path="/privacy"><Public page="privacy" /></Route>
         <Route path="/s/:slug">{(params) => <Survey slug={params.slug} />}</Route>
+        <Route path="/admin/accept-invite"><AcceptInvite /></Route>
         <Route path="/admin/:rest*"><Admin /></Route>
         <Route path="/admin"><Admin /></Route>
         <Route><NotFound /></Route>
