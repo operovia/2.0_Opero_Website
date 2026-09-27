@@ -40,9 +40,9 @@ export function SiteHeader({ content }: Props) {
         scrolled || open ? 'border-line bg-canvas/80 backdrop-blur-xl' : 'border-transparent bg-transparent',
       )}
     >
-      <Container className="flex h-18 items-center justify-between gap-6">
+      <Container className="flex h-18 items-center justify-between gap-3 sm:gap-6">
         <Link href="/" aria-label="Opero home" className="rounded-sm">
-          <BrandMark name="opero" className="h-8" decorative priority />
+          <BrandMark name="opero" className="h-9 sm:h-11" decorative priority />
         </Link>
 
         <nav aria-label="Main" className="hidden md:block">

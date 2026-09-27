@@ -94,7 +94,7 @@ export function OppieConsole({ scenes, labels }: { scenes: ConsoleScene[]; label
         <div className="flex items-center justify-between border-b border-line px-5 py-3.5">
           <div className="flex items-center gap-1">
             {/* Oppie's pace follows the conversation. The mark's box leaves room around the pie; the negative margins keep the header its usual height. */}
-            <OppieMark decorative state={oppieStates[state.phase]} paused={!running} className="-my-2 -ml-1.5 size-10" />
+            <OppieMark decorative compact state={oppieStates[state.phase]} paused={!running} className="-my-1.5 -ml-1 size-9" />
             <span className="text-sm font-semibold text-fg">Oppie</span>
           </div>
           <span className="inline-flex items-center gap-2 rounded-full border border-line-strong px-2.5 py-1 text-micro font-semibold text-fg-muted uppercase">
