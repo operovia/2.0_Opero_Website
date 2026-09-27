@@ -48,6 +48,8 @@ In Replit, open Deploy. The build and run commands are already configured (`npm 
 - `RESEND_API_KEY`, `EMAIL_FROM`
 - For images uploaded in the admin: `S3_BUCKET`, `S3_REGION`, `S3_ENDPOINT`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY`. Published apps do not keep uploaded files, so they need an S3-compatible bucket. Cloudflare R2 works well and is inexpensive.
 
+`SITE_URL` matters for search and sharing: the sitemap, robots file, email links, and link previews all use it. Until you choose a share image in Settings, link previews show an image the site draws from the home page headline.
+
 The app is a standard Node.js server, so any host that can run `npm run build` and `npm run start` with Postgres works the same way. Every variable is described in [.env.example](.env.example).
 
 ## Locked out?

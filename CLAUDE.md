@@ -36,6 +36,9 @@ Next.js notes (managed by Next.js itself): @AGENTS.md
 - Next.js replaces a layout's `openGraph` object wholesale when a page sets its own, so public pages build theirs with `openGraph()` from `src/content/metadata.ts`.
 - Form actions return the submitted `values` and forms render `defaultValue` from `state.values ?? saved`, because React resets uncontrolled fields after every form action.
 - Editable copy lives in `src/content/registry.ts` (fields plus seed copy per section). Pages read it with `getPage()` from `src/content/store.ts`; never hardcode public copy in components.
+- Browser code (`'use client'` and anything it imports) must not import values from `src/content/registry.ts`: it carries every section's validation and seed copy, which would ship to every visitor. Put small values the browser needs in `src/content/constants.ts`; type-only imports are fine.
+- For narrower page columns use `<Container size="3xl">` and similar, never a `max-w-*` class on Container.
+- A brand mark at the top of a page gets `priority` on `<BrandMark>`, which preloads it: on phones the header wordmark is the largest thing painted first.
 - Anything that changes what the public site shows must go through `changeContent()` (`src/server/content-version.ts`) so every server instance refreshes.
 - `npm run typecheck` regenerates route types first; after adding a route, run it before trusting TypeScript errors about `PageProps`.
 - Light and dark themes are both wired. The public site defaults to dark.
@@ -50,5 +53,7 @@ Next.js notes (managed by Next.js itself): @AGENTS.md
 - Email through Resend from a dedicated operovia.com subdomain. Without `RESEND_API_KEY`, emails are printed to the server log.
 - Uploads go through one storage adapter: local `uploads/` folder in development, S3-compatible bucket in production.
 - Standard Node service (`npm run build`, `npm run start`). Nothing platform-specific.
-- Security: every admin page, action, and route calls `requireAdmin()`; mutations go through Server Actions (built-in origin check) or route handlers guarded by `assertSameOrigin()`; parameterized queries only (Drizzle); secrets only in environment variables (documented in `.env.example`); honeypot plus rate limiting on public forms; tokens from at least 32 random bytes; audit log for publishes and logins.
+- Security: every admin page, action, and route calls `requireAdmin()`; mutations go through Server Actions (built-in origin check) or route handlers guarded by `isSameOrigin()` (`src/server/origin.ts`); parameterized queries only (Drizzle); secrets only in environment variables (documented in `.env.example`); honeypot plus rate limiting on public forms; tokens from at least 32 random bytes; audit log for publishes and logins.
 - Public pages render on the server from an in-memory content cache that is checked against a content version number, so a publish shows up immediately on every server instance.
+- Share previews use the image chosen in Settings, or else `/share-image.png`, drawn by the site from the hero headline (TTF copies of two Plus Jakarta Sans weights in `src/theme/fonts` exist only for this renderer). `sitemap.xml` and `robots.txt` are generated at request time from `SITE_URL`.
+- Surveys: once a survey has responses only wording may change (`structuralChange` in `src/surveys/questions.ts`); personal links submit once (the recipient row is locked); anonymous surveys never store who answered and keep only the day. Survey pages are noindex and deliberately not blocked in robots.txt, so crawlers can see the noindex.

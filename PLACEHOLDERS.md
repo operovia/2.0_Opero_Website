@@ -7,6 +7,7 @@ Everything on this list is a stand-in that needs a real answer or real asset. Cl
 - **Color and type specification.** Not yet supplied. Colors are taken from the artwork itself (metal gradient, jewels, favicon ground) and type is Plus Jakarta Sans from the supplied font files. Adjust `src/theme/tokens.ts` when the specification arrives.
 - **Oppie orb.** Not yet supplied (light and dark, with listening and speaking states). A temporary orb in the jewel colors stands in, in the Oppie section and the console header. Add the files to `public/brand/` and point the `oppie-orb` entry in `public/brand/manifest.json` at them.
 - **Page mockups.** Not yet supplied. Layouts are designed from the brief and the artwork.
+- **Share image.** Until one is chosen in Admin, Settings, link previews use an image the site draws itself: the wordmark and the hero headline on the dark background. A designed image can replace it any time.
 
 ## Copy drafted for the site (flagged "Drafted copy to review" in the admin)
 
