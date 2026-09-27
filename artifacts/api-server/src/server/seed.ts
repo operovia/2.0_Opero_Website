@@ -39,7 +39,7 @@ async function seedAdmin(db: Db): Promise<void> {
     passwordHash: await hashPassword(seed.password),
     passwordChangedAt: new Date(),
   });
-  console.log(`[opero] Created the first admin account for ${seed.email}.`);
+  console.log('[opero] Created the first admin account.');
 }
 
 async function seedSettings(db: Db): Promise<void> {
