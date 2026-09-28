@@ -4,6 +4,7 @@ import { and, asc, eq, gt, lt, desc, max } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 import { db } from '@/db/client';
+import { parseSceneTable } from '@/content/scene-table';
 import { consoleScenes } from '@/db/schema';
 import { failure, fieldErrors, formValues, success, type FormState } from '@/lib/forms';
 import { audit } from '@/server/audit';
@@ -21,9 +22,11 @@ const sceneSchema = z.object({
   chip2: z.string().trim().max(60),
   chip3: z.string().trim().max(60),
   chip4: z.string().trim().max(60),
+  answerTable: z.string().max(3000, 'Keep the table shorter.'),
+  followUp: z.string().trim().max(160),
 });
 
-const fields = ['question', 'thinkingMs', 'answerTag', 'answerMain', 'answerSupport', 'chip1', 'chip2', 'chip3', 'chip4'] as const;
+const fields = ['question', 'thinkingMs', 'answerTag', 'answerMain', 'answerSupport', 'chip1', 'chip2', 'chip3', 'chip4', 'answerTable', 'followUp'] as const;
 
 async function record(summary: string) {
   const { user } = await requireAdmin();
@@ -31,16 +34,24 @@ async function record(summary: string) {
   revalidatePath('/admin/console');
 }
 
-type Parsed =
-  | { ok: false; state: FormState }
-  | { ok: true; data: Omit<z.infer<typeof sceneSchema>, 'chip1' | 'chip2' | 'chip3' | 'chip4'> & { chips: string[] }; values: Record<string, string> };
+type Scene = Omit<z.infer<typeof sceneSchema>, 'chip1' | 'chip2' | 'chip3' | 'chip4' | 'answerTable'> & {
+  chips: string[];
+  answerTable: ReturnType<typeof parseSceneTable>['table'];
+};
+
+type Parsed = { ok: false; state: FormState } | { ok: true; data: Scene; values: Record<string, string> };
 
 function parse(formData: FormData): Parsed {
   const values = formValues(formData, fields);
   const parsed = sceneSchema.safeParse(values);
-  if (!parsed.success) return { ok: false, state: failure('Check the highlighted fields.', { fieldErrors: fieldErrors(parsed.error), values }) };
+  const table = parseSceneTable(values.answerTable ?? '');
+  if (!parsed.success || table.error) {
+    const errors = { ...(parsed.success ? {} : fieldErrors(parsed.error)), ...(table.error ? { answerTable: table.error } : {}) };
+    return { ok: false, state: failure('Check the highlighted fields.', { fieldErrors: errors, values }) };
+  }
   const { chip1, chip2, chip3, chip4, ...rest } = parsed.data;
-  return { ok: true, data: { ...rest, chips: [chip1, chip2, chip3, chip4].filter(Boolean) }, values };
+  // The table arrives as text; what is saved is the table read from it.
+  return { ok: true, data: { ...rest, chips: [chip1, chip2, chip3, chip4].filter(Boolean), answerTable: table.table }, values };
 }
 
 export async function saveScene(_prev: FormState, formData: FormData): Promise<FormState> {

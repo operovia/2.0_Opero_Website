@@ -70,6 +70,7 @@ export default async function ConsolePage() {
                       <p className="text-sm text-fg-muted">
                         {scene.answerMain}
                         {scene.chips.length ? ` · ${scene.chips.join(' · ')}` : ''}
+                        {scene.answerTable ? ` · Table of ${scene.answerTable.rows.length} ${scene.answerTable.rows.length === 1 ? 'row' : 'rows'}` : ''}
                       </p>
                       <p className="text-xs text-fg-subtle">Thinks for {scene.thinkingMs} ms</p>
                     </div>
@@ -117,6 +118,8 @@ export default async function ConsolePage() {
                           answerMain: scene.answerMain,
                           answerSupport: scene.answerSupport,
                           chips: scene.chips,
+                          answerTable: scene.answerTable,
+                          followUp: scene.followUp,
                         }}
                       />
                     </div>

@@ -4,6 +4,7 @@ import { useActionState } from 'react';
 import { Field, Input, Textarea } from '@/components/ui/field';
 import { Notice } from '@/components/ui/notice';
 import { SubmitButton } from '@/components/ui/submit-button';
+import { formatSceneTable, TABLE_LIMITS, type SceneTable } from '@/content/scene-table';
 import { idleState } from '@/lib/forms';
 import { saveScene } from './actions';
 
@@ -15,9 +16,11 @@ export type SceneValues = {
   answerMain: string;
   answerSupport: string;
   chips: string[];
+  answerTable: SceneTable | null;
+  followUp: string;
 };
 
-const blank: SceneValues = { question: '', thinkingMs: 1200, answerTag: '', answerMain: '', answerSupport: '', chips: [] };
+const blank: SceneValues = { question: '', thinkingMs: 1200, answerTag: '', answerMain: '', answerSupport: '', chips: [], answerTable: null, followUp: '' };
 
 /** Adds a new scene, or edits one when `scene` is given. */
 export function SceneForm({ scene }: { scene?: SceneValues }) {
@@ -34,6 +37,8 @@ export function SceneForm({ scene }: { scene?: SceneValues }) {
     chip2: saved.chips[1] ?? '',
     chip3: saved.chips[2] ?? '',
     chip4: saved.chips[3] ?? '',
+    answerTable: formatSceneTable(saved.answerTable),
+    followUp: saved.followUp,
   };
   const prefix = scene?.id ? `scene-${scene.id.slice(0, 8)}-` : 'new-scene-';
 
@@ -68,6 +73,18 @@ export function SceneForm({ scene }: { scene?: SceneValues }) {
           ))}
         </div>
       </fieldset>
+      <Field
+        name={`${prefix}answerTable`}
+        label="Table"
+        optionalLabel="(optional)"
+        hint={`A small grid under the answer, such as a rent roll. One row per line, with cells separated by | or pasted from a spreadsheet; the first line is the headings. Up to ${TABLE_LIMITS.maxColumns} columns and ${TABLE_LIMITS.maxRows} rows. Phones show the first three columns.`}
+        error={e.answerTable}
+      >
+        {(p) => <Textarea {...p} name="answerTable" rows={6} defaultValue={v.answerTable} spellCheck={false} className="font-mono" />}
+      </Field>
+      <Field name={`${prefix}followUp`} label="Follow-up question" optionalLabel="(optional)" hint="Oppie's question after the answer, such as offering an export." error={e.followUp}>
+        {(p) => <Input {...p} name="followUp" defaultValue={v.followUp} maxLength={160} />}
+      </Field>
       <SubmitButton pendingLabel="Saving">{scene?.id ? 'Save scene' : 'Add scene'}</SubmitButton>
     </form>
   );
