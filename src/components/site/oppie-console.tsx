@@ -3,7 +3,7 @@
 import { Pause, Play, Sparkles } from 'lucide-react';
 import { m, useInView, useReducedMotion } from 'motion/react';
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
-import { OppieMark, type OppieState } from '@/components/brand/oppie-mark';
+import { OppieMark } from '@/components/brand/oppie-mark';
 import type { ConsoleScene } from '@/content/store';
 import { cn } from '@/lib/cn';
 import { tokens } from '@/theme/tokens';
@@ -12,15 +12,6 @@ export type ConsoleLabels = { badge: string; footerLeft: string; footerRight: st
 
 type Phase = 'typing' | 'thinking' | 'answer' | 'shown' | 'leaving';
 type State = { index: number; phase: Phase; typed: number };
-
-/** How engaged Oppie is in each phase (docs/brand/oppie-motion-spec.md): working while the answer appears. */
-const oppieStates: Record<Phase, OppieState> = {
-  typing: 'listening',
-  thinking: 'thinking',
-  answer: 'working',
-  shown: 'listening',
-  leaving: 'listening',
-};
 
 const HOLD_MS = 4600;
 /** The part of the hold during which the answer card and its chips appear. */
@@ -92,10 +83,14 @@ export function OppieConsole({ scenes, labels }: { scenes: ConsoleScene[]; label
       >
         {/* Header */}
         <div className="console-rule flex items-center justify-between border-b px-5 py-3.5">
-          <div className="flex items-center gap-1">
-            {/* Oppie's pace follows the conversation. The mark's box leaves room around the pie; the negative margins keep the header its usual height. */}
-            <OppieMark decorative compact state={oppieStates[state.phase]} paused={!running} className="-my-1.5 -ml-1 size-9" />
-            <span className="text-sm font-semibold text-fg">Oppie</span>
+          <div className="flex items-center gap-1.5">
+            {/* Oppie's pills turn over while it thinks and settle when the answer arrives (docs/brand/oppie-8e-handoff.md). The mark's box leaves room around the pills; the negative margins keep the header its usual height. */}
+            <OppieMark decorative state={state.phase === 'thinking' ? 'thinking' : 'rest'} paused={!running} className="-my-1 -ml-1.5 size-8" />
+            <span className="text-sm font-semibold text-fg">
+              Oppie
+              {/* With reduced motion the pills hold still, so say it instead. */}
+              {reduce && state.phase === 'thinking' ? <span className="font-normal text-fg-muted"> is thinking…</span> : null}
+            </span>
           </div>
           <span className="console-rule inline-flex items-center gap-2 rounded-full border px-2.5 py-1 text-micro font-semibold text-fg-muted uppercase">
             <span className="console-live-dot relative inline-flex size-1.5 rounded-full bg-success" aria-hidden />

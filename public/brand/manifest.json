@@ -87,14 +87,14 @@
     },
     "oppie": {
       "label": "Oppie",
-      "dark": "/brand/oppie/oppie-static-dark.svg",
-      "light": "/brand/oppie/oppie-static-light.svg",
-      "viewBox": [-10, -10, 220, 220],
-      "bounds": [-10, -10, 220, 220]
+      "dark": "/brand/oppie/oppie-rest-dark.svg",
+      "light": "/brand/oppie/oppie-rest-light.svg",
+      "viewBox": [0, 0, 100, 100],
+      "bounds": [10, 10, 80, 80]
     }
   },
   "oppie": {
-    "about": "Oppie's mark holding still, as PNGs for places that cannot use SVG. On the site the mark moves: src/components/brand/oppie-mark.tsx draws it from the supplied component, kept with the rest of the package in docs/brand/oppie-2c.zip.",
+    "about": "Oppie's five pills at rest, as PNGs for places that cannot use SVG (email, print, share images), drawn from oppie-rest-light.svg. The supplied thinking files (oppie-thinking-*.svg) carry the flip inside them. On the site src/components/brand/oppie-mark.tsx draws the mark, following docs/brand/oppie-8e-handoff.md.",
     "png": {
       "32": "/brand/oppie/oppie-32.png",
       "192": "/brand/oppie/oppie-192.png",

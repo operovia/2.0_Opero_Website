@@ -177,38 +177,54 @@ export const tokens = {
       ring: { dark: '#0000001F', light: '#00000029' },
     },
     /**
-     * Oppie's mark, as docs/brand/oppie-motion-spec.md describes it: a pie of
-     * five slices in module colors, clockwise from the top in brand order.
-     * Each slice is a radial gradient from highlight through base to shadow,
-     * under a white shine.
+     * Oppie's mark, from the owner's handoff (docs/brand/oppie-8e-handoff.md):
+     * five rounded pills standing side by side, one per module in brand order,
+     * tallest in the middle like a voice level. Each is a deep jewel tone at
+     * the top fading into a shared graphite base. Units are the mark's own: it
+     * is 100 square.
      */
     oppie: {
-      slices: {
-        build: ['#FF5444', '#D43A2F', '#83241D'],
-        studios: ['#9B5BE8', '#6B3FA0', '#422763'],
-        playbook: ['#FFC926', '#C58B1A', '#7A5610'],
-        university: ['#44CF84', '#2F8F5B', '#1D5938'],
-        compass: ['#2BCEDF', '#1E8E9A', '#13585F'],
+      /** Each pill's left edge and height. All are the same width, fully rounded, and centered at y 50. */
+      pills: [
+        { module: 'build', x: 10, height: 36 },
+        { module: 'studios', x: 27, height: 60 },
+        { module: 'playbook', x: 44, height: 80 },
+        { module: 'university', x: 61, height: 60 },
+        { module: 'compass', x: 78, height: 36 },
+      ],
+      width: 12,
+      /**
+       * Each pill's curved surface, left to right across it, at `surfaceStops`:
+       * shadow, the jewel tone, the lit face, the jewel tone, shadow. Dark
+       * backgrounds get brighter tones so the purple stays visible.
+       */
+      surface: {
+        light: {
+          build: ['#5C130F', '#A8231C', '#F43329', '#A8231C', '#4C100D'],
+          studios: ['#291348', '#4B2382', '#6D33BD', '#4B2382', '#22103B'],
+          playbook: ['#5C3D07', '#A86F0C', '#F4A111', '#A86F0C', '#4C3205'],
+          university: ['#103B25', '#1D6B43', '#2A9B61', '#1D6B43', '#0D301E'],
+          compass: ['#0A3B42', '#136C78', '#1C9DAE', '#136C78', '#093136'],
+        },
+        dark: {
+          build: ['#6E1D17', '#C8342A', '#FF4B3D', '#C8342A', '#5A1713'],
+          studios: ['#402765', '#7446B8', '#A866FF', '#7446B8', '#342053'],
+          playbook: ['#6E4C0E', '#C88A1A', '#FFC826', '#C88A1A', '#5A3E0C'],
+          university: ['#174C30', '#2A8A58', '#3DC880', '#2A8A58', '#133E28'],
+          compass: ['#104D55', '#1D8C9A', '#2ACBDF', '#1D8C9A', '#0D3F45'],
+        },
       },
-      /** The shine: white, fading out from each slice's lit corner. */
-      shine: {
-        color: '#FFFFFF',
-        stops: [
-          { offset: 0, opacity: 0.6 },
-          { offset: 0.45, opacity: 0.1 },
-          { offset: 1, opacity: 0 },
-        ],
-      },
-      /** The shadow under the pie, in the mark's own units (it is 160 wide). */
-      shadow: {
-        dark: { color: '#000000', opacity: 0.5, blur: 5, offset: 3 },
-        light: { color: '#000000', opacity: 0.18, blur: 3, offset: 3 },
-      },
-      /** How much brighter a slice gets as the relay reaches it. */
-      litBrightness: 1.35,
-      /** In the mark's units: how far each slice sits out from the center, and how far the relay pushes it. */
-      gap: 3,
-      push: { full: 9, compact: 6 },
+      surfaceStops: [0, 0.18, 0.42, 0.7, 1],
+      /** The graphite every pill fades into at its foot. */
+      graphite: { light: '#23262B', dark: '#3A3D45' },
+      /** Top to bottom over the surface: white light at the top, clear through the middle, graphite at the foot. */
+      depth: { lightTop: { color: '#FFFFFF', opacity: 0.25, until: 0.3 }, graphiteFrom: 0.7, graphiteOpacity: 0.85 },
+      /** The black that darkens a pill's side as it turns edge-on. */
+      shade: '#000000',
+      /** The white highlight down each pill: how far in from its left edge and ends, how wide, how bright. */
+      glint: { left: 4, inset: 3, width: 2.6, color: '#FFFFFF', opacity: 0.55 },
+      /** The fine outline just inside each pill. */
+      rim: { light: { color: '#000000', opacity: 0.2 }, dark: { color: '#FFFFFF', opacity: 0.22 } },
     },
     /** Aurora background: the jewels' base colors and how strongly they show per theme. */
     aurora: {
@@ -334,15 +350,13 @@ export const tokens = {
     /** Distance revealed elements travel, in pixels. */
     revealDistance: 24,
     /**
-     * Oppie's relay (docs/brand/oppie-motion-spec.md): one full lap per state,
-     * slow at rest and quick while thinking, and how long a change of speed
-     * takes. Waking up is quicker than winding down.
+     * Oppie's flip (docs/brand/oppie-8e-handoff.md): while Oppie thinks, each
+     * pill turns over once per `turn`, starting `stagger` after the one before
+     * it, so the turn ripples left to right.
      */
     oppie: {
-      lap: { calm: 5600, listening: 3300, working: 2000, thinking: 1250 },
-      speedUp: 400,
-      slowDown: 1200,
-      ease: [0.42, 0, 0.58, 1],
+      turn: 1600,
+      stagger: 160,
     },
   },
 } as const;
