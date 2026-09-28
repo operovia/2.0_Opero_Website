@@ -28,20 +28,9 @@ export function Platform({ content }: { content: SectionData<'home', 'platform'>
 
         <Reveal className="mt-16">
           <div className="relative overflow-hidden rounded-2xl border border-line-strong bg-surface p-8 sm:p-10">
-            <div className="flex flex-col gap-8 sm:flex-row sm:items-center sm:gap-12">
-              <div aria-hidden className="flex shrink-0 flex-col items-center gap-3">
-                {[content.modules.slice(0, 2), content.modules.slice(2, 5)].map((row, r) => (
-                  <div key={r} className="flex gap-3">
-                    {row.map((item) => (
-                      <span key={item.module} className={cn('size-6 rounded-full shadow-sm', jewel[item.module])} />
-                    ))}
-                  </div>
-                ))}
-              </div>
-              <div className="max-w-2xl">
-                <h3 className="text-2xl font-semibold text-fg">{content.coreTitle}</h3>
-                <p className="mt-3 text-lg text-fg-muted">{content.coreText}</p>
-              </div>
+            <div className="max-w-2xl">
+              <h3 className="text-2xl font-semibold text-fg">{content.coreTitle}</h3>
+              <p className="mt-3 text-lg text-fg-muted">{content.coreText}</p>
             </div>
           </div>
         </Reveal>
