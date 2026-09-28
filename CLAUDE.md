@@ -25,7 +25,7 @@ The owner runs Claude Code in the Replit shell (started with `./cc`) and watches
 2. Give the owner the dev URL and say whether the site is live there. The admin (`/admin`) signs in only at that address in its own tab, not in Replit's embedded preview.
 3. If the site shows errors, deal with them or report them before other work. The dev server writes its errors to `.next/dev/logs/next-development.log`.
 
-While `serve` runs, the owner should not press Run: Next.js allows one dev server per folder, so that second copy just stops. Code changes hot reload; after pulling changes that touch `package.json`, `next.config.ts`, environment variables, or `drizzle/`, restart the dev server (stop the `serve` task and start it again, or ask the owner to stop and press Run) so packages install, settings reload, and migrations apply. Replit Agent must not restructure this project; `replit.md` tells it so.
+While `serve` runs, the owner should not press Run: Next.js allows one dev server per folder, so that second copy just stops. Code changes hot reload, and the dev server applies new migrations by itself when a pull brings them (`src/server/dev-migrations.ts`). After pulling changes that touch `package.json`, `next.config.ts`, or environment variables, restart the dev server (stop the `serve` task and start it again, or ask the owner to stop and press Run) so packages install and settings reload. Replit Agent must not restructure this project; `replit.md` tells it so.
 
 ## Facts and copy rules
 
