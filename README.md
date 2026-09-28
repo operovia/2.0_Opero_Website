@@ -1,6 +1,6 @@
 # Opero marketing site
 
-The public website for Opero, with an admin area for editing copy, reading demo requests and partner applications, and running surveys.
+The public website for Opero, with an admin area for editing copy, reading demo requests, partner applications, and investor inquiries, and running surveys.
 
 The product brief is in [docs/brief.md](docs/brief.md). Anything still waiting on a real answer or asset is listed in [PLACEHOLDERS.md](PLACEHOLDERS.md).
 
@@ -22,6 +22,10 @@ To work with Claude Code in Replit, type `./cc` in the Shell. The first time, it
 Everything else is optional until you publish.
 
 This project is one Next.js app and must stay that way. `replit.md` tells Replit Agent not to restructure it; if Replit Agent ever proposes migrating or converting the project, decline.
+
+## Investor Hub
+
+The Investor Hub (`/investors`) tells the founder's story for investors and ends with a short contact form; messages arrive in Inquiries. It stays hidden until you switch it on in Settings: until then visitors get "page not found" and its tab is left out of the header, while you see both whenever you are signed in. Edit its copy in Content, Investor Hub.
 
 ## Surveys
 

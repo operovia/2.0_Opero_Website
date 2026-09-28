@@ -94,6 +94,9 @@
   --text-display-lg: var(--o-text-display-lg);
   --text-display-lg--line-height: var(--o-text-display-lg-lh);
   --text-display-lg--letter-spacing: var(--o-text-display-lg-tracking);
+  --text-numeral: var(--o-text-numeral);
+  --text-numeral--line-height: var(--o-text-numeral-lh);
+  --text-numeral--letter-spacing: var(--o-text-numeral-tracking);
   --text-eyebrow: var(--o-text-eyebrow);
   --text-eyebrow--line-height: var(--o-text-eyebrow-lh);
   --text-eyebrow--letter-spacing: var(--o-text-eyebrow-tracking);
@@ -388,9 +391,10 @@
  * over the aurora, with the page's violet and teal glowing faintly inside it
  * and a soft light along the top, so it reads as part of the page's light
  * rather than a panel laid on top of it. Panes and rules inside are faint
- * light instead of gray.
+ * light instead of gray. The Investor Hub's contact panel uses the same glass.
  */
-.console-glass {
+.console-glass,
+.investor-glass {
   background:
     linear-gradient(180deg, color-mix(in oklab, var(--o-fg) 7%, transparent), transparent 32%),
     radial-gradient(120% 70% at 0% 0%, color-mix(in oklab, var(--o-aurora-1) 22%, transparent), transparent 70%),
@@ -562,6 +566,70 @@
   to {
     transform: translate3d(0, -50%, 0) rotate(360deg);
   }
+}
+
+/*
+ * Investor Hub (src/app/(site)/investors/page.tsx): a ground of its own. A
+ * fine drafting grid fades out below the header, under one slow gold glow,
+ * where the other pages share the aurora.
+ */
+.investor-grid {
+  background-image:
+    linear-gradient(to bottom, color-mix(in oklab, var(--o-fg) 7%, transparent) 1px, transparent 1px),
+    linear-gradient(to right, color-mix(in oklab, var(--o-fg) 7%, transparent) 1px, transparent 1px);
+  background-size: 56px 56px;
+  background-position: center top;
+  mask-image: radial-gradient(110% 85% at 50% 0%, black 20%, transparent 80%);
+}
+.investor-glow {
+  position: absolute;
+  top: -30vmax;
+  right: -18vmax;
+  width: 66vmax;
+  height: 66vmax;
+  border-radius: 9999px;
+  background: radial-gradient(circle at center, var(--o-jewel-gold-base) 0%, transparent 62%);
+  opacity: var(--o-aurora-opacity);
+  will-change: transform;
+  animation: aurora-drift 50s var(--o-ease-in-out) infinite alternate;
+}
+.investor-glow-2 {
+  top: auto;
+  right: auto;
+  bottom: -40vmax;
+  left: -26vmax;
+  width: 56vmax;
+  height: 56vmax;
+  background: radial-gradient(circle at center, var(--o-jewel-violet-base) 0%, transparent 62%);
+  animation-duration: 62s;
+  animation-direction: alternate-reverse;
+}
+
+/* The story's three steps hang from one line: gray through the experience and the problem, the jewels through the solution. */
+.investor-line {
+  background: linear-gradient(
+    to right,
+    var(--o-line-strong) 0%,
+    var(--o-line-strong) 60%,
+    var(--o-jewel-crimson-base) 67%,
+    var(--o-jewel-violet-base) 75%,
+    var(--o-jewel-gold-base) 83%,
+    var(--o-jewel-green-base) 91%,
+    var(--o-jewel-teal-base) 100%
+  );
+}
+
+/* Each step's picture is as tall as the large number, so the titles line up. */
+.investor-anchor {
+  height: var(--o-text-numeral);
+}
+
+/* What comes next: drawn, not built yet. */
+.investor-blueprint {
+  background-image:
+    linear-gradient(to bottom, color-mix(in oklab, var(--o-fg) 5%, transparent) 1px, transparent 1px),
+    linear-gradient(to right, color-mix(in oklab, var(--o-fg) 5%, transparent) 1px, transparent 1px);
+  background-size: 24px 24px;
 }
 
 /* The closing section's aurora rises from the bottom. */

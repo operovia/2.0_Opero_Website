@@ -351,6 +351,114 @@ const partnersApply = section({
 });
 
 /* ------------------------------------------------------------------------ */
+/* Investor Hub                                                             */
+/* ------------------------------------------------------------------------ */
+
+const investorsIntro = section({
+  label: 'Introduction',
+  description: "The top of the page, in the founder's voice. Visitors see the page only while the Investor Hub is switched on in Settings.",
+  draftCopy: true,
+  fields: {
+    eyebrow: text('Eyebrow', { optional: true, max: 60 }),
+    headline: text('Headline', { max: 120 }),
+    name: text('Signed by', { max: 80 }),
+    role: text('Role', { max: 80 }),
+    description: text('Search and share description', { max: 200, multiline: true, hint: 'Shown in search results and link previews.' }),
+  },
+  seed: {
+    eyebrow: 'Investor Hub',
+    headline: 'I lived the problem. Then I built the solution.',
+    name: 'Joe Mifsud',
+    role: 'Founder',
+    description: 'Twenty-five years in property management, the problem it showed, and the platform built to solve it.',
+  },
+});
+
+const investorsStory = section({
+  label: 'The story',
+  description: 'Three steps across the page: the experience, the problem, and the solution.',
+  draftCopy: true,
+  fields: {
+    experienceValue: text('Experience: large number', { max: 6, hint: 'Shown very large, like 25.' }),
+    experienceTitle: text('Experience: title', { max: 80 }),
+    experienceBody: text('Experience: text', { optional: true, max: 240, multiline: true, hint: 'Optional.' }),
+    problemTitle: text('Problem: title', { max: 80 }),
+    problemBody: text('Problem: text', { max: 240, multiline: true }),
+    solutionTitle: text('Solution: title', { max: 80 }),
+    solutionBody: text('Solution: text', { max: 240, multiline: true }),
+  },
+  seed: {
+    experienceValue: '25',
+    experienceTitle: 'Years in property management',
+    experienceBody: '',
+    problemTitle: 'The problem',
+    problemBody:
+      'Operators run on a patchwork of disconnected apps, each with its own login, its own bill, and its own version of the truth. None of them know the properties.',
+    solutionTitle: 'The solution',
+    solutionBody: 'Opero: one platform built around a core CRM, with Oppie, the AI assistant, in every step. It runs Oxford Companies every day.',
+  },
+});
+
+const investorsNext = section({
+  label: 'What comes next',
+  description: tokenHelp,
+  draftCopy: true,
+  fields: {
+    heading: text('Heading', { max: 60, hint: 'Shown small, in capitals.' }),
+    todayLabel: text('Today: label', { max: 30 }),
+    todayTitle: text('Today: title', { max: 80 }),
+    todayBody: text('Today: text', { max: 240, multiline: true, hint: tokenHelp }),
+    nextLabel: text('Next: label', { max: 30 }),
+    nextTitle: text('Next: title', { max: 80 }),
+    nextBody: text('Next: text', { max: 240, multiline: true, hint: tokenHelp }),
+  },
+  seed: {
+    heading: 'Where it goes next',
+    todayLabel: 'Today',
+    todayTitle: 'In production',
+    todayBody: 'Seventy-plus people at Oxford Companies work in it every day, and it has replaced six figures of annual software spend.',
+    nextLabel: 'Next',
+    nextTitle: 'The commercial release',
+    nextBody: 'The same system, for operators who did not build it, starting with a small group of {partners}.',
+  },
+});
+
+const investorsContact = section({
+  label: 'Contact form',
+  description: 'Heading, labels, thank-you message, and the note under the form. Messages arrive in Inquiries.',
+  draftCopy: true,
+  fields: {
+    headline: text('Headline', { max: 120 }),
+    intro: text('Introduction', { max: 300, multiline: true }),
+    nameLabel: text('Name label', { max: 60 }),
+    firmLabel: text('Firm label', { max: 60 }),
+    emailLabel: text('Email label', { max: 60 }),
+    phoneLabel: text('Phone label', { max: 60 }),
+    messageLabel: text('Message label', { max: 60 }),
+    optionalLabel: text('Marker for optional fields', { max: 30 }),
+    submitLabel: text('Submit button', { max: 40 }),
+    thankYouTitle: text('Thank-you heading', { max: 120 }),
+    thankYouBody: text('Thank-you message', { max: 400, multiline: true }),
+    disclaimer: text('Note under the form', { max: 600, multiline: true, hint: 'Small print. Have counsel review it before the page goes live.' }),
+  },
+  seed: {
+    headline: "Let's talk.",
+    intro: 'Write to me directly. I read and answer every message myself.',
+    nameLabel: 'Name',
+    firmLabel: 'Firm or fund',
+    emailLabel: 'Email',
+    phoneLabel: 'Phone',
+    messageLabel: 'Message',
+    optionalLabel: '(optional)',
+    submitLabel: 'Send message',
+    thankYouTitle: 'Thank you.',
+    thankYouBody: "I'll be in touch personally.",
+    disclaimer:
+      'This page is a summary for discussion purposes only. It is not an offer to sell, or a solicitation of an offer to buy, any security. Any offering will be made only to qualified investors through definitive documents.',
+  },
+});
+
+/* ------------------------------------------------------------------------ */
 /* Privacy                                                                  */
 /* ------------------------------------------------------------------------ */
 
@@ -372,7 +480,7 @@ const privacyNotice = section({
       {
         heading: 'Information you give us',
         body: textToRich(
-          'When you request a demo or apply to become a {partner}, we collect what you enter in the form: your name, firm, role, email address, and phone number, plus anything else you choose to share, such as your portfolio size and the systems you use today. We use it to respond to you and to consider your application.',
+          'When you request a demo, apply to become a {partner}, or write to us from the Investor Hub, we collect what you enter in the form: your name, firm, role, email address, and phone number, plus anything else you choose to share, such as your portfolio size and the systems you use today. We use it to respond to you and to consider your application.',
         ),
       },
       {
@@ -539,6 +647,12 @@ export const pages = {
     description: 'The page for firms applying for a founding seat.',
     path: '/partners',
     sections: { intro: partnersIntro, gets: partnersGets, asks: partnersAsks, selection: partnersSelection, apply: partnersApply },
+  },
+  investors: {
+    label: 'Investor Hub',
+    description: "The founder's story for investors, and a way to get in touch. Hidden from visitors until it is switched on in Settings.",
+    path: INVESTOR_HUB_PATH,
+    sections: { intro: investorsIntro, story: investorsStory, next: investorsNext, contact: investorsContact },
   },
   privacy: {
     label: 'Privacy page',

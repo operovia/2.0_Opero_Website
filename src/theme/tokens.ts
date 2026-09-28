@@ -258,6 +258,8 @@ export const tokens = {
     'display-sm': { size: 'clamp(1.875rem, 1.35rem + 1.9vw, 2.75rem)', lineHeight: '1.22', tracking: '0.004em' },
     'display-md': { size: 'clamp(2.25rem, 1.5rem + 2.9vw, 3.75rem)', lineHeight: '1.18', tracking: '0.006em' },
     'display-lg': { size: 'clamp(2.5rem, 1.65rem + 3.2vw, 4.25rem)', lineHeight: '1.14', tracking: '0.008em' },
+    /** A single figure set very large, such as the founder's years on the Investor Hub. */
+    numeral: { size: 'clamp(5.5rem, 3.4rem + 7vw, 9.5rem)', lineHeight: '1', tracking: '0.01em' },
     /** Small uppercase labels: eyebrows, console tags. */
     eyebrow: { size: '0.8125rem', lineHeight: '1.4', tracking: '0.16em' },
     /** The smallest uppercase labels, such as the console's badge and footer. */

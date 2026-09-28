@@ -15,7 +15,8 @@ Review each in Admin, Content. Publishing a section clears its flag.
 - **Partners page:** all five sections (introduction, what you get, what we ask, limited seats, application form wording).
 - **Privacy page:** the whole notice. Worth a legal review; it makes plain statements such as "We do not sell your information".
 - **Demo request form:** heading, introduction, labels, button, and thank-you message.
-- **Header:** navigation labels (Platform, Oppie, and the partner label linking to the partners page).
+- **Header:** navigation labels (Platform, Oppie, the partner label linking to the partners page, and Investor Hub).
+- **Investor Hub:** all four sections, drafted from the owner's note (twenty-five years in property management, the problem, then the solution) and the investor room in the Opero repo, leaving out the offering, its terms, and its figures. It is signed "Joe Mifsud, Founder", as in the investor room. Before switching it on in Settings: have counsel review the page and the note under its form, and on an existing site add the Investor Hub form to the first section of the privacy notice (new sites already say it).
 - **Maintenance page** and **Page not found** wording.
 
 ## Copy derived from the brief (not flagged, but worth a look)
