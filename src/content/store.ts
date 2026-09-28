@@ -10,6 +10,7 @@ import { onContentChange } from '@/server/content-version';
 import { getSettings, type SiteSettings } from '@/server/settings';
 import { schemaFor } from './fields';
 import { getSectionDef, pages, type PageData, type PageKey, type SectionDef } from './registry';
+import type { SceneTable } from './scene-table';
 import { contentTokens, fillTokensDeep } from './tokens';
 
 /**
@@ -30,6 +31,8 @@ export type ConsoleScene = {
   answerMain: string;
   answerSupport: string;
   chips: string[];
+  answerTable: SceneTable | null;
+  followUp: string;
 };
 
 export type SocialImage = { url: string; width: number | null; height: number | null } | null;
@@ -60,6 +63,8 @@ async function loadSnapshot(source: Snapshot['source']): Promise<Snapshot> {
         answerMain: consoleScenes.answerMain,
         answerSupport: consoleScenes.answerSupport,
         chips: consoleScenes.chips,
+        answerTable: consoleScenes.answerTable,
+        followUp: consoleScenes.followUp,
       })
       .from(consoleScenes)
       .where(eq(consoleScenes.enabled, true))

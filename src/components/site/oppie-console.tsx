@@ -139,6 +139,45 @@ export function OppieConsole({ scenes, labels }: { scenes: ConsoleScene[]; label
                     {s.answerTag ? <p className="text-eyebrow font-semibold text-fg-subtle uppercase">{s.answerTag}</p> : null}
                     <p className="mt-2 text-2xl font-semibold text-metal">{s.answerMain}</p>
                     {s.answerSupport ? <p className="mt-2 text-sm text-fg-muted">{s.answerSupport}</p> : null}
+                    {s.answerTable ? (
+                      // Phones show the first three columns; wider screens show them all.
+                      <table className="mt-4 w-full text-xs">
+                        <thead>
+                          <tr>
+                            {s.answerTable.columns.map((column, c) => (
+                              <th
+                                key={column + c}
+                                scope="col"
+                                className={cn('pb-2 text-xs font-medium text-fg-subtle', c === 0 ? 'text-left' : 'pl-3 text-right whitespace-nowrap', c > 2 && 'hidden sm:table-cell')}
+                              >
+                                {column}
+                              </th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {s.answerTable.rows.map((row, r) => (
+                            <m.tr
+                              key={r}
+                              initial={false}
+                              animate={{ opacity: showAnswer ? 1 : 0 }}
+                              transition={{ duration: 0.4, delay: showAnswer ? 0.15 + r * 0.07 : 0, ease: tokens.motion.ease.out }}
+                              data-reveal={i === 0 ? '' : undefined}
+                              className="console-rule border-t"
+                            >
+                              {row.map((cell, c) => (
+                                <td
+                                  key={c}
+                                  className={cn('py-1.5', c === 0 ? 'font-medium text-fg' : 'pl-3 text-right whitespace-nowrap text-fg-muted tabular-nums', c > 2 && 'hidden sm:table-cell')}
+                                >
+                                  {cell}
+                                </td>
+                              ))}
+                            </m.tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    ) : null}
                     {s.chips.length ? (
                       <ul className="mt-4 flex flex-wrap gap-2">
                         {s.chips.map((chip, c) => (
@@ -154,6 +193,17 @@ export function OppieConsole({ scenes, labels }: { scenes: ConsoleScene[]; label
                           </m.li>
                         ))}
                       </ul>
+                    ) : null}
+                    {s.followUp ? (
+                      <m.p
+                        initial={false}
+                        animate={{ opacity: showAnswer ? 1 : 0 }}
+                        transition={{ duration: 0.4, delay: showAnswer ? 0.5 : 0, ease: tokens.motion.ease.out }}
+                        data-reveal={i === 0 ? '' : undefined}
+                        className="console-rule mt-4 border-t pt-4 text-sm font-medium text-fg"
+                      >
+                        {s.followUp}
+                      </m.p>
                     ) : null}
                   </m.div>
                 </div>
@@ -208,6 +258,8 @@ export function OppieConsole({ scenes, labels }: { scenes: ConsoleScene[]; label
           <li key={s.id}>
             Question: {s.question} Oppie answers: {s.answerTag ? `${s.answerTag}. ` : ''}
             {s.answerMain}. {s.answerSupport} {s.chips.join(', ')}
+            {s.answerTable ? ` ${s.answerTable.rows.map((row) => row.map((cell, c) => `${s.answerTable!.columns[c]}: ${cell}`).join(', ')).join('. ')}.` : ''}
+            {s.followUp ? ` ${s.followUp}` : ''}
           </li>
         ))}
       </ul>

@@ -12,6 +12,7 @@ import {
   uniqueIndex,
   uuid,
 } from 'drizzle-orm/pg-core';
+import type { SceneTable } from '../content/scene-table';
 import type { RichDoc } from '../lib/rich-text/types';
 import { questionTypes, surveyStatuses, type SurveyAnswers, type SurveyOption } from '../surveys/types';
 
@@ -195,6 +196,10 @@ export const consoleScenes = pgTable(
     answerMain: text('answer_main').notNull(),
     answerSupport: text('answer_support').notNull().default(''),
     chips: text('chips').array().notNull().default(sql`'{}'::text[]`),
+    /** An optional small grid in the answer, such as a rent roll (src/content/scene-table.ts). */
+    answerTable: jsonb('answer_table').$type<SceneTable>(),
+    /** Oppie's optional question after the answer, such as offering an export. */
+    followUp: text('follow_up').notNull().default(''),
     createdAt: createdAt(),
     updatedAt: updatedAt(),
   },

@@ -26,7 +26,7 @@ Review each in Admin, Content. Publishing a section clears its flag.
 
 ## Invented, illustrative data
 
-- **Oppie console answers.** The three questions are from the brief. The answers are invented for a Midwest office portfolio: Horizon Suite 200 (10 ft finished ceilings, 4,280 RSF, floor 2), three Guardian Building suites (910, 1400, 2215 with sizes), and seven expiring leases with sample tenants Aldergrove Dental, Pinecrest Analytics, and Stonebridge Legal. Replace them in Admin, Oppie console.
+- **Oppie console answers.** The first three questions are from the brief, and the rent roll question is from the owner. The answers are invented for a Midwest office portfolio: Horizon Suite 200 (10 ft finished ceilings, 4,280 RSF, floor 2), three Guardian Building suites (910, 1400, 2215 with sizes), seven expiring leases with sample tenants Aldergrove Dental, Pinecrest Analytics, and Stonebridge Legal, and a rent roll for Parkside Commons (Copperline Coffee, Birchwood Therapy, Northgate Insurance, Summit Engineering: 16,600 RSF, $387,600 annual base rent, with the term left on each lease). Replace them in Admin, Oppie console.
 
 ## Surveys
 
