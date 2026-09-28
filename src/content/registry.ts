@@ -63,13 +63,13 @@ const hero = section({
     consoleNote: text('Console note', { optional: true, max: 80, hint: 'Small print under the console. Leave empty to hide it.' }),
   },
   seed: {
-    headline: 'The AI-driven operating platform for real estate companies.',
+    headline: 'The AI-driven operating platform for property management companies.',
     subhead: textToRich(
       'One system, built around a core CRM, that replaces the patchwork of disconnected apps your teams run every day, with Oppie, your AI assistant, woven into every step.',
     ),
     buttonLabel: 'Book a demo',
     buttonTarget: DEMO_TARGET,
-    supportingLine: 'Built by operators inside a working commercial real estate firm. Not a software lab.',
+    supportingLine: 'Built by operators inside a working commercial property management firm. Not a software lab.',
     consoleBadge: 'Live',
     consoleFooterLeft: 'Ask in plain English',
     consoleFooterRight: 'Answers from your live data',
@@ -127,9 +127,9 @@ const platform = section({
     eyebrow: 'The platform.',
     headline: 'One platform. Every department.',
     body: textToRich(
-      'At the core is a CRM built for real estate: every property, suite, tenant, and prospect in one place, driving leasing, property management, and facilities. Around it, five modules run how you work. Studios for project boards and workflows. Playbook for your SOPs. University for training your team. Compass for running on EOS. And Build, where your own people create custom apps with AI, no developers required.',
+      'At the core is a CRM built for property management: every property, suite, tenant, and prospect in one place, driving leasing, property management, and facilities. Around it, five modules run how you work. Studios for project boards and workflows. Playbook for your SOPs. University for training your team. Compass for running on EOS. And Build, where your own people create custom apps with AI, no developers required.',
     ),
-    coreTitle: 'A CRM built for real estate',
+    coreTitle: 'A CRM built for property management',
     coreText: 'Every property, suite, tenant, and prospect in one place, driving leasing, property management, and facilities.',
     modules: [
       { module: 'build', description: 'Your own people create custom apps with AI, no developers required.' },
@@ -172,7 +172,7 @@ const proof = section({
     eyebrow: '',
     headline: 'Not a demo. A daily operating system.',
     body: textToRich(
-      'Opero was built inside Oxford Companies, a commercial and residential real estate firm in Ann Arbor, where it runs the business every day: leasing, property management, facilities, projects, training, meetings. Seventy-plus people work in it. Six figures of annual software spend, replaced. Every feature exists because an operator needed it.',
+      'Opero was built inside Oxford Companies, a commercial and residential property management firm in Ann Arbor, where it runs the business every day: leasing, property management, facilities, projects, training, meetings. Seventy-plus people work in it. Six figures of annual software spend, replaced. Every feature exists because an operator needed it.',
     ),
     stats: [
       { value: '70+', label: 'People work in it daily' },
@@ -240,7 +240,7 @@ const partnersIntro = section({
     eyebrow: 'For owner-operators and property managers',
     headline: 'Become a {partner}.',
     body: textToRich(
-      "Opero isn't a concept. It runs Oxford Companies, a commercial and residential real estate firm in Ann Arbor, every day: leasing, property management, facilities, projects, training, and meetings. Now we're opening it to a small group of firms as {partners}.\n\nFor twelve months you work directly with the team that built it, shaping the platform around how your firm actually operates, at preferred founding terms. You get the platform early, and a real say in where it goes.",
+      "Opero isn't a concept. It runs Oxford Companies, a commercial and residential property management firm in Ann Arbor, every day: leasing, property management, facilities, projects, training, and meetings. Now we're opening it to a small group of firms as {partners}.\n\nFor twelve months you work directly with the team that built it, shaping the platform around how your firm actually operates, at preferred founding terms. You get the platform early, and a real say in where it goes.",
     ),
   },
 });

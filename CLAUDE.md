@@ -30,9 +30,10 @@ While `serve` runs, the owner should not press Run: Next.js allows one dev serve
 ## Facts and copy rules
 
 - **Opero** is the product. **Operovia, Inc.** is the company (Delaware corporation, Ann Arbor, Michigan). Use "Operovia" only for company contexts: footer, legal, contact.
-- Opero is an operating platform for real estate companies, built around a core CRM. The five modules are **Studios, Playbook, University, Compass, Build**. Always use the bare module names, never "Opero Studios".
+- Opero is an operating platform for property management companies, built around a core CRM. The five modules are **Studios, Playbook, University, Compass, Build**. Always use the bare module names, never "Opero Studios".
 - The AI assistant is **Oppie**. Always that spelling.
 - Opero was built inside **Oxford Companies** in Ann Arbor, which is named publicly.
+- Say property management, never real estate: "real estate" makes people think of realtors, which Opero is not. That covers Oxford Companies too (a commercial and residential property management firm).
 - Never claim to replace or beat Yardi or any accounting system; say nothing about accounting.
 - Never name competitor products. Use categories: a board tool, a wiki, a training platform, an EOS tool, a listing marketing tool.
 - No pricing and no dates anywhere on the public site (that includes copyright years and "last updated" lines).

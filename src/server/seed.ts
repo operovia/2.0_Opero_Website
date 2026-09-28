@@ -15,7 +15,7 @@ export const defaultSettings = {
   siteName: 'Opero',
   contactEmail: 'hello@operovia.com',
   partnerProgramLabel: 'design partner',
-  homeMetaTitle: 'Opero: The AI-driven operating platform for real estate companies',
+  homeMetaTitle: 'Opero: The AI-driven operating platform for property management companies',
   homeMetaDescription:
     'One system, built around a core CRM, that replaces the patchwork of disconnected apps your teams run every day, with Oppie, your AI assistant, woven into every step.',
 };
