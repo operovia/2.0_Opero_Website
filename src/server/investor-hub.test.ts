@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { investorHubHidden, linksToInvestorHub, visibleLinks } from './investor-hub';
+import { investorHubHidden, linksToInvestorHub, visibleLinks, withVisibleLinks } from './investor-hub';
 
 const site = 'https://opero.example';
 
@@ -28,5 +28,11 @@ describe('Investor Hub visibility', () => {
     ];
     expect(visibleLinks(links, true, site)).toEqual([links[0]]);
     expect(visibleLinks(links, false, site)).toEqual(links);
+  });
+
+  it('filters a header or footer section, leaving its other fields alone', () => {
+    const header = { links: [{ label: 'Investor Hub', href: '/investors' }], buttonLabel: 'Book a demo' };
+    expect(withVisibleLinks(header, true, site)).toEqual({ links: [], buttonLabel: 'Book a demo' });
+    expect(withVisibleLinks(header, false, site)).toEqual(header);
   });
 });

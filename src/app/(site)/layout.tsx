@@ -8,7 +8,7 @@ import { SiteHeader } from '@/components/site/site-header';
 import { openGraph } from '@/content/metadata';
 import { getPage, getPublicSettings, isPreview } from '@/content/store';
 import { getSession } from '@/server/auth/session';
-import { investorHubHidden, visibleLinks } from '@/server/investor-hub';
+import { investorHubHidden, withVisibleLinks } from '@/server/investor-hub';
 import { siteUrl } from '@/server/env';
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -30,8 +30,8 @@ export default async function SiteLayout({ children }: LayoutProps<'/'>) {
   if (settings.maintenanceMode && !session) return <MaintenancePage content={site.maintenance} />;
 
   const hubHidden = investorHubHidden(settings, session !== null);
-  const header = { ...site.header, links: visibleLinks(site.header.links, hubHidden, siteUrl()) };
-  const footer = { ...site.footer, links: visibleLinks(site.footer.links, hubHidden, siteUrl()) };
+  const header = withVisibleLinks(site.header, hubHidden, siteUrl());
+  const footer = withVisibleLinks(site.footer, hubHidden, siteUrl());
 
   return (
     <MotionRoot>

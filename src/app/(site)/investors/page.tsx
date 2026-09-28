@@ -1,7 +1,9 @@
 import { ArrowDown, ArrowRight } from 'lucide-react';
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import founderPortrait from '@/assets/founder-portrait.jpg';
 import { Reveal } from '@/components/motion/reveal';
 import { InvestorInquiryForm } from '@/components/site/investor-inquiry-form';
 import { JoinedModules, ScatteredApps, StoryLine } from '@/components/site/investors/story-visuals';
@@ -14,7 +16,9 @@ import { getSession } from '@/server/auth/session';
 import { investorHubHidden } from '@/server/investor-hub';
 
 export async function generateMetadata(): Promise<Metadata> {
-  const [{ intro }, { settings }] = await Promise.all([getPage('investors'), getPublicSettings()]);
+  const [{ intro }, { settings }, session] = await Promise.all([getPage('investors'), getPublicSettings(), getSession()]);
+  // Hidden pages give away nothing, not even their title.
+  if (investorHubHidden(settings, session !== null)) notFound();
   const title = intro.eyebrow || 'Investor Hub';
   return {
     title,
@@ -61,28 +65,39 @@ export default async function InvestorsPage() {
           <div className="investor-glow" />
           <div className="investor-glow investor-glow-2" />
         </div>
-        <Container className="pt-16 pb-16 sm:pt-24 sm:pb-24">
-          {settings.investorHubEnabled ? null : (
-            <p
-              role="status"
-              className="hero-fade mb-8 inline-flex flex-wrap items-center gap-x-2 rounded-full border border-warning/40 bg-warning-soft px-4 py-1.5 text-sm text-fg"
-            >
-              Only signed-in admins can see this page.
-              <Link href="/admin/settings" className="font-semibold underline underline-offset-4">
-                Show it to visitors in Settings
-              </Link>
-            </p>
-          )}
-          {intro.eyebrow ? <Eyebrow className="hero-fade">{intro.eyebrow}</Eyebrow> : null}
-          <h1 id="investors-title" className="hero-rise mt-5 max-w-4xl text-display-lg font-medium text-metal">
-            {intro.headline}
-          </h1>
-          <p className="hero-fade mt-10 flex items-center gap-4 text-base text-fg-muted">
-            <span aria-hidden className="h-px w-10 bg-line-strong" />
-            <span>
-              <span className="font-semibold text-fg">{intro.name}</span>, {intro.role}
-            </span>
-          </p>
+        <Container className="grid grid-cols-1 items-center gap-10 pt-16 pb-16 sm:pt-24 sm:pb-24 lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-16">
+          <div>
+            {settings.investorHubEnabled ? null : (
+              <p
+                role="status"
+                className="hero-fade mb-8 inline-flex flex-wrap items-center gap-x-2 rounded-full border border-warning/40 bg-warning-soft px-4 py-1.5 text-sm text-fg"
+              >
+                Only signed-in admins can see this page.
+                <Link href="/admin/settings" className="font-semibold underline underline-offset-4">
+                  Show it to visitors in Settings
+                </Link>
+              </p>
+            )}
+            {intro.eyebrow ? <Eyebrow className="hero-fade">{intro.eyebrow}</Eyebrow> : null}
+            <h1 id="investors-title" className="hero-rise mt-5 max-w-4xl text-display-lg font-medium text-metal">
+              {intro.headline}
+            </h1>
+          </div>
+          {/* The portrait from the investor room in the Opero repo, as supplied. Signed beneath, like the original. */}
+          <figure className="hero-rise flex items-center gap-5 lg:flex-col lg:items-start">
+            <Image
+              src={founderPortrait}
+              alt={intro.name}
+              placeholder="blur"
+              preload
+              sizes="(min-width: 64rem) 18rem, (min-width: 40rem) 7rem, 5rem"
+              className="h-auto w-20 shrink-0 rounded-xl border border-line-strong shadow-lg sm:w-28 lg:w-72 lg:rounded-2xl"
+            />
+            <figcaption>
+              <span className="block text-base font-semibold text-fg">{intro.name}</span>
+              <span className="mt-1 block text-eyebrow font-semibold text-fg-subtle uppercase">{intro.role}</span>
+            </figcaption>
+          </figure>
         </Container>
       </section>
 

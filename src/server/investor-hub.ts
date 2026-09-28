@@ -23,3 +23,8 @@ export function linksToInvestorHub(href: string, siteUrl: string): boolean {
 export function visibleLinks<T extends { href: string }>(links: T[], hubHidden: boolean, siteUrl: string): T[] {
   return hubHidden ? links.filter((link) => !linksToInvestorHub(link.href, siteUrl)) : links;
 }
+
+/** A header or footer section with its links filtered the same way. */
+export function withVisibleLinks<T extends { links: { href: string }[] }>(section: T, hubHidden: boolean, siteUrl: string): T {
+  return { ...section, links: visibleLinks(section.links, hubHidden, siteUrl) };
+}
