@@ -1,7 +1,7 @@
 import { textToRich } from '@/lib/rich-text';
 import { choice, link, list, rich, text, type Fields, type Values } from './fields';
 import { tokenHelp } from './tokens';
-import { DEMO_TARGET } from './constants';
+import { DEMO_TARGET, INVESTOR_HUB_PATH } from './constants';
 
 /**
  * Every editable section of every public page: its fields and its seed copy.
@@ -428,7 +428,12 @@ const header = section({
   description: tokenHelp,
   draftCopy: true,
   fields: {
-    links: list('Navigation links', 'Link', { label: text('Label', { max: 40, hint: tokenHelp }), href: link('Link', { hint: buttonTargetHint }) }, { max: 5 }),
+    links: list(
+      'Navigation links',
+      'Link',
+      { label: text('Label', { max: 40, hint: tokenHelp }), href: link('Link', { hint: buttonTargetHint }) },
+      { max: 5, hint: `A link to ${INVESTOR_HUB_PATH} shows to visitors only while the Investor Hub is switched on in Settings.` },
+    ),
     buttonLabel: text('Button label', { max: 40 }),
     buttonTarget: link('Button link', { hint: buttonTargetHint }),
   },
@@ -437,6 +442,7 @@ const header = section({
       { label: 'Platform', href: '/#platform' },
       { label: 'Oppie', href: '/#oppie' },
       { label: '{Partners}', href: '/partners' },
+      { label: 'Investor Hub', href: INVESTOR_HUB_PATH },
     ],
     buttonLabel: 'Book a demo',
     buttonTarget: DEMO_TARGET,

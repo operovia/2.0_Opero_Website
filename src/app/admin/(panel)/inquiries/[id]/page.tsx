@@ -7,7 +7,7 @@ import { ConfirmSubmit } from '@/components/ui/confirm-submit';
 import { PageHeader } from '@/components/ui/page-header';
 import { Time } from '@/components/ui/time';
 import { requireAdmin } from '@/server/auth/session';
-import { getInquiry, statusLabels, typeLabel } from '@/server/inquiries-admin';
+import { getInquiry, inquirerName, statusLabels, typeLabel } from '@/server/inquiries-admin';
 import { getSettings } from '@/server/settings';
 import { deleteInquiry } from '../actions';
 import { StatusForm } from './status-form';
@@ -38,7 +38,7 @@ export default async function InquiryPage({ params }: PageProps<'/admin/inquirie
         </Link>
       </nav>
       <PageHeader
-        title={`${inquiry.name}, ${inquiry.firm}`}
+        title={inquirerName(inquiry)}
         description={
           <>
             {typeLabel(inquiry.type, settings.partnerProgramLabel)}, received <Time value={inquiry.createdAt} />
@@ -53,7 +53,7 @@ export default async function InquiryPage({ params }: PageProps<'/admin/inquirie
           <CardBody>
             <dl className="divide-y divide-line">
               <Detail label="Name" value={inquiry.name} />
-              <Detail label="Firm" value={inquiry.firm} />
+              <Detail label={inquiry.type === 'investor' ? 'Firm or fund' : 'Firm'} value={inquiry.firm} />
               {inquiry.type === 'partner' ? <Detail label="Role" value={inquiry.role} /> : null}
               <Detail
                 label="Email"
@@ -75,7 +75,7 @@ export default async function InquiryPage({ params }: PageProps<'/admin/inquirie
                   )
                 }
               />
-              {inquiry.type === 'demo' ? <Detail label="Message" value={inquiry.message} /> : null}
+              {inquiry.type !== 'partner' ? <Detail label="Message" value={inquiry.message} /> : null}
               {inquiry.type === 'partner' ? (
                 <>
                   <Detail label="Commercial square feet" value={number(inquiry.commercialSqft)} />

@@ -6,3 +6,6 @@
 
 /** Any link to this target opens the demo request form (see DemoDialog). */
 export const DEMO_TARGET = '#book-demo';
+
+/** Where the Investor Hub lives. Visitors see it only while it is switched on in Settings. */
+export const INVESTOR_HUB_PATH = '/investors';

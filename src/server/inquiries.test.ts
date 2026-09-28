@@ -2,7 +2,8 @@ import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('server-only', () => ({}));
 
-const { demoRequestSchema, partnerApplicationSchema } = await import('./inquiries');
+const { demoRequestSchema, investorInquirySchema, partnerApplicationSchema } = await import('./inquiries');
+const { investorInquiryNotification } = await import('./email/templates');
 
 const base = { name: 'Jordan Rivera', firm: 'Lakeshore', email: 'Jordan@Example.com ' };
 
@@ -40,5 +41,25 @@ describe('partner application validation', () => {
   it('requires role and interest', () => {
     expect(partnerApplicationSchema.safeParse({ ...application, role: '' }).success).toBe(false);
     expect(partnerApplicationSchema.safeParse({ ...application, interest: '' }).success).toBe(false);
+  });
+});
+
+describe('investor inquiry validation', () => {
+  it('lets an investor leave the firm and message empty', () => {
+    const parsed = investorInquirySchema.parse({ name: 'Avery Chen', firm: '  ', email: 'Avery@Example.com' });
+    expect(parsed).toEqual({ name: 'Avery Chen', firm: '', email: 'avery@example.com', phone: '', message: '' });
+  });
+
+  it('still requires a name and a valid email', () => {
+    expect(investorInquirySchema.safeParse({ name: '', email: 'avery@example.com' }).success).toBe(false);
+    expect(investorInquirySchema.safeParse({ name: 'Avery Chen', email: 'avery' }).success).toBe(false);
+  });
+
+  it('names the firm in the notification only when there is one', () => {
+    const inquiry = { name: 'Avery Chen', firm: '', email: 'avery@example.com', phone: '', message: 'Hello' };
+    expect(investorInquiryNotification(inquiry, 'https://example.com/admin').subject).toBe('Investor inquiry from Avery Chen');
+    expect(investorInquiryNotification({ ...inquiry, firm: 'Example Capital' }, 'https://example.com/admin').subject).toBe(
+      'Investor inquiry from Avery Chen, Example Capital',
+    );
   });
 });

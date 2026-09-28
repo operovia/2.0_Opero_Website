@@ -1,7 +1,15 @@
 'use server';
 
 import { failure, fieldErrors, formValues, success, type FormState } from '@/lib/forms';
-import { createDemoRequest, createPartnerApplication, demoRequestSchema, partnerApplicationSchema, screen } from '@/server/inquiries';
+import {
+  createDemoRequest,
+  createInvestorInquiry,
+  createPartnerApplication,
+  demoRequestSchema,
+  investorInquirySchema,
+  partnerApplicationSchema,
+  screen,
+} from '@/server/inquiries';
 import { retryWording } from '@/server/rate-limit';
 
 const CHECK_FIELDS = 'Please check the highlighted fields.';
@@ -43,6 +51,26 @@ export async function applyForSeat(_prev: FormState, formData: FormData): Promis
     await createPartnerApplication(parsed.data);
   } catch (error) {
     console.error('[opero] Could not save a partner application', error);
+    return failure(SERVER_TROUBLE, { values });
+  }
+  return success();
+}
+
+export async function sendInvestorInquiry(_prev: FormState, formData: FormData): Promise<FormState> {
+  const values = formValues(formData, ['name', 'firm', 'email', 'phone', 'message']);
+  const parsed = investorInquirySchema.safeParse(values);
+  if (!parsed.success) return failure(CHECK_FIELDS, { fieldErrors: fieldErrors(parsed.error), values });
+
+  const screening = await screen(formData, 'investor', parsed.data.email);
+  if (screening.verdict === 'bot') return success();
+  if (screening.verdict === 'limited') {
+    return failure(`We have already received several messages from you. Please try again in ${retryWording(screening.retryAfterSeconds)}.`, { values });
+  }
+
+  try {
+    await createInvestorInquiry(parsed.data);
+  } catch (error) {
+    console.error('[opero] Could not save an investor inquiry', error);
     return failure(SERVER_TROUBLE, { values });
   }
   return success();

@@ -31,6 +31,7 @@ const schema = z.object({
   homeMetaDescription: z.string().trim().min(1, 'Enter a description for search results.').max(320),
   analyticsSnippet: z.string().max(10_000, 'The snippet is too long.'),
   maintenanceMode: z.literal('on').optional().transform(Boolean),
+  investorHubEnabled: z.literal('on').optional().transform(Boolean),
 });
 
 const fields = [
@@ -43,12 +44,13 @@ const fields = [
   'homeMetaDescription',
   'analyticsSnippet',
   'maintenanceMode',
+  'investorHubEnabled',
 ] as const;
 
 export async function saveSettings(_prev: FormState, formData: FormData): Promise<FormState> {
   const { user } = await requireAdmin();
   // Echo what was submitted so the form keeps it after React resets the fields.
-  const values = { maintenanceMode: '', ...formValues(formData, fields) };
+  const values = { maintenanceMode: '', investorHubEnabled: '', ...formValues(formData, fields) };
   const parsed = schema.safeParse(Object.fromEntries(formData));
   if (!parsed.success) return failure('Check the highlighted fields.', { fieldErrors: fieldErrors(parsed.error), values });
   const next = parsed.data;

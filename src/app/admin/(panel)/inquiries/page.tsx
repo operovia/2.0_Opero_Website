@@ -7,6 +7,7 @@ import { Time } from '@/components/ui/time';
 import { cn } from '@/lib/cn';
 import { requireAdmin } from '@/server/auth/session';
 import {
+  inquirerName,
   isInquiryStatus,
   isInquiryType,
   listInquiries,
@@ -50,7 +51,7 @@ export default async function InquiriesPage({ searchParams }: PageProps<'/admin/
 
   return (
     <div className="space-y-8">
-      <PageHeader title="Inquiries" description="Demo requests and partner applications from the site, newest first." />
+      <PageHeader title="Inquiries" description="Demo requests, partner applications, and investor inquiries from the site, newest first." />
 
       <div className="flex flex-wrap items-center justify-between gap-4">
         <nav aria-label="Filter by type" className="flex flex-wrap gap-2">
@@ -62,6 +63,9 @@ export default async function InquiriesPage({ searchParams }: PageProps<'/admin/
           </Link>
           <Link href={href({ type: 'partner', page: 1 })} aria-current={type === 'partner' ? 'page' : undefined} className={pill(type === 'partner')}>
             {typeLabel('partner', settings.partnerProgramLabel)}s
+          </Link>
+          <Link href={href({ type: 'investor', page: 1 })} aria-current={type === 'investor' ? 'page' : undefined} className={pill(type === 'investor')}>
+            Investor inquiries
           </Link>
         </nav>
         <nav aria-label="Filter by status" className="flex flex-wrap gap-2">
@@ -85,13 +89,13 @@ export default async function InquiriesPage({ searchParams }: PageProps<'/admin/
                   <div className="min-w-0">
                     <p className="flex flex-wrap items-center gap-2">
                       <span className={cn('truncate text-fg', row.status === 'new' ? 'font-semibold' : 'font-medium')}>
-                        {row.name}, {row.firm}
+                        {inquirerName(row)}
                       </span>
                       <Badge tone={statusTone[row.status]}>{statusLabels[row.status]}</Badge>
                     </p>
                     <p className="mt-1 truncate text-sm text-fg-muted">
                       {typeLabel(row.type, settings.partnerProgramLabel)}
-                      {row.type === 'demo' && row.message ? ` · ${row.message}` : ''}
+                      {row.type !== 'partner' && row.message ? ` · ${row.message}` : ''}
                       {row.type === 'partner' && row.role ? ` · ${row.role}` : ''}
                     </p>
                   </div>
@@ -105,7 +109,7 @@ export default async function InquiriesPage({ searchParams }: PageProps<'/admin/
         </Card>
       ) : (
         <EmptyState title={type || status ? 'Nothing matches these filters' : 'No inquiries yet'}>
-          Demo requests and partner applications appear here as they arrive, and are emailed to the notification recipients in Settings.
+          Demo requests, partner applications, and investor inquiries appear here as they arrive, and are emailed to the notification recipients in Settings.
         </EmptyState>
       )}
 

@@ -121,6 +121,8 @@ export const siteSettings = pgTable(
     homeMetaDescription: text('home_meta_description').notNull(),
     analyticsSnippet: text('analytics_snippet').notNull().default(''),
     maintenanceMode: boolean('maintenance_mode').notNull().default(false),
+    /** Off until the owner has reviewed it: the Investor Hub and links to it show only to signed-in admins. */
+    investorHubEnabled: boolean('investor_hub_enabled').notNull().default(false),
     updatedBy: uuid('updated_by').references(() => adminUsers.id, { onDelete: 'set null' }),
     updatedAt: updatedAt(),
   },
@@ -220,10 +222,10 @@ export const media = pgTable('media', {
 });
 
 /* ------------------------------------------------------------------------ */
-/* Inquiries: demo requests and partner applications                        */
+/* Inquiries: demo requests, partner applications, investor inquiries       */
 /* ------------------------------------------------------------------------ */
 
-export const inquiryTypes = ['demo', 'partner'] as const;
+export const inquiryTypes = ['demo', 'partner', 'investor'] as const;
 export const inquiryStatuses = ['new', 'contacted', 'closed'] as const;
 
 export const inquiries = pgTable(

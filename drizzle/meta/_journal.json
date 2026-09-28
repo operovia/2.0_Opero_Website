@@ -15,6 +15,13 @@
       "when": 1790556698721,
       "tag": "0001_console_scene_tables",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1790636414406,
+      "tag": "0002_investor_hub",
+      "breakpoints": true
     }
   ]
 }

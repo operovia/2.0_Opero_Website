@@ -58,6 +58,27 @@ export function demoRequestNotification(inquiry: InquiryForEmail, adminUrl: stri
   };
 }
 
+export function investorInquiryNotification(inquiry: InquiryForEmail, adminUrl: string): Email {
+  const who = inquiry.firm ? `${inquiry.name} at ${inquiry.firm}` : inquiry.name;
+  const subject = `Investor inquiry from ${inquiry.firm ? `${inquiry.name}, ${inquiry.firm}` : inquiry.name}`;
+  return {
+    subject,
+    ...renderEmail({
+      preheader: `${who} wrote from the Investor Hub.`,
+      heading: 'New investor inquiry',
+      body: [`${who} wrote from the Investor Hub. Reply to this email to write back to them directly.`],
+      details: [
+        ['Name', inquiry.name],
+        ['Firm or fund', inquiry.firm],
+        ['Email', inquiry.email],
+        ['Phone', inquiry.phone],
+        ['Message', inquiry.message ?? ''],
+      ],
+      button: { label: 'Open in the admin', url: adminUrl },
+    }),
+  };
+}
+
 export function partnerApplicationNotification(inquiry: InquiryForEmail, adminUrl: string, programLabel: string): Email {
   const label = programLabel.charAt(0).toUpperCase() + programLabel.slice(1);
   const subject = `${label} application from ${inquiry.firm}`;

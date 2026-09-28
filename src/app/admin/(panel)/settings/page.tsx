@@ -20,7 +20,7 @@ export default async function SettingsPage() {
 
   return (
     <div className="space-y-8">
-      <PageHeader title="Settings" description="Site-wide details, notifications, search appearance, and maintenance mode." />
+      <PageHeader title="Settings" description="Site-wide details, notifications, search appearance, the Investor Hub, and maintenance mode." />
       <SettingsForm
         images={images}
         values={{
@@ -33,6 +33,7 @@ export default async function SettingsPage() {
           homeMetaDescription: settings.homeMetaDescription,
           analyticsSnippet: settings.analyticsSnippet,
           maintenanceMode: settings.maintenanceMode,
+          investorHubEnabled: settings.investorHubEnabled,
         }}
       />
     </div>

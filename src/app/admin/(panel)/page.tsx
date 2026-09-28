@@ -8,7 +8,7 @@ import { Time } from '@/components/ui/time';
 import { getPageDef, getSectionDef } from '@/content/registry';
 import { requireAdmin } from '@/server/auth/session';
 import { allPagesStatus, recentPublishes } from '@/server/content-admin';
-import { newInquiryCount, recentNewInquiries, typeLabel } from '@/server/inquiries-admin';
+import { inquirerName, newInquiryCount, recentNewInquiries, typeLabel } from '@/server/inquiries-admin';
 import { getSettings } from '@/server/settings';
 import { surveysWithRecentResponses } from '@/server/surveys';
 
@@ -70,7 +70,7 @@ export default async function DashboardPage() {
                 <Row
                   key={row.id}
                   href={`/admin/inquiries/${row.id}`}
-                  title={`${row.name}, ${row.firm}`}
+                  title={inquirerName(row)}
                   detail={typeLabel(row.type, settings.partnerProgramLabel)}
                   time={row.createdAt}
                 />

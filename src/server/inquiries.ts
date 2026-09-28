@@ -1,9 +1,9 @@
 import 'server-only';
 import { z } from 'zod';
 import { db } from '@/db/client';
-import { inquiries } from '@/db/schema';
+import { inquiries, type inquiryTypes } from '@/db/schema';
 import { sendEmails } from '@/server/email/send';
-import { demoRequestNotification, partnerApplicationNotification } from '@/server/email/templates';
+import { demoRequestNotification, investorInquiryNotification, partnerApplicationNotification } from '@/server/email/templates';
 import { siteUrl } from '@/server/env';
 import { ELAPSED_FIELD, HONEYPOT_FIELD } from '@/server/inquiries-fields';
 import { hit } from '@/server/rate-limit';
@@ -41,6 +41,9 @@ const contact = {
 
 export const demoRequestSchema = z.object({ ...contact, message: optional(3000) });
 
+/** Investors often write for themselves rather than a firm, so the firm is optional here. */
+export const investorInquirySchema = z.object({ ...contact, firm: optional(160), message: optional(3000) });
+
 export const partnerApplicationSchema = z.object({
   ...contact,
   role: required('role', 120),
@@ -58,7 +61,7 @@ const MIN_FILL_MS = 2500;
 
 export type Screening = { verdict: 'ok' } | { verdict: 'bot' } | { verdict: 'limited'; retryAfterSeconds: number };
 
-export async function screen(formData: FormData, kind: 'demo' | 'partner', email: string): Promise<Screening> {
+export async function screen(formData: FormData, kind: (typeof inquiryTypes)[number], email: string): Promise<Screening> {
   if (String(formData.get(HONEYPOT_FIELD) ?? '') !== '') return { verdict: 'bot' };
   const elapsed = Number(formData.get(ELAPSED_FIELD) || NaN);
   if (Number.isFinite(elapsed) && elapsed < MIN_FILL_MS) return { verdict: 'bot' };
@@ -76,6 +79,7 @@ export async function screen(formData: FormData, kind: 'demo' | 'partner', email
 
 type DemoInput = z.infer<typeof demoRequestSchema>;
 type PartnerInput = z.infer<typeof partnerApplicationSchema>;
+type InvestorInput = z.infer<typeof investorInquirySchema>;
 
 async function notify(build: (adminUrl: string, label: string) => ReturnType<typeof demoRequestNotification>, id: string, replyTo: string) {
   const settings = await getSettings();
@@ -111,5 +115,14 @@ export async function createPartnerApplication(input: PartnerInput): Promise<str
     })
     .returning({ id: inquiries.id });
   await notify((url, label) => partnerApplicationNotification(input, url, label), row!.id, input.email);
+  return row!.id;
+}
+
+export async function createInvestorInquiry(input: InvestorInput): Promise<string> {
+  const [row] = await db
+    .insert(inquiries)
+    .values({ type: 'investor', name: input.name, firm: input.firm, email: input.email, phone: input.phone, message: input.message })
+    .returning({ id: inquiries.id });
+  await notify((url) => investorInquiryNotification(input, url), row!.id, input.email);
   return row!.id;
 }

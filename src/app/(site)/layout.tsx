@@ -8,6 +8,7 @@ import { SiteHeader } from '@/components/site/site-header';
 import { openGraph } from '@/content/metadata';
 import { getPage, getPublicSettings, isPreview } from '@/content/store';
 import { getSession } from '@/server/auth/session';
+import { investorHubHidden, visibleLinks } from '@/server/investor-hub';
 import { siteUrl } from '@/server/env';
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -28,6 +29,10 @@ export default async function SiteLayout({ children }: LayoutProps<'/'>) {
 
   if (settings.maintenanceMode && !session) return <MaintenancePage content={site.maintenance} />;
 
+  const hubHidden = investorHubHidden(settings, session !== null);
+  const header = { ...site.header, links: visibleLinks(site.header.links, hubHidden, siteUrl()) };
+  const footer = { ...site.footer, links: visibleLinks(site.footer.links, hubHidden, siteUrl()) };
+
   return (
     <MotionRoot>
       {/* Content that animates in stays visible when JavaScript is off. */}
@@ -46,11 +51,11 @@ export default async function SiteLayout({ children }: LayoutProps<'/'>) {
           Maintenance mode is on. Visitors see the holding page; you see the site because you are signed in.
         </p>
       ) : null}
-      <SiteHeader content={site.header} />
+      <SiteHeader content={header} />
       <main id="main" tabIndex={-1} className="outline-none">
         {children}
       </main>
-      <SiteFooter content={site.footer} email={settings.contactEmail} />
+      <SiteFooter content={footer} email={settings.contactEmail} />
       <DemoDialog content={site.demoForm} />
       {settings.analyticsSnippet ? <div hidden dangerouslySetInnerHTML={{ __html: settings.analyticsSnippet }} /> : null}
     </MotionRoot>

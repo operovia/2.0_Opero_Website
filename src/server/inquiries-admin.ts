@@ -49,5 +49,11 @@ export const statusLabels: Record<InquiryStatus, string> = { new: 'New', contact
 
 export function typeLabel(type: InquiryType, partnerLabel: string): string {
   if (type === 'demo') return 'Demo request';
+  if (type === 'investor') return 'Investor inquiry';
   return `${partnerLabel.charAt(0).toUpperCase()}${partnerLabel.slice(1)} application`;
+}
+
+/** Who wrote in: name and firm, or just the name when they gave no firm. */
+export function inquirerName({ name, firm }: Pick<Inquiry, 'name' | 'firm'>): string {
+  return firm ? `${name}, ${firm}` : name;
 }
