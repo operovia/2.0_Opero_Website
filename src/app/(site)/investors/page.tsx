@@ -6,7 +6,8 @@ import { notFound } from 'next/navigation';
 import founderPortrait from '@/assets/founder-portrait.jpg';
 import { Reveal, RevealGroup, RevealItem } from '@/components/motion/reveal';
 import { InvestorInquiryForm } from '@/components/site/investor-inquiry-form';
-import { JoinedModules, ScatteredApps, StoryLine } from '@/components/site/investors/story-visuals';
+import { BrandMark } from '@/components/brand/brand-mark';
+import { AppCloud, StoryLine } from '@/components/site/investors/story-visuals';
 import { Container, Eyebrow } from '@/components/site/layout-parts';
 import { LinkedInGlyph } from '@/components/site/linkedin-glyph';
 import { SiteLink } from '@/components/site/site-link';
@@ -40,8 +41,8 @@ const lines = (text: string) =>
     .map((line) => line.trim())
     .filter(Boolean);
 
-/** The dots where each step meets the line across the story: gray through the problem, a jewel at the solution. */
-const nodes = ['bg-line-strong', 'bg-line-strong', 'jewel-build'];
+/** The dots where each column meets the line across the story: gray at the problem, a jewel at the solution. */
+const nodes = ['bg-line-strong', 'jewel-build'];
 
 export default async function InvestorsPage() {
   const [{ settings }, session] = await Promise.all([getPublicSettings(), getSession()]);
@@ -53,22 +54,8 @@ export default async function InvestorsPage() {
   const onDeck = areas.reduce((sum, area) => sum + area.next.length, 0);
 
   const steps = [
-    {
-      picture: (
-        <span className="text-numeral font-medium text-metal tabular-nums" aria-hidden>
-          {story.experienceValue}
-        </span>
-      ),
-      title: (
-        <>
-          <span className="sr-only">{story.experienceValue} </span>
-          {story.experienceTitle}
-        </>
-      ),
-      body: story.experienceBody,
-    },
-    { picture: <ScatteredApps />, title: story.problemTitle, body: story.problemBody },
-    { picture: <JoinedModules className="mb-2" />, title: story.solutionTitle, body: story.solutionBody },
+    { picture: <AppCloud className="h-full w-full max-w-md" />, title: story.problemTitle, body: story.problemBody },
+    { picture: <BrandMark name="opero" className="h-16 sm:h-20" decorative />, title: story.solutionTitle, body: story.solutionBody },
   ];
 
   return (
@@ -131,7 +118,7 @@ export default async function InvestorsPage() {
         <Container>
           <div className="relative">
             <StoryLine className="absolute inset-x-0 top-1.5 hidden md:block" />
-            <ol className="grid grid-cols-1 gap-14 md:grid-cols-3 md:gap-10">
+            <ol className="grid grid-cols-1 gap-14 md:grid-cols-2 md:gap-16">
               {steps.map((step, i) => (
                 <li key={i}>
                   <Reveal delay={i * 0.12}>
@@ -141,9 +128,9 @@ export default async function InvestorsPage() {
                         {String(i + 1).padStart(2, '0')}
                       </span>
                     </div>
-                    <div className="investor-anchor mt-8 flex items-end">{step.picture}</div>
+                    <div className="mt-8 flex h-44 items-center">{step.picture}</div>
                     <h2 className="mt-6 text-xl font-semibold text-fg">{step.title}</h2>
-                    {step.body ? <p className="mt-3 max-w-sm text-base text-fg-muted">{step.body}</p> : null}
+                    <p className="mt-3 max-w-md text-base text-fg-muted">{step.body}</p>
                   </Reveal>
                 </li>
               ))}

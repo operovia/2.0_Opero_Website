@@ -380,21 +380,15 @@ const investorsIntro = section({
 
 const investorsStory = section({
   label: 'The story',
-  description: 'Three steps across the page: the experience, the problem, and the solution.',
+  description: 'Two columns across the page: the problem, over a cloud of disconnected apps, and the solution, under the Opero mark.',
   draftCopy: true,
   fields: {
-    experienceValue: text('Experience: large number', { max: 6, hint: 'Shown very large, like 25.' }),
-    experienceTitle: text('Experience: title', { max: 80 }),
-    experienceBody: text('Experience: text', { optional: true, max: 240, multiline: true, hint: 'Optional.' }),
     problemTitle: text('Problem: title', { max: 80 }),
     problemBody: text('Problem: text', { max: 240, multiline: true }),
     solutionTitle: text('Solution: title', { max: 80 }),
     solutionBody: text('Solution: text', { max: 240, multiline: true }),
   },
   seed: {
-    experienceValue: '25',
-    experienceTitle: 'Years in property management',
-    experienceBody: '',
     problemTitle: 'The problem',
     problemBody:
       'Operators run on a patchwork of disconnected apps, each with its own login, its own bill, and its own version of the truth. None of them know the properties.',

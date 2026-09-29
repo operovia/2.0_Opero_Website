@@ -1,13 +1,30 @@
 'use client';
 
+import {
+  BookOpen,
+  CalendarDays,
+  CirclePlay,
+  ClipboardList,
+  FolderOpen,
+  GraduationCap,
+  KeyRound,
+  Mail,
+  Megaphone,
+  MessageSquare,
+  Sheet,
+  SquareKanban,
+  StickyNote,
+  Target,
+  type LucideIcon,
+} from 'lucide-react';
 import { m, type Variants } from 'motion/react';
 import { cn } from '@/lib/cn';
-import { tokens, type ModuleKey } from '@/theme/tokens';
+import { tokens } from '@/theme/tokens';
 
 const { duration, ease } = tokens.motion;
 const settle = { duration: duration.reveal / 1000, ease: ease.out };
 
-/** The line the three steps hang from, drawn left to right as it scrolls into view. Wide screens only. */
+/** The line the two columns hang from, drawn left to right as it scrolls into view. Wide screens only. */
 export function StoryLine({ className }: { className?: string }) {
   return (
     <m.span
@@ -22,68 +39,58 @@ export function StoryLine({ className }: { className?: string }) {
   );
 }
 
+/** App icons: rounded squares, their corners about a fifth of their size. */
+const tiles = {
+  sm: { box: 'size-9 rounded-sm', icon: 'size-4' },
+  md: { box: 'size-11 rounded-md', icon: 'size-5' },
+  lg: { box: 'size-13 rounded-md', icon: 'size-6' },
+} as const;
+
 /**
- * The problem: apps of every size, scattered and unconnected. Circles in the
- * picture's own units (it is 160 by 96), drawn as outlines.
+ * The problem: a cloud of apps, one for everything and none of them joined.
+ * Generic icons for the kinds of tools the site names (a board tool, a wiki,
+ * a training platform, an EOS tool, a listing marketing tool) and the rest of
+ * the sprawl, never a real product's logo. Positions are shares of the
+ * picture's width and height; faint ones sit further back, and a few carry
+ * an unread badge, the way they all ask for attention.
  */
-const apps = [
-  { x: 12, y: 70, r: 7 },
-  { x: 40, y: 28, r: 10 },
-  { x: 66, y: 64, r: 5 },
-  { x: 92, y: 22, r: 6 },
-  { x: 106, y: 70, r: 11 },
-  { x: 140, y: 34, r: 8 },
-  { x: 150, y: 80, r: 4 },
+const apps: { icon: LucideIcon; x: number; y: number; size: keyof typeof tiles; tilt: string; faint?: boolean; badge?: boolean }[] = [
+  { icon: SquareKanban, x: 0, y: 50, size: 'lg', tilt: '-rotate-6' },
+  { icon: Sheet, x: 11, y: 6, size: 'md', tilt: 'rotate-3' },
+  { icon: StickyNote, x: 17, y: 62, size: 'sm', tilt: 'rotate-6', faint: true },
+  { icon: BookOpen, x: 25, y: 30, size: 'md', tilt: '-rotate-3' },
+  { icon: GraduationCap, x: 34, y: 68, size: 'md', tilt: 'rotate-2' },
+  { icon: Mail, x: 38, y: 2, size: 'sm', tilt: '-rotate-12', badge: true },
+  { icon: CirclePlay, x: 46, y: 38, size: 'lg', tilt: 'rotate-6' },
+  { icon: Target, x: 57, y: 6, size: 'md', tilt: '-rotate-6' },
+  { icon: CalendarDays, x: 61, y: 70, size: 'sm', tilt: 'rotate-12', faint: true },
+  { icon: Megaphone, x: 68, y: 34, size: 'md', tilt: 'rotate-3' },
+  { icon: KeyRound, x: 76, y: 0, size: 'sm', tilt: 'rotate-6' },
+  { icon: MessageSquare, x: 80, y: 62, size: 'md', tilt: '-rotate-3', badge: true },
+  { icon: ClipboardList, x: 87, y: 22, size: 'lg', tilt: '-rotate-6', badge: true },
+  { icon: FolderOpen, x: 93, y: 68, size: 'sm', tilt: 'rotate-3', faint: true },
 ];
 
 const drift: Variants = {
-  hidden: { opacity: 0, y: 10 },
-  shown: (i: number) => ({ opacity: 1, y: 0, transition: { ...settle, delay: 0.1 + i * 0.07 } }),
+  hidden: { opacity: 0, y: 12, scale: 0.9 },
+  shown: ({ i, faint }: { i: number; faint?: boolean }) => ({ opacity: faint ? 0.55 : 1, y: 0, scale: 1, transition: { ...settle, delay: 0.1 + i * 0.05 } }),
 };
 
-export function ScatteredApps({ className }: { className?: string }) {
+export function AppCloud({ className }: { className?: string }) {
   return (
-    <m.svg
-      aria-hidden
-      viewBox="0 0 160 96"
-      className={cn('h-full w-auto max-w-full overflow-visible', className)}
-      initial="hidden"
-      whileInView="shown"
-      viewport={{ once: true, amount: 0.5 }}
-    >
-      {apps.map(({ x, y, r }, i) => (
-        <m.circle key={i} data-reveal custom={i} variants={drift} cx={x} cy={y} r={r} className="fill-none stroke-fg-subtle" strokeWidth={1.5} />
-      ))}
-    </m.svg>
-  );
-}
-
-/** The solution: the five modules, in brand order, joined on one line. Class names are written out so Tailwind finds them. */
-const jewels: Record<ModuleKey, string> = {
-  build: 'jewel-build',
-  studios: 'jewel-studios',
-  playbook: 'jewel-playbook',
-  university: 'jewel-university',
-  compass: 'jewel-compass',
-};
-
-const rise: Variants = {
-  hidden: { opacity: 0, y: 14, scale: 0.8 },
-  shown: (i: number) => ({ opacity: 1, y: 0, scale: 1, transition: { ...settle, delay: 0.15 + i * 0.08 } }),
-};
-
-export function JoinedModules({ className }: { className?: string }) {
-  return (
-    <m.div
-      aria-hidden
-      className={cn('relative flex items-center gap-3', className)}
-      initial="hidden"
-      whileInView="shown"
-      viewport={{ once: true, amount: 0.5 }}
-    >
-      <span className="absolute inset-x-5 top-1/2 h-px bg-line-strong" />
-      {Object.entries(jewels).map(([module, jewel], i) => (
-        <m.span key={module} data-reveal custom={i} variants={rise} className={cn('relative size-10 rounded-full shadow-sm', jewel)} />
+    <m.div aria-hidden className={cn('relative', className)} initial="hidden" whileInView="shown" viewport={{ once: true, amount: 0.5 }}>
+      {apps.map(({ icon: Icon, x, y, size, tilt, faint, badge }, i) => (
+        <m.span
+          key={i}
+          data-reveal
+          custom={{ i, faint }}
+          variants={drift}
+          className={cn('absolute grid place-items-center border border-line-strong bg-surface text-fg-subtle shadow-md', tiles[size].box, tilt)}
+          style={{ left: `${x}%`, top: `${y}%` }}
+        >
+          <Icon className={tiles[size].icon} strokeWidth={1.75} />
+          {badge ? <span className="absolute -top-1 -right-1 size-2.5 rounded-full bg-danger ring-2 ring-canvas" /> : null}
+        </m.span>
       ))}
     </m.div>
   );

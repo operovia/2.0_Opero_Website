@@ -866,24 +866,20 @@
   animation-direction: alternate-reverse;
 }
 
-/* The story's three steps hang from one line: gray through the experience and the problem, the jewels through the solution. */
+/* The story's two columns hang from one line: gray through the problem, the jewels through the solution. */
 .investor-line {
   background: linear-gradient(
     to right,
     var(--o-line-strong) 0%,
-    var(--o-line-strong) 60%,
-    var(--o-jewel-crimson-base) 67%,
-    var(--o-jewel-violet-base) 75%,
-    var(--o-jewel-gold-base) 83%,
-    var(--o-jewel-green-base) 91%,
+    var(--o-line-strong) 50%,
+    var(--o-jewel-crimson-base) 56%,
+    var(--o-jewel-violet-base) 67%,
+    var(--o-jewel-gold-base) 78%,
+    var(--o-jewel-green-base) 89%,
     var(--o-jewel-teal-base) 100%
   );
 }
 
-/* Each step's picture is as tall as the large number, so the titles line up. */
-.investor-anchor {
-  height: var(--o-text-numeral);
-}
 
 /* What comes next: drawn, not built yet. */
 .investor-blueprint {
