@@ -1,10 +1,10 @@
-import { ArrowDown, ArrowRight } from 'lucide-react';
+import { ArrowDown, ArrowRight, Check, CircleDashed } from 'lucide-react';
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import founderPortrait from '@/assets/founder-portrait.jpg';
-import { Reveal } from '@/components/motion/reveal';
+import { Reveal, RevealGroup, RevealItem } from '@/components/motion/reveal';
 import { InvestorInquiryForm } from '@/components/site/investor-inquiry-form';
 import { JoinedModules, ScatteredApps, StoryLine } from '@/components/site/investors/story-visuals';
 import { Container, Eyebrow } from '@/components/site/layout-parts';
@@ -30,13 +30,24 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
+/** The items in a one-per-line list from the admin. */
+const lines = (text: string) =>
+  text
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean);
+
 /** The dots where each step meets the line across the story: gray through the problem, a jewel at the solution. */
 const nodes = ['bg-line-strong', 'bg-line-strong', 'jewel-build'];
 
 export default async function InvestorsPage() {
   const [{ settings }, session] = await Promise.all([getPublicSettings(), getSession()]);
   if (investorHubHidden(settings, session !== null)) notFound();
-  const { intro, story, next, contact } = await getPage('investors');
+  const { intro, story, next, platform, contact } = await getPage('investors');
+  const areas = platform.areas.map((area) => ({ name: area.name, today: lines(area.today), extended: lines(area.extended), next: lines(area.next) }));
+  // Worked out from the lists, so they always agree with them.
+  const runningToday = areas.reduce((sum, area) => sum + area.today.length + area.extended.length, 0);
+  const onDeck = areas.reduce((sum, area) => sum + area.next.length, 0);
 
   const steps = [
     {
@@ -127,13 +138,19 @@ export default async function InvestorsPage() {
       </section>
 
       <section aria-labelledby="next-title" className="border-y border-line bg-canvas-raised py-section">
-        <Container size="5xl">
+        <Container>
           <Reveal>
-            <h2 id="next-title" className="text-eyebrow font-semibold text-fg-subtle uppercase">
-              {next.heading}
+            <Eyebrow>{next.heading}</Eyebrow>
+          </Reveal>
+          <Reveal delay={0.05}>
+            <h2 id="next-title" className="mt-5 max-w-3xl text-display-sm font-medium text-metal">
+              {platform.headline}
             </h2>
           </Reveal>
-          <div className="mt-8 grid grid-cols-1 items-stretch gap-4 md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] md:gap-6">
+          <Reveal delay={0.1}>
+            <p className="mt-5 max-w-2xl text-lg text-fg-muted">{platform.intro}</p>
+          </Reveal>
+          <div className="mt-10 grid grid-cols-1 items-stretch gap-4 md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] md:gap-6">
             <Reveal className="rounded-2xl border border-line bg-surface p-7 shadow-md sm:p-9">
               <p className="flex items-center gap-2.5 text-micro font-semibold text-fg-subtle uppercase">
                 <span aria-hidden className="size-2 rounded-full bg-success" />
@@ -155,6 +172,61 @@ export default async function InvestorsPage() {
               <p className="mt-3 text-base text-fg-muted">{next.nextBody}</p>
             </Reveal>
           </div>
+
+          <Reveal className="mt-14">
+            <p className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-fg-muted">
+              <span className="inline-flex items-center gap-2">
+                <Check aria-hidden className="size-4 text-success" />
+                {platform.todayLabel}
+                <span className="font-semibold text-fg tabular-nums">{runningToday}</span>
+              </span>
+              <span className="inline-flex items-center gap-2">
+                <CircleDashed aria-hidden className="size-4 text-fg-subtle" />
+                {platform.nextLabel}
+                <span className="font-semibold text-fg tabular-nums">{onDeck}</span>
+              </span>
+              <span className="inline-flex items-center gap-2">
+                <span className="rounded-full border border-line-strong px-1.5 text-micro font-semibold text-fg-subtle uppercase">
+                  {platform.extendedLabel}
+                </span>
+                {platform.extendedNote}
+              </span>
+            </p>
+          </Reveal>
+          <RevealGroup as="ul" className="mt-6 columns-1 gap-4 md:columns-2 lg:columns-3">
+            {areas.map((area, i) => (
+              <RevealItem as="li" key={area.name + i} className="mb-4 break-inside-avoid rounded-2xl border border-line bg-surface p-6">
+                <h3 className="text-lg font-semibold text-fg">{area.name}</h3>
+                {area.today.length + area.extended.length ? (
+                  <ul aria-label={platform.todayLabel} className="mt-4 space-y-2.5">
+                    {[...area.today.map((item) => ({ item, extended: false })), ...area.extended.map((item) => ({ item, extended: true }))].map(
+                      ({ item, extended }) => (
+                        <li key={item} className="flex gap-2.5 text-sm text-fg-muted">
+                          <Check aria-hidden className="mt-0.5 size-4 shrink-0 text-success" />
+                          <span className="min-w-0 flex-1">{item}</span>
+                          {extended ? (
+                            <span className="mt-px shrink-0 self-start rounded-full border border-line-strong px-1.5 text-micro font-semibold text-fg-subtle uppercase">
+                              {platform.extendedLabel}
+                            </span>
+                          ) : null}
+                        </li>
+                      ),
+                    )}
+                  </ul>
+                ) : null}
+                {area.next.length ? (
+                  <ul aria-label={platform.nextLabel} className="mt-4 space-y-2.5 border-t border-dashed border-line-strong pt-4">
+                    {area.next.map((item) => (
+                      <li key={item} className="flex gap-2.5 text-sm text-fg">
+                        <CircleDashed aria-hidden className="mt-0.5 size-4 shrink-0 text-fg-subtle" />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
+              </RevealItem>
+            ))}
+          </RevealGroup>
         </Container>
       </section>
 

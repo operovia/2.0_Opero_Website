@@ -423,6 +423,89 @@ const investorsNext = section({
   },
 });
 
+const areaLines = 'One per line.';
+
+const investorsPlatform = section({
+  label: 'Today and on deck',
+  description:
+    "What runs at Oxford today against what the new build adds, area by area, from the investor room's capability table. The counts on the page are worked out from these lists.",
+  draftCopy: true,
+  fields: {
+    headline: text('Headline', { max: 120 }),
+    intro: text('Introduction', { max: 300, multiline: true }),
+    todayLabel: text('Running today: label', { max: 60 }),
+    nextLabel: text('On deck: label', { max: 60 }),
+    extendedLabel: text('Extended: tag', { max: 20 }),
+    extendedNote: text('Extended: meaning', { max: 80 }),
+    areas: list(
+      'Areas',
+      'Area',
+      {
+        name: text('Name', { max: 40 }),
+        today: text('Running at Oxford today', { max: 1200, multiline: true, hint: areaLines }),
+        extended: text('Running today, extended in the new build', { optional: true, max: 1200, multiline: true, hint: areaLines }),
+        next: text('New in the new build', { optional: true, max: 1200, multiline: true, hint: areaLines }),
+      },
+      { min: 1, max: 10 },
+    ),
+  },
+  seed: {
+    headline: "What runs at Oxford today, and what's on deck.",
+    intro:
+      'Described from the running system, not from a roadmap. Everything running at Oxford Companies today carries into the new build, which adds the rest.',
+    todayLabel: 'Running at Oxford today',
+    nextLabel: 'On deck for the new build',
+    extendedLabel: 'Extended',
+    extendedNote: 'Running today, extended in the new build',
+    areas: [
+      {
+        name: 'Leasing & Sales',
+        today: 'Prospect management and pipeline\nAI interest scoring\nTour scheduling\nLease terms analyzer and calculator',
+        extended: 'LOI and lease generation, with redline management\nBrochure management',
+        next: 'Listing syndication integration\nCommission and brokerage house tracking',
+      },
+      {
+        name: 'Tenancy',
+        today: 'AI lease abstraction\nInstant answers from Oppie on lease information\nRenewals',
+        extended: 'Move-in and move-out workflows\nTenant communications',
+        next: 'Tenant portal\nUtility management',
+      },
+      {
+        name: 'Records',
+        today:
+          'Global contacts and companies\nProperties, buildings, and suites\nEntity records\nAvailability and vacancy\nFloor plans and space visualization\n3D tours',
+        extended: 'Document management\nVendor records and insurance certificates',
+        next: '',
+      },
+      {
+        name: 'Work management',
+        today:
+          'Project and task boards\nWork orders and dispatch\nInspections\nPurchase orders and approvals\nProcess and SOP library\nLearning and training\nPersonal dashboards',
+        extended: '',
+        next: 'Meeting capture and notes',
+      },
+      {
+        name: 'Planning',
+        today: 'Company operating system (EOS)\nQuarterly priorities and scorecards\nAcquisition pipeline',
+        extended: 'Portfolio dashboards and KPIs',
+        next: 'Development site finder\nValuation and DCF modeling',
+      },
+      {
+        name: 'Oppie and AI',
+        today: 'Build: describe-and-create applications',
+        extended: 'Oppie across every module\nNatural-language answers on portfolio data\nAgentic task execution\nAI drafting in documents and communications',
+        next: '',
+      },
+      {
+        name: 'Trust',
+        today: 'Role-based access control\nSingle sign-on\nNotification engine\nMobile apps, iOS and Android\nOpen API',
+        extended: 'Third-party security assessment',
+        next: 'Multi-tenant SaaS architecture\nCustomer data migration tooling\nSOC 2',
+      },
+    ],
+  },
+});
+
 const investorsContact = section({
   label: 'Contact form',
   description: 'Heading, labels, thank-you message, and the note under the form. Messages arrive in Inquiries.',
@@ -652,7 +735,7 @@ export const pages = {
     label: 'Investor Hub',
     description: "The founder's story for investors, and a way to get in touch. Hidden from visitors until it is switched on in Settings.",
     path: INVESTOR_HUB_PATH,
-    sections: { intro: investorsIntro, story: investorsStory, next: investorsNext, contact: investorsContact },
+    sections: { intro: investorsIntro, story: investorsStory, next: investorsNext, platform: investorsPlatform, contact: investorsContact },
   },
   privacy: {
     label: 'Privacy page',
