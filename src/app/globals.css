@@ -693,6 +693,44 @@
   }
 }
 
+/*
+ * The platform section's frame (src/components/site/home/platform.tsx): Opero
+ * around the core CRM and every module. An edge in the wordmark's metal,
+ * brightest at the top, with a faint light falling from it. Its corners
+ * follow the cards inside, one padding further out.
+ */
+.platform-frame {
+  --frame-pad: calc(var(--o-space-unit) * 3);
+  position: relative;
+  isolation: isolate;
+  padding: var(--frame-pad);
+  padding-top: calc(var(--frame-pad) + var(--o-space-unit) * 10);
+  border-radius: calc(var(--o-radius-2xl) + var(--frame-pad));
+  background:
+    radial-gradient(60% 45% at 50% 0%, color-mix(in oklab, var(--o-fg) 6%, transparent), transparent),
+    color-mix(in oklab, var(--o-surface) 45%, transparent);
+  @variant sm {
+    --frame-pad: calc(var(--o-space-unit) * 6);
+  }
+  @variant lg {
+    --frame-pad: calc(var(--o-space-unit) * 8);
+  }
+}
+.platform-frame::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  padding: 1px;
+  border-radius: inherit;
+  background: var(--o-metal);
+  mask:
+    linear-gradient(black 0 0) content-box exclude,
+    linear-gradient(black 0 0);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
 /* Design partner card: a border of jewel light that turns slowly. */
 .partner-frame {
   background: var(--o-line-strong);

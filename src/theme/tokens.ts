@@ -381,6 +381,18 @@ export const tokens = {
     /** Distance revealed elements travel, in pixels. */
     revealDistance: 24,
     /**
+     * The platform section's links (src/components/site/home/platform-links.tsx):
+     * as they come into view, after `delay`, a light runs `down` each line from
+     * the core CRM to its module, `stagger` apart, then along the line joining
+     * the modules, taking `across` for each half gap between two of them.
+     */
+    links: {
+      delay: 300,
+      down: 900,
+      stagger: 120,
+      across: 360,
+    },
+    /**
      * Oppie's flip (docs/brand/oppie-8e-handoff.md): while Oppie thinks, each
      * pill turns over once per `turn`, starting `stagger` after the one before
      * it, so the turn ripples left to right. A mark that greets turns over once
