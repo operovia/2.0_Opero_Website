@@ -225,6 +225,33 @@ export const tokens = {
       glint: { left: 4, inset: 3, width: 2.6, color: '#FFFFFF', opacity: 0.55 },
       /** The fine outline just inside each pill. */
       rim: { light: { color: '#000000', opacity: 0.2 }, dark: { color: '#FFFFFF', opacity: 0.22 } },
+      /**
+       * Finer details for a mark shown big (120px and up), where the icon-size
+       * highlight and outline read heavy: a thin highlight that fades out down
+       * the pill, like light on glass, and an edge lit only across the top.
+       * The owner's adjustment to the handoff's artwork, for big marks only.
+       */
+      large: {
+        glint: {
+          left: 4.4,
+          inset: 3.5,
+          width: 1.2,
+          stops: [
+            { offset: 0, opacity: 0 },
+            { offset: 0.1, opacity: 0.75 },
+            { offset: 0.45, opacity: 0.25 },
+            { offset: 0.8, opacity: 0 },
+          ],
+        },
+        rim: {
+          width: 0.4,
+          stops: [
+            { offset: 0, opacity: 0.3 },
+            { offset: 0.3, opacity: 0.05 },
+            { offset: 1, opacity: 0.1 },
+          ],
+        },
+      },
     },
     /** Aurora background: the jewels' base colors and how strongly they show per theme. */
     aurora: {

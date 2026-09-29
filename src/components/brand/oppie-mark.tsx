@@ -117,6 +117,8 @@ type Props = {
   paused?: boolean;
   /** Turn over once when it first comes into view, then rest. For a mark that stands for Oppie on the page, not one in a conversation. */
   greet?: boolean;
+  /** Finer details for a mark shown big, 120px and up, where the icon-size highlight and outline read heavy. */
+  large?: boolean;
   /** Size with a size class, e.g. `size-10`. The pills fill the middle 80%. */
   className?: string;
   /** Hide from assistive tech when a surrounding label already names it. */
@@ -130,7 +132,7 @@ type Props = {
  * graphite over it, a shade for its side, its highlight, and a fine rim.
  * Motion is transform and opacity only.
  */
-export function OppieMark({ state = 'rest', on = 'dark', still = false, paused = false, greet = false, className, decorative }: Props) {
+export function OppieMark({ state = 'rest', on = 'dark', still = false, paused = false, greet = false, large = false, className, decorative }: Props) {
   // Gradient ids must be unique on the page, and plain enough for url(#...).
   const id = `oppie${useId().replace(/[^a-zA-Z0-9_-]/g, '')}`;
   const ref = useRef<HTMLSpanElement>(null);
@@ -138,6 +140,9 @@ export function OppieMark({ state = 'rest', on = 'dark', still = false, paused =
   const greeting = useGreeting(ref, greet && !still);
   const asleep = useAsleep(ref, still);
   const { pills, width, surface, surfaceStops, graphite, depth, shade, glint, rim } = tokens.brand.oppie;
+  const fine = large ? tokens.brand.oppie.large : null;
+  const highlight = fine ? fine.glint : glint;
+  const edge = fine ? fine.rim.width : 1;
   const a11y = decorative ? { 'aria-hidden': true } : { role: 'img', 'aria-label': labels[state] };
 
   return (
@@ -164,6 +169,20 @@ export function OppieMark({ state = 'rest', on = 'dark', still = false, paused =
             <stop offset={depth.graphiteFrom} stopColor={graphite[on]} stopOpacity="0" />
             <stop offset="1" stopColor={graphite[on]} stopOpacity={depth.graphiteOpacity} />
           </linearGradient>
+          {fine ? (
+            <>
+              <linearGradient id={`${id}-glint`} x1="0" y1="0" x2="0" y2="1">
+                {fine.glint.stops.map(({ offset, opacity }) => (
+                  <stop key={offset} offset={offset} stopColor={glint.color} stopOpacity={opacity} />
+                ))}
+              </linearGradient>
+              <linearGradient id={`${id}-rim`} x1="0" y1="0" x2="0" y2="1">
+                {fine.rim.stops.map(({ offset, opacity }) => (
+                  <stop key={offset} offset={offset} stopColor={rim[on].color} stopOpacity={opacity} />
+                ))}
+              </linearGradient>
+            </>
+          ) : null}
         </defs>
         {pills.map(({ module, x, height }, i) => {
           const pill = { x, y: 50 - height / 2, width, height, rx: width / 2 };
@@ -174,24 +193,25 @@ export function OppieMark({ state = 'rest', on = 'dark', still = false, paused =
               <rect {...pill} className="oppie-shade" fill={shade} />
               <g className="oppie-glint">
                 <rect
-                  x={x + glint.left}
-                  y={pill.y + glint.inset}
-                  width={glint.width}
-                  height={height - glint.inset * 2}
-                  rx={glint.width / 2}
-                  fill={glint.color}
-                  fillOpacity={glint.opacity}
+                  x={x + highlight.left}
+                  y={pill.y + highlight.inset}
+                  width={highlight.width}
+                  height={height - highlight.inset * 2}
+                  rx={highlight.width / 2}
+                  fill={fine ? `url(#${id}-glint)` : glint.color}
+                  fillOpacity={fine ? undefined : glint.opacity}
                 />
               </g>
               <rect
-                x={x + 0.5}
-                y={pill.y + 0.5}
-                width={width - 1}
-                height={height - 1}
-                rx={(width - 1) / 2}
+                x={x + edge / 2}
+                y={pill.y + edge / 2}
+                width={width - edge}
+                height={height - edge}
+                rx={(width - edge) / 2}
                 fill="none"
-                stroke={rim[on].color}
-                strokeOpacity={rim[on].opacity}
+                stroke={fine ? `url(#${id}-rim)` : rim[on].color}
+                strokeOpacity={fine ? undefined : rim[on].opacity}
+                strokeWidth={edge}
               />
             </g>
           );

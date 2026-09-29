@@ -10,7 +10,7 @@ export function OppieSection({ content }: { content: SectionData<'home', 'oppie'
       <Container className="grid grid-cols-1 items-center gap-16 lg:grid-cols-2">
         <Reveal className="flex justify-center">
           {/* Turns over once as the visitor arrives, then rests. */}
-          <OppieMark decorative greet className="size-60 sm:size-80" />
+          <OppieMark decorative greet large className="size-60 sm:size-80" />
         </Reveal>
         <div>
           {content.eyebrow ? (
