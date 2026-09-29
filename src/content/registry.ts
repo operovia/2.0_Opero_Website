@@ -52,7 +52,7 @@ const hero = section({
   label: 'Hero',
   description: 'The first screen: headline, button, and the Oppie console. Console questions and answers are edited under Oppie console.',
   fields: {
-    headline: text('Headline', { max: 160 }),
+    headline: text('Headline', { max: 160, hint: 'Put a word between asterisks to set it in italics, like *The*.' }),
     subhead: rich('Subhead'),
     buttonLabel: text('Button label', { max: 40 }),
     buttonTarget: link('Button link', { hint: buttonTargetHint }),
@@ -63,7 +63,7 @@ const hero = section({
     consoleNote: text('Console note', { optional: true, max: 80, hint: 'Small print under the console. Leave empty to hide it.' }),
   },
   seed: {
-    headline: 'The AI-driven operating platform for property management companies.',
+    headline: '*The* AI-driven operating platform for property management.',
     subhead: textToRich(
       'One system, built around a core CRM, that replaces the patchwork of disconnected apps your teams run every day, with Oppie, your AI assistant, woven into every step.',
     ),

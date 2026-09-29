@@ -4,6 +4,7 @@ import { ImageResponse } from 'next/og';
 import sharp from 'sharp';
 import { SHARE_IMAGE_SIZE } from '@/content/metadata';
 import { getPage, getPublicSettings } from '@/content/store';
+import { withoutEmphasis } from '@/lib/emphasis';
 import { tokens } from '@/theme/tokens';
 
 const c = tokens.color.dark;
@@ -43,7 +44,8 @@ let cached: { key: string; png: ArrayBuffer } | undefined;
  */
 export async function GET() {
   const [{ hero }, { version }, { medium, semibold, logo }] = await Promise.all([getPage('home'), getPublicSettings(), loadAssets()]);
-  const key = `${version}:${hero.headline}`;
+  const headline = withoutEmphasis(hero.headline);
+  const key = `${version}:${headline}`;
 
   if (cached?.key !== key) {
     const [violet, teal, crimson, green, gold] = tokens.brand.aurora.colors;
@@ -69,14 +71,14 @@ export async function GET() {
             style={{
               display: 'flex',
               maxWidth: 960,
-              fontSize: hero.headline.length > 70 ? 58 : 70,
+              fontSize: headline.length > 70 ? 58 : 70,
               fontWeight: 500,
               lineHeight: 1.12,
               letterSpacing: '-0.005em',
               color: c.fg,
             }}
           >
-            {hero.headline}
+            {headline}
           </div>
         </div>
       ),

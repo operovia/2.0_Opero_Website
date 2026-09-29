@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { isSafeHref, richDocSchema, richToText, textToRich } from '@/lib/rich-text';
 import { schemaFor } from './fields';
+import { withoutEmphasis } from '@/lib/emphasis';
 import { defaultSettings } from '@/server/seed';
 import { allSections, pages } from './registry';
 import { contentTokens, fillTokens, fillTokensDeep, pluralize } from './tokens';
@@ -12,7 +13,8 @@ describe('seed content', () => {
   });
 
   it('keeps the approved hero copy word for word', () => {
-    expect(pages.home.sections.hero.seed.headline).toBe('The AI-driven operating platform for property management companies.');
+    expect(withoutEmphasis(pages.home.sections.hero.seed.headline)).toBe('The AI-driven operating platform for property management.');
+    expect(pages.home.sections.hero.seed.headline).toMatch(/^\*The\* /);
     expect(richToText(pages.home.sections.hero.seed.subhead)).toBe(
       'One system, built around a core CRM, that replaces the patchwork of disconnected apps your teams run every day, with Oppie, your AI assistant, woven into every step.',
     );
