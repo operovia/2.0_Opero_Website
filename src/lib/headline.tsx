@@ -2,8 +2,8 @@ import { Fragment, type ReactNode } from 'react';
 
 /*
  * How headlines typed in the admin are shown. Enter starts a new line, and
- * words between asterisks, like *this*, are emphasized: set in italics, in
- * the teal jewel's colors (text-emphasis in src/app/globals.css).
+ * words between asterisks, like *this*, are set in italics, in the headline's
+ * own metal.
  */
 
 /** Words between asterisks, like *The*, within one line. */
@@ -15,11 +15,7 @@ function emphasize(line: string): ReactNode[] {
   let last = 0;
   for (const match of line.matchAll(marked)) {
     if (match.index > last) parts.push(line.slice(last, match.index));
-    parts.push(
-      <em key={match.index} className="text-emphasis">
-        {match[1]}
-      </em>,
-    );
+    parts.push(<em key={match.index}>{match[1]}</em>);
     last = match.index + match[0].length;
   }
   if (last < line.length) parts.push(line.slice(last));

@@ -22,23 +22,6 @@ function metalGradient(theme: ThemeName): string {
   return `linear-gradient(180deg, ${stops.join(', ')})`;
 }
 
-/** Emphasis in headlines (tokens.brand.emphasis): the metal's gradient, stop for stop, in a jewel's colors. */
-function emphasisGradient(theme: ThemeName): string {
-  const emphasis = tokens.brand.emphasis;
-  const [highlight, base] = tokens.brand.jewels[emphasis.jewel][theme];
-  const color = (mix: number) =>
-    mix > 0 ? `color-mix(in oklab, ${highlight}, white ${mix}%)` : mix < 0 ? `color-mix(in oklab, ${highlight}, ${base} ${-mix}%)` : highlight;
-  const stops = tokens.brand.metal[theme].map(([offset], i) => `${color(emphasis[theme][i] ?? 0)} ${offset}`);
-  return `linear-gradient(180deg, ${stops.join(', ')})`;
-}
-
-/** The glint across an emphasized word, like the light on the jewel. */
-function emphasisGlint(): string {
-  const { angle, band, opacity } = tokens.brand.emphasis.glint;
-  const [from, peak, to] = band;
-  return `linear-gradient(${angle}deg, transparent ${from}%, rgb(255 255 255 / ${opacity}) ${peak}%, transparent ${to}%)`;
-}
-
 /**
  * A jewel as layered CSS gradients, drawn layer for layer like the jewels in
  * the full Opero mark (public/brand/opero/opero-dark.svg): from the top, the
@@ -66,9 +49,6 @@ function themeDeclarations(theme: ThemeName): string {
   for (const [key, value] of Object.entries(tokens.shadow[theme])) vars[`shadow-${key}`] = value;
 
   vars['metal'] = metalGradient(theme);
-  vars['emphasis'] = emphasisGradient(theme);
-  vars['emphasis-glint'] = emphasisGlint();
-  vars['emphasis-color'] = tokens.brand.jewels[tokens.brand.emphasis.jewel][theme][1];
   vars['jewel-light-specular'] = tokens.brand.jewelLight.specular;
   vars['jewel-light-edge'] = tokens.brand.jewelLight.edge[theme];
   vars['aurora-opacity'] = tokens.brand.aurora.opacity[theme];

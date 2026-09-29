@@ -70,7 +70,7 @@ function describedBy(id: string, hint?: string, error?: string): string | undefi
 
 function TextInput({ id, field, value, onChange, error }: { id: string; field: TextField; value: string; onChange: (v: string) => void; error?: string }) {
   const hint = field.headline
-    ? [field.hint, 'Press Enter to start a new line. Put words between asterisks, like *this*, to set them in italic teal.'].filter(Boolean).join(' ')
+    ? [field.hint, 'Press Enter to start a new line. Put words between asterisks, like *this*, to set them in italics.'].filter(Boolean).join(' ')
     : field.hint;
   const props = {
     id,
