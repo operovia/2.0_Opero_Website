@@ -3,17 +3,19 @@ import { RichText } from '@/components/rich-text';
 import { Container } from '@/components/site/layout-parts';
 import { openGraph } from '@/content/metadata';
 import { getPage } from '@/content/store';
+import { onOneLine, withLineBreaks } from '@/lib/headline';
 
 export async function generateMetadata(): Promise<Metadata> {
   const { notice } = await getPage('privacy');
-  return { title: notice.headline, alternates: { canonical: '/privacy' }, openGraph: await openGraph({ title: notice.headline, url: '/privacy' }) };
+  const title = onOneLine(notice.headline);
+  return { title, alternates: { canonical: '/privacy' }, openGraph: await openGraph({ title, url: '/privacy' }) };
 }
 
 export default async function PrivacyPage() {
   const { notice } = await getPage('privacy');
   return (
     <Container size="3xl" className="py-section">
-      <h1 className="text-display-md font-medium text-metal">{notice.headline}</h1>
+      <h1 className="text-display-md font-medium text-metal">{withLineBreaks(notice.headline)}</h1>
       <RichText doc={notice.intro} className="mt-8 text-lg text-fg-muted sm:text-xl" />
       <div className="mt-14 space-y-12">
         {notice.sections.map((section, i) => (

@@ -52,6 +52,7 @@ While `serve` runs, the owner should not press Run: Next.js allows one dev serve
 - Next.js replaces a layout's `openGraph` object wholesale when a page sets its own, so public pages build theirs with `openGraph()` from `src/content/metadata.ts`.
 - Form actions return the submitted `values` and forms render `defaultValue` from `state.values ?? saved`, because React resets uncontrolled fields after every form action.
 - Editable copy lives in `src/content/registry.ts` (fields plus seed copy per section). Pages read it with `getPage()` from `src/content/store.ts`; never hardcode public copy in components.
+- Headline fields take line breaks (`lineBreaks` in `src/content/fields.ts`): the admin gives them a small box where Enter starts a new line. Render every headline with `withLineBreaks()` from `src/lib/headline.tsx` (the hero also passes `emphasis` for its asterisk italics), and use `onOneLine()` wherever a headline is plain text, such as a page title.
 - Browser code (`'use client'` and anything it imports) must not import values from `src/content/registry.ts`: it carries every section's validation and seed copy, which would ship to every visitor. Put small values the browser needs in `src/content/constants.ts`; type-only imports are fine.
 - For narrower page columns use `<Container size="3xl">` and similar, never a `max-w-*` class on Container.
 - A brand mark at the top of a page gets `priority` on `<BrandMark>`, which preloads it: on phones the header wordmark is the largest thing painted first.

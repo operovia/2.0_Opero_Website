@@ -7,10 +7,11 @@ import { PartnerApplicationForm } from '@/components/site/partner-application-fo
 import { openGraph } from '@/content/metadata';
 import { getPage } from '@/content/store';
 import { cn } from '@/lib/cn';
+import { onOneLine, withLineBreaks } from '@/lib/headline';
 
 export async function generateMetadata(): Promise<Metadata> {
   const { intro } = await getPage('partners');
-  const title = intro.headline.replace(/[.!]$/, '');
+  const title = onOneLine(intro.headline).replace(/[.!]$/, '');
   return { title, alternates: { canonical: '/partners' }, openGraph: await openGraph({ title, url: '/partners' }) };
 }
 
@@ -25,7 +26,7 @@ export default async function PartnersPage() {
         <Container size="4xl" className="pt-16 pb-16 sm:pt-24 sm:pb-20">
           {intro.eyebrow ? <Eyebrow className="hero-fade">{intro.eyebrow}</Eyebrow> : null}
           <h1 id="partners-title" className="hero-rise mt-5 text-display-lg font-medium text-metal">
-            {intro.headline}
+            {withLineBreaks(intro.headline)}
           </h1>
           <RichText doc={intro.body} className="hero-fade mt-8 max-w-3xl text-lg text-fg-muted sm:text-xl" />
         </Container>
@@ -35,7 +36,7 @@ export default async function PartnersPage() {
         <Container size="5xl">
           <Reveal>
             <h2 id="gets-title" className="text-display-sm font-medium text-metal">
-              {gets.headline}
+              {withLineBreaks(gets.headline)}
             </h2>
           </Reveal>
           <RevealGroup as="ul" className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -54,7 +55,7 @@ export default async function PartnersPage() {
         <Container size="5xl">
           <Reveal>
             <h2 id="asks-title" className="text-display-sm font-medium text-metal">
-              {asks.headline}
+              {withLineBreaks(asks.headline)}
             </h2>
           </Reveal>
           <RevealGroup as="ol" className="mt-10 grid grid-cols-1 gap-x-10 gap-y-8 sm:grid-cols-2">
@@ -77,7 +78,7 @@ export default async function PartnersPage() {
         <Container size="3xl" className="text-center">
           <Reveal>
             <h2 id="selection-title" className="text-display-sm font-medium text-metal">
-              {selection.headline}
+              {withLineBreaks(selection.headline)}
             </h2>
           </Reveal>
           <Reveal delay={0.08}>
@@ -90,7 +91,7 @@ export default async function PartnersPage() {
         <Container size="3xl">
           <div className="rounded-2xl border border-line-strong bg-surface p-6 shadow-lg sm:p-10">
             <h2 id="apply-title" className="text-display-sm font-medium text-metal">
-              {apply.headline}
+              {withLineBreaks(apply.headline)}
             </h2>
             <p className="mt-4 text-lg text-fg-muted">{apply.intro}</p>
             <div className="mt-10">

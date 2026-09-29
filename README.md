@@ -23,6 +23,10 @@ Everything else is optional until you publish.
 
 This project is one Next.js app and must stay that way. `replit.md` tells Replit Agent not to restructure it; if Replit Agent ever proposes migrating or converting the project, decline.
 
+## Editing the site
+
+Sign in at `/admin` and open Content to change the words on any page. In a headline, press Enter where a new line should start. In the home page headline, a word between asterisks is set in italics, like `*The*`.
+
 ## Investor Hub
 
 The Investor Hub (`/investors`) tells the founder's story for investors and ends with a short contact form; messages arrive in Inquiries. It stays hidden until you switch it on in Settings: until then visitors get "page not found" and its tab is left out of the header, while you see both whenever you are signed in. Edit its copy in Content, Investor Hub.

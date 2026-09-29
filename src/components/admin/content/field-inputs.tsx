@@ -69,17 +69,18 @@ function describedBy(id: string, hint?: string, error?: string): string | undefi
 }
 
 function TextInput({ id, field, value, onChange, error }: { id: string; field: TextField; value: string; onChange: (v: string) => void; error?: string }) {
+  const hint = field.lineBreaks ? [field.hint, 'Press Enter to start a new line.'].filter(Boolean).join(' ') : field.hint;
   const props = {
     id,
     value,
     onChange: (e: { target: { value: string } }) => onChange(e.target.value),
     maxLength: field.max,
-    'aria-describedby': describedBy(id, field.hint, error),
+    'aria-describedby': describedBy(id, hint, error),
     'aria-invalid': error ? (true as const) : undefined,
   };
   return (
-    <FieldFrame id={id} label={field.label} hint={field.hint} error={error} optional={field.optional}>
-      {field.multiline ? <Textarea rows={3} {...props} /> : <Input {...props} />}
+    <FieldFrame id={id} label={field.label} hint={hint} error={error} optional={field.optional}>
+      {field.multiline || field.lineBreaks ? <Textarea rows={field.multiline ? 3 : 2} {...props} /> : <Input {...props} />}
     </FieldFrame>
   );
 }

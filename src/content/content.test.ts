@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { isSafeHref, richDocSchema, richToText, textToRich } from '@/lib/rich-text';
-import { schemaFor } from './fields';
-import { withoutEmphasis } from '@/lib/emphasis';
+import { schemaFor, text } from './fields';
+import { withoutEmphasis } from '@/lib/headline';
 import { defaultSettings } from '@/server/seed';
 import { allSections, pages } from './registry';
 import { contentTokens, fillTokens, fillTokensDeep, pluralize } from './tokens';
@@ -28,6 +28,26 @@ describe('seed content', () => {
 
   it('lists modules in brand order', () => {
     expect(pages.home.sections.platform.seed.modules.map((m) => m.module)).toEqual(['build', 'studios', 'playbook', 'university', 'compass']);
+  });
+});
+
+describe('headlines', () => {
+  it('take line breaks everywhere', () => {
+    const headlines = allSections().flatMap(({ page, section, def }) =>
+      Object.entries(def.fields)
+        .filter(([, field]) => field.kind === 'text' && field.label === 'Headline')
+        .map(([key, field]) => [`${page}.${section}.${key}`, field.kind === 'text' && field.lineBreaks === true]),
+    );
+    expect(headlines.length).toBeGreaterThan(10);
+    expect(headlines.filter(([, breaks]) => !breaks)).toEqual([]);
+  });
+
+  it('keep one break between lines, without blank lines or stray spaces', () => {
+    const schema = schemaFor({ headline: text('Headline', { lineBreaks: true }) });
+    expect(schema.parse({ headline: ' I lived with the problem.  \r\n\r\n  Then I built the solution. ' }).headline).toBe(
+      'I lived with the problem.\nThen I built the solution.',
+    );
+    expect(schema.safeParse({ headline: ' \n \n ' }).success).toBe(false);
   });
 });
 

@@ -9,7 +9,8 @@ import { isSafeHref, richDocSchema, type RichDoc } from '@/lib/rich-text';
 
 type Base = { label: string; hint?: string; optional?: boolean };
 
-export type TextField = Base & { kind: 'text'; max?: number; multiline?: boolean };
+/** `multiline` gives longer text a bigger box. `lineBreaks` is for headlines: Enter starts a new line, and the site keeps it. */
+export type TextField = Base & { kind: 'text'; max?: number; multiline?: boolean; lineBreaks?: boolean };
 export type RichField = Base & { kind: 'rich' };
 /** A button or link target: a path on the site, a web address, or `#book-demo` for the demo form. */
 export type LinkField = Base & { kind: 'link' };
@@ -66,12 +67,21 @@ export const list = <I extends Record<string, ItemField>>(label: string, itemLab
 /* Validation                                                               */
 /* ------------------------------------------------------------------------ */
 
+/** A headline's lines, each trimmed, without blank ones. */
+const tidyLines = (value: string) =>
+  value
+    .split(/\r?\n|\r/)
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .join('\n');
+
 function itemSchema(field: ItemField): z.ZodType {
   switch (field.kind) {
     case 'text': {
       let s = z.string().trim().max(field.max ?? 2000, `Keep this under ${field.max ?? 2000} characters.`);
       if (!field.optional) s = s.min(1, `${field.label} cannot be empty.`);
-      return s;
+      // One break between lines: blank lines and spaces around a break would only add gaps.
+      return field.lineBreaks ? z.preprocess((value) => (typeof value === 'string' ? tidyLines(value) : value), s) : s;
     }
     case 'rich':
       return richDocSchema.refine(

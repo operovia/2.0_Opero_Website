@@ -1,6 +1,7 @@
 import { Reveal } from '@/components/motion/reveal';
 import { RichText } from '@/components/rich-text';
 import type { SectionData } from '@/content/registry';
+import { withLineBreaks } from '@/lib/headline';
 import { Container, Eyebrow, SiteButton } from '../layout-parts';
 
 export function PartnerInvite({ content }: { content: SectionData<'home', 'partner'> }) {
@@ -12,7 +13,7 @@ export function PartnerInvite({ content }: { content: SectionData<'home', 'partn
             <div className="relative rounded-[calc(var(--o-radius-2xl)-1px)] bg-surface px-6 py-16 text-center sm:px-12 md:py-20">
               {content.eyebrow ? <Eyebrow>{content.eyebrow}</Eyebrow> : null}
               <h2 id="partner-title" className="mx-auto mt-5 max-w-3xl text-display-md font-medium text-metal">
-                {content.headline}
+                {withLineBreaks(content.headline)}
               </h2>
               <RichText doc={content.body} className="mx-auto mt-7 max-w-2xl text-lg text-fg-muted" />
               <p className="mt-8 text-eyebrow font-semibold text-fg-subtle uppercase">{content.closing}</p>

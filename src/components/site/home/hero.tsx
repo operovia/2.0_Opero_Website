@@ -1,7 +1,7 @@
 import { RichText } from '@/components/rich-text';
 import type { ConsoleScene } from '@/content/store';
 import type { SectionData } from '@/content/registry';
-import { withEmphasis } from '@/lib/emphasis';
+import { withLineBreaks } from '@/lib/headline';
 import { Aurora } from '../aurora';
 import { Container, SiteButton } from '../layout-parts';
 import { OppieConsole } from '../oppie-console';
@@ -13,7 +13,7 @@ export function Hero({ content, scenes }: { content: SectionData<'home', 'hero'>
       <Container className="grid grid-cols-1 items-center gap-14 pt-12 pb-16 sm:pt-16 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] lg:gap-16 lg:pt-24 lg:pb-24">
         <div>
           <h1 id="hero-title" className="hero-rise text-display-lg font-medium text-metal">
-            {withEmphasis(content.headline)}
+            {withLineBreaks(content.headline, { emphasis: true })}
           </h1>
           <RichText doc={content.subhead} className="hero-fade mt-7 max-w-xl text-lg text-fg-muted sm:text-xl" />
           <div className="hero-fade mt-10 [animation-delay:120ms]">

@@ -1,5 +1,6 @@
 import { Reveal } from '@/components/motion/reveal';
 import type { SectionData } from '@/content/registry';
+import { withLineBreaks } from '@/lib/headline';
 import { Aurora } from '../aurora';
 import { Container, SiteButton } from '../layout-parts';
 
@@ -10,7 +11,7 @@ export function Closing({ content }: { content: SectionData<'home', 'closing'> }
       <Container size="3xl" className="text-center">
         <Reveal>
           <h2 id="closing-title" className="text-display-lg font-medium text-metal">
-            {content.headline}
+            {withLineBreaks(content.headline)}
           </h2>
         </Reveal>
         <Reveal delay={0.08}>

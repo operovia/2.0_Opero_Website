@@ -4,7 +4,7 @@ import { ImageResponse } from 'next/og';
 import sharp from 'sharp';
 import { SHARE_IMAGE_SIZE } from '@/content/metadata';
 import { getPage, getPublicSettings } from '@/content/store';
-import { withoutEmphasis } from '@/lib/emphasis';
+import { onOneLine, withoutEmphasis } from '@/lib/headline';
 import { tokens } from '@/theme/tokens';
 
 const c = tokens.color.dark;
@@ -44,7 +44,7 @@ let cached: { key: string; png: ArrayBuffer } | undefined;
  */
 export async function GET() {
   const [{ hero }, { version }, { medium, semibold, logo }] = await Promise.all([getPage('home'), getPublicSettings(), loadAssets()]);
-  const headline = withoutEmphasis(hero.headline);
+  const headline = onOneLine(withoutEmphasis(hero.headline));
   const key = `${version}:${headline}`;
 
   if (cached?.key !== key) {
