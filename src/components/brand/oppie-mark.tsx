@@ -59,6 +59,26 @@ function useFlip(ref: RefObject<HTMLElement | null>, thinking: boolean, still: b
   return !still && (thinking || settling);
 }
 
+/** True from the moment the mark is first well into view, for a mark that greets once. */
+function useGreeting(ref: RefObject<HTMLElement | null>, enabled: boolean): boolean {
+  const [greeting, setGreeting] = useState(false);
+  useEffect(() => {
+    const element = ref.current;
+    if (!element || !enabled) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry?.isIntersecting) return;
+        setGreeting(true);
+        observer.disconnect();
+      },
+      { threshold: 0.6 },
+    );
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [ref, enabled]);
+  return greeting;
+}
+
 /** True while the tab is hidden or the mark is off screen: nobody sees it then, so it holds still and saves the battery. */
 function useAsleep(ref: RefObject<HTMLElement | null>, still: boolean): boolean {
   const [asleep, setAsleep] = useState(false);
@@ -95,6 +115,8 @@ type Props = {
   still?: boolean;
   /** Freeze the flip where it is, for example while a demo is paused. It carries on from there. */
   paused?: boolean;
+  /** Turn over once when it first comes into view, then rest. For a mark that stands for Oppie on the page, not one in a conversation. */
+  greet?: boolean;
   /** Size with a size class, e.g. `size-10`. The pills fill the middle 80%. */
   className?: string;
   /** Hide from assistive tech when a surrounding label already names it. */
@@ -108,11 +130,12 @@ type Props = {
  * graphite over it, a shade for its side, its highlight, and a fine rim.
  * Motion is transform and opacity only.
  */
-export function OppieMark({ state = 'rest', on = 'dark', still = false, paused = false, className, decorative }: Props) {
+export function OppieMark({ state = 'rest', on = 'dark', still = false, paused = false, greet = false, className, decorative }: Props) {
   // Gradient ids must be unique on the page, and plain enough for url(#...).
   const id = `oppie${useId().replace(/[^a-zA-Z0-9_-]/g, '')}`;
   const ref = useRef<HTMLSpanElement>(null);
   const spinning = useFlip(ref, state === 'thinking', still);
+  const greeting = useGreeting(ref, greet && !still);
   const asleep = useAsleep(ref, still);
   const { pills, width, surface, surfaceStops, graphite, depth, shade, glint, rim } = tokens.brand.oppie;
   const a11y = decorative ? { 'aria-hidden': true } : { role: 'img', 'aria-label': labels[state] };
@@ -122,6 +145,7 @@ export function OppieMark({ state = 'rest', on = 'dark', still = false, paused =
       ref={ref}
       className={cn('oppie inline-block shrink-0', className)}
       data-spinning={spinning ? '' : undefined}
+      data-greeting={greeting ? '' : undefined}
       data-paused={paused || asleep ? '' : undefined}
       {...a11y}
     >

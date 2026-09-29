@@ -9,7 +9,8 @@ export function OppieSection({ content }: { content: SectionData<'home', 'oppie'
     <section id="oppie" aria-labelledby="oppie-title" className="relative scroll-mt-18 overflow-hidden border-y border-line bg-canvas-raised py-section">
       <Container className="grid grid-cols-1 items-center gap-16 lg:grid-cols-2">
         <Reveal className="flex justify-center">
-          <OppieMark decorative className="size-60 sm:size-80" />
+          {/* Turns over once as the visitor arrives, then rests. */}
+          <OppieMark decorative greet className="size-60 sm:size-80" />
         </Reveal>
         <div>
           {content.eyebrow ? (

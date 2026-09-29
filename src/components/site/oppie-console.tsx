@@ -84,8 +84,8 @@ export function OppieConsole({ scenes, labels }: { scenes: ConsoleScene[]; label
         {/* Header */}
         <div className="console-rule flex items-center justify-between border-b px-5 py-3.5">
           <div className="flex items-center gap-1.5">
-            {/* Oppie's pills turn over while it thinks and settle when the answer arrives (docs/brand/oppie-8e-handoff.md). The mark's box leaves room around the pills; the negative margins keep the header its usual height. */}
-            <OppieMark decorative state={state.phase === 'thinking' ? 'thinking' : 'rest'} paused={!running} className="-my-1 -ml-1.5 size-8" />
+            {/* At the owner's request Oppie keeps turning while the demo runs, and holds still with it when paused. The mark's box leaves room around the pills; the negative margins keep the header its usual height. */}
+            <OppieMark decorative state="thinking" paused={!running} className="-my-1 -ml-1.5 size-8" />
             <span className="text-sm font-semibold text-fg">
               Oppie
               {/* With reduced motion the pills hold still, so say it instead. */}

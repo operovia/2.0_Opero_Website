@@ -97,6 +97,7 @@ function sharedDeclarations(): string {
   vars['reveal-distance'] = `${tokens.motion.revealDistance}px`;
   vars['oppie-turn'] = `${tokens.motion.oppie.turn}ms`;
   vars['oppie-stagger'] = `${tokens.motion.oppie.stagger}ms`;
+  vars['oppie-greet-delay'] = `${tokens.motion.oppie.greetDelay}ms`;
 
   return declarations(vars);
 }

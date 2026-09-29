@@ -352,11 +352,13 @@ export const tokens = {
     /**
      * Oppie's flip (docs/brand/oppie-8e-handoff.md): while Oppie thinks, each
      * pill turns over once per `turn`, starting `stagger` after the one before
-     * it, so the turn ripples left to right.
+     * it, so the turn ripples left to right. A mark that greets turns over once
+     * when it comes into view, after `greetDelay`, so it has faded in first.
      */
     oppie: {
       turn: 1600,
       stagger: 160,
+      greetDelay: 400,
     },
   },
 } as const;

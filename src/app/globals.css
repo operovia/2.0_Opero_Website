@@ -358,6 +358,16 @@
 .oppie-shade {
   opacity: 0;
 }
+/* A mark that greets turns over once, a little after it comes into view, then rests. */
+.oppie[data-greeting] .oppie-pill {
+  animation: oppie-spin var(--o-oppie-turn) linear calc(var(--o-oppie-greet-delay) + var(--o-oppie-stagger) * var(--oppie-index));
+}
+.oppie[data-greeting] .oppie-shade {
+  animation: oppie-side var(--o-oppie-turn) linear calc(var(--o-oppie-greet-delay) + var(--o-oppie-stagger) * var(--oppie-index));
+}
+.oppie[data-greeting] .oppie-glint {
+  animation: oppie-glint var(--o-oppie-turn) linear calc(var(--o-oppie-greet-delay) + var(--o-oppie-stagger) * var(--oppie-index));
+}
 .oppie[data-spinning] .oppie-pill {
   animation: oppie-spin var(--o-oppie-turn) linear calc(var(--o-oppie-stagger) * var(--oppie-index)) infinite;
 }
@@ -367,7 +377,10 @@
 .oppie[data-spinning] .oppie-glint {
   animation: oppie-glint var(--o-oppie-turn) linear calc(var(--o-oppie-stagger) * var(--oppie-index)) infinite;
 }
-.oppie[data-paused] * {
+/* After the rules above and as specific, because their animation shorthand resets the play state to running. */
+.oppie[data-paused] .oppie-pill,
+.oppie[data-paused] .oppie-shade,
+.oppie[data-paused] .oppie-glint {
   animation-play-state: paused;
 }
 @media (prefers-reduced-motion: reduce) {
