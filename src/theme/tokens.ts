@@ -52,6 +52,8 @@ export type ThemeColors = {
   dangerSoft: string;
   /** Translucent veil behind dialogs. */
   overlay: string;
+  /** The "in" of the LinkedIn icon: LinkedIn's blue on light, a lighter tint of it on dark so it stays clear on a dark tile. */
+  linkedin: string;
 };
 
 /** A jewel's radial gradient stops, lightest to deepest, as drawn in the Opero mark. */
@@ -110,6 +112,7 @@ export const tokens = {
       danger: '#E3787B',
       dangerSoft: '#D2696C24',
       overlay: '#08090BCC',
+      linkedin: '#378FE9',
     },
     light: {
       canvas: '#FFFFFF',
@@ -134,6 +137,7 @@ export const tokens = {
       danger: '#841C28',
       dangerSoft: '#841C2814',
       overlay: '#25272E66',
+      linkedin: '#0A66C2',
     },
   } satisfies Record<ThemeName, ThemeColors>,
 

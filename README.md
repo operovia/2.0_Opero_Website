@@ -29,7 +29,7 @@ Sign in at `/admin` and open Content to change the words on any page. In a headl
 
 ## Investor Hub
 
-The Investor Hub (`/investors`) tells the founder's story for investors and ends with a short contact form; messages arrive in Inquiries. It stays hidden until you switch it on in Settings: until then visitors get "page not found" and its tab is left out of the header, while you see both whenever you are signed in. Edit its copy in Content, Investor Hub.
+The Investor Hub (`/investors`) tells the founder's story for investors and ends with a short contact form; messages arrive in Inquiries. It stays hidden until you switch it on in Settings: until then visitors get "page not found" and its tab is left out of the header, while you see both whenever you are signed in. Edit its copy in Content, Investor Hub. The LinkedIn icon beside your name links to the profile set there, under Introduction; leave that empty to hide the icon.
 
 ## Surveys
 

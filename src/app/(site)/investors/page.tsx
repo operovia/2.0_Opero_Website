@@ -8,6 +8,8 @@ import { Reveal, RevealGroup, RevealItem } from '@/components/motion/reveal';
 import { InvestorInquiryForm } from '@/components/site/investor-inquiry-form';
 import { JoinedModules, ScatteredApps, StoryLine } from '@/components/site/investors/story-visuals';
 import { Container, Eyebrow } from '@/components/site/layout-parts';
+import { LinkedInGlyph } from '@/components/site/linkedin-glyph';
+import { SiteLink } from '@/components/site/site-link';
 import { INVESTOR_HUB_PATH } from '@/content/constants';
 import { openGraph } from '@/content/metadata';
 import { getPage, getPublicSettings } from '@/content/store';
@@ -105,8 +107,20 @@ export default async function InvestorsPage() {
               sizes="(min-width: 64rem) 18rem, (min-width: 40rem) 7rem, 5rem"
               className="h-auto w-20 shrink-0 rounded-xl border border-line-strong shadow-lg sm:w-28 lg:w-72 lg:rounded-2xl"
             />
-            <figcaption>
-              <span className="block text-base font-semibold text-fg">{intro.name}</span>
+            {/* As wide as the photo on large screens, so the LinkedIn icon lines up with its right edge. */}
+            <figcaption className="min-w-0 flex-1 lg:w-72 lg:flex-none">
+              <span className="flex items-center justify-between gap-4">
+                <span className="text-base font-semibold text-fg">{intro.name}</span>
+                {intro.linkedin ? (
+                  <SiteLink
+                    href={intro.linkedin}
+                    aria-label={`${intro.name} on LinkedIn`}
+                    className="-my-1 grid size-8 shrink-0 place-items-center rounded-sm border border-line-strong bg-surface text-linkedin transition-colors hover:border-fg-subtle hover:bg-surface-raised"
+                  >
+                    <LinkedInGlyph className="size-4" />
+                  </SiteLink>
+                ) : null}
+              </span>
               <span className="mt-1 block text-eyebrow font-semibold text-fg-subtle uppercase">{intro.role}</span>
             </figcaption>
           </figure>

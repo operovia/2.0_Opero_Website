@@ -363,6 +363,7 @@ const investorsIntro = section({
     headline: text('Headline', { max: 120, lineBreaks: true }),
     name: text('Signed by', { max: 80 }),
     role: text('Role', { max: 80 }),
+    linkedin: link('LinkedIn profile', { optional: true, hint: 'Shown as the LinkedIn icon beside your name. Leave it empty to hide the icon.' }),
     description: text('Search and share description', { max: 200, multiline: true, hint: 'Shown in search results and link previews.' }),
   },
   seed: {
@@ -370,6 +371,7 @@ const investorsIntro = section({
     headline: 'I lived the problem. Then I built the solution.',
     name: 'Joe Mifsud',
     role: 'Founder',
+    linkedin: 'https://www.linkedin.com/in/joseph-mifsud-b7481217/',
     description: 'Twenty-five years in property management, the problem it showed, and the platform built to solve it.',
   },
 });
