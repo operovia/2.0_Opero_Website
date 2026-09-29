@@ -43,6 +43,13 @@
       "when": 1790685315647,
       "tag": "0005_hero_headline",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1790685645505,
+      "tag": "0006_search_title",
+      "breakpoints": true
     }
   ]
 }
