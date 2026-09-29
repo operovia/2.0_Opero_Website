@@ -20,8 +20,13 @@ export default async function EditSectionPage({ params }: PageProps<'/admin/cont
   if (!pageDef || !data) notFound();
 
   const { def, row, versions } = data;
-  const draft = { ...def.seed, ...(row?.draft ?? {}) };
-  const published = { ...def.seed, ...(row?.published ?? {}) };
+  // Only the section's current fields: content saved before a field was removed still carries it.
+  const current = (stored: unknown) => {
+    const merged: Record<string, unknown> = { ...def.seed, ...((stored as Record<string, unknown> | null) ?? {}) };
+    return Object.fromEntries(Object.keys(def.fields).map((key) => [key, merged[key]]));
+  };
+  const draft = current(row?.draft);
+  const published = current(row?.published);
 
   return (
     <div className="space-y-8">

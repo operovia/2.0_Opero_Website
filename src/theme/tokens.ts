@@ -381,16 +381,15 @@ export const tokens = {
     /** Distance revealed elements travel, in pixels. */
     revealDistance: 24,
     /**
-     * The platform section's links (src/components/site/home/platform-links.tsx):
-     * as they come into view, after `delay`, a light runs `down` each line from
-     * the core CRM to its module, `stagger` apart, then along the line joining
-     * the modules, taking `across` for each half gap between two of them.
+     * The platform section's network (src/components/site/home/platform-network.tsx):
+     * `delay` after it comes into view, light leaves Oppie and runs `across`
+     * the line joining the modules to each end; as it passes a module's line
+     * it runs up to the CRM and down to the module, taking `reach`.
      */
     links: {
-      delay: 300,
-      down: 900,
-      stagger: 120,
-      across: 360,
+      delay: 500,
+      across: 1000,
+      reach: 600,
     },
     /**
      * Oppie's flip (docs/brand/oppie-8e-handoff.md): while Oppie thinks, each

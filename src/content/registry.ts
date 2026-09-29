@@ -121,7 +121,8 @@ const platform = section({
       },
       { min: 1, max: 5 },
     ),
-    closing: text('Closing line', { max: 200 }),
+    oppieTitle: text('Oppie note', { max: 60, hint: 'Beside the Oppie mark, in the middle of the lines joining the CRM and the modules.' }),
+    oppieDetail: text('Oppie note, second line', { optional: true, max: 80 }),
   },
   seed: {
     eyebrow: 'The platform.',
@@ -138,7 +139,8 @@ const platform = section({
       { module: 'university', description: 'Training for your team.' },
       { module: 'compass', description: 'Running the business on EOS.' },
     ],
-    closing: 'And woven through all of it, Oppie.',
+    oppieTitle: 'Oppie knows all of it.',
+    oppieDetail: 'Ask anything in plain English.',
   },
 });
 

@@ -3,7 +3,7 @@ import { BrandMark } from '@/components/brand/brand-mark';
 import type { SectionData } from '@/content/registry';
 import { cn } from '@/lib/cn';
 import { Container, SectionIntro } from '../layout-parts';
-import { PlatformLinks } from './platform-links';
+import { PlatformNetwork } from './platform-network';
 
 const jewel = {
   build: 'jewel-build',
@@ -27,19 +27,19 @@ export function Platform({ content }: { content: SectionData<'home', 'platform'>
       <Container>
         <SectionIntro headingId="platform-title" eyebrow={content.eyebrow} headline={content.headline} body={content.body} />
 
-        {/* Opero around everything: the core CRM and every module in one frame, all linked to each other. */}
+        {/* Opero around everything: the core CRM and every module in one frame, all linked, with Oppie in the middle knowing all of it. */}
         <Reveal className="mt-20">
           <div className="platform-frame">
             <div className="absolute top-0 left-1/2 z-10 -translate-x-1/2 -translate-y-1/2 rounded-full border border-line-strong bg-canvas px-6 py-3 shadow-md">
               <BrandMark name="opero" className="h-7 sm:h-8" />
             </div>
             <div className="relative overflow-hidden rounded-2xl border border-line-strong bg-surface p-8 sm:p-10">
-              <div className="max-w-2xl">
+              <div className="mx-auto max-w-2xl text-center">
                 <h3 className="text-2xl font-semibold text-fg">{content.coreTitle}</h3>
                 <p className="mt-3 text-lg text-fg-muted">{content.coreText}</p>
               </div>
             </div>
-            <PlatformLinks modules={content.modules.map((item) => item.module)} />
+            <PlatformNetwork modules={content.modules.map((item) => item.module)} title={content.oppieTitle} detail={content.oppieDetail} />
             {/* Stacked on phones, the cards hang on one line that shows in the gaps between them. */}
             <RevealGroup
               as="ul"
@@ -58,10 +58,6 @@ export function Platform({ content }: { content: SectionData<'home', 'platform'>
               ))}
             </RevealGroup>
           </div>
-        </Reveal>
-
-        <Reveal>
-          <p className="mt-14 text-center text-xl font-medium text-fg sm:text-2xl">{content.closing}</p>
         </Reveal>
       </Container>
     </section>
