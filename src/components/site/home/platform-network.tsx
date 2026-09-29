@@ -1,13 +1,15 @@
 'use client';
 
-import { m, type Variants } from 'motion/react';
+import { m } from 'motion/react';
 import type { CSSProperties } from 'react';
 import { OppieMark } from '@/components/brand/oppie-mark';
 import { cn } from '@/lib/cn';
 import { tokens, type ModuleKey } from '@/theme/tokens';
+import { Light, lightRuns } from '../light';
 
 const { links } = tokens.motion;
 const seconds = (ms: number) => ms / 1000;
+const { up, down, leftward, rightward } = lightRuns;
 
 const jewel: Record<ModuleKey, string> = {
   build: 'jewel-build',
@@ -25,26 +27,6 @@ const toModule: Record<ModuleKey, string> = {
   university: 'to-module-university',
   compass: 'to-module-compass',
 };
-
-/* Each light runs along its line once, when the network first comes into view; `custom` is when it starts, in seconds. */
-const run = (from: { x?: string; y?: string }, to: { x?: string; y?: string }, duration: number): Variants => ({
-  off: from,
-  on: (delay: number) => ({ ...to, transition: { delay, duration: seconds(duration), ease: 'linear' } }),
-});
-const up = run({ y: '100%' }, { y: '-100%' }, links.reach);
-const down = run({ y: '-100%' }, { y: '100%' }, links.reach);
-const leftward = run({ x: '100%' }, { x: '-100%' }, links.across);
-const rightward = run({ x: '-100%' }, { x: '100%' }, links.across);
-
-function Light({ variants, delay, vertical }: { variants: Variants; delay: number; vertical?: boolean }) {
-  return (
-    <m.span
-      variants={variants}
-      custom={delay}
-      className={cn('absolute inset-0 from-transparent via-fg to-transparent', vertical ? 'bg-linear-to-b' : 'bg-linear-to-r')}
-    />
-  );
-}
 
 type Props = { modules: readonly ModuleKey[]; title: string; detail: string };
 

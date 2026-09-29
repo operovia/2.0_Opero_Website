@@ -276,7 +276,9 @@
 /*
  * Aurora (src/components/site/aurora.tsx): soft glows in the jewel colors,
  * drifting slowly. Radial gradients instead of blur filters keep it cheap;
- * only transform is animated.
+ * only transform is animated. When a guest arrives through the front door,
+ * src/components/door/door-arrival.tsx copies each glow's currentTime from
+ * the veil's aurora to the hero's, so the two drift in one phase.
  */
 .aurora {
   mask-image: radial-gradient(130% 90% at 50% 0%, black 40%, transparent 100%);
@@ -627,13 +629,22 @@
 
 /*
  * Hero entrance. The headline only moves (it never starts invisible), so the
- * largest paint on the page happens immediately.
+ * largest paint on the page happens immediately. Written as longhands, never
+ * the animation shorthand: the shorthand resets animation-delay, and these
+ * unlayered rules would beat the [animation-delay:*] utilities on the
+ * elements whatever the order, leaving every delay at 0s.
  */
 .hero-rise {
-  animation: hero-rise 900ms var(--o-ease-out) both;
+  animation-name: hero-rise;
+  animation-duration: 900ms;
+  animation-timing-function: var(--o-ease-out);
+  animation-fill-mode: both;
 }
 .hero-fade {
-  animation: hero-fade 900ms var(--o-ease-out) both;
+  animation-name: hero-fade;
+  animation-duration: 900ms;
+  animation-timing-function: var(--o-ease-out);
+  animation-fill-mode: both;
 }
 @keyframes hero-rise {
   from {
@@ -645,6 +656,216 @@
     opacity: 0;
     transform: translate3d(0, 14px, 0);
   }
+}
+
+/*
+ * Arrival from the front door (src/components/door/door-veil.tsx). While the
+ * veil holds the home page at its first frame, the headline fades up like the
+ * rest instead of sitting visible, and every hero entrance waits paused at
+ * frame zero until the veil releases it halfway through its lift. Only
+ * door-arrival.tsx removes the attribute, when the hero unmounts: taking it
+ * away earlier would swap the headline's animation mid-flight.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  html[data-door-arrival] .hero-rise {
+    animation-name: hero-fade;
+  }
+  html[data-door-arrival='held'] .hero-rise,
+  html[data-door-arrival='held'] .hero-fade {
+    animation-play-state: paused;
+  }
+}
+
+/*
+ * The front door (src/components/door/door.tsx). A point of light waits on
+ * the line where the caret will be, under a soft glow; it hands over to the
+ * caret on focus and stays out once something is typed. The line carries a
+ * warm overlay that brightens with each character and a rose overlay for a
+ * miss. Everything on arrival is a CSS keyframe with both fill modes, so it
+ * plays without JavaScript; the delays sit on the elements as
+ * [animation-delay:*] classes, as the hero does, so the rules below are
+ * longhands: the animation shorthand would reset those delays to 0s.
+ */
+.door-point {
+  position: absolute;
+  border-radius: var(--o-radius-full);
+  background: var(--o-jewel-light-specular);
+  transition: opacity var(--o-duration-base) var(--o-ease-out);
+}
+.door-point::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: calc(var(--o-space-unit) * 30);
+  height: calc(var(--o-space-unit) * 30);
+  translate: -50% -50%;
+  border-radius: var(--o-radius-full);
+  background: radial-gradient(circle at center, color-mix(in oklab, var(--o-fg) var(--o-door-glow), transparent) 0%, transparent 70%);
+}
+.door-field:has(input:focus) .door-point,
+.door-field[data-typed] .door-point {
+  opacity: 0;
+}
+.door-field:has(input:focus) .door-label {
+  color: var(--o-fg-muted);
+}
+/* Focus shows on the line itself, not as an outline boxing a field that has no box: the hairline turns teal and doubles. */
+.door-field:has(input:focus-visible) .door-line-in {
+  background-color: var(--o-focus-ring);
+  box-shadow: 0 1px 0 0 var(--o-focus-ring);
+}
+/* Autofill paints its own box: keep the canvas and the text color, and light the line without script. */
+.door-input:autofill,
+.door-input:-webkit-autofill {
+  -webkit-text-fill-color: var(--o-fg);
+  caret-color: var(--o-fg);
+  box-shadow: inset 0 0 0 1000px var(--o-canvas);
+}
+.door-field:has(input:autofill) .door-line-warm {
+  opacity: 1;
+}
+/* The warm overlay's opacity is the field's --door-warm, which the script sets from the typed length. */
+.door-line-warm {
+  opacity: var(--door-warm, 0);
+}
+.door-line-warm,
+.door-line-danger,
+.door-dot {
+  transition: opacity var(--o-duration-base) var(--o-ease-standard);
+}
+.door-field[data-checking] .door-line-warm {
+  transition-duration: var(--o-duration-slow);
+}
+/* While the list is checked the running light stands in for the caret. */
+.door-field[data-checking] .door-input {
+  caret-color: transparent;
+}
+/* The key turns: the line flashes white and its end dots light, quickly. */
+.door-field[data-open] .door-line-warm,
+.door-field[data-open] .door-dot {
+  opacity: 1;
+  transition-duration: var(--o-duration-fast);
+  transition-timing-function: var(--o-ease-out);
+}
+/* The rose tint after a miss, from the server's answer, so it needs no script. */
+.door-field[data-answer] .door-line-danger {
+  opacity: 0.6;
+}
+/* The teal ring and the brighter arrow once the value looks like an address. */
+.door-ring-lit,
+.door-arrow-lit {
+  transition: opacity var(--o-duration-base) var(--o-ease-standard);
+}
+.door-field[data-ready] .door-ring-lit,
+.door-field[data-ready] .door-arrow-lit {
+  opacity: 1;
+}
+
+.door-mark-in {
+  animation-name: door-mark-in;
+  animation-duration: var(--o-door-mark);
+  animation-timing-function: var(--o-ease-out);
+  animation-fill-mode: both;
+}
+.door-point-in {
+  animation-name: door-point-in;
+  animation-duration: var(--o-door-point);
+  animation-timing-function: var(--o-ease-out);
+  animation-fill-mode: both;
+}
+.door-line-in {
+  animation-name: door-line-in;
+  animation-duration: var(--o-duration-reveal);
+  animation-timing-function: var(--o-ease-in-out);
+  animation-fill-mode: both;
+  transform-origin: left;
+  @variant sm {
+    transform-origin: center;
+  }
+}
+.door-rise {
+  animation-name: door-rise;
+  animation-duration: var(--o-duration-reveal);
+  animation-timing-function: var(--o-ease-out);
+  animation-fill-mode: both;
+}
+.door-fade {
+  animation-name: door-fade;
+  animation-duration: var(--o-duration-slow);
+  animation-timing-function: var(--o-ease-out);
+  animation-fill-mode: both;
+}
+.door-message-in {
+  animation-name: door-message-in;
+  animation-duration: var(--o-duration-slow);
+  animation-timing-function: var(--o-ease-out);
+  animation-fill-mode: both;
+}
+@keyframes door-mark-in {
+  from {
+    transform: translate3d(0, var(--o-door-settle), 0);
+  }
+}
+@keyframes door-point-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes door-line-in {
+  from {
+    transform: scaleX(0);
+  }
+}
+@keyframes door-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, var(--o-door-lift), 0);
+  }
+}
+@keyframes door-fade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes door-message-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, calc(var(--o-door-lift) / 2), 0);
+  }
+}
+/* The rule above collapses every animation to an instant but leaves its delay, so the whole door appears at once instead of piece by piece. */
+@media (prefers-reduced-motion: reduce) {
+  .door-mark-in,
+  .door-point-in,
+  .door-line-in,
+  .door-rise,
+  .door-fade,
+  .door-message-in {
+    animation-delay: 0ms !important;
+  }
+}
+/* The box-less field keeps an edge in high contrast, and the point stays lit. */
+@media (forced-colors: active) {
+  .door-input {
+    border-bottom: 1px solid CanvasText;
+  }
+  .door-point {
+    forced-color-adjust: none;
+  }
+}
+
+/*
+ * The veil's ring of light (src/components/door/door-veil.tsx): a thin band
+ * that opens out from the spark, ten times over. It keeps will-change only
+ * while the veil lives; the script clears it when the veil leaves.
+ */
+.door-iris {
+  width: 24vmin;
+  height: 24vmin;
+  border-radius: var(--o-radius-full);
+  background: radial-gradient(circle at center, transparent 46%, color-mix(in oklab, var(--o-fg) var(--o-door-band), transparent) 46% 50%, transparent 52%);
+  will-change: transform;
 }
 
 /* Module cards: each glows softly in its jewel's color, brighter on hover. */

@@ -262,6 +262,11 @@ export const tokens = {
       colors: [jewels.violet.dark[1], jewels.teal.dark[1], jewels.crimson.dark[1], jewels.green.dark[1], jewels.gold.dark[1]],
       opacity: { dark: 0.5, light: 0.16 },
     },
+    /** The front door (src/components/door): how much of the text color lights the point's soft glow and the veil's ring of light, in percent. */
+    door: {
+      glow: 14,
+      band: 40,
+    },
   },
 
   /**
@@ -401,6 +406,38 @@ export const tokens = {
       turn: 1600,
       stagger: 160,
       greetDelay: 400,
+    },
+    /**
+     * The front door (src/components/door): on arrival the point of light
+     * comes up over `point` and the mark settles by `settle` over `mark`; the
+     * door's pieces rise and sink by `lift`. The checking light runs at most
+     * `runs` times before it holds. After a yes, the spark returns at
+     * `sparkScale` of its size and flares to `flareScale` over `flare`, the
+     * ring of light grows from `irisFrom` to `irisScale` times its size while
+     * it fades from `irisOpacity`, and the aurora blooms from `bloomScale`,
+     * both over `iris`; then the
+     * darkness lifts over `veil`, the home page is released at `release` of
+     * the lift, and after `giveUp` without the home page the veil falls back
+     * to a plain navigation. (The action's answer floor is DOOR_FLOOR_MS in
+     * src/server/guests.ts.)
+     */
+    door: {
+      point: 300,
+      mark: 900,
+      settle: 6,
+      lift: 8,
+      runs: 3,
+      sparkScale: 0.5,
+      flareScale: 4,
+      flare: 500,
+      iris: 1200,
+      irisFrom: 0.1,
+      irisScale: 10,
+      irisOpacity: 0.8,
+      bloomScale: 0.3,
+      veil: 1000,
+      release: 0.5,
+      giveUp: 6000,
     },
   },
 } as const;

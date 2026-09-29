@@ -41,7 +41,8 @@ export function SiteHeader({ content }: Props) {
       )}
     >
       <Container className="flex h-18 items-center justify-between gap-3 sm:gap-6">
-        <Link href="/" aria-label="Opero home" className="rounded-sm">
+        {/* data-door-mark: the front door's veil lands its traveling mark on this one (src/components/door/door-veil.tsx). */}
+        <Link href="/" aria-label="Opero home" className="rounded-sm" data-door-mark>
           <BrandMark name="opero" className="h-9 sm:h-11 lg:h-13" decorative priority />
         </Link>
 

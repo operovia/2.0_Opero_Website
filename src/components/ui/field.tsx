@@ -5,8 +5,20 @@ import { cn } from '@/lib/cn';
 const control =
   'block w-full rounded-md border border-line-input bg-surface px-3.5 text-base text-fg shadow-sm transition-[border-color,box-shadow] duration-150 placeholder:text-fg-subtle hover:border-fg-subtle focus-visible:border-focus-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring/40 disabled:opacity-60 aria-invalid:border-danger';
 
-export function Input({ className, ...props }: ComponentProps<'input'>) {
-  return <input className={cn(control, 'h-11', className)} {...props} />;
+const inputVariants = {
+  /** The ordinary boxed control. */
+  box: cn(control, 'h-11'),
+  /**
+   * No box at all: for a field drawn as a line, such as the front door's
+   * (src/components/door/door.tsx). It sets no height or padding, so the
+   * caller's row height and padding never fight it; the site's own
+   * :focus-visible outline still shows keyboard focus.
+   */
+  line: 'block w-full rounded-none border-0 bg-transparent text-xl text-fg caret-fg placeholder:text-fg-subtle',
+};
+
+export function Input({ className, variant = 'box', ...props }: ComponentProps<'input'> & { variant?: keyof typeof inputVariants }) {
+  return <input className={cn(inputVariants[variant], className)} {...props} />;
 }
 
 export function Textarea({ className, rows = 4, ...props }: ComponentProps<'textarea'>) {

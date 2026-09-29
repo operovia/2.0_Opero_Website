@@ -98,6 +98,14 @@ function sharedDeclarations(): string {
   vars['oppie-turn'] = `${tokens.motion.oppie.turn}ms`;
   vars['oppie-stagger'] = `${tokens.motion.oppie.stagger}ms`;
   vars['oppie-greet-delay'] = `${tokens.motion.oppie.greetDelay}ms`;
+  // The front door's arrival and its light (src/components/door): durations in ms, distances in px, shares in %.
+  vars['door-point'] = `${tokens.motion.door.point}ms`;
+  vars['door-mark'] = `${tokens.motion.door.mark}ms`;
+  vars['door-settle'] = `${tokens.motion.door.settle}px`;
+  vars['door-lift'] = `${tokens.motion.door.lift}px`;
+  vars['door-iris-scale'] = tokens.motion.door.irisScale;
+  vars['door-glow'] = `${tokens.brand.door.glow}%`;
+  vars['door-band'] = `${tokens.brand.door.band}%`;
 
   return declarations(vars);
 }

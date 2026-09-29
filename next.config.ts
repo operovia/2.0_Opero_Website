@@ -50,8 +50,9 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       { source: '/:path*', headers: securityHeaders },
-      // Surveys and the admin are never indexed.
+      // Surveys, the front door and the admin are never indexed.
       { source: '/s/:path*', headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }] },
+      { source: '/welcome', headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }] },
       {
         source: '/admin/:path*',
         headers: [
