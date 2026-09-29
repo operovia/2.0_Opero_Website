@@ -34,11 +34,11 @@ While `serve` runs, the owner should not press Run: Next.js allows one dev serve
 - The AI assistant is **Oppie**. Always that spelling.
 - Opero was built inside **Oxford Companies** in Ann Arbor, which is named publicly.
 - Say property management, never real estate: "real estate" makes people think of realtors, which Opero is not. That covers Oxford Companies too (a commercial and residential property management firm).
-- Never claim to replace or beat Yardi or any accounting system; say nothing about accounting.
+- Never claim to replace or beat Yardi or any accounting system; say nothing about accounting. Budgeting and financial reporting, which run today through API connections, may be shown as what they are, without the word accounting.
 - Never name competitor products. Use categories: a board tool, a wiki, a training platform, an EOS tool, a listing marketing tool.
 - No pricing and no dates anywhere on the public site (that includes copyright years and "last updated" lines).
 - **No em dashes** anywhere a visitor, recipient, or admin reads: site copy, admin UI, emails, placeholders, seed data, docs. Use commas, periods, or colons. `npm run check:copy` enforces this.
-- The Investor Hub (`/investors`) never offers investment or states terms: no SAFE or other instrument, raise amount, valuation, cap table, budget, or projections. It stays hidden from visitors until it is switched on in Settings (`src/server/investor-hub.ts` drops links to it and the page returns 404).
+- The Investor Hub (`/investors`) never offers investment or states terms: no SAFE or other instrument, raise amount, valuation, cap table, the company's budget, or projections. It stays hidden from visitors until it is switched on in Settings (`src/server/investor-hub.ts` drops links to it and the page returns 404).
 - The phrase "design partner" comes from the `partnerProgramLabel` site setting. In content use the tokens `{partner}`, `{partners}`, `{Partner}`, `{Partners}` so a label change flows everywhere.
 
 ## Design system rules

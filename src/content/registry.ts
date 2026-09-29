@@ -471,6 +471,12 @@ const investorsPlatform = section({
         next: 'Tenant portal\nUtility management',
       },
       {
+        name: 'Budgeting and reporting',
+        today: 'Budgeting and forecasting workflows',
+        extended: 'Financial reporting and report builder\nActual vs. budget reporting',
+        next: '',
+      },
+      {
         name: 'Records',
         today:
           'Global contacts and companies\nProperties, buildings, and suites\nEntity records\nAvailability and vacancy\nFloor plans and space visualization\n3D tours',
