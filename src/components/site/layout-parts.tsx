@@ -2,7 +2,7 @@ import type { ComponentProps, ReactNode } from 'react';
 import { Reveal } from '@/components/motion/reveal';
 import { RichText } from '@/components/rich-text';
 import { cn } from '@/lib/cn';
-import { withLineBreaks } from '@/lib/headline';
+import { renderHeadline } from '@/lib/headline';
 import type { RichDoc } from '@/lib/rich-text';
 import { SiteLink } from './site-link';
 
@@ -50,7 +50,7 @@ export function SectionIntro({
       ) : null}
       <Reveal delay={0.05}>
         <h2 id={headingId} className={cn('text-display-md font-medium text-metal', eyebrow && 'mt-5')}>
-          {withLineBreaks(headline)}
+          {renderHeadline(headline)}
         </h2>
       </Reveal>
       {body ? (

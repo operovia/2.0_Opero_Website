@@ -1,9 +1,10 @@
 import { createElement, Fragment } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
-import { onOneLine, withLineBreaks, withoutEmphasis } from './headline';
+import { plainHeadline, renderHeadline } from './headline';
 
-const html = (text: string, emphasis = false) => renderToStaticMarkup(createElement(Fragment, null, withLineBreaks(text, { emphasis })));
+const html = (text: string) => renderToStaticMarkup(createElement(Fragment, null, renderHeadline(text)));
+const em = (word: string) => `<em class="text-emphasis">${word}</em>`;
 
 describe('headlines', () => {
   it('starts a new line where Enter was pressed', () => {
@@ -13,20 +14,20 @@ describe('headlines', () => {
     expect(html('One line')).toBe('One line');
   });
 
-  it('sets words between asterisks in italics where the headline offers it', () => {
-    expect(html('*The* AI-driven platform', true)).toBe('<em>The</em> AI-driven platform');
-    expect(html('One *two* three *four*', true)).toBe('One <em>two</em> three <em>four</em>');
-    expect(html('*The* AI-driven\nplatform for *you*', true)).toBe('<em>The</em> AI-driven<br/>platform for <em>you</em>');
-    expect(html('*The* platform')).toBe('*The* platform');
+  it('emphasizes words between asterisks', () => {
+    expect(html('*The* AI-driven platform')).toBe(`${em('The')} AI-driven platform`);
+    expect(html('One *two* three *four*')).toBe(`One ${em('two')} three ${em('four')}`);
+    expect(html('Then I built *the* solution.')).toBe(`Then I built ${em('the')} solution.`);
+    expect(html('*The* AI-driven\nplatform for *you*')).toBe(`${em('The')} AI-driven<br/>platform for ${em('you')}`);
   });
 
   it('leaves text without a matched pair alone', () => {
-    expect(html('A lone * asterisk', true)).toBe('A lone * asterisk');
-    expect(html('*Across\nlines*', true)).toBe('*Across<br/>lines*');
+    expect(html('A lone * asterisk')).toBe('A lone * asterisk');
+    expect(html('*Across\nlines*')).toBe('*Across<br/>lines*');
   });
 
-  it('shows plain text on one line', () => {
-    expect(onOneLine('I lived with the problem.\nThen I built the solution.')).toBe('I lived with the problem. Then I built the solution.');
-    expect(withoutEmphasis('*The* AI-driven operating platform for property management.')).toBe('The AI-driven operating platform for property management.');
+  it('shows plain text on one line, without the asterisks', () => {
+    expect(plainHeadline('I lived with the problem.\nThen I built *the* solution.')).toBe('I lived with the problem. Then I built the solution.');
+    expect(plainHeadline('*The* AI-driven operating platform for property management.')).toBe('The AI-driven operating platform for property management.');
   });
 });

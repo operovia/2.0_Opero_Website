@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { isSafeHref, richDocSchema, richToText, textToRich } from '@/lib/rich-text';
 import { schemaFor, text } from './fields';
-import { withoutEmphasis } from '@/lib/headline';
+import { plainHeadline } from '@/lib/headline';
 import { defaultSettings } from '@/server/seed';
 import { allSections, pages } from './registry';
 import { contentTokens, fillTokens, fillTokensDeep, pluralize } from './tokens';
@@ -13,7 +13,7 @@ describe('seed content', () => {
   });
 
   it('keeps the approved hero copy word for word', () => {
-    expect(withoutEmphasis(pages.home.sections.hero.seed.headline)).toBe('The AI-driven operating platform for property management.');
+    expect(plainHeadline(pages.home.sections.hero.seed.headline)).toBe('The AI-driven operating platform for property management.');
     expect(pages.home.sections.hero.seed.headline).toMatch(/^\*The\* /);
     expect(richToText(pages.home.sections.hero.seed.subhead)).toBe(
       'One system, built around a core CRM, that replaces the patchwork of disconnected apps your teams run every day, with Oppie, your AI assistant, woven into every step.',
@@ -32,18 +32,18 @@ describe('seed content', () => {
 });
 
 describe('headlines', () => {
-  it('take line breaks everywhere', () => {
+  it('take line breaks and emphasis everywhere', () => {
     const headlines = allSections().flatMap(({ page, section, def }) =>
       Object.entries(def.fields)
         .filter(([, field]) => field.kind === 'text' && field.label === 'Headline')
-        .map(([key, field]) => [`${page}.${section}.${key}`, field.kind === 'text' && field.lineBreaks === true]),
+        .map(([key, field]) => [`${page}.${section}.${key}`, field.kind === 'text' && field.headline === true]),
     );
     expect(headlines.length).toBeGreaterThan(10);
     expect(headlines.filter(([, breaks]) => !breaks)).toEqual([]);
   });
 
   it('keep one break between lines, without blank lines or stray spaces', () => {
-    const schema = schemaFor({ headline: text('Headline', { lineBreaks: true }) });
+    const schema = schemaFor({ headline: text('Headline', { headline: true }) });
     expect(schema.parse({ headline: ' I lived with the problem.  \r\n\r\n  Then I built the solution. ' }).headline).toBe(
       'I lived with the problem.\nThen I built the solution.',
     );

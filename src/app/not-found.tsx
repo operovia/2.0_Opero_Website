@@ -4,7 +4,7 @@ import { NotFoundContent } from '@/components/site/not-found-content';
 import { SiteFooter } from '@/components/site/site-footer';
 import { SiteHeader } from '@/components/site/site-header';
 import { getPage, getPublicSettings } from '@/content/store';
-import { onOneLine } from '@/lib/headline';
+import { plainHeadline } from '@/lib/headline';
 import { getSession } from '@/server/auth/session';
 import { siteUrl } from '@/server/env';
 import { investorHubHidden, withVisibleLinks } from '@/server/investor-hub';
@@ -17,7 +17,7 @@ export default async function NotFound() {
   return (
     <>
       {/* Not-found pages take no metadata export; React moves this title into the head. */}
-      <title>{`${onOneLine(site.notFound.headline).replace(/[.!]$/, '')} | ${settings.siteName}`}</title>
+      <title>{`${plainHeadline(site.notFound.headline).replace(/[.!]$/, '')} | ${settings.siteName}`}</title>
       <SiteHeader content={withVisibleLinks(site.header, hubHidden, siteUrl())} />
       <main id="main">
         <NotFoundContent content={site.notFound} />

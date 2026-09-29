@@ -9,8 +9,11 @@ import { isSafeHref, richDocSchema, type RichDoc } from '@/lib/rich-text';
 
 type Base = { label: string; hint?: string; optional?: boolean };
 
-/** `multiline` gives longer text a bigger box. `lineBreaks` is for headlines: Enter starts a new line, and the site keeps it. */
-export type TextField = Base & { kind: 'text'; max?: number; multiline?: boolean; lineBreaks?: boolean };
+/**
+ * `multiline` gives longer text a bigger box. `headline` is for headlines: Enter
+ * starts a new line, and words between asterisks are emphasized (src/lib/headline.tsx).
+ */
+export type TextField = Base & { kind: 'text'; max?: number; multiline?: boolean; headline?: boolean };
 export type RichField = Base & { kind: 'rich' };
 /** A button or link target: a path on the site, a web address, or `#book-demo` for the demo form. */
 export type LinkField = Base & { kind: 'link' };
@@ -81,7 +84,7 @@ function itemSchema(field: ItemField): z.ZodType {
       let s = z.string().trim().max(field.max ?? 2000, `Keep this under ${field.max ?? 2000} characters.`);
       if (!field.optional) s = s.min(1, `${field.label} cannot be empty.`);
       // One break between lines: blank lines and spaces around a break would only add gaps.
-      return field.lineBreaks ? z.preprocess((value) => (typeof value === 'string' ? tidyLines(value) : value), s) : s;
+      return field.headline ? z.preprocess((value) => (typeof value === 'string' ? tidyLines(value) : value), s) : s;
     }
     case 'rich':
       return richDocSchema.refine(

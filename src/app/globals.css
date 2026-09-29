@@ -166,6 +166,41 @@
   }
 }
 
+/*
+ * Emphasis in headlines, the words between asterisks (src/lib/headline.tsx):
+ * italic, in the teal jewel's colors with the metal's polish and a glint
+ * across the word. The gradient sits centered on each line, as the text
+ * does, so its shine falls where the metal's does around it; a little room
+ * each side keeps the color on italic letters that lean past their box,
+ * taken back by the margin.
+ */
+@utility text-emphasis {
+  font-style: italic;
+  color: var(--o-emphasis-color);
+  @supports (background-clip: text) or (-webkit-background-clip: text) {
+    background-image: var(--o-emphasis-glint), var(--o-emphasis);
+    background-size:
+      100% 100%,
+      100% 1.2em;
+    background-size:
+      100% 100%,
+      100% 1lh;
+    background-position:
+      0 0,
+      0 50%;
+    background-repeat: no-repeat, repeat-y;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    padding-inline: 0.12em;
+    margin-inline: -0.12em;
+  }
+  @media (forced-colors: active) {
+    background-image: none;
+    color: CanvasText;
+  }
+}
+
 /* A brand jewel, by module (`jewel-studios`) or by name (`jewel-teal`). Pair with a size and rounded-full. */
 @utility jewel-crimson {
   background-image: var(--o-jewel-crimson);

@@ -164,6 +164,21 @@ export const tokens = {
     },
     jewels,
     /**
+     * Emphasis in headlines, the words between asterisks: italic, in a
+     * jewel's colors with the metal's polish. Each theme lists the metal's
+     * stops, top to bottom, as how much white (positive) or of the jewel's
+     * body (negative) is mixed into its highlight: on dark, a shine at the top,
+     * the highlight through the middle, and light again at the bottom; on
+     * light, deeper, to read on white. A glint crosses each emphasized word
+     * like the light on the jewel: its angle, and the band where it shows.
+     */
+    emphasis: {
+      jewel: 'teal',
+      dark: [72, 28, 0, -45, 35],
+      light: [0, -60, -100, -60, -30],
+      glint: { angle: 115, band: [38, 47, 56], opacity: 0.55 },
+    },
+    /**
      * Lighting layered over every jewel, taken from the jewels in the full
      * Opero mark (opero-dark.svg and opero-light.svg). The small and flat
      * exports of the mark leave these out.

@@ -14,7 +14,7 @@ import { INVESTOR_HUB_PATH } from '@/content/constants';
 import { openGraph } from '@/content/metadata';
 import { getPage, getPublicSettings } from '@/content/store';
 import { cn } from '@/lib/cn';
-import { withLineBreaks } from '@/lib/headline';
+import { renderHeadline } from '@/lib/headline';
 import { getSession } from '@/server/auth/session';
 import { investorHubHidden } from '@/server/investor-hub';
 
@@ -94,7 +94,7 @@ export default async function InvestorsPage() {
             )}
             {intro.eyebrow ? <Eyebrow className="hero-fade">{intro.eyebrow}</Eyebrow> : null}
             <h1 id="investors-title" className="hero-rise mt-5 max-w-4xl text-display-lg font-medium text-metal">
-              {withLineBreaks(intro.headline)}
+              {renderHeadline(intro.headline)}
             </h1>
           </div>
           {/* The portrait from the investor room in the Opero repo, as supplied. Signed beneath, like the original. */}
@@ -159,7 +159,7 @@ export default async function InvestorsPage() {
           </Reveal>
           <Reveal delay={0.05}>
             <h2 id="next-title" className="mt-5 max-w-3xl text-display-sm font-medium text-metal">
-              {withLineBreaks(platform.headline)}
+              {renderHeadline(platform.headline)}
             </h2>
           </Reveal>
           <Reveal delay={0.1}>
@@ -249,7 +249,7 @@ export default async function InvestorsPage() {
         <Container size="3xl">
           <div className="investor-glass rounded-2xl p-6 sm:p-10">
             <h2 id="talk-title" className="text-display-sm font-medium text-metal">
-              {withLineBreaks(contact.headline)}
+              {renderHeadline(contact.headline)}
             </h2>
             <p className="mt-4 text-lg text-fg-muted">{contact.intro}</p>
             <div className="mt-10">

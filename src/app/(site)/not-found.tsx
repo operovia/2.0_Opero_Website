@@ -1,6 +1,6 @@
 import { NotFoundContent } from '@/components/site/not-found-content';
 import { getPage, getPublicSettings } from '@/content/store';
-import { onOneLine } from '@/lib/headline';
+import { plainHeadline } from '@/lib/headline';
 
 /**
  * A page in the site's frame that is not there, such as the Investor Hub
@@ -12,7 +12,7 @@ export default async function SiteNotFound() {
   return (
     <>
       {/* Not-found pages take no metadata export; React moves this title into the head. */}
-      <title>{`${onOneLine(site.notFound.headline).replace(/[.!]$/, '')} | ${settings.siteName}`}</title>
+      <title>{`${plainHeadline(site.notFound.headline).replace(/[.!]$/, '')} | ${settings.siteName}`}</title>
       <NotFoundContent content={site.notFound} />
     </>
   );

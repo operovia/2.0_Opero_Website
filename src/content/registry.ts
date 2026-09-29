@@ -52,7 +52,7 @@ const hero = section({
   label: 'Hero',
   description: 'The first screen: headline, button, and the Oppie console. Console questions and answers are edited under Oppie console.',
   fields: {
-    headline: text('Headline', { max: 160, lineBreaks: true, hint: 'Put a word between asterisks to set it in italics, like *The*.' }),
+    headline: text('Headline', { max: 160, headline: true }),
     subhead: rich('Subhead'),
     buttonLabel: text('Button label', { max: 40 }),
     buttonTarget: link('Button link', { hint: buttonTargetHint }),
@@ -81,7 +81,7 @@ const problem = section({
   label: 'Problem',
   fields: {
     eyebrow: text('Eyebrow', { optional: true, max: 60 }),
-    headline: text('Headline', { max: 160, lineBreaks: true }),
+    headline: text('Headline', { max: 160, headline: true }),
     body: rich('Body'),
     apps: list('App chips', 'Chip', { label: text('Label', { max: 60 }) }, { min: 1, max: 10, hint: 'Shown struck through, one after another.' }),
     closing: text('Closing line', { max: 200 }),
@@ -108,7 +108,7 @@ const platform = section({
   label: 'Platform',
   fields: {
     eyebrow: text('Eyebrow', { optional: true, max: 60 }),
-    headline: text('Headline', { max: 160, lineBreaks: true }),
+    headline: text('Headline', { max: 160, headline: true }),
     body: rich('Body'),
     coreTitle: text('Core CRM title', { max: 80 }),
     coreText: text('Core CRM description', { max: 240, multiline: true }),
@@ -148,7 +148,7 @@ const oppie = section({
   label: 'Oppie',
   fields: {
     eyebrow: text('Eyebrow', { optional: true, max: 60 }),
-    headline: text('Headline', { max: 160, lineBreaks: true }),
+    headline: text('Headline', { max: 160, headline: true }),
     body: rich('Body'),
     closing: text('Closing line', { max: 200 }),
   },
@@ -166,7 +166,7 @@ const proof = section({
   label: 'Proof',
   fields: {
     eyebrow: text('Eyebrow', { optional: true, max: 60 }),
-    headline: text('Headline', { max: 160, lineBreaks: true }),
+    headline: text('Headline', { max: 160, headline: true }),
     body: rich('Body'),
     stats: list('Stats', 'Stat', { value: text('Value', { max: 30 }), label: text('Label', { max: 80 }) }, { min: 1, max: 6 }),
   },
@@ -189,7 +189,7 @@ const partner = section({
   description: tokenHelp,
   fields: {
     eyebrow: text('Eyebrow', { optional: true, max: 60 }),
-    headline: text('Headline', { max: 160, lineBreaks: true, hint: tokenHelp }),
+    headline: text('Headline', { max: 160, headline: true, hint: tokenHelp }),
     body: rich('Body', { hint: tokenHelp }),
     closing: text('Closing line', { max: 200 }),
     buttonLabel: text('Button label', { max: 40 }),
@@ -210,7 +210,7 @@ const partner = section({
 const closing = section({
   label: 'Closing call to action',
   fields: {
-    headline: text('Headline', { max: 160, lineBreaks: true }),
+    headline: text('Headline', { max: 160, headline: true }),
     subhead: text('Subhead', { max: 240, multiline: true }),
     buttonLabel: text('Button label', { max: 40 }),
     buttonTarget: link('Button link', { hint: buttonTargetHint }),
@@ -235,7 +235,7 @@ const partnersIntro = section({
   draftCopy: true,
   fields: {
     eyebrow: text('Eyebrow', { optional: true, max: 80 }),
-    headline: text('Headline', { max: 160, lineBreaks: true, hint: tokenHelp }),
+    headline: text('Headline', { max: 160, headline: true, hint: tokenHelp }),
     body: rich('Body', { hint: tokenHelp }),
   },
   seed: {
@@ -251,7 +251,7 @@ const partnersGets = section({
   label: 'What you get',
   draftCopy: true,
   fields: {
-    headline: text('Headline', { max: 120, lineBreaks: true }),
+    headline: text('Headline', { max: 120, headline: true }),
     items: list('Benefits', 'Benefit', itemFields, { min: 1, max: 8 }),
   },
   seed: {
@@ -281,7 +281,7 @@ const partnersAsks = section({
   label: 'What we ask',
   draftCopy: true,
   fields: {
-    headline: text('Headline', { max: 120, lineBreaks: true }),
+    headline: text('Headline', { max: 120, headline: true }),
     items: list('Requests', 'Request', itemFields, { min: 1, max: 8 }),
   },
   seed: {
@@ -299,7 +299,7 @@ const partnersSelection = section({
   label: 'Limited seats',
   draftCopy: true,
   fields: {
-    headline: text('Headline', { max: 120, lineBreaks: true }),
+    headline: text('Headline', { max: 120, headline: true }),
     body: rich('Body'),
   },
   seed: {
@@ -315,7 +315,7 @@ const partnersApply = section({
   description: 'Heading, labels, and thank-you message for the application form.',
   draftCopy: true,
   fields: {
-    headline: text('Headline', { max: 120, lineBreaks: true }),
+    headline: text('Headline', { max: 120, headline: true }),
     intro: text('Introduction', { max: 300, multiline: true }),
     nameLabel: text('Name label', { max: 60 }),
     firmLabel: text('Firm label', { max: 60 }),
@@ -362,7 +362,7 @@ const investorsIntro = section({
   draftCopy: true,
   fields: {
     eyebrow: text('Eyebrow', { optional: true, max: 60 }),
-    headline: text('Headline', { max: 120, lineBreaks: true }),
+    headline: text('Headline', { max: 120, headline: true }),
     name: text('Signed by', { max: 80 }),
     role: text('Role', { max: 80 }),
     linkedin: link('LinkedIn profile', { optional: true, hint: 'Shown as the LinkedIn icon beside your name. Leave it empty to hide the icon.' }),
@@ -435,7 +435,7 @@ const investorsPlatform = section({
     "What runs at Oxford today against what the new build adds, area by area, from the investor room's capability table. The counts on the page are worked out from these lists.",
   draftCopy: true,
   fields: {
-    headline: text('Headline', { max: 120, lineBreaks: true }),
+    headline: text('Headline', { max: 120, headline: true }),
     intro: text('Introduction', { max: 300, multiline: true }),
     todayLabel: text('Running today: label', { max: 60 }),
     nextLabel: text('On deck: label', { max: 60 }),
@@ -521,7 +521,7 @@ const investorsContact = section({
   description: 'Heading, labels, thank-you message, and the note under the form. Messages arrive in Inquiries.',
   draftCopy: true,
   fields: {
-    headline: text('Headline', { max: 120, lineBreaks: true }),
+    headline: text('Headline', { max: 120, headline: true }),
     intro: text('Introduction', { max: 300, multiline: true }),
     nameLabel: text('Name label', { max: 60 }),
     firmLabel: text('Firm label', { max: 60 }),
@@ -560,7 +560,7 @@ const privacyNotice = section({
   description: tokenHelp,
   draftCopy: true,
   fields: {
-    headline: text('Headline', { max: 120, lineBreaks: true }),
+    headline: text('Headline', { max: 120, headline: true }),
     intro: rich('Introduction', { hint: tokenHelp }),
     sections: list('Sections', 'Section', { heading: text('Heading', { max: 120 }), body: rich('Text', { hint: tokenHelp }) }, { min: 1, max: 20 }),
   },
@@ -702,7 +702,7 @@ const maintenance = section({
   description: 'Shown to visitors while maintenance mode is on in Settings.',
   draftCopy: true,
   fields: {
-    headline: text('Headline', { max: 120, lineBreaks: true }),
+    headline: text('Headline', { max: 120, headline: true }),
     body: text('Message', { max: 400, multiline: true }),
   },
   seed: {
@@ -715,7 +715,7 @@ const notFound = section({
   label: 'Page not found',
   draftCopy: true,
   fields: {
-    headline: text('Headline', { max: 120, lineBreaks: true }),
+    headline: text('Headline', { max: 120, headline: true }),
     body: text('Message', { max: 400, multiline: true }),
     buttonLabel: text('Button label', { max: 40 }),
   },

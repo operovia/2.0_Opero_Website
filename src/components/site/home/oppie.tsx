@@ -2,7 +2,7 @@ import { OppieMark } from '@/components/brand/oppie-mark';
 import { Reveal } from '@/components/motion/reveal';
 import { RichText } from '@/components/rich-text';
 import type { SectionData } from '@/content/registry';
-import { withLineBreaks } from '@/lib/headline';
+import { renderHeadline } from '@/lib/headline';
 import { Container, Eyebrow } from '../layout-parts';
 
 export function OppieSection({ content }: { content: SectionData<'home', 'oppie'> }) {
@@ -21,7 +21,7 @@ export function OppieSection({ content }: { content: SectionData<'home', 'oppie'
           ) : null}
           <Reveal delay={0.05}>
             <h2 id="oppie-title" className="text-display-md font-medium text-metal">
-              {withLineBreaks(content.headline)}
+              {renderHeadline(content.headline)}
             </h2>
           </Reveal>
           <Reveal delay={0.1}>
