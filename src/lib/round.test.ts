@@ -20,9 +20,9 @@ const bounds = { min: 50_000, max: 750_000, step: 25_000 };
 const raise = 750_000;
 const cap = 10_000_000;
 const holders = [
-  { holder: 'Joseph Mifsud', class: 'Common, founder', shares: 7_000_000 },
-  { holder: 'Oxford Companies', class: 'Common', shares: 1_500_000 },
-  { holder: 'Equity incentive plan', class: 'Reserved, unissued', shares: 1_500_000 },
+  { holder: 'Founder', class: 'Common', shares: 7_000_000 },
+  { holder: 'Flagship operator', class: 'Common', shares: 1_500_000 },
+  { holder: 'Employee pool', class: 'Reserved, unissued', shares: 1_500_000 },
 ];
 const model = (amount: number) => roundModel({ amount, raise, cap, holders, youLabel: 'You', othersLabel: 'Other pre-seed investors' });
 

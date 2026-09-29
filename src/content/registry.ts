@@ -607,14 +607,14 @@ const investorsRound = section({
     totalLabel: 'Total',
     priceLabel: 'Illustrative price per share, if the full round converts',
     capTable: [
-      { holder: 'Joseph Mifsud', class: 'Common, founder', shares: 7000000 },
-      { holder: 'Oxford Companies', class: 'Common', shares: 1500000 },
-      { holder: 'Equity incentive plan', class: 'Reserved, unissued', shares: 1500000 },
+      { holder: 'Founder', class: 'Common', shares: 7000000 },
+      { holder: 'Flagship operator', class: 'Common', shares: 1500000 },
+      { holder: 'Employee pool', class: 'Reserved, unissued', shares: 1500000 },
     ],
     youLabel: 'You',
     othersLabel: 'Other pre-seed investors',
     capNote:
-      "Oxford Companies' position was purchased at formation and is not part of this round. The dilution from the round falls on the holders already on the table. Your ownership is your investment divided by the cap, so it does not change if the round grows. Share counts after the round assume the full round is raised and are illustrative; the percentages are the terms.",
+      "The flagship operator's position was purchased at formation and is not part of this round. The dilution from the round falls on the holders already on the table. Your ownership is your investment divided by the cap, so it does not change if the round grows. Share counts after the round assume the full round is raised and are illustrative; the percentages are the terms.",
   },
   // The slider's figures must agree with each other, or the model's sums no longer add up.
   check: ({ raise, minimum, maximum, step, start }) => {
