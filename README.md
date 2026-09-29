@@ -25,7 +25,7 @@ This project is one Next.js app and must stay that way. `replit.md` tells Replit
 
 ## Editing the site
 
-Sign in at `/admin` and open Content to change the words on any page. In a headline, press Enter where a new line should start. In the home page headline, a word between asterisks is set in italics, like `*The*`.
+Sign in at `/admin` and open Content to change the words on any page. While you are signed in, an Admin button in the bottom left corner of every page of the site takes you back to the admin; visitors never see it. In a headline, press Enter where a new line should start. In the home page headline, a word between asterisks is set in italics, like `*The*`.
 
 ## Investor Hub
 

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { MotionRoot } from '@/components/motion/motion-root';
+import { AdminDoor } from '@/components/site/admin-door';
 import { DemoDialog } from '@/components/site/demo-dialog';
 import { MaintenancePage } from '@/components/site/maintenance-page';
 import { PreviewBanner } from '@/components/site/preview-banner';
@@ -57,6 +58,7 @@ export default async function SiteLayout({ children }: LayoutProps<'/'>) {
       </main>
       <SiteFooter content={footer} email={settings.contactEmail} />
       <DemoDialog content={site.demoForm} />
+      {session ? <AdminDoor /> : null}
       {settings.analyticsSnippet ? <div hidden dangerouslySetInnerHTML={{ __html: settings.analyticsSnippet }} /> : null}
     </MotionRoot>
   );
