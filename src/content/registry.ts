@@ -1,5 +1,5 @@
 import { textToRich } from '@/lib/rich-text';
-import { choice, link, list, rich, text, type Fields, type Values } from './fields';
+import { choice, link, list, number, rich, text, type Fields, type SectionCheck, type Values } from './fields';
 import { tokenHelp } from './tokens';
 import { DEMO_TARGET, DOOR_PATH, FOUNDER_PATH, INVESTOR_HUB_PATH } from './constants';
 
@@ -20,6 +20,8 @@ export type SectionDef<F extends Fields = Fields> = {
   fields: F;
   seed: Values<F>;
   draftCopy?: boolean;
+  /** Runs after every field has passed its own validation, for figures that must agree with each other. */
+  check?: SectionCheck<F>;
 };
 
 export type PageDef = {
@@ -512,6 +514,122 @@ const investorsPlatform = section({
   },
 });
 
+const investorsRound = section({
+  label: 'The round',
+  description:
+    'The terms of the current round, the investment model, and the capitalization table. Shown to guests who came through the front door and to signed-in admins only, never on a public page. The figures come from the signed documents and the owner; the model works out every percentage from them.',
+  draftCopy: true,
+  fields: {
+    eyebrow: text('Eyebrow', { optional: true, max: 60 }),
+    termsHeading: text('Headline', { max: 120, headline: true }),
+    terms: list(
+      'Terms',
+      'Term',
+      {
+        value: text('Figure', { max: 30, hint: 'Shown large, like $750,000 or 180 days.' }),
+        label: text('What it is', { max: 120 }),
+      },
+      { min: 1, max: 8 },
+    ),
+    getsHeading: text('What the investor gets: heading', { max: 60 }),
+    getsBody: text('What the investor gets: text', { max: 600, multiline: true }),
+    modelHeading: text('Model: heading', { max: 60 }),
+    sliderLabel: text('Slider label', { max: 40 }),
+    shareLabel: text('Share of round: label', { max: 40 }),
+    ownershipLabel: text('Ownership: label', { max: 40 }),
+    remainingLabel: text('Allocation remaining: label', { max: 40 }),
+    raise: number('The round, in dollars', { min: 1, integer: true, hint: 'The amount being raised. The share of round and the dilution come from it.' }),
+    cap: number('Valuation cap, in dollars', { min: 1, integer: true, hint: 'The post-money cap. Ownership is the investment divided by it.' }),
+    minimum: number('Minimum investment, in dollars', {
+      min: 1,
+      integer: true,
+      hint: "The smallest investment, and the slider's lower end. The minimum shown in the terms above is its own text; edit it to match.",
+    }),
+    maximum: number('Largest investment on the slider, in dollars', { min: 1, integer: true, hint: 'No more than the round.' }),
+    step: number('Slider step, in dollars', { min: 1, integer: true, hint: 'Must fit a whole number of times between the minimum and the largest investment.' }),
+    start: number('Starting amount, in dollars', {
+      min: 1,
+      integer: true,
+      hint: 'The amount shown before the visitor moves the slider. Between the minimum and the largest investment.',
+    }),
+    capHeading: text('Capitalization: heading', { max: 120 }),
+    holderColumn: text('Column: holder', { max: 30 }),
+    classColumn: text('Column: class', { max: 30 }),
+    todayColumn: text('Column: today', { max: 30 }),
+    afterColumn: text('Column: after the round', { max: 30 }),
+    sharesUnit: text('Unit after share counts', { max: 20, hint: 'Shown after each count, like 7,000,000 shares.' }),
+    totalLabel: text('Total row: label', { max: 30 }),
+    priceLabel: text('Price per share: label', { max: 120, hint: 'Worked out from the cap and the full round, so it is an illustration.' }),
+    capTable: list(
+      'Capitalization today',
+      'Holder',
+      {
+        holder: text('Holder', { max: 60 }),
+        class: text('Class', { max: 60 }),
+        shares: number('Shares', { min: 0, integer: true }),
+      },
+      { min: 1, max: 12 },
+    ),
+    youLabel: text('Label for the reader in the table', { max: 40 }),
+    othersLabel: text('Label for the rest of the round in the table', { max: 60 }),
+    capNote: text('Note under the table', { max: 800, multiline: true }),
+  },
+  seed: {
+    eyebrow: 'The round',
+    termsHeading: 'The raise',
+    terms: [
+      { value: '$750,000', label: 'on a standard post-money SAFE' },
+      { value: '$10,000,000', label: 'valuation cap, no discount' },
+      { value: '$50,000', label: 'minimum investment' },
+      { value: '$250,000', label: 'and above receives pro-rata rights via side letter' },
+      { value: '180 days', label: 'the round remains open, from company formation' },
+    ],
+    getsHeading: 'What the investor gets',
+    getsBody:
+      'The SAFE converts to preferred stock at the next priced equity round, at the lower of the cap or the round price. The cap is what does the work: a $100,000 check today converts as if the company were worth no more than $10 million, regardless of the price later investors pay.',
+    modelHeading: 'Model your investment',
+    sliderLabel: 'Your investment',
+    shareLabel: 'Share of round',
+    ownershipLabel: 'Your ownership',
+    remainingLabel: 'Allocation remaining',
+    raise: 750000,
+    cap: 10000000,
+    minimum: 50000,
+    maximum: 750000,
+    step: 25000,
+    start: 50000,
+    capHeading: 'Capitalization, today and after the round converts',
+    holderColumn: 'Holder',
+    classColumn: 'Class',
+    todayColumn: 'Today',
+    afterColumn: 'After the round',
+    sharesUnit: 'shares',
+    totalLabel: 'Total',
+    priceLabel: 'Illustrative price per share, if the full round converts',
+    capTable: [
+      { holder: 'Joseph Mifsud', class: 'Common, founder', shares: 7000000 },
+      { holder: 'Oxford Companies', class: 'Common', shares: 1500000 },
+      { holder: 'Equity incentive plan', class: 'Reserved, unissued', shares: 1500000 },
+    ],
+    youLabel: 'You',
+    othersLabel: 'Other pre-seed investors',
+    capNote:
+      "Oxford Companies' position was purchased at formation and is not part of this round. The dilution from the round falls on the holders already on the table. Your ownership is your investment divided by the cap, so it does not change if the round grows. Share counts after the round assume the full round is raised and are illustrative; the percentages are the terms.",
+  },
+  // The slider's figures must agree with each other, or the model's sums no longer add up.
+  check: ({ raise, minimum, maximum, step, start }) => {
+    if (![raise, minimum, maximum, step, start].every(Number.isFinite)) return [];
+    const issues = [];
+    if (maximum > raise) issues.push({ field: 'maximum', message: 'The largest investment on the slider cannot be more than the round.' });
+    if (minimum > maximum) issues.push({ field: 'minimum', message: 'The minimum investment cannot be more than the largest investment on the slider.' });
+    if (start < minimum || start > maximum) issues.push({ field: 'start', message: 'The starting amount must be between the minimum and the largest investment.' });
+    if (maximum >= minimum && (maximum - minimum) % step !== 0) {
+      issues.push({ field: 'step', message: 'The slider step must fit a whole number of times between the minimum and the largest investment.' });
+    }
+    return issues;
+  },
+});
+
 const investorsContact = section({
   label: 'Contact form',
   description: 'Heading, labels, thank-you message, and the note under the form. Messages arrive in Inquiries.',
@@ -832,7 +950,7 @@ export const pages = {
     label: 'Investor Hub',
     description: "The founder's story for investors, and a way to get in touch. Only guests who came through the front door and signed-in admins see it.",
     path: INVESTOR_HUB_PATH,
-    sections: { intro: investorsIntro, story: investorsStory, next: investorsNext, platform: investorsPlatform, contact: investorsContact },
+    sections: { intro: investorsIntro, story: investorsStory, next: investorsNext, platform: investorsPlatform, round: investorsRound, contact: investorsContact },
   },
   privacy: {
     label: 'Privacy page',

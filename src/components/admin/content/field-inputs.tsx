@@ -3,7 +3,7 @@
 import { ArrowDown, ArrowUp, Plus, Trash2 } from 'lucide-react';
 import { useId } from 'react';
 import { Input, Select, Textarea } from '@/components/ui/field';
-import type { ChoiceField, Field, ItemField, LinkField, ListField, TextField } from '@/content/fields';
+import type { ChoiceField, Field, ItemField, LinkField, ListField, NumberField, TextField } from '@/content/fields';
 import { cn } from '@/lib/cn';
 import { emptyRichDoc, type RichDoc } from '@/lib/rich-text';
 import { RichTextEditor } from './rich-text-editor';
@@ -133,6 +133,26 @@ function ChoiceInput({ id, field, value, onChange, error }: { id: string; field:
   );
 }
 
+function NumberInput({ id, field, value, onChange, error }: { id: string; field: NumberField; value: string; onChange: (v: string) => void; error?: string }) {
+  const whole = field.integer || Number.isInteger(field.step ?? 1);
+  return (
+    <FieldFrame id={id} label={field.label} hint={field.hint} error={error} optional={field.optional}>
+      <Input
+        id={id}
+        type="number"
+        inputMode={whole ? 'numeric' : 'decimal'}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        min={field.min}
+        max={field.max}
+        step={field.step ?? (field.integer ? 1 : 'any')}
+        aria-describedby={describedBy(id, field.hint, error)}
+        aria-invalid={error ? true : undefined}
+      />
+    </FieldFrame>
+  );
+}
+
 function RichInput({ id, field, value, onChange, error }: { id: string; field: ItemField; value: RichDoc; onChange: (v: RichDoc) => void; error?: string }) {
   return (
     <FieldFrame id={id} label={field.label} hint={field.hint} error={error} optional={field.optional}>
@@ -151,6 +171,8 @@ function ItemInput({ id, field, value, onChange, error }: { id: string; field: I
       return <ChoiceInput id={id} field={field} value={String(value ?? '')} onChange={onChange} error={error} />;
     case 'rich':
       return <RichInput id={id} field={field} value={(value as RichDoc) ?? emptyRichDoc()} onChange={onChange} error={error} />;
+    case 'number':
+      return <NumberInput id={id} field={field} value={value === undefined || value === null ? '' : String(value)} onChange={onChange} error={error} />;
   }
 }
 

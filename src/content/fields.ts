@@ -18,8 +18,14 @@ export type RichField = Base & { kind: 'rich' };
 /** A button or link target: a path on the site, a web address, or `#book-demo` for the demo form. */
 export type LinkField = Base & { kind: 'link' };
 export type ChoiceField<V extends string = string> = Base & { kind: 'choice'; options: readonly { value: V; label: string }[] };
+/**
+ * A figure stored as a number, never as prose: a share count, an amount of
+ * money, a limit. `min`, `max` and `step` bound it (and shape the admin's
+ * input); `integer` refuses fractions.
+ */
+export type NumberField = Base & { kind: 'number'; min?: number; max?: number; step?: number; integer?: boolean };
 
-export type ItemField = TextField | RichField | LinkField | ChoiceField;
+export type ItemField = TextField | RichField | LinkField | ChoiceField | NumberField;
 
 export type ListField<I extends Record<string, ItemField> = Record<string, ItemField>> = Base & {
   kind: 'list';
@@ -41,7 +47,9 @@ type ItemValue<F> = F extends TextField
       ? string
       : F extends ChoiceField<infer V>
         ? V
-        : never;
+        : F extends NumberField
+          ? number
+          : never;
 
 type FieldValue<F> = F extends ListField<infer I> ? { [K in keyof I]: ItemValue<I[K]> }[] : ItemValue<F>;
 
@@ -58,6 +66,7 @@ export const choice = <V extends string>(label: string, options: readonly { valu
   options,
   ...rest,
 });
+export const number = (label: string, options: Omit<NumberField, 'kind' | 'label'> = {}): NumberField => ({ kind: 'number', label, ...options });
 export const list = <I extends Record<string, ItemField>>(label: string, itemLabel: string, fields: I, options: Omit<ListField<I>, 'kind' | 'label' | 'itemLabel' | 'fields'> = {}): ListField<I> => ({
   kind: 'list',
   label,
@@ -99,6 +108,14 @@ function itemSchema(field: ItemField): z.ZodType {
     }
     case 'choice':
       return z.enum(field.options.map((o) => o.value) as [string, ...string[]]);
+    case 'number': {
+      // Coerced, so the admin's input can hand over a string. A blank is a missing figure, not zero.
+      let s = z.coerce.number({ error: `${field.label} needs a number.` });
+      if (field.integer) s = s.int(`${field.label} must be a whole number.`);
+      if (field.min !== undefined) s = s.min(field.min, `${field.label} must be at least ${field.min.toLocaleString('en-US')}.`);
+      if (field.max !== undefined) s = s.max(field.max, `${field.label} must be at most ${field.max.toLocaleString('en-US')}.`);
+      return z.preprocess((value) => (typeof value === 'string' && value.trim() === '' ? undefined : value), s);
+    }
   }
 }
 
@@ -111,7 +128,23 @@ function fieldSchema(field: Field): z.ZodType {
   return s;
 }
 
-/** A zod schema that validates (and cleans) data for the given fields. */
-export function schemaFor<F extends Fields>(fields: F): z.ZodType<Values<F>> {
-  return z.object(Object.fromEntries(Object.entries(fields).map(([k, f]) => [k, fieldSchema(f)]))) as unknown as z.ZodType<Values<F>>;
+/** A problem found across a section's fields, shown on the field named. */
+export type SectionIssue = { field: string; message: string };
+/**
+ * A check across a section's fields, run once every field has passed its
+ * own validation: for figures that must agree with each other, like a
+ * slider's bounds.
+ */
+// Written as a method so a section typed with its own fields still fits the general `SectionDef<Fields>`.
+export type SectionCheck<F extends Fields> = { check(values: Values<F>): SectionIssue[] }['check'];
+
+/** A zod schema that validates (and cleans) data for the given fields, then runs the section's check, if any. */
+export function schemaFor<F extends Fields>(fields: F, check?: SectionCheck<F>): z.ZodType<Values<F>> {
+  const object = z.object(Object.fromEntries(Object.entries(fields).map(([k, f]) => [k, fieldSchema(f)])));
+  const schema = check
+    ? object.superRefine((values, ctx) => {
+        for (const issue of check(values as Values<F>)) ctx.addIssue({ code: 'custom', path: [issue.field], message: issue.message });
+      })
+    : object;
+  return schema as unknown as z.ZodType<Values<F>>;
 }

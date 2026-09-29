@@ -1075,6 +1075,71 @@
   background-size: 24px 24px;
 }
 
+/*
+ * The round (src/components/site/investors/round.tsx). The investment
+ * slider: a hairline track, filled in teal up to the thumb (the component
+ * sets --round-fill), with a teal jewel for a thumb, big enough to take a
+ * finger. Keyboard focus rings the thumb, not the whole track.
+ */
+.round-range {
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+  touch-action: pan-y;
+  --round-track: linear-gradient(to right, var(--o-jewel-teal-base) var(--round-fill, 0%), var(--o-line-strong) var(--round-fill, 0%));
+  --round-thumb: calc(var(--o-space-unit) * 7);
+}
+.round-range::-webkit-slider-runnable-track {
+  height: var(--o-space-unit);
+  border-radius: var(--o-radius-full);
+  background: var(--round-track);
+}
+.round-range::-moz-range-track {
+  height: var(--o-space-unit);
+  border-radius: var(--o-radius-full);
+  background: var(--round-track);
+}
+.round-range::-webkit-slider-thumb {
+  appearance: none;
+  width: var(--round-thumb);
+  height: var(--round-thumb);
+  margin-top: calc((var(--o-space-unit) - var(--round-thumb)) / 2);
+  border: calc(var(--o-space-unit) / 2) solid var(--o-canvas);
+  border-radius: var(--o-radius-full);
+  background-image: var(--o-jewel-teal);
+  box-shadow: var(--o-shadow-md);
+}
+.round-range::-moz-range-thumb {
+  width: var(--round-thumb);
+  height: var(--round-thumb);
+  border: calc(var(--o-space-unit) / 2) solid var(--o-canvas);
+  border-radius: var(--o-radius-full);
+  background-image: var(--o-jewel-teal);
+  box-shadow: var(--o-shadow-md);
+}
+.round-range:focus-visible {
+  outline: none;
+}
+.round-range:focus-visible::-webkit-slider-thumb {
+  outline: 2px solid var(--o-focus-ring);
+  outline-offset: 3px;
+}
+.round-range:focus-visible::-moz-range-thumb {
+  outline: 2px solid var(--o-focus-ring);
+  outline-offset: 3px;
+}
+
+/* The table's bars: a jewel tone (set per row by the component), sliding to the new share as the slider moves. */
+.round-bar {
+  background: linear-gradient(to right, var(--round-jewel-highlight), var(--round-jewel));
+  transition: width var(--o-duration-slow) var(--o-ease-out);
+}
+@media (prefers-reduced-motion: reduce) {
+  .round-bar {
+    transition: none;
+  }
+}
+
 /* The closing section's aurora rises from the bottom. */
 .aurora-bottom {
   transform: scaleY(-1);

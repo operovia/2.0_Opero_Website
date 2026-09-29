@@ -137,7 +137,7 @@ function errorKey(def: SectionDef, path: readonly PropertyKey[]): string {
 }
 
 export function validateSection(def: SectionDef, data: unknown): ValidationResult {
-  const parsed = schemaFor(def.fields).safeParse(data);
+  const parsed = schemaFor(def.fields, def.check).safeParse(data);
   if (parsed.success) return { ok: true, data: parsed.data as Record<string, unknown> };
   const errors: Record<string, string> = {};
   for (const issue of parsed.error.issues) {

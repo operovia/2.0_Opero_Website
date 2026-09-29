@@ -166,7 +166,7 @@ const snapshotForRequest = cache(async (): Promise<Snapshot> => {
 function resolveSection(snapshot: Snapshot, page: PageKey, key: string, def: SectionDef): unknown {
   const stored = snapshot.sections.get(`${page}.${key}`);
   const merged = { ...def.seed, ...(stored ?? {}) };
-  const parsed = schemaFor(def.fields).safeParse(merged);
+  const parsed = schemaFor(def.fields, def.check).safeParse(merged);
   if (!parsed.success) {
     console.error(`[opero] Stored content for ${page}.${key} is invalid; showing the default copy.`, parsed.error.issues);
     return def.seed;
@@ -203,5 +203,5 @@ export async function getPublicSettings(): Promise<{ settings: SiteSettings; soc
 /** Validates data for one section, for the admin editor. */
 export function sectionSchema(page: string, key: string) {
   const def = getSectionDef(page, key);
-  return def ? schemaFor(def.fields) : null;
+  return def ? schemaFor(def.fields, def.check) : null;
 }

@@ -8,7 +8,7 @@ import { contentTokens, fillTokens, fillTokensDeep, pluralize } from './tokens';
 
 describe('seed content', () => {
   it.each(allSections().map((s) => [`${s.page}.${s.section}`, s] as const))('%s seed passes its own validation', (_name, { def }) => {
-    const result = schemaFor(def.fields).safeParse(def.seed);
+    const result = schemaFor(def.fields, def.check).safeParse(def.seed);
     expect(result.success, result.success ? '' : JSON.stringify(result.error.issues)).toBe(true);
   });
 
@@ -24,6 +24,25 @@ describe('seed content', () => {
   it('says property management, never real estate', () => {
     const copy = JSON.stringify([allSections().map((s) => s.def.seed), defaultSettings]);
     expect(copy).not.toMatch(/real estate/i);
+  });
+
+  it('refuses slider bounds that disagree with each other', () => {
+    const def = pages.investors.sections.round;
+    const schema = schemaFor(def.fields, def.check);
+    const parse = (changes: Partial<typeof def.seed>) => schema.safeParse({ ...def.seed, ...changes });
+    expect(parse({}).success).toBe(true);
+    const failing: [string, Partial<typeof def.seed>][] = [
+      ['maximum', { maximum: 1_000_000 }],
+      ['minimum', { minimum: 800_000 }],
+      ['start', { start: 25_000 }],
+      ['start', { start: 800_000 }],
+      ['step', { step: 30_000 }],
+    ];
+    for (const [field, changes] of failing) {
+      const result = parse(changes);
+      expect(result.success, JSON.stringify(changes)).toBe(false);
+      if (!result.success) expect(result.error.issues.map((i) => i.path[0])).toContain(field);
+    }
   });
 
   it('lists modules in brand order', () => {

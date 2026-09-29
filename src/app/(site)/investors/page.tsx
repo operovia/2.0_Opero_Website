@@ -5,10 +5,12 @@ import { Reveal, RevealGroup, RevealItem } from '@/components/motion/reveal';
 import { InvestorInquiryForm } from '@/components/site/investor-inquiry-form';
 import { FounderIntro } from '@/components/site/founder/intro';
 import { FounderStory } from '@/components/site/founder/story';
+import { RoundSection } from '@/components/site/investors/round';
 import { Container, Eyebrow } from '@/components/site/layout-parts';
 import { INVESTOR_HUB_PATH } from '@/content/constants';
 import { openGraph } from '@/content/metadata';
 import { getPage } from '@/content/store';
+import { cn } from '@/lib/cn';
 import { renderHeadline } from '@/lib/headline';
 import { getSession } from '@/server/auth/session';
 import { getGuest } from '@/server/guests';
@@ -39,7 +41,7 @@ const lines = (text: string) =>
 export default async function InvestorsPage() {
   const [session, guest] = await Promise.all([getSession(), getGuest()]);
   if (investorHubHidden(session !== null || guest !== null)) notFound();
-  const { intro, story, next, platform, contact } = await getPage('investors');
+  const { intro, story, next, platform, round, contact } = await getPage('investors');
   const areas = platform.areas.map((area) => ({ name: area.name, today: lines(area.today), extended: lines(area.extended), next: lines(area.next) }));
   // Worked out from the lists, so they always agree with them.
   const runningToday = areas.reduce((sum, area) => sum + area.today.length + area.extended.length, 0);
@@ -140,6 +142,23 @@ export default async function InvestorsPage() {
               </RevealItem>
             ))}
           </RevealGroup>
+        </Container>
+      </section>
+
+      {/* The round's terms, the investment model, and the cap table: for guests and admins, who are the only ones who reach this page. */}
+      <section aria-labelledby="round-title" className="py-section">
+        <Container>
+          {round.eyebrow ? (
+            <Reveal>
+              <Eyebrow>{round.eyebrow}</Eyebrow>
+            </Reveal>
+          ) : null}
+          <Reveal delay={0.05}>
+            <h2 id="round-title" className={cn('max-w-3xl text-display-sm font-medium text-metal', round.eyebrow && 'mt-5')}>
+              {renderHeadline(round.termsHeading)}
+            </h2>
+          </Reveal>
+          <RoundSection content={round} />
         </Container>
       </section>
 
