@@ -102,8 +102,9 @@
     }
   },
   "favicon": {
-    "svg": "/brand/opero/opero-favicon.svg",
-    "ico": "/brand/opero/opero.ico"
+    "about": "The browser tab icon: Oppie at rest (oppie-rest-dark.svg, unchanged) on the dark ground of the supplied Opero favicon, which is kept in /brand/opero. The .ico holds 16, 32, and 48 pixel copies for older browsers.",
+    "svg": "/brand/oppie/oppie-favicon.svg",
+    "ico": "/brand/oppie/oppie.ico"
   },
   "email": {
     "opero": {
