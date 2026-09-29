@@ -7,5 +7,19 @@
 /** Any link to this target opens the demo request form (see DemoDialog). */
 export const DEMO_TARGET = '#book-demo';
 
-/** Where the Investor Hub lives. Visitors see it only while it is switched on in Settings. */
+/** Where the Investor Hub lives. Only guests who came through the front door and signed-in admins see it. */
 export const INVESTOR_HUB_PATH = '/investors';
+
+/** The public Founder page: the founder's introduction and story from the Investor Hub, for everyone. */
+export const FOUNDER_PATH = '/founder';
+
+/** The front door for invited guests. Linked from nowhere on the site and never indexed; the owner shares the link. */
+export const DOOR_PATH = '/welcome';
+
+/** A hidden field on the door's form. The script sets it to '1' before submitting; without JavaScript it stays empty, so the action knows no reveal can play and redirects instead. */
+export const DOOR_ENHANCED_FIELD = 'enhanced';
+
+/** What the door answers when it does not open, in FormState.message; the door maps each code to its copy. */
+export type DoorAnswer = 'wrong' | 'empty' | 'invalid' | 'limited' | 'trouble';
+
+export const DOOR_ANSWERS: readonly DoorAnswer[] = ['wrong', 'empty', 'invalid', 'limited', 'trouble'];

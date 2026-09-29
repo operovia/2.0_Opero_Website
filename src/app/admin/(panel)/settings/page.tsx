@@ -1,5 +1,7 @@
 import { desc, like } from 'drizzle-orm';
 import type { Metadata } from 'next';
+import { ButtonLink } from '@/components/ui/button';
+import { Card, CardBody, CardHeader } from '@/components/ui/card';
 import { PageHeader } from '@/components/ui/page-header';
 import { db } from '@/db/client';
 import { media } from '@/db/schema';
@@ -20,7 +22,7 @@ export default async function SettingsPage() {
 
   return (
     <div className="space-y-8">
-      <PageHeader title="Settings" description="Site-wide details, notifications, search appearance, the Investor Hub, and maintenance mode." />
+      <PageHeader title="Settings" description="Site-wide details, notifications, search appearance, and maintenance mode." />
       <SettingsForm
         images={images}
         values={{
@@ -33,9 +35,16 @@ export default async function SettingsPage() {
           homeMetaDescription: settings.homeMetaDescription,
           analyticsSnippet: settings.analyticsSnippet,
           maintenanceMode: settings.maintenanceMode,
-          investorHubEnabled: settings.investorHubEnabled,
         }}
       />
+      <Card>
+        <CardHeader title="Investor Hub" description="The Investor Hub opens for the people on the guest list, and for you while signed in. Everyone else gets the Founder page." />
+        <CardBody>
+          <ButtonLink href="/admin/guests" variant="secondary" size="sm">
+            Manage the guest list
+          </ButtonLink>
+        </CardBody>
+      </Card>
     </div>
   );
 }

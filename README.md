@@ -27,9 +27,13 @@ This project is one Next.js app and must stay that way. `replit.md` tells Replit
 
 Sign in at `/admin` and open Content to change the words on any page. While you are signed in, an Admin button in the bottom left corner of every page of the site takes you back to the admin; visitors never see it. In a headline, press Enter where a new line should start, and put words between asterisks, like `*this*`, to set them in italics.
 
-## Investor Hub
+## Investor Hub and the Founder page
 
-The Investor Hub (`/investors`) tells the founder's story for investors and ends with a short contact form; messages arrive in Inquiries. It stays hidden until you switch it on in Settings: until then visitors get "page not found" and its tab is left out of the header, while you see both whenever you are signed in. Edit its copy in Content, Investor Hub. The LinkedIn icon beside your name links to the profile set there, under Introduction; leave that empty to hide the icon.
+The Founder page (`/founder`) is public: it shows the founder's introduction (headline, photo, name, role, and the LinkedIn icon) and the story in two columns. Its eyebrow and search description are edited in Content, Founder page; everything else on it comes from the Investor Hub's Introduction and The story sections, so an edit there changes both pages.
+
+The Investor Hub (`/investors`) tells the whole story for investors and ends with a short contact form; messages arrive in Inquiries. Only two kinds of people see it: you, while signed in, and guests on the list. Everyone else gets "page not found" there, and the header shows them the Founder tab where a guest sees the Investor Hub tab. Search engines never index it. Edit its copy in Content, Investor Hub. The LinkedIn icon beside your name links to the profile set there, under Introduction; leave that empty to hide the icon.
+
+To invite someone, open Guests in the admin, add their email address (with a note to yourself if you like), and send them the door link shown there from your own email; the page has a Copy button and a short note to paste. The site sends no invitation. The door (`/welcome`) is linked from nowhere on the site and asks for an email address only. When a guest gives an address on the list, the site opens for them and lands them on the home page with the Investor Hub tab in the header; their browser keeps the key until you remove them, and you get an email the first time each guest enters. Ask them to open the link in Safari or Chrome rather than inside a mail app's own browser, which may forget the key. Removing an address on the Guests page ends its access on every browser at once.
 
 ## Surveys
 

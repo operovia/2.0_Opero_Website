@@ -38,7 +38,7 @@ While `serve` runs, the owner should not press Run: Next.js allows one dev serve
 - Never name competitor products. Use categories: a board tool, a wiki, a training platform, an EOS tool, a listing marketing tool.
 - No pricing and no dates anywhere on the public site (that includes copyright years and "last updated" lines).
 - **No em dashes** anywhere a visitor, recipient, or admin reads: site copy, admin UI, emails, placeholders, seed data, docs. Use commas, periods, or colons. `npm run check:copy` enforces this.
-- The Investor Hub (`/investors`) never offers investment or states terms: no SAFE or other instrument, raise amount, valuation, cap table, the company's budget, or projections. It stays hidden from visitors until it is switched on in Settings (`src/server/investor-hub.ts` drops links to it and the page returns 404).
+- The Investor Hub (`/investors`) never offers investment or states terms: no SAFE or other instrument, raise amount, valuation, cap table, the company's budget, or projections. It is visible only to signed-in admins and to guests who entered through the front door at `/welcome` with an address on the admin's guest list; visitors get the Founder page at `/founder` instead (`src/server/investor-hub.ts` decides which of the two header links shows and hides the hub, `src/server/guests.ts` holds the list and the guest session).
 - The phrase "design partner" comes from the `partnerProgramLabel` site setting. In content use the tokens `{partner}`, `{partners}`, `{Partner}`, `{Partners}` so a label change flows everywhere.
 
 ## Design system rules
@@ -63,6 +63,7 @@ While `serve` runs, the owner should not press Run: Next.js allows one dev serve
 - Headline type must feel open and generous: loosen line height and tracking, never condense. Body type must be comfortable at length.
 - `text-metal` gives the tails of g, j, p, q, and y room below the last line (the metal is painted only inside the element's box) and takes it back with a negative bottom margin. So never set a bottom margin on metal text, and never space it with `space-y-*` on its parent (that works by bottom margins): space it with the next element's top margin or a flex or grid gap.
 - Motion uses transform and opacity only, holds 60fps, and fully respects `prefers-reduced-motion`. Anything that auto-cycles needs a pause control.
+- The front door (`/welcome`, `src/components/door`) never redirects on the server: its cookie-setting action re-renders the page, so a redirect thrown there would navigate out from under the dissolving door; returning guests are handled on the door itself. Never add a `loading.tsx` under `(site)`: the door relies on the home page committing whole, in one go, under the veil. The veil lives in the root layout and hands off to the hero through `data-door-arrival` on `<html>`, which only `door-arrival.tsx` removes.
 
 ## Technical decisions (settled)
 

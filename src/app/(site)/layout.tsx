@@ -9,6 +9,7 @@ import { SiteHeader } from '@/components/site/site-header';
 import { openGraph } from '@/content/metadata';
 import { getPage, getPublicSettings, isPreview } from '@/content/store';
 import { getSession } from '@/server/auth/session';
+import { getGuest } from '@/server/guests';
 import { investorHubHidden, withVisibleLinks } from '@/server/investor-hub';
 import { siteUrl } from '@/server/env';
 
@@ -26,11 +27,11 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function SiteLayout({ children }: LayoutProps<'/'>) {
-  const [{ settings }, site, preview, session] = await Promise.all([getPublicSettings(), getPage('site'), isPreview(), getSession()]);
+  const [{ settings }, site, preview, session, guest] = await Promise.all([getPublicSettings(), getPage('site'), isPreview(), getSession(), getGuest()]);
 
   if (settings.maintenanceMode && !session) return <MaintenancePage content={site.maintenance} />;
 
-  const hubHidden = investorHubHidden(settings, session !== null);
+  const hubHidden = investorHubHidden(session !== null || guest !== null);
   const header = withVisibleLinks(site.header, hubHidden, siteUrl());
   const footer = withVisibleLinks(site.footer, hubHidden, siteUrl());
 

@@ -2,6 +2,7 @@
 
 import {
   Activity,
+  DoorOpen,
   FileText,
   Image as ImageIcon,
   Inbox,
@@ -16,11 +17,12 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/cn';
 
-export type NavKey = 'dashboard' | 'inquiries' | 'content' | 'console' | 'surveys' | 'media' | 'settings' | 'team' | 'activity';
+export type NavKey = 'dashboard' | 'inquiries' | 'guests' | 'content' | 'console' | 'surveys' | 'media' | 'settings' | 'team' | 'activity';
 
 const items: { key: NavKey; href: string; label: string; icon: LucideIcon }[] = [
   { key: 'dashboard', href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
   { key: 'inquiries', href: '/admin/inquiries', label: 'Inquiries', icon: Inbox },
+  { key: 'guests', href: '/admin/guests', label: 'Guests', icon: DoorOpen },
   { key: 'content', href: '/admin/content', label: 'Content', icon: FileText },
   { key: 'console', href: '/admin/console', label: 'Oppie console', icon: MessageSquareText },
   { key: 'surveys', href: '/admin/surveys', label: 'Surveys', icon: ListChecks },

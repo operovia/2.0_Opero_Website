@@ -1,7 +1,7 @@
 import { textToRich } from '@/lib/rich-text';
 import { choice, link, list, rich, text, type Fields, type Values } from './fields';
 import { tokenHelp } from './tokens';
-import { DEMO_TARGET, INVESTOR_HUB_PATH } from './constants';
+import { DEMO_TARGET, DOOR_PATH, FOUNDER_PATH, INVESTOR_HUB_PATH } from './constants';
 
 /**
  * Every editable section of every public page: its fields and its seed copy.
@@ -358,7 +358,8 @@ const partnersApply = section({
 
 const investorsIntro = section({
   label: 'Introduction',
-  description: "The top of the page, in the founder's voice. Visitors see the page only while the Investor Hub is switched on in Settings.",
+  description:
+    "The top of the page, in the founder's voice. The public Founder page shows the same headline, photo, name, role, and LinkedIn icon, so an edit here changes both.",
   draftCopy: true,
   fields: {
     eyebrow: text('Eyebrow', { optional: true, max: 60 }),
@@ -380,7 +381,8 @@ const investorsIntro = section({
 
 const investorsStory = section({
   label: 'The story',
-  description: 'Two columns across the page: the problem, over a cloud of disconnected apps, and the solution, under the Opero mark.',
+  description:
+    'Two columns across the page: the problem, over a cloud of disconnected apps, and the solution, under the Opero mark. The public Founder page shows these columns too.',
   draftCopy: true,
   fields: {
     problemTitle: text('Problem: title', { max: 80 }),
@@ -627,7 +629,10 @@ const header = section({
       'Navigation links',
       'Link',
       { label: text('Label', { max: 40, hint: tokenHelp }), href: link('Link', { hint: buttonTargetHint }) },
-      { max: 5, hint: `A link to ${INVESTOR_HUB_PATH} shows to visitors only while the Investor Hub is switched on in Settings.` },
+      {
+        max: 5,
+        hint: `A link to ${FOUNDER_PATH} shows to visitors, and a link to ${INVESTOR_HUB_PATH} shows to guests and signed-in admins in its place, never both at once.`,
+      },
     ),
     buttonLabel: text('Button label', { max: 40 }),
     buttonTarget: link('Button link', { hint: buttonTargetHint }),
@@ -637,6 +642,7 @@ const header = section({
       { label: 'Platform', href: '/#platform' },
       { label: 'Oppie', href: '/#oppie' },
       { label: '{Partners}', href: '/partners' },
+      { label: 'Founder', href: FOUNDER_PATH },
       { label: 'Investor Hub', href: INVESTOR_HUB_PATH },
     ],
     buttonLabel: 'Book a demo',
@@ -721,6 +727,93 @@ const notFound = section({
 });
 
 /* ------------------------------------------------------------------------ */
+/* Founder page                                                             */
+/* ------------------------------------------------------------------------ */
+
+const founderPage = section({
+  label: 'Page',
+  description:
+    'The eyebrow above the headline and the description for search results. The headline, photo, name, role, and LinkedIn are edited under Investor Hub, Introduction, and the story under Investor Hub, The story.',
+  draftCopy: true,
+  fields: {
+    eyebrow: text('Eyebrow', { optional: true, max: 60 }),
+    description: text('Search and share description', { max: 200, multiline: true, hint: 'Shown in search results and link previews.' }),
+  },
+  seed: {
+    eyebrow: 'Founder',
+    description: 'Twenty-five years in property management, the problem it showed, and the platform built to solve it.',
+  },
+});
+
+/* ------------------------------------------------------------------------ */
+/* Front door                                                               */
+/* ------------------------------------------------------------------------ */
+
+const door = section({
+  label: 'The door',
+  description:
+    'Everything on the private door at /welcome, where an invited guest enters the email address the invitation went to. The page is linked from nowhere and never indexed; the Guests page shows the link to share.',
+  draftCopy: true,
+  fields: {
+    metaTitle: text('Page title', { max: 60, hint: 'The browser tab. The page is never indexed.' }),
+    metaDescription: text('Search and share description', { max: 200, multiline: true }),
+    eyebrow: text('Eyebrow', { optional: true, max: 60, hint: 'Optional. Small capitals above the title.' }),
+    title: text('Title', { max: 120, headline: true, hint: 'Words between asterisks are set in italics.' }),
+    intro: text('Introduction', { max: 200 }),
+    emailLabel: text('Email label', { max: 40 }),
+    submitLabel: text('Enter button', { max: 30, hint: "The round arrow button's name for screen readers and its tooltip." }),
+    checkingLabel: text('Button while checking', { max: 30 }),
+    checkingStatus: text('Checking status', { max: 120, hint: 'Announced while the list is checked, and shown when motion is reduced.' }),
+    stillCheckingStatus: text('Still checking status', { max: 120, hint: 'Shown if the check takes more than three seconds.' }),
+    welcomeStatus: text('Welcome status', { max: 120 }),
+    emptyMessage: text('Empty field message', { max: 200 }),
+    invalidMessage: text('Not an address message', { max: 200 }),
+    wrongMessage: text('Wrong address message', {
+      max: 300,
+      hint: 'Shown for every address that does not open the door. Keep it the same whether or not the address exists.',
+    }),
+    wrongHelp: text('Wrong address help line', { optional: true, max: 200, hint: 'Optional. A quieter line under the message.' }),
+    limitMessage: text('Too many tries message', { max: 200, hint: '{wait} becomes the time left before they can try again, up to 15 minutes.' }),
+    troubleMessage: text('Server trouble message', { max: 200 }),
+    helpLine: text('Lost invitation line', { max: 80 }),
+    helpLinkLabel: text('Lost invitation link', { max: 40, hint: 'Opens an email to the contact address in Settings.' }),
+    publicLine: text('Public site line', { max: 80 }),
+    publicLinkLabel: text('Public site link', { max: 40, hint: 'Goes to the home page.' }),
+    companyLine: text('Company line', { max: 80 }),
+    alreadyInTitle: text('Already in: title', { max: 120, headline: true, hint: 'Shown to a guest whose browser already holds the key.' }),
+    alreadyInIntro: text('Already in: line', { max: 200 }),
+    alreadyInButton: text('Already in: button', { max: 40 }),
+  },
+  seed: {
+    metaTitle: 'Welcome',
+    metaDescription: 'A private door for invited guests of Opero.',
+    eyebrow: 'By invitation',
+    title: 'You were *invited* here.',
+    intro: 'Enter the email address your invitation was sent to.',
+    emailLabel: 'Email address',
+    submitLabel: 'Enter',
+    checkingLabel: 'Checking',
+    checkingStatus: 'Checking your invitation.',
+    stillCheckingStatus: 'Still checking. One moment.',
+    welcomeStatus: 'Welcome. Opening Opero.',
+    emptyMessage: 'Enter the email address your invitation was sent to.',
+    invalidMessage: 'That does not look like a complete email address.',
+    wrongMessage: 'That address did not open the door. Check the address your invitation was sent to and try again.',
+    wrongHelp: 'If it should have worked, reply to your invitation and we will sort it out.',
+    limitMessage: 'Too many tries for now. Please wait {wait} and try again.',
+    troubleMessage: 'Something went wrong on our side. Please try again in a moment.',
+    helpLine: 'Lost your invitation?',
+    helpLinkLabel: 'Write to us',
+    publicLine: 'Here without an invitation?',
+    publicLinkLabel: 'See Opero for everyone',
+    companyLine: 'Operovia, Inc., Ann Arbor, Michigan',
+    alreadyInTitle: 'You are already *in*.',
+    alreadyInIntro: 'This browser remembers you.',
+    alreadyInButton: 'Go to Opero',
+  },
+});
+
+/* ------------------------------------------------------------------------ */
 
 export const pages = {
   home: {
@@ -737,7 +830,7 @@ export const pages = {
   },
   investors: {
     label: 'Investor Hub',
-    description: "The founder's story for investors, and a way to get in touch. Hidden from visitors until it is switched on in Settings.",
+    description: "The founder's story for investors, and a way to get in touch. Only guests who came through the front door and signed-in admins see it.",
     path: INVESTOR_HUB_PATH,
     sections: { intro: investorsIntro, story: investorsStory, next: investorsNext, platform: investorsPlatform, contact: investorsContact },
   },
@@ -752,6 +845,19 @@ export const pages = {
     description: 'Header, footer, the demo form, and system pages.',
     path: null,
     sections: { header, footer, demoForm, maintenance, notFound },
+  },
+  founder: {
+    label: 'Founder page',
+    description:
+      "The founder's introduction and story, for everyone. The headline, photo, name, role, and LinkedIn are edited under Investor Hub, Introduction, and the story under Investor Hub, The story.",
+    path: FOUNDER_PATH,
+    sections: { page: founderPage },
+  },
+  welcome: {
+    label: 'Front door',
+    description: 'The private door for invited guests. Linked from nowhere and never indexed; the Guests page shows the link to share.',
+    path: DOOR_PATH,
+    sections: { door },
   },
 } satisfies Record<string, PageDef>;
 

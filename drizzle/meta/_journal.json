@@ -50,6 +50,20 @@
       "when": 1790685645505,
       "tag": "0006_search_title",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1790706960454,
+      "tag": "0007_guest_access",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1790706971236,
+      "tag": "0008_founder_link",
+      "breakpoints": true
     }
   ]
 }

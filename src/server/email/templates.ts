@@ -23,6 +23,24 @@ export function adminInviteEmail({ inviterName, url, expiresInDays }: { inviterN
   };
 }
 
+/** Sent the first time a guest gives their address at the front door. */
+export function guestEnteredNotification({ email, ip }: { email: string; ip: string }, adminUrl: string): Email {
+  const subject = `${email} entered the site as a guest`;
+  return {
+    subject,
+    ...renderEmail({
+      preheader: `${email} came through the front door for the first time.`,
+      heading: 'A guest came in',
+      body: [`${email} came through the front door for the first time and can now see the Investor Hub. Their key keeps working until you remove the address.`],
+      details: [
+        ['Email', email],
+        ['IP address', ip],
+      ],
+      button: { label: 'Open the guest list', url: adminUrl },
+    }),
+  };
+}
+
 const formatNumber = (n: number | null) => (n === null ? '' : n.toLocaleString('en-US'));
 
 export type InquiryForEmail = {

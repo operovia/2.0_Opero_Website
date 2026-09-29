@@ -1,36 +1,31 @@
 import { ArrowDown, ArrowRight, Check, CircleDashed } from 'lucide-react';
 import type { Metadata } from 'next';
-import Image from 'next/image';
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import founderPortrait from '@/assets/founder-portrait.jpg';
 import { Reveal, RevealGroup, RevealItem } from '@/components/motion/reveal';
 import { InvestorInquiryForm } from '@/components/site/investor-inquiry-form';
-import { BrandMark } from '@/components/brand/brand-mark';
-import { AppCloud, StoryLine } from '@/components/site/investors/story-visuals';
+import { FounderIntro } from '@/components/site/founder/intro';
+import { FounderStory } from '@/components/site/founder/story';
 import { Container, Eyebrow } from '@/components/site/layout-parts';
-import { LinkedInGlyph } from '@/components/site/linkedin-glyph';
-import { SiteLink } from '@/components/site/site-link';
 import { INVESTOR_HUB_PATH } from '@/content/constants';
 import { openGraph } from '@/content/metadata';
-import { getPage, getPublicSettings } from '@/content/store';
-import { cn } from '@/lib/cn';
+import { getPage } from '@/content/store';
 import { renderHeadline } from '@/lib/headline';
 import { getSession } from '@/server/auth/session';
+import { getGuest } from '@/server/guests';
 import { investorHubHidden } from '@/server/investor-hub';
 
 export async function generateMetadata(): Promise<Metadata> {
-  const [{ intro }, { settings }, session] = await Promise.all([getPage('investors'), getPublicSettings(), getSession()]);
+  const [{ intro }, session, guest] = await Promise.all([getPage('investors'), getSession(), getGuest()]);
   // Hidden pages give away nothing, not even their title.
-  if (investorHubHidden(settings, session !== null)) notFound();
+  if (investorHubHidden(session !== null || guest !== null)) notFound();
   const title = intro.eyebrow || 'Investor Hub';
   return {
     title,
     description: intro.description,
     alternates: { canonical: INVESTOR_HUB_PATH },
     openGraph: await openGraph({ title, description: intro.description, url: INVESTOR_HUB_PATH }),
-    // While it is switched off only admins can open it; keep it out of search.
-    ...(settings.investorHubEnabled ? {} : { robots: { index: false, follow: false } }),
+    // Only guests and admins can open it; it stays out of search.
+    robots: { index: false, follow: false },
   };
 }
 
@@ -41,103 +36,19 @@ const lines = (text: string) =>
     .map((line) => line.trim())
     .filter(Boolean);
 
-/** The dots where each column meets the line across the story: gray at the problem, a jewel at the solution. */
-const nodes = ['bg-line-strong', 'jewel-build'];
-
 export default async function InvestorsPage() {
-  const [{ settings }, session] = await Promise.all([getPublicSettings(), getSession()]);
-  if (investorHubHidden(settings, session !== null)) notFound();
+  const [session, guest] = await Promise.all([getSession(), getGuest()]);
+  if (investorHubHidden(session !== null || guest !== null)) notFound();
   const { intro, story, next, platform, contact } = await getPage('investors');
   const areas = platform.areas.map((area) => ({ name: area.name, today: lines(area.today), extended: lines(area.extended), next: lines(area.next) }));
   // Worked out from the lists, so they always agree with them.
   const runningToday = areas.reduce((sum, area) => sum + area.today.length + area.extended.length, 0);
   const onDeck = areas.reduce((sum, area) => sum + area.next.length, 0);
 
-  const steps = [
-    { picture: <AppCloud className="h-full w-full max-w-md" />, title: story.problemTitle, body: story.problemBody },
-    { picture: <BrandMark name="opero" className="h-16 sm:h-20" decorative />, title: story.solutionTitle, body: story.solutionBody },
-  ];
-
   return (
     <>
-      <section aria-labelledby="investors-title" className="relative isolate -mt-18 overflow-hidden pt-18">
-        <div aria-hidden className="investor-grid absolute inset-0 -z-10" />
-        <div aria-hidden className="absolute inset-0 -z-20 overflow-hidden">
-          <div className="investor-glow" />
-          <div className="investor-glow investor-glow-2" />
-        </div>
-        <Container className="grid grid-cols-1 items-center gap-10 pt-16 pb-16 sm:pt-24 sm:pb-24 lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-16">
-          <div>
-            {settings.investorHubEnabled ? null : (
-              <p
-                role="status"
-                className="hero-fade mb-8 inline-flex flex-wrap items-center gap-x-2 rounded-full border border-warning/40 bg-warning-soft px-4 py-1.5 text-sm text-fg"
-              >
-                Only signed-in admins can see this page.
-                <Link href="/admin/settings" className="font-semibold underline underline-offset-4">
-                  Show it to visitors in Settings
-                </Link>
-              </p>
-            )}
-            {intro.eyebrow ? <Eyebrow className="hero-fade">{intro.eyebrow}</Eyebrow> : null}
-            <h1 id="investors-title" className="hero-rise mt-5 max-w-4xl text-display-lg font-medium text-metal">
-              {renderHeadline(intro.headline)}
-            </h1>
-          </div>
-          {/* The portrait from the investor room in the Opero repo, as supplied. Signed beneath, like the original. */}
-          <figure className="hero-rise flex items-center gap-5 lg:flex-col lg:items-start">
-            <Image
-              src={founderPortrait}
-              alt={intro.name}
-              placeholder="blur"
-              preload
-              sizes="(min-width: 64rem) 18rem, (min-width: 40rem) 7rem, 5rem"
-              className="h-auto w-20 shrink-0 rounded-xl border border-line-strong shadow-lg sm:w-28 lg:w-72 lg:rounded-2xl"
-            />
-            {/* As wide as the photo on large screens, so the LinkedIn icon lines up with its right edge. */}
-            <figcaption className="min-w-0 flex-1 lg:w-72 lg:flex-none">
-              <span className="flex items-center justify-between gap-4">
-                <span className="text-base font-semibold text-fg">{intro.name}</span>
-                {intro.linkedin ? (
-                  <SiteLink
-                    href={intro.linkedin}
-                    aria-label={`${intro.name} on LinkedIn`}
-                    className="-my-1 grid size-8 shrink-0 place-items-center rounded-sm border border-line-strong bg-surface text-linkedin transition-colors hover:border-fg-subtle hover:bg-surface-raised"
-                  >
-                    <LinkedInGlyph className="size-4" />
-                  </SiteLink>
-                ) : null}
-              </span>
-              <span className="mt-1 block text-eyebrow font-semibold text-fg-subtle uppercase">{intro.role}</span>
-            </figcaption>
-          </figure>
-        </Container>
-      </section>
-
-      <section className="pb-section">
-        <Container>
-          <div className="relative">
-            <StoryLine className="absolute inset-x-0 top-1.5 hidden md:block" />
-            <ol className="grid grid-cols-1 gap-14 md:grid-cols-2 md:gap-16">
-              {steps.map((step, i) => (
-                <li key={i}>
-                  <Reveal delay={i * 0.12}>
-                    <div className="flex items-center gap-3">
-                      <span aria-hidden className={cn('relative size-3 rounded-full ring-4 ring-canvas', nodes[i])} />
-                      <span aria-hidden className="text-eyebrow font-semibold text-fg-subtle tabular-nums">
-                        {String(i + 1).padStart(2, '0')}
-                      </span>
-                    </div>
-                    <div className="mt-8 flex h-44 items-center">{step.picture}</div>
-                    <h2 className="mt-6 text-xl font-semibold text-fg">{step.title}</h2>
-                    <p className="mt-3 max-w-md text-base text-fg-muted">{step.body}</p>
-                  </Reveal>
-                </li>
-              ))}
-            </ol>
-          </div>
-        </Container>
-      </section>
+      <FounderIntro intro={intro} eyebrow={intro.eyebrow} titleId="investors-title" />
+      <FounderStory story={story} />
 
       <section aria-labelledby="next-title" className="border-y border-line bg-canvas-raised py-section">
         <Container>

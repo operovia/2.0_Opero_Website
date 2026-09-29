@@ -103,6 +103,45 @@ export const rateLimits = pgTable('rate_limits', {
 });
 
 /* ------------------------------------------------------------------------ */
+/* Guests: the addresses the front door lets in, and their sessions        */
+/* ------------------------------------------------------------------------ */
+
+export const guestInvites = pgTable(
+  'guest_invites',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    /** Always stored lowercase. */
+    email: text('email').notNull(),
+    /** The owner's note to himself about who this is. */
+    note: text('note').notNull().default(''),
+    invitedBy: uuid('invited_by').references(() => adminUsers.id, { onDelete: 'set null' }),
+    /** The first and the latest time this address came through the door. */
+    firstEnteredAt: timestamp('first_entered_at', { withTimezone: true }),
+    lastEnteredAt: timestamp('last_entered_at', { withTimezone: true }),
+    createdAt: createdAt(),
+  },
+  (t) => [uniqueIndex('guest_invites_email_key').on(t.email)],
+);
+
+export const guestSessions = pgTable(
+  'guest_sessions',
+  {
+    /** SHA-256 of the guest token; the token itself only lives in the cookie. */
+    id: text('id').primaryKey(),
+    /** Removing the invite removes its sessions, so access ends everywhere at once. */
+    inviteId: uuid('invite_id')
+      .notNull()
+      .references(() => guestInvites.id, { onDelete: 'cascade' }),
+    expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
+    lastSeenAt: timestamp('last_seen_at', { withTimezone: true }).notNull().defaultNow(),
+    ip: text('ip').notNull().default(''),
+    userAgent: text('user_agent').notNull().default(''),
+    createdAt: createdAt(),
+  },
+  (t) => [index('guest_sessions_invite_idx').on(t.inviteId)],
+);
+
+/* ------------------------------------------------------------------------ */
 /* Site settings                                                            */
 /* ------------------------------------------------------------------------ */
 
@@ -121,8 +160,6 @@ export const siteSettings = pgTable(
     homeMetaDescription: text('home_meta_description').notNull(),
     analyticsSnippet: text('analytics_snippet').notNull().default(''),
     maintenanceMode: boolean('maintenance_mode').notNull().default(false),
-    /** Off until the owner has reviewed it: the Investor Hub and links to it show only to signed-in admins. */
-    investorHubEnabled: boolean('investor_hub_enabled').notNull().default(false),
     updatedBy: uuid('updated_by').references(() => adminUsers.id, { onDelete: 'set null' }),
     updatedAt: updatedAt(),
   },

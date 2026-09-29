@@ -21,7 +21,11 @@ export type AuditAction =
   | 'survey.delete'
   | 'survey.send'
   | 'survey.export'
-  | 'survey.responses.delete';
+  | 'survey.responses.delete'
+  | 'guest.add'
+  | 'guest.remove'
+  /** Written with no actor; the target is the address that came in. */
+  | 'door.enter';
 
 type Actor = { id: string; email: string } | null;
 

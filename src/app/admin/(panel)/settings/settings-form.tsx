@@ -18,7 +18,6 @@ export type SettingsFormValues = {
   homeMetaDescription: string;
   analyticsSnippet: string;
   maintenanceMode: boolean;
-  investorHubEnabled: boolean;
 };
 
 export function SettingsForm({ values, images }: { values: SettingsFormValues; images: { id: string; filename: string }[] }) {
@@ -35,7 +34,6 @@ export function SettingsForm({ values, images }: { values: SettingsFormValues; i
     homeMetaDescription: values.homeMetaDescription,
     analyticsSnippet: values.analyticsSnippet,
     maintenanceMode: values.maintenanceMode ? 'on' : '',
-    investorHubEnabled: values.investorHubEnabled ? 'on' : '',
   };
 
   return (
@@ -113,18 +111,6 @@ export function SettingsForm({ values, images }: { values: SettingsFormValues; i
           <Field name="analyticsSnippet" label="Analytics snippet" hint="Added to every public page. Leave empty for no analytics." error={e.analyticsSnippet}>
             {(p) => <Textarea {...p} rows={5} spellCheck={false} className="font-mono" defaultValue={v.analyticsSnippet} />}
           </Field>
-        </CardBody>
-      </Card>
-
-      <Card>
-        <CardHeader title="Investor Hub" />
-        <CardBody>
-          <Switch
-            name="investorHubEnabled"
-            defaultChecked={v.investorHubEnabled === 'on'}
-            label="Show the Investor Hub to visitors"
-            description="While this is off, the page and its tab in the header are hidden from visitors. Signed-in admins always see them, so you can review the page first."
-          />
         </CardBody>
       </Card>
 

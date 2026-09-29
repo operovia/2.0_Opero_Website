@@ -7,13 +7,14 @@ import { getPage, getPublicSettings } from '@/content/store';
 import { plainHeadline } from '@/lib/headline';
 import { getSession } from '@/server/auth/session';
 import { siteUrl } from '@/server/env';
+import { getGuest } from '@/server/guests';
 import { investorHubHidden, withVisibleLinks } from '@/server/investor-hub';
 
 /** An address that matches no page. It has no site frame around it, so it brings its own header and footer. */
 export default async function NotFound() {
-  const [site, { settings }, session] = await Promise.all([getPage('site'), getPublicSettings(), getSession()]);
+  const [site, { settings }, session, guest] = await Promise.all([getPage('site'), getPublicSettings(), getSession(), getGuest()]);
   if (settings.maintenanceMode && !session) return <MaintenancePage content={site.maintenance} />;
-  const hubHidden = investorHubHidden(settings, session !== null);
+  const hubHidden = investorHubHidden(session !== null || guest !== null);
   return (
     <>
       {/* Not-found pages take no metadata export; React moves this title into the head. */}
