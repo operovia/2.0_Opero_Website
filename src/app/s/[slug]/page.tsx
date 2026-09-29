@@ -25,7 +25,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 
 function Message({ title, children }: { title: string; children?: ReactNode }) {
   return (
-    <div className="space-y-4 py-8">
+    <div className="flex flex-col gap-4 py-8">
       <h1 className="text-display-sm font-medium text-metal">{title}</h1>
       {children ? <div className="text-lg text-fg-muted">{children}</div> : null}
     </div>

@@ -152,6 +152,13 @@
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
+    /*
+     * The metal is painted only inside the element's box, and at display line
+     * heights the tails of g, j, p, q, and y on the last line hang below it.
+     * Room below for them, taken back by the margin so nothing moves.
+     */
+    padding-bottom: 0.25em;
+    margin-bottom: -0.25em;
   }
   @media (forced-colors: active) {
     background-image: none;

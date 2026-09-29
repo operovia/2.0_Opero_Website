@@ -61,6 +61,7 @@ While `serve` runs, the owner should not press Run: Next.js allows one dev serve
 - `npm run typecheck` regenerates route types first; after adding a route, run it before trusting TypeScript errors about `PageProps`.
 - Light and dark themes are both wired. The public site defaults to dark.
 - Headline type must feel open and generous: loosen line height and tracking, never condense. Body type must be comfortable at length.
+- `text-metal` gives the tails of g, j, p, q, and y room below the last line (the metal is painted only inside the element's box) and takes it back with a negative bottom margin. So never set a bottom margin on metal text, and never space it with `space-y-*` on its parent (that works by bottom margins): space it with the next element's top margin or a flex or grid gap.
 - Motion uses transform and opacity only, holds 60fps, and fully respects `prefers-reduced-motion`. Anything that auto-cycles needs a pause control.
 
 ## Technical decisions (settled)

@@ -44,7 +44,7 @@ export function SurveyForm({ surveyId, token, preview, title, intro, thankYou, q
 
   if (finished) {
     return (
-      <section aria-labelledby="survey-thanks" className="space-y-6">
+      <section aria-labelledby="survey-thanks" className="flex flex-col gap-6">
         <p className="text-sm text-fg-subtle">{title}</p>
         <CircleCheck className="size-10 text-success" aria-hidden />
         <h1 id="survey-thanks" ref={thanks} tabIndex={-1} className="text-display-sm font-medium text-metal outline-none">
@@ -60,7 +60,7 @@ export function SurveyForm({ surveyId, token, preview, title, intro, thankYou, q
 
   return (
     <div className="space-y-10">
-      <header className="space-y-5">
+      <header className="flex flex-col gap-5">
         <h1 className="text-display-sm font-medium text-metal">{title}</h1>
         {intro}
       </header>
