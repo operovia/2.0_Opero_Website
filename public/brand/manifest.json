@@ -94,11 +94,15 @@
     }
   },
   "oppie": {
-    "about": "Oppie's five pills at rest, as PNGs for places that cannot use SVG (email, print, share images), drawn from oppie-rest-light.svg. The supplied thinking files (oppie-thinking-*.svg) carry the flip inside them. On the site src/components/brand/oppie-mark.tsx draws the mark, following docs/brand/oppie-8e-handoff.md.",
+    "about": "Oppie's five pills at rest, as PNGs for places that cannot use SVG (email, print, share images), drawn from oppie-rest-light.svg. The supplied thinking files (oppie-thinking-*.svg) carry the flip inside them. On the site src/components/brand/oppie-mark.tsx draws the mark, following docs/brand/oppie-8e-handoff.md. The large files are not supplied artwork: they are the site's mark with its finer highlight and edge for big sizes, written by scripts/export-oppie-large.ts, which rewrites them after a change to the mark.",
     "png": {
       "32": "/brand/oppie/oppie-32.png",
       "192": "/brand/oppie/oppie-192.png",
       "512": "/brand/oppie/oppie-512.png"
+    },
+    "large": {
+      "dark": "/brand/oppie/oppie-large-dark.svg",
+      "light": "/brand/oppie/oppie-large-light.svg"
     }
   },
   "favicon": {

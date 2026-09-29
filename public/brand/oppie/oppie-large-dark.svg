@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100" role="img" aria-label="Oppie">
+  <defs>
+    <linearGradient id="oppie-build" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#6E1D17"/>
+      <stop offset="0.18" stop-color="#C8342A"/>
+      <stop offset="0.42" stop-color="#FF4B3D"/>
+      <stop offset="0.7" stop-color="#C8342A"/>
+      <stop offset="1" stop-color="#5A1713"/>
+    </linearGradient>
+    <linearGradient id="oppie-studios" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#402765"/>
+      <stop offset="0.18" stop-color="#7446B8"/>
+      <stop offset="0.42" stop-color="#A866FF"/>
+      <stop offset="0.7" stop-color="#7446B8"/>
+      <stop offset="1" stop-color="#342053"/>
+    </linearGradient>
+    <linearGradient id="oppie-playbook" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#6E4C0E"/>
+      <stop offset="0.18" stop-color="#C88A1A"/>
+      <stop offset="0.42" stop-color="#FFC826"/>
+      <stop offset="0.7" stop-color="#C88A1A"/>
+      <stop offset="1" stop-color="#5A3E0C"/>
+    </linearGradient>
+    <linearGradient id="oppie-university" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#174C30"/>
+      <stop offset="0.18" stop-color="#2A8A58"/>
+      <stop offset="0.42" stop-color="#3DC880"/>
+      <stop offset="0.7" stop-color="#2A8A58"/>
+      <stop offset="1" stop-color="#133E28"/>
+    </linearGradient>
+    <linearGradient id="oppie-compass" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#104D55"/>
+      <stop offset="0.18" stop-color="#1D8C9A"/>
+      <stop offset="0.42" stop-color="#2ACBDF"/>
+      <stop offset="0.7" stop-color="#1D8C9A"/>
+      <stop offset="1" stop-color="#0D3F45"/>
+    </linearGradient>
+    <linearGradient id="oppie-depth" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.25"/>
+      <stop offset="0.3" stop-color="#FFFFFF" stop-opacity="0"/>
+      <stop offset="0.7" stop-color="#3A3D45" stop-opacity="0"/>
+      <stop offset="1" stop-color="#3A3D45" stop-opacity="0.85"/>
+    </linearGradient>
+    <linearGradient id="oppie-glint" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0"/>
+      <stop offset="0.1" stop-color="#FFFFFF" stop-opacity="0.75"/>
+      <stop offset="0.45" stop-color="#FFFFFF" stop-opacity="0.25"/>
+      <stop offset="0.8" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="oppie-rim" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.3"/>
+      <stop offset="0.3" stop-color="#FFFFFF" stop-opacity="0.05"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0.1"/>
+    </linearGradient>
+  </defs>
+  <g>
+    <rect x="10" y="32" width="12" height="36" rx="6" fill="url(#oppie-build)"/>
+    <rect x="10" y="32" width="12" height="36" rx="6" fill="url(#oppie-depth)"/>
+    <rect x="14.4" y="35.5" width="1.2" height="29" rx="0.6" fill="url(#oppie-glint)"/>
+    <rect x="10.2" y="32.2" width="11.6" height="35.6" rx="5.8" fill="none" stroke="url(#oppie-rim)" stroke-width="0.4"/>
+  </g>
+  <g>
+    <rect x="27" y="20" width="12" height="60" rx="6" fill="url(#oppie-studios)"/>
+    <rect x="27" y="20" width="12" height="60" rx="6" fill="url(#oppie-depth)"/>
+    <rect x="31.4" y="23.5" width="1.2" height="53" rx="0.6" fill="url(#oppie-glint)"/>
+    <rect x="27.2" y="20.2" width="11.6" height="59.6" rx="5.8" fill="none" stroke="url(#oppie-rim)" stroke-width="0.4"/>
+  </g>
+  <g>
+    <rect x="44" y="10" width="12" height="80" rx="6" fill="url(#oppie-playbook)"/>
+    <rect x="44" y="10" width="12" height="80" rx="6" fill="url(#oppie-depth)"/>
+    <rect x="48.4" y="13.5" width="1.2" height="73" rx="0.6" fill="url(#oppie-glint)"/>
+    <rect x="44.2" y="10.2" width="11.6" height="79.6" rx="5.8" fill="none" stroke="url(#oppie-rim)" stroke-width="0.4"/>
+  </g>
+  <g>
+    <rect x="61" y="20" width="12" height="60" rx="6" fill="url(#oppie-university)"/>
+    <rect x="61" y="20" width="12" height="60" rx="6" fill="url(#oppie-depth)"/>
+    <rect x="65.4" y="23.5" width="1.2" height="53" rx="0.6" fill="url(#oppie-glint)"/>
+    <rect x="61.2" y="20.2" width="11.6" height="59.6" rx="5.8" fill="none" stroke="url(#oppie-rim)" stroke-width="0.4"/>
+  </g>
+  <g>
+    <rect x="78" y="32" width="12" height="36" rx="6" fill="url(#oppie-compass)"/>
+    <rect x="78" y="32" width="12" height="36" rx="6" fill="url(#oppie-depth)"/>
+    <rect x="82.4" y="35.5" width="1.2" height="29" rx="0.6" fill="url(#oppie-glint)"/>
+    <rect x="78.2" y="32.2" width="11.6" height="35.6" rx="5.8" fill="none" stroke="url(#oppie-rim)" stroke-width="0.4"/>
+  </g>
+</svg>
