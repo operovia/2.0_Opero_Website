@@ -80,7 +80,7 @@ ADMIN_EMAIL=you@operovia.com ADMIN_PASSWORD='a new long password' npm run admin:
 
 ## If the admin says the database is not up to date
 
-Each time the site starts, it applies any database updates that arrived with new code. If that fails, a red notice at the top of every admin page says why, and the pages that need the missing update (Guests, for one) cannot load until it runs. Deal with the cause the notice names, then press Update the database now; it applies only what is missing. The Site health card on the Dashboard shows the same status and the last errors the server hit, so you can paste them to whoever is helping you.
+Each time the site starts, it applies any database updates that arrived with new code, then checks that each one really took: an update its record has no trace of, or whose tables are not all there, is applied again, skipping what is already in place. If that fails, a red notice at the top of every admin page says why, and the pages that need the missing update (Guests, for one) cannot load until it runs. Deal with the cause the notice names, then press Update the database now; it applies only what is missing. The Site health card on the Dashboard shows the same status and the last errors the server hit, so you can paste them to whoever is helping you.
 
 ## For developers
 

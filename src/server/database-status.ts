@@ -1,10 +1,12 @@
 import { db } from '@/db/client';
-import { pendingMigrations } from '@/db/migrate';
+import { planMigrations } from '@/db/migrate';
 import { describeError, lastBootstrap, type BootstrapReport } from '@/server/health';
 
 export type DatabaseStatus = {
-  /** Migrations the database has not run yet, oldest first. */
+  /** Migrations the database still needs, oldest first: unrecorded, or recorded but not all there. */
   pending: string[];
+  /** Tables and columns the newest migration expects that the database lacks. */
+  missing: string[];
   /** Why the migrations could not be checked, when the database did not answer. */
   unreachable: string | null;
   /** How this server's last attempt to prepare the database went. */
@@ -15,9 +17,10 @@ export type DatabaseStatus = {
 export async function databaseStatus(): Promise<DatabaseStatus> {
   const report = lastBootstrap();
   try {
-    return { pending: await pendingMigrations(db), unreachable: null, report };
+    const plan = await planMigrations(db);
+    return { pending: plan.todo.map((migration) => migration.tag), missing: plan.missing, unreachable: null, report };
   } catch (error) {
-    return { pending: [], unreachable: describeError(error), report };
+    return { pending: [], missing: [], unreachable: describeError(error), report };
   }
 }
 

@@ -154,7 +154,10 @@ export default async function DashboardPage() {
                 database.report.ok ? (
                   <>
                     {' '}
-                    Last prepared <Time value={database.report.at} format="relative" />.
+                    Last prepared <Time value={database.report.at} format="relative" />
+                    {database.report.repaired.length
+                      ? `, applying ${database.report.repaired.length === 1 ? 'one update' : `${database.report.repaired.length} updates`} it did not have: ${database.report.repaired.join(', ')}.`
+                      : '.'}
                   </>
                 ) : (
                   <>

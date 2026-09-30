@@ -11,7 +11,7 @@ import { updateDatabaseAction } from './database-actions';
 export async function DatabaseNotice() {
   const status = await databaseStatus();
   if (!databaseNeedsAttention(status)) return null;
-  const { pending, unreachable, report } = status;
+  const { pending, missing, unreachable, report } = status;
 
   return (
     <Notice tone="danger" title="The database is not up to date" className="mb-8">
@@ -20,8 +20,9 @@ export async function DatabaseNotice() {
           {unreachable
             ? `The database did not answer: ${unreachable}`
             : pending.length
-              ? `${pending.length === 1 ? 'One update the site needs has' : `${pending.length} updates the site needs have`} not run yet: ${pending.join(', ')}. Pages that depend on ${pending.length === 1 ? 'it' : 'them'}, such as Guests, cannot load until ${pending.length === 1 ? 'it does' : 'they do'}.`
+              ? `${pending.length === 1 ? 'One update the site needs has' : `${pending.length} updates the site needs have`} not fully run: ${pending.join(', ')}. Pages that depend on ${pending.length === 1 ? 'it' : 'them'}, such as Guests, cannot load until ${pending.length === 1 ? 'it does' : 'they do'}.`
               : 'The last attempt to prepare it did not finish.'}
+          {missing.length ? ` The database is missing ${missing.slice(0, 6).join(', ')}${missing.length > 6 ? `, and ${missing.length - 6} more` : ''}.` : ''}
         </p>
         <p>
           {report ? (

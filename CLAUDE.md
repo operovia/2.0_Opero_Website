@@ -69,7 +69,7 @@ While `serve` runs, the owner should not press Run: Next.js allows one dev serve
 
 - Next.js App Router, TypeScript, Tailwind CSS v4, Motion (formerly Framer Motion).
 - Postgres via Drizzle ORM (`pg` driver); migrations in `drizzle/`, generated with `npm run db:generate`. Never edit an applied migration; add a new one.
-- The server applies migrations and seeds (admin account, settings, content) on startup, under an advisory lock. Nothing touches the database at build time.
+- The server applies migrations and seeds (admin account, settings, content) on startup, under an advisory lock. Nothing touches the database at build time. After migrating, it checks the migrator's record against the files (by hash) and the schema against the newest snapshot, and applies again, statement by statement and skipping what is already there, any migration the record does not vouch for or whose tables are missing (`src/db/migrate.ts`): the migrator goes by date alone, so one stray row in its record can make it skip everything. Data migrations must therefore be safe to run twice: guard every change on the state it changes.
 - Email through Resend from a dedicated operovia.com subdomain. Without `RESEND_API_KEY`, emails are printed to the server log.
 - Uploads go through one storage adapter: local `uploads/` folder in development, S3-compatible bucket in production.
 - Standard Node service (`npm run build`, `npm run start`). Nothing platform-specific.

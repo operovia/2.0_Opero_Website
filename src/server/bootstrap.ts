@@ -1,6 +1,7 @@
 import { db, pool } from '@/db/client';
 import { DatabaseMismatchError, runMigrations } from '@/db/migrate';
-import { describeError, reportBootstrap, shareBootstrap, sqlState } from '@/server/health';
+import { sqlState } from '@/db/errors';
+import { describeError, reportBootstrap, shareBootstrap } from '@/server/health';
 import { seed } from '@/server/seed';
 
 /** Arbitrary constant identifying this app's startup lock in Postgres. */
@@ -39,18 +40,19 @@ async function prepare(): Promise<void> {
   }
 
   for (let attempt = 1; ; attempt++) {
+    let repaired: string[] = [];
     try {
       const client = await pool.connect();
       try {
         await client.query('SELECT pg_advisory_lock($1)', [BOOTSTRAP_LOCK]);
-        await runMigrations(db);
+        ({ repaired } = await runMigrations(db));
         await seed(db);
       } finally {
         await client.query('SELECT pg_advisory_unlock($1)', [BOOTSTRAP_LOCK]).catch(() => {});
         client.release();
       }
       console.log('[opero] Database is ready.');
-      reportBootstrap(true, null);
+      reportBootstrap(true, null, repaired);
       return;
     } catch (error) {
       if (error instanceof DatabaseMismatchError) {

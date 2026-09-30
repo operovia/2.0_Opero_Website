@@ -6,7 +6,13 @@
  * here is stored.
  */
 
-export type BootstrapReport = { at: Date; ok: boolean; message: string | null };
+export type BootstrapReport = {
+  at: Date;
+  ok: boolean;
+  message: string | null;
+  /** Migrations that run applied because the database did not have them, though its record may have said otherwise. */
+  repaired: string[];
+};
 export type RequestError = { at: Date; path: string; message: string; digest: string | null };
 
 type Health = { bootstrap: BootstrapReport | null; running: Promise<void> | null; errors: RequestError[] };
@@ -20,8 +26,8 @@ export function lastBootstrap(): BootstrapReport | null {
   return health.bootstrap;
 }
 
-export function reportBootstrap(ok: boolean, message: string | null): void {
-  health.bootstrap = { at: new Date(), ok, message };
+export function reportBootstrap(ok: boolean, message: string | null, repaired: string[] = []): void {
+  health.bootstrap = { at: new Date(), ok, message, repaired };
 }
 
 /** Runs one preparation at a time per process: a retry while one is in flight joins it. */
@@ -53,16 +59,4 @@ export function describeError(error: unknown): string {
     return `${error.message}${cause}`;
   }
   return String(error);
-}
-
-/**
- * The SQLSTATE code of a database error, looking through the errors that
- * wrap it, or null for anything else (a connection that failed, a timeout).
- */
-export function sqlState(error: unknown): string | null {
-  for (let current: unknown = error; current instanceof Error; current = current.cause) {
-    const code = (current as { code?: unknown }).code;
-    if (typeof code === 'string' && /^[0-9A-Z]{5}$/.test(code)) return code;
-  }
-  return null;
 }

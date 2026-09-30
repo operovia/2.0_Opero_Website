@@ -4,21 +4,205 @@ import { sql } from 'drizzle-orm';
 import { readMigrationFiles } from 'drizzle-orm/migrator';
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
 import type { Db } from './client';
+import { sqlState } from './errors';
 
 const MIGRATIONS_FOLDER = path.join(/*turbopackIgnore: true*/ process.cwd(), 'drizzle');
 
 /** The database cannot be prepared safely as it is. Retrying will not help. */
 export class DatabaseMismatchError extends Error {}
 
-/** Applies any migrations in /drizzle that have not run yet. Safe to call on every start. */
-export async function runMigrations(db: Db): Promise<void> {
+/**
+ * Applies any migrations in /drizzle that have not run yet, then makes sure
+ * each of them really did. The migrator decides by date: it skips every
+ * migration older than the newest row in its record, so a row from another
+ * tool dated after them all makes it skip them all, and nothing else would
+ * notice. So any migration the record does not vouch for, or whose tables
+ * and columns are not all there, is applied again statement by statement,
+ * skipping what is already in place. Safe to call on every start.
+ */
+export async function runMigrations(db: Db): Promise<{ repaired: string[] }> {
   await adoptUntrackedTables(db);
   await migrate(db, { migrationsFolder: MIGRATIONS_FOLDER });
+  const plan = await planMigrations(db);
+  for (const migration of plan.todo) await applyAgain(db, migration, plan.recorded.has(migration.hash));
+  return { repaired: plan.todo.map((migration) => migration.tag) };
 }
+
+/* ------------------------------------------------------------------------ */
+/* The migrations on disk and the schema they describe                      */
+/* ------------------------------------------------------------------------ */
+
+export type Migration = { tag: string; idx: number; when: number; hash: string; statements: string[] };
 
 type Snapshot = {
   tables: Record<string, { name: string; schema: string; columns: Record<string, { name: string }> }>;
 };
+
+/** Tables with their columns, keyed "schema.table". */
+type Tables = Map<string, Set<string>>;
+
+// The files do not change while a production server runs; in development they do, so they are read each time.
+const cache = process.env.NODE_ENV === 'production' ? { migrations: null as Migration[] | null, snapshots: new Map<number, Tables>() } : null;
+
+function readMigrations(): Migration[] {
+  if (cache?.migrations) return cache.migrations;
+  const journal = JSON.parse(readFileSync(path.join(MIGRATIONS_FOLDER, 'meta', '_journal.json'), 'utf8')) as {
+    entries: { idx: number; tag: string; when: number }[];
+  };
+  const files = readMigrationFiles({ migrationsFolder: MIGRATIONS_FOLDER });
+  const migrations = journal.entries.map((entry, i) => {
+    const file = files[i];
+    if (!file) throw new Error(`Migration ${entry.tag} has no file.`);
+    return { tag: entry.tag, idx: entry.idx, when: entry.when, hash: file.hash, statements: file.sql };
+  });
+  if (cache) cache.migrations = migrations;
+  return migrations;
+}
+
+/** The tables and columns a migration's snapshot says exist once it has run. */
+function snapshotTables(idx: number): Tables {
+  const cached = cache?.snapshots.get(idx);
+  if (cached) return cached;
+  const snapshot = JSON.parse(readFileSync(path.join(MIGRATIONS_FOLDER, 'meta', `${String(idx).padStart(4, '0')}_snapshot.json`), 'utf8')) as Snapshot;
+  const tables: Tables = new Map();
+  for (const table of Object.values(snapshot.tables)) {
+    tables.set(`${table.schema || 'public'}.${table.name}`, new Set(Object.values(table.columns).map((column) => column.name)));
+  }
+  cache?.snapshots.set(idx, tables);
+  return tables;
+}
+
+/** The tables and columns the database has, outside Postgres's own schemas. */
+async function databaseTables(db: Db): Promise<Tables> {
+  const { rows } = await db.execute<{ table: string; column_name: string }>(sql`
+    select table_schema || '.' || table_name as "table", column_name
+    from information_schema.columns
+    where table_schema not in ('pg_catalog', 'information_schema')`);
+  const tables: Tables = new Map();
+  for (const row of rows) tables.set(row.table, (tables.get(row.table) ?? new Set()).add(row.column_name));
+  return tables;
+}
+
+/** What `expected` has that `actual` lacks: "schema.table" or "schema.table.column". */
+export function missingFrom(expected: Tables, actual: Tables): string[] {
+  return [...expected].flatMap(([table, columns]) => {
+    const present = actual.get(table);
+    if (!present) return [table];
+    return [...columns].filter((column) => !present.has(column)).map((column) => `${table}.${column}`);
+  });
+}
+
+/** Only what `keep` still has: tables and columns a later migration drops or renames are not expected to be there. */
+export function intersect(tables: Tables, keep: Tables): Tables {
+  const result: Tables = new Map();
+  for (const [table, columns] of tables) {
+    const kept = keep.get(table);
+    if (kept) result.set(table, new Set([...columns].filter((column) => kept.has(column))));
+  }
+  return result;
+}
+
+/* ------------------------------------------------------------------------ */
+/* Checking the record against the files and the database                  */
+/* ------------------------------------------------------------------------ */
+
+export type MigrationPlan<M = Migration> = {
+  /** Migrations to apply (again), oldest first. */
+  todo: M[];
+  /** Hashes in the migrator's record. */
+  recorded: Set<string>;
+  /** What the database lacks of the newest migration's tables and columns. */
+  missing: string[];
+};
+
+/**
+ * Which migrations to apply again. The record vouches for a migration when
+ * it holds the file's hash; anything after the last one it vouches for never
+ * ran. And from the first migration whose tables or columns are not all
+ * there, everything must run again: what is there already is skipped.
+ */
+export function planFrom<M extends { hash: string }>(migrations: M[], recorded: Set<string>, missing: string[][]): MigrationPlan<M> {
+  let proven = -1;
+  migrations.forEach((migration, i) => {
+    if (recorded.has(migration.hash)) proven = i;
+  });
+  const firstIncomplete = missing.findIndex((list) => list.length > 0);
+  const start = Math.min(proven + 1, firstIncomplete === -1 ? migrations.length : firstIncomplete);
+  return { todo: migrations.slice(start), recorded, missing: missing.at(-1) ?? [] };
+}
+
+async function recordedHashes(db: Db): Promise<Set<string>> {
+  const {
+    rows: [journal],
+  } = await db.execute<{ found: boolean }>(sql`select to_regclass('drizzle.__drizzle_migrations') is not null as found`);
+  if (!journal?.found) return new Set();
+  const { rows } = await db.execute<{ hash: string }>(sql`select hash from drizzle.__drizzle_migrations`);
+  return new Set(rows.map((row) => row.hash));
+}
+
+/** The migrations the database still needs, by its record and by what it holds. */
+export async function planMigrations(db: Db): Promise<MigrationPlan> {
+  const migrations = readMigrations();
+  const last = migrations.at(-1);
+  if (!last) return { todo: [], recorded: new Set(), missing: [] };
+  const [recorded, actual] = await Promise.all([recordedHashes(db), databaseTables(db)]);
+  const final = snapshotTables(last.idx);
+  const missing = migrations.map((migration) => missingFrom(intersect(snapshotTables(migration.idx), final), actual));
+  return planFrom(migrations, recorded, missing);
+}
+
+/* ------------------------------------------------------------------------ */
+/* Applying a migration to a database that may already have parts of it     */
+/* ------------------------------------------------------------------------ */
+
+const withoutComments = (statement: string) =>
+  statement
+    .replace(/^\s*--.*$/gm, '')
+    .trim()
+    .replace(/\s+/g, ' ')
+    .toLowerCase();
+
+/**
+ * Whether a statement's failure means its work was already done: a table,
+ * index, constraint or column it creates exists, or one it drops is gone.
+ * Anything else, a data change included, is a real failure.
+ */
+export function tolerated(statement: string, code: string | null): boolean {
+  if (!code) return false;
+  const text = withoutComments(statement);
+  if (text.startsWith('create ')) return ['42P07', '42710', '42P06', '42723'].includes(code);
+  if (/^alter table .* add column /.test(text)) return code === '42701';
+  if (/^alter table .* add constraint /.test(text)) return code === '42710';
+  if (/^alter table .* drop column /.test(text)) return code === '42703';
+  if (/^alter table .* drop constraint /.test(text)) return code === '42704';
+  if (text.startsWith('drop ')) return ['42P01', '42704'].includes(code);
+  return false;
+}
+
+/** Runs one migration's statements, skipping those whose work is already done, and records it unless the record has it. */
+async function applyAgain(db: Db, migration: Migration, recorded: boolean): Promise<void> {
+  await db.transaction(async (tx) => {
+    for (const statement of migration.statements) {
+      if (!withoutComments(statement)) continue;
+      await tx.execute(sql`savepoint statement`);
+      try {
+        await tx.execute(sql.raw(statement));
+        await tx.execute(sql`release savepoint statement`);
+      } catch (error) {
+        if (!tolerated(statement, sqlState(error))) throw error;
+        await tx.execute(sql`rollback to savepoint statement`);
+      }
+    }
+    if (!recorded) {
+      await tx.execute(sql`insert into drizzle.__drizzle_migrations (hash, created_at) values (${migration.hash}, ${migration.when})`);
+    }
+  });
+  console.log(`[opero] Applied ${migration.tag}, which the database did not have.`);
+}
+
+/* ------------------------------------------------------------------------ */
+/* A database whose tables were created without migrations                  */
+/* ------------------------------------------------------------------------ */
 
 /**
  * Tables created without migrations (for example by `drizzle-kit push`)
@@ -39,29 +223,15 @@ async function adoptUntrackedTables(db: Db): Promise<void> {
     if (applied && applied.count > 0) return;
   }
 
-  const [first] = readMigrationFiles({ migrationsFolder: MIGRATIONS_FOLDER });
+  const [first] = readMigrations();
   if (!first) return;
-  const snapshot = JSON.parse(readFileSync(path.join(MIGRATIONS_FOLDER, 'meta', '0000_snapshot.json'), 'utf8')) as Snapshot;
-  const expected = Object.values(snapshot.tables).map((table) => ({
-    name: `${table.schema || 'public'}.${table.name}`,
-    columns: Object.values(table.columns).map((column) => column.name),
-  }));
-
-  const { rows } = await db.execute<{ table: string; column_name: string }>(sql`
-    select table_schema || '.' || table_name as "table", column_name
-    from information_schema.columns
-    where table_schema not in ('pg_catalog', 'information_schema')`);
-  const existing = new Map<string, Set<string>>();
-  for (const row of rows) existing.set(row.table, (existing.get(row.table) ?? new Set()).add(row.column_name));
+  const expected = snapshotTables(first.idx);
+  const existing = await databaseTables(db);
 
   // An empty database: the first migration creates everything.
-  if (!expected.some((table) => existing.has(table.name))) return;
+  if (![...expected.keys()].some((table) => existing.has(table))) return;
 
-  const missing = expected.flatMap((table) => {
-    const columns = existing.get(table.name);
-    if (!columns) return [table.name];
-    return table.columns.filter((column) => !columns.has(column)).map((column) => `${table.name}.${column}`);
-  });
+  const missing = missingFrom(expected, existing);
   if (missing.length) {
     const listed = missing.length > 10 ? `${missing.slice(0, 10).join(', ')}, and ${missing.length - 10} more` : missing.join(', ');
     throw new DatabaseMismatchError(
@@ -72,29 +242,6 @@ async function adoptUntrackedTables(db: Db): Promise<void> {
   // The same journal table the migrator creates, holding the row it would have written.
   await db.execute(sql`create schema if not exists drizzle`);
   await db.execute(sql`create table if not exists drizzle.__drizzle_migrations (id serial primary key, hash text not null, created_at bigint)`);
-  await db.execute(sql`insert into drizzle.__drizzle_migrations (hash, created_at) values (${first.hash}, ${first.folderMillis})`);
+  await db.execute(sql`insert into drizzle.__drizzle_migrations (hash, created_at) values (${first.hash}, ${first.when})`);
   console.log("[opero] The database already had the site's tables; recorded the first migration as applied.");
-}
-
-type JournalEntry = { tag: string; when: number };
-
-/**
- * The migrations still to run, given the journal's entries and when the
- * newest applied one was made: the same rule the migrator applies.
- */
-export function pendingTags(entries: JournalEntry[], latestApplied: number | null): string[] {
-  return entries.filter((entry) => latestApplied === null || entry.when > latestApplied).map((entry) => entry.tag);
-}
-
-/** Tags of the migrations in /drizzle that the database has not run yet, oldest first. */
-export async function pendingMigrations(db: Db): Promise<string[]> {
-  const journal = JSON.parse(readFileSync(path.join(MIGRATIONS_FOLDER, 'meta', '_journal.json'), 'utf8')) as { entries: JournalEntry[] };
-  const {
-    rows: [table],
-  } = await db.execute<{ found: boolean }>(sql`select to_regclass('drizzle.__drizzle_migrations') is not null as found`);
-  if (!table?.found) return pendingTags(journal.entries, null);
-  const {
-    rows: [latest],
-  } = await db.execute<{ latest: string | null }>(sql`select max(created_at)::text as latest from drizzle.__drizzle_migrations`);
-  return pendingTags(journal.entries, latest?.latest ? Number(latest.latest) : null);
 }
