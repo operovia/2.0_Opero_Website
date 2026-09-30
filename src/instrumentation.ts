@@ -14,3 +14,16 @@ export async function register() {
     watchForMigrations();
   }
 }
+
+/** Keeps the last errors this server's pages and actions hit, for the admin's Site health card. */
+export async function onRequestError(error: unknown, request: { path: string }) {
+  if (process.env.NEXT_RUNTIME !== 'nodejs') return;
+  const { describeError, recordRequestError } = await import('./server/health');
+  recordRequestError({
+    at: new Date(),
+    // Without the query string, which can carry a personal survey link's token.
+    path: request.path.split('?')[0] ?? request.path,
+    message: describeError(error),
+    digest: typeof error === 'object' && error !== null && 'digest' in error ? String(error.digest) : null,
+  });
+}

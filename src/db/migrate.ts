@@ -73,5 +73,28 @@ async function adoptUntrackedTables(db: Db): Promise<void> {
   await db.execute(sql`create schema if not exists drizzle`);
   await db.execute(sql`create table if not exists drizzle.__drizzle_migrations (id serial primary key, hash text not null, created_at bigint)`);
   await db.execute(sql`insert into drizzle.__drizzle_migrations (hash, created_at) values (${first.hash}, ${first.folderMillis})`);
-  console.log('[opero] The database already had the site\'s tables; recorded the first migration as applied.');
+  console.log("[opero] The database already had the site's tables; recorded the first migration as applied.");
+}
+
+type JournalEntry = { tag: string; when: number };
+
+/**
+ * The migrations still to run, given the journal's entries and when the
+ * newest applied one was made: the same rule the migrator applies.
+ */
+export function pendingTags(entries: JournalEntry[], latestApplied: number | null): string[] {
+  return entries.filter((entry) => latestApplied === null || entry.when > latestApplied).map((entry) => entry.tag);
+}
+
+/** Tags of the migrations in /drizzle that the database has not run yet, oldest first. */
+export async function pendingMigrations(db: Db): Promise<string[]> {
+  const journal = JSON.parse(readFileSync(path.join(MIGRATIONS_FOLDER, 'meta', '_journal.json'), 'utf8')) as { entries: JournalEntry[] };
+  const {
+    rows: [table],
+  } = await db.execute<{ found: boolean }>(sql`select to_regclass('drizzle.__drizzle_migrations') is not null as found`);
+  if (!table?.found) return pendingTags(journal.entries, null);
+  const {
+    rows: [latest],
+  } = await db.execute<{ latest: string | null }>(sql`select max(created_at)::text as latest from drizzle.__drizzle_migrations`);
+  return pendingTags(journal.entries, latest?.latest ? Number(latest.latest) : null);
 }

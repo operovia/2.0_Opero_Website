@@ -10,6 +10,7 @@ export const auditLabels: Record<AuditAction, string> = {
   'admin.invite.accept': 'Accepted an invitation',
   'admin.remove': 'Removed an admin',
   'settings.update': 'Updated settings',
+  'database.update': 'Ran the database update',
   'content.publish': 'Published content',
   'content.rollback': 'Rolled back content',
   'scenes.update': 'Updated the Oppie console',
@@ -32,7 +33,7 @@ export const auditFilters = {
   content: { label: 'Content', actions: ['content.publish', 'content.rollback', 'scenes.update', 'media.upload', 'media.delete'] },
   admin: {
     label: 'Team and settings',
-    actions: ['password.change', 'admin.invite', 'admin.invite.revoke', 'admin.invite.accept', 'admin.remove', 'settings.update'],
+    actions: ['password.change', 'admin.invite', 'admin.invite.revoke', 'admin.invite.accept', 'admin.remove', 'settings.update', 'database.update'],
   },
   surveys: { label: 'Surveys', actions: ['survey.create', 'survey.status', 'survey.delete', 'survey.send', 'survey.export', 'survey.responses.delete'] },
   guests: { label: 'Guests', actions: ['guest.add', 'guest.remove', 'door.enter'] },

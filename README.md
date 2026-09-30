@@ -78,6 +78,10 @@ After six wrong passwords in fifteen minutes, sign-in pauses for that account fr
 ADMIN_EMAIL=you@operovia.com ADMIN_PASSWORD='a new long password' npm run admin:reset-password
 ```
 
+## If the admin says the database is not up to date
+
+Each time the site starts, it applies any database updates that arrived with new code. If that fails, a red notice at the top of every admin page says why, and the pages that need the missing update (Guests, for one) cannot load until it runs. Deal with the cause the notice names, then press Update the database now; it applies only what is missing. The Site health card on the Dashboard shows the same status and the last errors the server hit, so you can paste them to whoever is helping you.
+
 ## For developers
 
 | Command | What it does |

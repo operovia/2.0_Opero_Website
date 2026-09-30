@@ -11,6 +11,7 @@ export type AuditAction =
   | 'admin.invite.accept'
   | 'admin.remove'
   | 'settings.update'
+  | 'database.update'
   | 'content.publish'
   | 'content.rollback'
   | 'scenes.update'

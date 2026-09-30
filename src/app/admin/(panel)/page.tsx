@@ -8,6 +8,8 @@ import { Time } from '@/components/ui/time';
 import { getPageDef, getSectionDef } from '@/content/registry';
 import { requireAdmin } from '@/server/auth/session';
 import { allPagesStatus, recentPublishes } from '@/server/content-admin';
+import { databaseStatus } from '@/server/database-status';
+import { recentRequestErrors } from '@/server/health';
 import { inquirerName, newInquiryCount, recentNewInquiries, typeLabel } from '@/server/inquiries-admin';
 import { getSettings } from '@/server/settings';
 import { surveysWithRecentResponses } from '@/server/surveys';
@@ -18,14 +20,16 @@ const linkClass = 'text-sm font-medium text-fg underline underline-offset-4 hove
 
 export default async function DashboardPage() {
   const { user } = await requireAdmin();
-  const [settings, newCount, inquiries, publishes, pages, surveys] = await Promise.all([
+  const [settings, newCount, inquiries, publishes, pages, surveys, database] = await Promise.all([
     getSettings(),
     newInquiryCount(),
     recentNewInquiries(5),
     recentPublishes(5),
     allPagesStatus(),
     surveysWithRecentResponses(30, 5),
+    databaseStatus(),
   ]);
+  const errors = recentRequestErrors();
   const firstName = user.name.split(' ')[0];
   const toReview = pages.reduce((sum, page) => sum + page.needsReview, 0);
 
@@ -57,7 +61,9 @@ export default async function DashboardPage() {
         <Card>
           <CardHeader
             title="New inquiries"
-            description={newCount ? `${newCount === 1 ? 'One inquiry is' : `${newCount} inquiries are`} waiting for a reply.` : 'Nothing is waiting for a reply.'}
+            description={
+              newCount ? `${newCount === 1 ? 'One inquiry is' : `${newCount} inquiries are`} waiting for a reply.` : 'Nothing is waiting for a reply.'
+            }
             actions={
               <Link href="/admin/inquiries" className={linkClass}>
                 All inquiries
@@ -134,7 +140,61 @@ export default async function DashboardPage() {
             <p className="px-6 py-5 text-sm text-fg-muted">Nothing has been published from the admin yet. Changes appear here once you publish them.</p>
           )}
         </Card>
+
+        <Card>
+          <CardHeader title="Site health" description="What this server knows about itself since it started." />
+          <dl className="divide-y divide-line">
+            <HealthRow label="Database">
+              {database.unreachable
+                ? `Did not answer: ${database.unreachable}`
+                : database.pending.length
+                  ? `${database.pending.length === 1 ? 'One update is' : `${database.pending.length} updates are`} waiting: ${database.pending.join(', ')}.`
+                  : 'Up to date.'}
+              {database.report ? (
+                database.report.ok ? (
+                  <>
+                    {' '}
+                    Last prepared <Time value={database.report.at} format="relative" />.
+                  </>
+                ) : (
+                  <>
+                    {' '}
+                    The last attempt, <Time value={database.report.at} format="relative" />, failed: {database.report.message}
+                  </>
+                )
+              ) : (
+                ' This server has not prepared it yet.'
+              )}
+            </HealthRow>
+            <HealthRow label="Page errors">
+              {errors.length ? (
+                <ul className="space-y-2">
+                  {errors.map((error, index) => (
+                    <li key={index}>
+                      <p className="text-fg">
+                        <Time value={error.at} format="relative" />, {error.path}
+                        {error.digest ? ` (reference ${error.digest})` : ''}
+                      </p>
+                      <p className="break-words">{error.message}</p>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                'None recorded.'
+              )}
+            </HealthRow>
+          </dl>
+        </Card>
       </div>
+    </div>
+  );
+}
+
+function HealthRow({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <div className="grid grid-cols-1 gap-1 px-6 py-3.5 sm:grid-cols-[7rem_minmax(0,1fr)] sm:gap-6">
+      <dt className="text-sm font-medium text-fg">{label}</dt>
+      <dd className="min-w-0 text-sm text-fg-muted">{children}</dd>
     </div>
   );
 }
