@@ -3,7 +3,7 @@
 //   node scripts/brand/export-lockup.mjs
 //
 // The supplied artwork is the pair of 4800 x 2638 PNGs in public/brand/opero/centered (the SVGs that came with
-// them were empty wrappers, so the PNGs are the source). This cuts each to the artwork's visible bounds and writes:
+// them are empty wrappers, two image tags pointing at no file, so the PNGs are the source). This cuts each to the artwork's visible bounds and writes:
 //   public/brand/opero/opero-centered-{dark,light}.webp      the mark the site draws (BrandMark "opero"), 1400 px wide
 //   public/brand/opero/png/opero-centered-{dark,light}-email-{1x,2x}.png   the email wordmark, 116 px wide at 1x
 // It prints the sizes to put in public/brand/manifest.json. The originals are never changed.
@@ -15,8 +15,8 @@ import sharp from 'sharp';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 const source = path.join(root, 'public', 'brand', 'opero', 'centered');
 const out = path.join(root, 'public', 'brand', 'opero');
-/** The visible artwork inside the 4800 x 2638 canvas: the wordmark at (663, 663) 3474 x 808 and the jewels at (1229, 1737) 2342 x 238. */
-const BOUNDS = { left: 663, top: 663, width: 3474, height: 1312 };
+/** The visible artwork inside the 4800 x 2638 canvas: the wordmark at (663, 663) 3474 x 808 and the jewels at (1017, 1683) 2767 x 207. */
+const BOUNDS = { left: 663, top: 663, width: 3474, height: 1227 };
 const WEB_WIDTH = 1200;
 const EMAIL_WIDTH = 116;
 
