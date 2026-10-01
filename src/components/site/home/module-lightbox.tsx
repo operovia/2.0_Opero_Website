@@ -50,8 +50,8 @@ export function ModuleLightbox({ modules, heading }: Props) {
 
   const current = modules[active];
   if (!current) return null;
-  // The module's own mark stands where the heading says {module}; its label still reads as text.
-  const [before = '', after = ''] = heading.split('{module}');
+  // The Opero logo stands where the heading says {opero}; copy saved before the logo took the module's place says {module}, and reads the same.
+  const [before = '', after = ''] = heading.replace('{module}', '{opero}').split('{opero}');
 
   return (
     <dialog
@@ -71,9 +71,12 @@ export function ModuleLightbox({ modules, heading }: Props) {
       <div className="relative flex max-h-[calc(100dvh-2*var(--o-gutter))] flex-col overflow-y-auto">
         <div className="flex items-center justify-between gap-4 border-b border-line px-5 py-4 sm:px-6">
           <h2 id="module-shot-title" className="flex min-w-0 items-center gap-2.5 text-base font-semibold text-fg">
-            {before.trim() ? <span>{before.trim()}</span> : null}
-            <BrandMark name={`module-${current.module}`} className="h-5" />
-            {after.trim() ? <span>{after.trim()}</span> : null}
+            {/* The words sit 4px up from center (half their bottom margin), so they share a baseline with the logo's letters rather than centering on the letters and jewels together. */}
+            {before.trim() ? <span className="mb-2">{before.trim()}</span> : null}
+            {/* Sighted visitors read the module's name in the picture itself; screen readers hear it here, where the logo shows. */}
+            <BrandMark name="opero" decorative className="h-7 sm:h-8" />
+            <span className="sr-only">{MODULE_LABELS[current.module]}</span>
+            {after.trim() ? <span className="mb-2">{after.trim()}</span> : null}
           </h2>
           <button
             ref={closeButton}
