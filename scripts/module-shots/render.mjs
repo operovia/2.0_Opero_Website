@@ -1,5 +1,6 @@
 // Renders the "inside the module" screenshots: each scripts/module-shots/<module>.html becomes
-// public/modules/<module>.png, drawn at 1440 x 900 CSS pixels at twice that in the file (src/content/constants.ts, MODULE_SHOT).
+// src/assets/modules/<module>.png, drawn at 1440 x 900 CSS pixels at twice that in the file. The site imports them
+// (src/content/module-shots.ts), so a re-rendered picture gets a new address and no cache keeps the old one.
 //
 //   node scripts/module-shots/render.mjs [module ...]
 //
@@ -13,7 +14,7 @@ import { chromium } from 'playwright-core';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(here, '..', '..');
-const out = path.join(root, 'public', 'modules');
+const out = path.join(root, 'src', 'assets', 'modules');
 const MODULES = ['build', 'studios', 'playbook', 'university', 'compass'];
 const WIDTH = 1440;
 const HEIGHT = 900;
@@ -46,7 +47,7 @@ try {
     await page.goto(`http://127.0.0.1:${port}/scripts/module-shots/${name}.html`, { waitUntil: 'networkidle' });
     await page.evaluate(() => document.fonts.ready);
     await page.screenshot({ path: path.join(out, `${name}.png`), type: 'png' });
-    console.log(`public/modules/${name}.png`);
+    console.log(`src/assets/modules/${name}.png`);
     await page.close();
   }
 } finally {

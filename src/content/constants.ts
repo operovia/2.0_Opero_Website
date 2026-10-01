@@ -38,7 +38,3 @@ export const GUEST_ROLE_LABELS: Record<GuestRole, { label: string; sees: string 
 /** The modules by their bare names, in brand order, for browser code (the registry's options are server-only). */
 export const MODULE_LABELS = { build: 'Build', studios: 'Studios', playbook: 'Playbook', university: 'University', compass: 'Compass' } as const;
 export type ModuleName = keyof typeof MODULE_LABELS;
-
-/** The "inside the module" screenshots: one PNG per module under public/modules, all drawn at this size (CSS pixels; the files are twice that). */
-export const MODULE_SHOT = { width: 1440, height: 900 } as const;
-export const moduleShotPath = (module: ModuleName) => `/modules/${module}.png`;

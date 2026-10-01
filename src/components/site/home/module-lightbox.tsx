@@ -4,7 +4,8 @@ import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import { BrandMark } from '@/components/brand/brand-mark';
-import { MODULE_LABELS, MODULE_SHOT, moduleShotPath, type ModuleName } from '@/content/constants';
+import { MODULE_LABELS, type ModuleName } from '@/content/constants';
+import { MODULE_SHOTS } from '@/content/module-shots';
 import { cn } from '@/lib/cn';
 
 export type ModuleShot = { module: ModuleName; description: string; inside: string };
@@ -91,10 +92,8 @@ export function ModuleLightbox({ modules }: Props) {
               ? modules.map((item, index) => (
                   <Image
                     key={item.module}
-                    src={moduleShotPath(item.module)}
+                    src={MODULE_SHOTS[item.module]}
                     alt={`A screen from ${MODULE_LABELS[item.module]}.`}
-                    width={MODULE_SHOT.width}
-                    height={MODULE_SHOT.height}
                     sizes="(min-width: 80rem) 72rem, 100vw"
                     quality={85}
                     priority={index === active}

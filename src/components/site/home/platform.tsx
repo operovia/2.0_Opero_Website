@@ -1,6 +1,7 @@
 import { Reveal, RevealGroup, RevealItem } from '@/components/motion/reveal';
 import { BrandMark } from '@/components/brand/brand-mark';
-import { MODULE_LABELS, moduleShotPath } from '@/content/constants';
+import { MODULE_LABELS } from '@/content/constants';
+import { MODULE_SHOTS } from '@/content/module-shots';
 import type { SectionData } from '@/content/registry';
 import { cn } from '@/lib/cn';
 import { Container, Eyebrow, SectionIntro } from '../layout-parts';
@@ -91,7 +92,7 @@ export function Platform({ content }: { content: SectionData<'home', 'platform'>
                 <RevealItem as="li" key={item.module}>
                   {/* The whole card opens the module's screen in the lightbox, or, without JavaScript, the picture itself. */}
                   <a
-                    href={moduleShotPath(item.module)}
+                    href={MODULE_SHOTS[item.module].src}
                     data-module-shot={item.module}
                     title={content.lookInsideLabel}
                     className={cn(
