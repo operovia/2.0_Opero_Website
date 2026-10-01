@@ -1,12 +1,11 @@
-import { Maximize2 } from 'lucide-react';
-import Image from 'next/image';
+import { Search } from 'lucide-react';
 import { Reveal, RevealGroup, RevealItem } from '@/components/motion/reveal';
 import { BrandMark } from '@/components/brand/brand-mark';
-import { MODULE_LABELS, MODULE_SHOT, moduleShotPath } from '@/content/constants';
+import { MODULE_LABELS, moduleShotPath } from '@/content/constants';
 import type { SectionData } from '@/content/registry';
 import { cn } from '@/lib/cn';
-import { Container, SectionIntro } from '../layout-parts';
-import { CoreRecord } from './core-record';
+import { Container, Eyebrow, SectionIntro } from '../layout-parts';
+import { CoreJoin } from './core-join';
 import { ModuleLightbox } from './module-lightbox';
 import { PlatformNetwork } from './platform-network';
 
@@ -26,37 +25,64 @@ const glow = {
   compass: 'module-glow-compass',
 } as const;
 
+/** The lines of a multiline field, blank ones left out. */
+const lines = (text: string) =>
+  text
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+
 export function Platform({ content }: { content: SectionData<'home', 'platform'> }) {
   return (
     <section id="platform" aria-labelledby="platform-title" className="scroll-mt-18 py-section">
       <Container>
         <SectionIntro headingId="platform-title" eyebrow={content.eyebrow} headline={content.headline} body={content.body} />
 
-        {/* Opero around everything: the core CRM and every module in one frame, all linked, with Oppie in the middle knowing all of it. */}
+        {/* Opero around everything: the core and every module in one frame, all linked, with Oppie in the middle knowing all of it. */}
         <Reveal className="mt-20">
           <div className="platform-frame">
             <div className="absolute top-0 left-1/2 z-10 -translate-x-1/2 -translate-y-1/2 rounded-full border border-line-strong bg-canvas px-6 py-3 shadow-md">
               <BrandMark name="opero" className="h-7 sm:h-8" />
             </div>
-            <div className="relative overflow-hidden rounded-2xl border border-line-strong bg-surface p-8 sm:p-10">
-              {/* The core as a drawing: the four kinds of record in one place, and the three lines of work it drives. */}
-              <CoreRecord
-                labels={{
-                  property: content.coreProperty,
-                  suites: content.coreSuites,
-                  tenants: content.coreTenants,
-                  prospects: content.coreProspects,
-                  leasing: content.coreLeasing,
-                  management: content.coreManagement,
-                  facilities: content.coreFacilities,
-                }}
-              />
-              <div className="mx-auto mt-8 max-w-2xl text-center">
-                <h3 className="text-2xl font-semibold text-fg">{content.coreTitle}</h3>
-                <p className="mt-3 text-lg text-fg-muted">{content.coreText}</p>
+
+            {/* The core: the records everything is built on, joined to the areas of work they drive. Its label sits on the border. */}
+            <div className="relative rounded-2xl border border-line-strong bg-surface p-6 pt-8 sm:p-8 sm:pt-9 lg:p-10">
+              <Eyebrow className="absolute top-0 left-6 -translate-y-1/2 bg-surface px-2 sm:left-8 lg:left-10">{content.coreLabel}</Eyebrow>
+              <div className="flex flex-col items-center xl:flex-row">
+                <div className="relative w-full max-w-56 shrink-0 xl:w-56">
+                  <div className="core-place relative rounded-xl bg-canvas-raised p-3">
+                    <ul className="space-y-2">
+                      {content.coreData.map((record, i) => (
+                        <li key={i} className="rounded-md border border-line bg-surface px-4 py-2.5 text-sm font-medium text-fg">
+                          {record.name}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  {/* Beside the areas of work, the caption hangs under the stack so the line meets the stack's middle. */}
+                  <Eyebrow className="mt-3 text-center xl:absolute xl:inset-x-0 xl:top-full">{content.coreDataLabel}</Eyebrow>
+                </div>
+                <CoreJoin />
+                <ul className="grid w-full grid-cols-1 gap-4 md:grid-cols-3">
+                  {content.coreAreas.map((area, i) => (
+                    <li key={i} className="rounded-xl border border-line-strong bg-canvas-raised p-5">
+                      <h3 className="text-base font-semibold text-fg">{area.title}</h3>
+                      <ul className="mt-3 space-y-1.5">
+                        {lines(area.items).map((item, j) => (
+                          <li key={j} className="flex gap-2.5 text-sm text-fg-muted">
+                            <span aria-hidden className="mt-2 size-1 shrink-0 rounded-full bg-fg-subtle" />
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
+
             <PlatformNetwork modules={content.modules.map((item) => item.module)} title={content.oppieTitle} detail={content.oppieDetail} />
+
             {/* Stacked on phones, the cards hang on one line that shows in the gaps between them. */}
             <RevealGroup
               as="ul"
@@ -70,29 +96,25 @@ export function Platform({ content }: { content: SectionData<'home', 'platform'>
                       glow[item.module],
                     )}
                   >
-                    <span aria-hidden className={cn('relative block size-9 rounded-full shadow-md', jewel[item.module])} />
-                    <h3 className="mt-8">
+                    <div className="flex items-center justify-between">
+                      <span aria-hidden className={cn('relative block size-8 rounded-full shadow-md', jewel[item.module])} />
+                      {/* The magnifying glass opens the module's screen in the lightbox, or, without JavaScript, the picture itself. */}
+                      <a
+                        href={moduleShotPath(item.module)}
+                        data-module-shot={item.module}
+                        title={content.lookInsideLabel}
+                        className="grid size-9 place-items-center rounded-full border border-line-strong bg-surface-raised text-fg-muted shadow-sm transition-colors hover:border-line-input hover:text-fg focus-visible:ring-2 focus-visible:ring-focus-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface focus-visible:outline-none"
+                      >
+                        <Search className="size-4" aria-hidden />
+                        <span className="sr-only">
+                          {content.lookInsideLabel}: {MODULE_LABELS[item.module]}
+                        </span>
+                      </a>
+                    </div>
+                    <h3 className="mt-7">
                       <BrandMark name={`module-${item.module}`} className="h-6" />
                     </h3>
                     <p className="mt-3 text-sm text-fg-muted">{item.description}</p>
-                    {/* A small view of the screen; it opens full size in the lightbox, or, without JavaScript, as the picture itself. */}
-                    <a href={moduleShotPath(item.module)} data-module-shot={item.module} className="group/shot mt-auto block rounded-lg pt-6 outline-none">
-                      <span className="block overflow-hidden rounded-lg border border-line-strong bg-canvas-raised shadow-md transition-transform duration-[var(--o-duration-base)] ease-[var(--o-ease-out)] group-hover/shot:-translate-y-0.5 group-focus-visible/shot:ring-2 group-focus-visible/shot:ring-focus-ring group-focus-visible/shot:ring-offset-2 group-focus-visible/shot:ring-offset-surface">
-                        <Image
-                          src={moduleShotPath(item.module)}
-                          alt=""
-                          width={MODULE_SHOT.width}
-                          height={MODULE_SHOT.height}
-                          sizes="(min-width: 64rem) 14rem, (min-width: 40rem) 40vw, 90vw"
-                          className="block h-auto w-full"
-                        />
-                      </span>
-                      <span className="mt-2.5 inline-flex items-center gap-1.5 text-xs font-medium text-fg-muted transition-colors group-hover/shot:text-fg group-focus-visible/shot:text-fg">
-                        <Maximize2 className="size-3.5" aria-hidden />
-                        {content.lookInsideLabel}
-                        <span className="sr-only">: {MODULE_LABELS[item.module]}</span>
-                      </span>
-                    </a>
                   </div>
                 </RevealItem>
               ))}

@@ -27,7 +27,7 @@ Review each in Admin, Content. Publishing a section clears its flag.
 
 ## Copy derived from the brief (not flagged, but worth a look)
 
-- **Platform section:** the core CRM card ("A CRM built for property management" and its line) and the five module descriptions are condensed from the approved platform copy. The labels in the drawing on that card (Property, Suites, Tenants, Prospects, then Leasing, Property management, Facilities) are the line's own words; edit them in Content, Home page, Platform.
+- **Platform section:** the five module descriptions are condensed from the approved platform copy. The core panel (its label, the four core records, and the three areas of work with what each covers) follows the owner's own sketch, set in sentence case with the abbreviations spelled out: "Tenant account management", "Building operations manuals", "AI-assisted LOI drafting"; "Asset lists / capital" is kept as written and worth a second look. Edit any of it in Content, Home page, Platform.
 - **Oppie console note:** a small "Illustrative data" line under the console, because the answers are invented. Clear it in Content, Home page, Hero to hide it.
 - **Oppie and Proof sections:** the brief gives no eyebrow, so none is shown. Each section has an optional eyebrow field.
 

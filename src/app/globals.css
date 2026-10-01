@@ -960,9 +960,9 @@
 }
 
 /*
- * The drawing on the CRM card (src/components/site/home/core-record.tsx): the
- * frame the four kinds of record sit in, edged in the wordmark's metal like
- * the platform frame around it.
+ * The core panel of the platform section (src/components/site/home/platform.tsx):
+ * the stack of core data, edged in the wordmark's metal like the platform
+ * frame around it.
  */
 .core-place::before {
   content: '';
