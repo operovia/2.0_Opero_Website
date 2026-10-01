@@ -24,7 +24,7 @@ function loadAssets(): Promise<Assets> {
     const [medium, semibold, logo] = await Promise.all([
       readFile(path.join(root, 'src/theme/fonts/PlusJakartaSans-Medium.ttf')),
       readFile(path.join(root, 'src/theme/fonts/PlusJakartaSans-SemiBold.ttf')),
-      sharp(path.join(root, 'public/brand/opero/png/opero-dark.png')).trim().resize({ height: 132 }).png().toBuffer({ resolveWithObject: true }),
+      sharp(path.join(root, 'public/brand/opero/centered/opero-centered-jewels-dark.png')).trim().resize({ height: 132 }).png().toBuffer({ resolveWithObject: true }),
     ]);
     return {
       medium,
