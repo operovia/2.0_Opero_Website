@@ -1,6 +1,14 @@
 @import "tailwindcss";
 
 /*
+ * Wide, short screens, most laptops: from the lg breakpoint (64rem), when the
+ * screen is at least as wide for its height as the module screenshots (16:10).
+ * The module lightbox sets its caption beside the picture there, so the
+ * picture can use the full height.
+ */
+@custom-variant shot-wide (@media (min-width: 64rem) and (min-aspect-ratio: 16/10));
+
+/*
  * Tailwind is limited to the design tokens. Default palettes and scales are
  * cleared, then every utility is mapped onto the CSS variables generated from
  * src/theme/tokens.ts (see src/theme/css.ts). Never add literal values here.
@@ -1271,6 +1279,15 @@
 .demo-dialog[open],
 .module-dialog[open] {
   animation: dialog-in var(--o-duration-slow) var(--o-ease-out);
+}
+/* The lightbox's picture: zooming in or out eases; following the pointer while zoomed does not, or it would lag behind. */
+.module-shot[data-easing] img {
+  transition: transform var(--o-duration-base) var(--o-ease-out);
+}
+@media (prefers-reduced-motion: reduce) {
+  .module-shot img {
+    transition: none !important;
+  }
 }
 .demo-dialog[open]::backdrop,
 .module-dialog[open]::backdrop {
