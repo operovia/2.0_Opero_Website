@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en" class="m-build"><head><meta charset="utf-8"><title>Build</title>
+<link rel="stylesheet" href="/scripts/module-shots/shell.css">
+<style>
+/* Build: the builder editor mid-build. Page-specific rules only; the frame comes from shell.css. */
+.nav-item .dotbox { width: 18px; display: flex; justify-content: center; flex: none; }
+.nav-item .dot { color: var(--text-subtle); }
+.nav-item.active .dot { color: #D2696C; }
+
+.panes { display: flex; gap: 16px; height: 686px; }
+
+/* Oppie pane */
+.oppie-pane { width: 400px; flex: none; display: flex; flex-direction: column; }
+.pane-head { height: 52px; flex: none; padding: 0 16px; border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 10px; }
+.pane-head .ident { display: flex; flex-direction: column; min-width: 0; }
+.pane-head .who { font-size: 14px; line-height: 18px; font-weight: 600; }
+.pane-head .what { font-size: 13px; line-height: 16px; color: var(--text-subtle); white-space: nowrap; }
+.pane-head .seg { margin-left: auto; }
+.seg-build span.on { background: #A63F443D; color: #D2696C; }
+.transcript { flex: 1; min-height: 0; padding: 16px 16px 8px; display: flex; flex-direction: column; gap: 14px; overflow: hidden; }
+.turn-user { align-self: flex-end; max-width: 85%; background: var(--surface-2); border: 1px solid var(--line); border-radius: 14px 14px 4px 14px; padding: 10px 14px; font-size: 14px; line-height: 21px; color: var(--text); }
+.turn-oppie { position: relative; padding-left: 30px; font-size: 14px; line-height: 21px; color: var(--text); }
+.turn-oppie > img.oppie { position: absolute; left: 0; top: 0; }
+.sys { position: relative; margin: 4px 0 0 -30px; padding-left: 20px; font-size: 13px; line-height: 18px; color: var(--text-subtle); white-space: nowrap; }
+.sys .icon { position: absolute; left: 3px; top: 2px; }
+.working { color: var(--text-muted); }
+.step { height: 28px; display: flex; align-items: center; gap: 8px; font-size: 13px; line-height: 18px; color: var(--text-muted); }
+.step svg { width: 16px; height: 16px; flex: none; }
+.composer { flex: none; padding: 12px 16px 14px; border-top: 1px solid var(--line); }
+.composer .textarea { height: 56px; }
+.composer .send-row { margin-top: 8px; display: flex; align-items: center; justify-content: space-between; font-size: 13px; line-height: 18px; color: var(--text-subtle); white-space: nowrap; }
+
+/* Preview pane */
+.preview { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.strip { height: 32px; flex: none; padding: 0 16px; background: var(--bg-raised); border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 8px; font-size: 13px; line-height: 18px; color: var(--text-subtle); white-space: nowrap; }
+.strip .live { width: 8px; height: 8px; border-radius: 9999px; background: var(--success); flex: none; }
+.strip .label { font-weight: 600; color: var(--text); }
+.strip .open { margin-left: auto; display: flex; align-items: center; gap: 6px; color: var(--text-muted); }
+.app { padding: 20px 16px; }
+.app-eyebrow { font-size: 13px; line-height: 16px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: #D2696C; white-space: nowrap; }
+.app-title { margin-top: 4px; font-size: 24px; line-height: 32px; font-weight: 700; }
+.app-sub { margin-top: 4px; font-size: 13px; line-height: 18px; color: var(--text-muted); white-space: nowrap; }
+.app .tabs { margin-top: 14px; }
+.kpis { margin-top: 14px; display: flex; gap: 12px; }
+.card.kpi { flex: 1; min-width: 0; height: 72px; padding: 7px 14px; }
+.kpi .lbl { font-size: 13px; line-height: 16px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; color: var(--text-subtle); white-space: nowrap; }
+.kpi .val { margin-top: 2px; font-size: 36px; line-height: 40px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.panel { margin-top: 14px; }
+.bar { height: 48px; padding: 0 16px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--line); }
+.bar .search { width: 240px; }
+.bar .status { width: 150px; }
+.bar .status .icon { margin-left: auto; width: 14px; height: 14px; }
+.panel th { height: 34px; padding: 0 8px; }
+.panel td { padding: 0 8px; }
+.panel th:first-child, .panel td:first-child { padding-left: 14px; }
+.panel .person { gap: 6px; }
+.panel tbody tr:first-child td { border-top: 0; }
+.panel td.days { font-weight: 600; color: var(--danger); }
+.panel .tfoot { height: 36px; padding: 0 16px 0 14px; border-top: 1px solid var(--line); display: flex; align-items: center; gap: 8px; font-size: 13px; line-height: 18px; color: var(--text-subtle); white-space: nowrap; }
+.panel .tfoot .pager { margin-left: auto; display: flex; align-items: center; gap: 4px; }
+.panel .tfoot .pager .btn { height: 28px; padding: 0 8px; gap: 4px; }
+.panel .tfoot .pager .btn .icon { width: 14px; height: 14px; }
+.panel .tfoot .pager .btn.off { opacity: .45; }
+</style></head>
+<body>
+
+<div class="sidebar">
+  <div class="brand"><img class="mark" src="/public/brand/opero/opero-centered-dark.webp" alt="Opero"></div>
+  <div class="lockup"><span class="jewel"></span><svg class="mark" viewBox="819 150 2377 980"><image href="/public/brand/modules/build-dark.svg" x="290" y="-379" width="3435" height="2037"/></svg></div>
+  <div class="nav">
+    <div class="nav-label">Build</div>
+    <div class="nav-item"><svg class="icon" viewBox="0 0 24 24"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Home</div>
+    <div class="nav-item"><svg class="icon" viewBox="0 0 24 24"><path d="M12 3v18"/><path d="M3 12h18"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg>Your Apps<span class="badge">4</span></div>
+    <div class="nav-label">Your Apps</div>
+    <div class="nav-item active"><span class="dotbox"><span class="dot"></span></span>Renewal Radar</div>
+    <div class="nav-item"><span class="dotbox"><span class="dot"></span></span>Vendor COI Tracker</div>
+    <div class="nav-item"><span class="dotbox"><span class="dot"></span></span>Snow Removal Log</div>
+    <div class="nav-item"><span class="dotbox"><span class="dot"></span></span>Suite Contact Updates</div>
+    <div class="nav-item ghost">+ New build</div>
+  </div>
+  <div class="foot"><div class="discs"><span class="jewel m-build current"></span><span class="jewel m-studios"></span><span class="jewel m-playbook"></span><span class="jewel m-university"></span><span class="jewel m-compass"></span></div>Switch module</div>
+</div>
+
+<div class="header">
+  <div class="pill"><img class="oppie" src="/public/brand/oppie/oppie-rest-dark.svg" width="20" height="20" alt="">Ask Oppie anything</div>
+  <div class="hdr-right">
+    <div class="icon-btn"><svg class="icon" viewBox="0 0 24 24"><path d="M10.268 21a2 2 0 0 0 3.464 0"/><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"/></svg></div>
+    <div class="avatar">MB</div>
+  </div>
+</div>
+
+<div class="content">
+  <div class="glow" style="left:-10px;top:-134px"></div>
+  <div class="crumbs">Build<svg class="icon" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>Your Apps<svg class="icon" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg><span class="current">Renewal Radar</span></div>
+  <div class="page-header">
+    <div>
+      <h1 class="title">Renewal Radar</h1>
+      <div class="context"><span>Draft</span><span>·</span><span class="row success" style="gap:4px"><svg class="icon i14" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Saved just now</span><span>·</span><span>not yet submitted for review</span></div>
+    </div>
+    <div class="actions">
+      <div class="seg"><span class="on"><svg class="icon" viewBox="0 0 24 24"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>Edit</span><span><svg class="icon" viewBox="0 0 24 24"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg>Preview</span></div>
+      <span class="btn btn-secondary">Invite testers</span>
+      <span class="btn btn-primary">Submit for Review</span>
+    </div>
+  </div>
+
+  <div class="panes">
+
+    <div class="card card-flush oppie-pane">
+      <div class="pane-head">
+        <span class="oppie-thinking"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100" role="img" aria-label="Oppie is thinking">
+  <style>
+    .oppie-bar{transform-box:fill-box;transform-origin:center;animation:oppie-spin 1.6s linear infinite}
+    .oppie-shade{opacity:0;animation:oppie-side 1.6s linear infinite}
+    .oppie-glint{animation:oppie-glint 1.6s linear infinite}
+    @keyframes oppie-spin{0.00%{transform:scaleX(1.000)}2.08%{transform:scaleX(0.994)}4.17%{transform:scaleX(0.976)}6.25%{transform:scaleX(0.947)}8.33%{transform:scaleX(0.908)}10.42%{transform:scaleX(0.861)}12.50%{transform:scaleX(0.806)}14.58%{transform:scaleX(0.748)}16.67%{transform:scaleX(0.689)}18.75%{transform:scaleX(0.634)}20.83%{transform:scaleX(0.589)}22.92%{transform:scaleX(0.559)}25.00%{transform:scaleX(0.548)}27.08%{transform:scaleX(0.559)}29.17%{transform:scaleX(0.589)}31.25%{transform:scaleX(0.634)}33.33%{transform:scaleX(0.689)}35.42%{transform:scaleX(0.748)}37.50%{transform:scaleX(0.806)}39.58%{transform:scaleX(0.861)}41.67%{transform:scaleX(0.908)}43.75%{transform:scaleX(0.947)}45.83%{transform:scaleX(0.976)}47.92%{transform:scaleX(0.994)}50.00%{transform:scaleX(1.000)}52.08%{transform:scaleX(0.994)}54.17%{transform:scaleX(0.976)}56.25%{transform:scaleX(0.947)}58.33%{transform:scaleX(0.908)}60.42%{transform:scaleX(0.861)}62.50%{transform:scaleX(0.806)}64.58%{transform:scaleX(0.748)}66.67%{transform:scaleX(0.689)}68.75%{transform:scaleX(0.634)}70.83%{transform:scaleX(0.589)}72.92%{transform:scaleX(0.559)}75.00%{transform:scaleX(0.548)}77.08%{transform:scaleX(0.559)}79.17%{transform:scaleX(0.589)}81.25%{transform:scaleX(0.634)}83.33%{transform:scaleX(0.689)}85.42%{transform:scaleX(0.748)}87.50%{transform:scaleX(0.806)}89.58%{transform:scaleX(0.861)}91.67%{transform:scaleX(0.908)}93.75%{transform:scaleX(0.947)}95.83%{transform:scaleX(0.976)}97.92%{transform:scaleX(0.994)}100.00%{transform:scaleX(1.000)}}@keyframes oppie-side{0.00%{opacity:0.000}2.08%{opacity:0.055}4.17%{opacity:0.109}6.25%{opacity:0.161}8.33%{opacity:0.210}10.42%{opacity:0.256}12.50%{opacity:0.297}14.58%{opacity:0.333}16.67%{opacity:0.364}18.75%{opacity:0.388}20.83%{opacity:0.406}22.92%{opacity:0.416}25.00%{opacity:0.420}27.08%{opacity:0.416}29.17%{opacity:0.406}31.25%{opacity:0.388}33.33%{opacity:0.364}35.42%{opacity:0.333}37.50%{opacity:0.297}39.58%{opacity:0.256}41.67%{opacity:0.210}43.75%{opacity:0.161}45.83%{opacity:0.109}47.92%{opacity:0.055}50.00%{opacity:0.000}52.08%{opacity:0.055}54.17%{opacity:0.109}56.25%{opacity:0.161}58.33%{opacity:0.210}60.42%{opacity:0.256}62.50%{opacity:0.297}64.58%{opacity:0.333}66.67%{opacity:0.364}68.75%{opacity:0.388}70.83%{opacity:0.406}72.92%{opacity:0.416}75.00%{opacity:0.420}77.08%{opacity:0.416}79.17%{opacity:0.406}81.25%{opacity:0.388}83.33%{opacity:0.364}85.42%{opacity:0.333}87.50%{opacity:0.297}89.58%{opacity:0.256}91.67%{opacity:0.210}93.75%{opacity:0.161}95.83%{opacity:0.109}97.92%{opacity:0.055}100.00%{opacity:0.000}}@keyframes oppie-glint{0.00%{transform:translateX(0.00px);opacity:1.000}2.08%{transform:translateX(-0.42px);opacity:0.994}4.17%{transform:translateX(-0.83px);opacity:0.978}6.25%{transform:translateX(-1.22px);opacity:0.951}8.33%{transform:translateX(-1.60px);opacity:0.913}10.42%{transform:translateX(-1.95px);opacity:0.866}12.50%{transform:translateX(-2.26px);opacity:0.810}14.58%{transform:translateX(-2.54px);opacity:0.746}16.67%{transform:translateX(-2.77px);opacity:0.675}18.75%{transform:translateX(-2.96px);opacity:0.599}20.83%{transform:translateX(-3.09px);opacity:0.518}22.92%{transform:translateX(-3.17px);opacity:0.435}25.00%{transform:translateX(-3.20px);opacity:0.350}27.08%{transform:translateX(-3.17px);opacity:0.435}29.17%{transform:translateX(-3.09px);opacity:0.518}31.25%{transform:translateX(-2.96px);opacity:0.599}33.33%{transform:translateX(-2.77px);opacity:0.675}35.42%{transform:translateX(-2.54px);opacity:0.746}37.50%{transform:translateX(-2.26px);opacity:0.810}39.58%{transform:translateX(-1.95px);opacity:0.866}41.67%{transform:translateX(-1.60px);opacity:0.913}43.75%{transform:translateX(-1.22px);opacity:0.951}45.83%{transform:translateX(-0.83px);opacity:0.978}47.92%{transform:translateX(-0.42px);opacity:0.994}50.00%{transform:translateX(-0.00px);opacity:1.000}52.08%{transform:translateX(0.42px);opacity:0.994}54.17%{transform:translateX(0.83px);opacity:0.978}56.25%{transform:translateX(1.22px);opacity:0.951}58.33%{transform:translateX(1.60px);opacity:0.913}60.42%{transform:translateX(1.95px);opacity:0.866}62.50%{transform:translateX(2.26px);opacity:0.810}64.58%{transform:translateX(2.54px);opacity:0.746}66.67%{transform:translateX(2.77px);opacity:0.675}68.75%{transform:translateX(2.96px);opacity:0.599}70.83%{transform:translateX(3.09px);opacity:0.518}72.92%{transform:translateX(3.17px);opacity:0.435}75.00%{transform:translateX(3.20px);opacity:0.350}77.08%{transform:translateX(3.17px);opacity:0.435}79.17%{transform:translateX(3.09px);opacity:0.518}81.25%{transform:translateX(2.96px);opacity:0.599}83.33%{transform:translateX(2.77px);opacity:0.675}85.42%{transform:translateX(2.54px);opacity:0.746}87.50%{transform:translateX(2.26px);opacity:0.810}89.58%{transform:translateX(1.95px);opacity:0.866}91.67%{transform:translateX(1.60px);opacity:0.913}93.75%{transform:translateX(1.22px);opacity:0.951}95.83%{transform:translateX(0.83px);opacity:0.978}97.92%{transform:translateX(0.42px);opacity:0.994}100.00%{transform:translateX(0.00px);opacity:1.000}}
+    @media (prefers-reduced-motion:reduce){.oppie-bar,.oppie-shade,.oppie-glint{animation:none!important}.oppie-shade{opacity:0}}
+  </style>
+  <defs>
+    <linearGradient id="oppie-f0" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#6e1d17"/><stop offset=".18" stop-color="#c8342a"/><stop offset=".42" stop-color="#ff4b3d"/><stop offset=".7" stop-color="#c8342a"/><stop offset="1" stop-color="#5a1713"/></linearGradient><linearGradient id="oppie-v0" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".25"/><stop offset=".3" stop-color="#fff" stop-opacity="0"/><stop offset=".7" stop-color="#3a3d45" stop-opacity="0"/><stop offset="1" stop-color="#3a3d45" stop-opacity=".85"/></linearGradient>
+    <linearGradient id="oppie-f1" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#402765"/><stop offset=".18" stop-color="#7446b8"/><stop offset=".42" stop-color="#a866ff"/><stop offset=".7" stop-color="#7446b8"/><stop offset="1" stop-color="#342053"/></linearGradient><linearGradient id="oppie-v1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".25"/><stop offset=".3" stop-color="#fff" stop-opacity="0"/><stop offset=".7" stop-color="#3a3d45" stop-opacity="0"/><stop offset="1" stop-color="#3a3d45" stop-opacity=".85"/></linearGradient>
+    <linearGradient id="oppie-f2" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#6e4c0e"/><stop offset=".18" stop-color="#c88a1a"/><stop offset=".42" stop-color="#ffc826"/><stop offset=".7" stop-color="#c88a1a"/><stop offset="1" stop-color="#5a3e0c"/></linearGradient><linearGradient id="oppie-v2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".25"/><stop offset=".3" stop-color="#fff" stop-opacity="0"/><stop offset=".7" stop-color="#3a3d45" stop-opacity="0"/><stop offset="1" stop-color="#3a3d45" stop-opacity=".85"/></linearGradient>
+    <linearGradient id="oppie-f3" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#174c30"/><stop offset=".18" stop-color="#2a8a58"/><stop offset=".42" stop-color="#3dc880"/><stop offset=".7" stop-color="#2a8a58"/><stop offset="1" stop-color="#133e28"/></linearGradient><linearGradient id="oppie-v3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".25"/><stop offset=".3" stop-color="#fff" stop-opacity="0"/><stop offset=".7" stop-color="#3a3d45" stop-opacity="0"/><stop offset="1" stop-color="#3a3d45" stop-opacity=".85"/></linearGradient>
+    <linearGradient id="oppie-f4" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#104d55"/><stop offset=".18" stop-color="#1d8c9a"/><stop offset=".42" stop-color="#2acbdf"/><stop offset=".7" stop-color="#1d8c9a"/><stop offset="1" stop-color="#0d3f45"/></linearGradient><linearGradient id="oppie-v4" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".25"/><stop offset=".3" stop-color="#fff" stop-opacity="0"/><stop offset=".7" stop-color="#3a3d45" stop-opacity="0"/><stop offset="1" stop-color="#3a3d45" stop-opacity=".85"/></linearGradient>
+  </defs>
+  <g class="oppie-bar" style="animation-delay:0.00s"><!-- Build -->
+    <rect x="10" y="32" width="12" height="36" rx="6" fill="url(#oppie-f0)"/>
+    <rect x="10" y="32" width="12" height="36" rx="6" fill="url(#oppie-v0)"/>
+    <rect class="oppie-shade" style="animation-delay:0.00s" x="10" y="32" width="12" height="36" rx="6" fill="#000"/>
+    <g class="oppie-glint" style="animation-delay:0.00s"><rect x="14" y="35" width="2.6" height="30" rx="1.3" fill="#fff" fill-opacity=".55"/></g>
+    <rect x="10.5" y="32.5" width="11" height="35" rx="5.5" fill="none" stroke="#fff" stroke-opacity="0.22"/>
+  </g>
+  <g class="oppie-bar" style="animation-delay:0.16s"><!-- Studios -->
+    <rect x="27" y="20" width="12" height="60" rx="6" fill="url(#oppie-f1)"/>
+    <rect x="27" y="20" width="12" height="60" rx="6" fill="url(#oppie-v1)"/>
+    <rect class="oppie-shade" style="animation-delay:0.16s" x="27" y="20" width="12" height="60" rx="6" fill="#000"/>
+    <g class="oppie-glint" style="animation-delay:0.16s"><rect x="31" y="23" width="2.6" height="54" rx="1.3" fill="#fff" fill-opacity=".55"/></g>
+    <rect x="27.5" y="20.5" width="11" height="59" rx="5.5" fill="none" stroke="#fff" stroke-opacity="0.22"/>
+  </g>
+  <g class="oppie-bar" style="animation-delay:0.32s"><!-- Playbook -->
+    <rect x="44" y="10" width="12" height="80" rx="6" fill="url(#oppie-f2)"/>
+    <rect x="44" y="10" width="12" height="80" rx="6" fill="url(#oppie-v2)"/>
+    <rect class="oppie-shade" style="animation-delay:0.32s" x="44" y="10" width="12" height="80" rx="6" fill="#000"/>
+    <g class="oppie-glint" style="animation-delay:0.32s"><rect x="48" y="13" width="2.6" height="74" rx="1.3" fill="#fff" fill-opacity=".55"/></g>
+    <rect x="44.5" y="10.5" width="11" height="79" rx="5.5" fill="none" stroke="#fff" stroke-opacity="0.22"/>
+  </g>
+  <g class="oppie-bar" style="animation-delay:0.48s"><!-- University -->
+    <rect x="61" y="20" width="12" height="60" rx="6" fill="url(#oppie-f3)"/>
+    <rect x="61" y="20" width="12" height="60" rx="6" fill="url(#oppie-v3)"/>
+    <rect class="oppie-shade" style="animation-delay:0.48s" x="61" y="20" width="12" height="60" rx="6" fill="#000"/>
+    <g class="oppie-glint" style="animation-delay:0.48s"><rect x="65" y="23" width="2.6" height="54" rx="1.3" fill="#fff" fill-opacity=".55"/></g>
+    <rect x="61.5" y="20.5" width="11" height="59" rx="5.5" fill="none" stroke="#fff" stroke-opacity="0.22"/>
+  </g>
+  <g class="oppie-bar" style="animation-delay:0.64s"><!-- Compass -->
+    <rect x="78" y="32" width="12" height="36" rx="6" fill="url(#oppie-f4)"/>
+    <rect x="78" y="32" width="12" height="36" rx="6" fill="url(#oppie-v4)"/>
+    <rect class="oppie-shade" style="animation-delay:0.64s" x="78" y="32" width="12" height="36" rx="6" fill="#000"/>
+    <g class="oppie-glint" style="animation-delay:0.64s"><rect x="82" y="35" width="2.6" height="30" rx="1.3" fill="#fff" fill-opacity=".55"/></g>
+    <rect x="78.5" y="32.5" width="11" height="35" rx="5.5" fill="none" stroke="#fff" stroke-opacity="0.22"/>
+  </g>
+</svg></span>
+        <div class="ident"><div class="who">Oppie</div><div class="what">building Renewal Radar with you</div></div>
+        <div class="seg seg-sm seg-build"><span>Plan</span><span class="on">Build</span></div>
+      </div>
+      <div class="transcript">
+        <div class="turn-user">Build me a renewal tracker for every commercial lease expiring in the next 180 days: lessee, property, suite, square feet, days left, who owns the outreach and where it stands. Flag anything under 90 days.</div>
+        <div class="turn-oppie"><img class="oppie" src="/public/brand/oppie/oppie-rest-dark.svg" width="20" height="20" alt="">Built it. A Dashboard with the counts and the list, and an Outreach page for notes. Leases, suites and owners come from the directory, so nothing is retyped.
+          <div class="sys"><svg class="icon i14" viewBox="0 0 24 24"><path d="M3 9h18"/><path d="M9 3v18"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg>Created canvas Renewal Outreach · 11 rows from <span style="white-space:nowrap">leases.</span></div>
+        </div>
+        <div class="turn-user">Add a notes field to each lease and email me at the start of every week with anything under 90 days.</div>
+        <div class="turn-oppie"><img class="oppie" src="/public/brand/oppie/oppie-rest-dark.svg" width="20" height="20" alt=""><span class="working">Working on it</span>
+          <div class="step"><svg class="icon success" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m16 9-5.5 5.5L8 12"/></svg>Reading the current app</div>
+          <div class="step"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.5" fill="none" stroke="var(--line-strong)" stroke-width="1.75"/><path d="M8 1.5A6.5 6.5 0 0 1 14.5 8" fill="none" stroke="#D2696C" stroke-width="1.75" stroke-linecap="round"/></svg>Editing the app</div>
+        </div>
+      </div>
+      <div class="composer">
+        <div class="textarea">Refine, add, or change…</div>
+        <div class="send-row"><span>Enter to send · Shift+Enter for newline</span><span class="btn btn-primary btn-sm is-working">Working…</span></div>
+      </div>
+    </div>
+
+    <div class="card card-flush preview">
+      <div class="strip"><span class="live"></span><span class="label">Live preview</span><span>running on your data</span><span class="open"><svg class="icon i14" viewBox="0 0 24 24"><path d="M15 3h6v6"/><path d="m21 3-7 7"/><path d="m3 21 7-7"/><path d="M9 21H3v-6"/></svg>Open full screen</span></div>
+      <div class="app">
+        <div class="app-eyebrow">Leasing · Wrenfield</div>
+        <h2 class="app-title">Renewal Radar</h2>
+        <div class="app-sub">11 leases expiring within 180 days · 7 under 90 days · 3 signed</div>
+        <div class="tabs">
+          <span class="tab on"><svg class="icon" viewBox="0 0 24 24"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>Dashboard</span>
+          <span class="tab"><svg class="icon" viewBox="0 0 24 24"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></svg>Outreach</span>
+        </div>
+        <div class="kpis">
+          <div class="card kpi"><div class="lbl">Within 180 days</div><div class="val num-kpi">11</div></div>
+          <div class="card kpi"><div class="lbl">Under 90 days</div><div class="val num-kpi danger">7</div></div>
+          <div class="card kpi"><div class="lbl">In outreach</div><div class="val num-kpi">5</div></div>
+          <div class="card kpi"><div class="lbl">Signed</div><div class="val num-kpi">3</div></div>
+        </div>
+        <div class="card card-flush panel">
+          <div class="bar">
+            <div class="input search"><svg class="icon" viewBox="0 0 24 24"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>Search lessees, suites</div>
+            <div class="input status"><span class="value">Status: All</span><svg class="icon" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></div>
+          </div>
+          <table>
+            <colgroup><col style="width:161px"><col style="width:108px"><col style="width:56px"><col style="width:54px"><col style="width:93px"><col style="width:112px"><col style="width:90px"></colgroup>
+            <thead><tr><th>Lessee</th><th>Property</th><th>Suite</th><th class="num">Sq ft</th><th class="num">Expires in</th><th>Status</th><th>Owner</th></tr></thead>
+            <tbody>
+              <tr><td class="first">Aldergrove Dental</td><td>Horizon</td><td>410</td><td class="num">6,200</td><td class="num days">38 days</td><td><span class="chip chip-neutral">Outreach</span></td><td><span class="person"><span class="avatar-xs">MB</span>Marcus</span></td></tr>
+              <tr><td class="first">Redbud Bakery</td><td>Millbrook Plaza</td><td>4</td><td class="num">1,550</td><td class="num days">44 days</td><td><span class="chip chip-success">Signed</span></td><td><span class="person"><span class="avatar-xs">EV</span>Elena</span></td></tr>
+              <tr><td class="first">Stonebridge Legal</td><td>Horizon</td><td>915</td><td class="num">3,900</td><td class="num days">52 days</td><td><span class="chip chip-danger">No reply</span></td><td><span class="person"><span class="avatar-xs">MB</span>Marcus</span></td></tr>
+              <tr><td class="first">Pinecrest Analytics</td><td>Horizon</td><td>1200</td><td class="num">4,800</td><td class="num days">67 days</td><td><span class="chip chip-success">Signed</span></td><td><span class="person"><span class="avatar-xs">EV</span>Elena</span></td></tr>
+              <tr><td class="first">Lakeshore Optometry</td><td>Horizon</td><td>620</td><td class="num">2,150</td><td class="num days">73 days</td><td><span class="chip chip-neutral">Outreach</span></td><td><span class="person"><span class="avatar-xs">MB</span>Marcus</span></td></tr>
+              <tr><td class="first">Fernhill Architects</td><td>Horizon</td><td>1105</td><td class="num">1,800</td><td class="num days">81 days</td><td><span class="chip chip-neutral">Outreach</span></td><td><span class="person"><span class="avatar-xs">MB</span>Marcus</span></td></tr>
+              <tr><td class="first">Granite Peak Fitness</td><td>Millbrook Plaza</td><td>9</td><td class="num">1,200</td><td class="num days">88 days</td><td><span class="chip chip-outline">Not started</span></td><td><span class="person"><span class="avatar-xs">EV</span>Elena</span></td></tr>
+            </tbody>
+          </table>
+          <div class="tfoot"><span>1 to 7 of 11</span><span>·</span><span>sorted by days left, 4 more between 90 and 180 days</span><span class="pager"><span class="btn btn-ghost off"><svg class="icon" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>Prev</span><span class="btn btn-ghost">Next<svg class="icon" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></span></span></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</body></html>

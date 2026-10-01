@@ -1157,11 +1157,13 @@
   font-weight: var(--o-weight-semibold);
 }
 
-/* Demo request dialog (src/components/site/demo-dialog.tsx). */
-.demo-dialog[open] {
+/* Demo request dialog (src/components/site/demo-dialog.tsx) and the module screenshots (src/components/site/home/module-lightbox.tsx). */
+.demo-dialog[open],
+.module-dialog[open] {
   animation: dialog-in var(--o-duration-slow) var(--o-ease-out);
 }
-.demo-dialog[open]::backdrop {
+.demo-dialog[open]::backdrop,
+.module-dialog[open]::backdrop {
   backdrop-filter: blur(6px);
   animation: backdrop-in var(--o-duration-slow) var(--o-ease-out);
 }

@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en" class="m-compass">
+<head>
+<meta charset="utf-8">
+<title>Compass</title>
+<link rel="stylesheet" href="/scripts/module-shots/shell.css">
+<style>
+/* Compass: Dana's My Dashboard on the morning before PM Weekly. Page rules only; the frame is shell.css. */
+
+/* sidebar: the full-width Add button above the nav groups */
+.nav .add { margin: 0 0 12px; }
+.nav-item .live { color: #63B08A; margin-left: -2px; }
+
+/* the Period Meridian card: y 190 to 294. Eyebrows y 203 to 219, the late callout above the track (y 224 to 246), the track at y 252, the checkpoint names and the today label under it (y 266 to 282). */
+.meridian { height: 104px; padding: 13px 20px 0; }
+.meridian .labels { display: flex; align-items: center; justify-content: space-between; height: 16px; }
+.meridian .left-eyebrow { color: var(--text-subtle); }
+.meridian .weeks-left { color: #5FA8BF; }
+.meridian .track-wrap { position: relative; margin-top: 33px; height: 6px; }
+.meridian .track { height: 6px; border-radius: 3px; background: var(--line-strong); display: flex; }
+.meridian .track > span { background: #367F95; border-radius: 3px; display: block; height: 6px; }
+.meridian .today { position: absolute; top: -4px; width: 2px; height: 14px; border-radius: 1px; background: var(--text); }
+.meridian .marker { position: absolute; top: -3px; width: 12px; height: 12px; transform: translateX(-50%) rotate(45deg); background: var(--surface); border: 1.5px solid #5FA8BF; }
+.meridian .marker.done { background: #367F95; border-color: #367F95; }
+.meridian .marker.late { background: #D9A55E; border-color: #D9A55E; }
+.meridian .callout { position: absolute; top: -28px; height: 22px; padding: 0 10px; border-radius: 9999px; background: var(--surface-2); border: 1px solid var(--line-strong); display: inline-flex; align-items: center; font-size: 13px; line-height: 16px; font-weight: 600; color: var(--text); white-space: nowrap; }
+/* checkpoint names and the today label, centered under their marks, 10px below the track */
+.meridian .tl { position: absolute; top: 14px; transform: translateX(-50%); font-size: 13px; line-height: 16px; color: var(--text-muted); white-space: nowrap; }
+
+/* the three cards: y 310 to 638 */
+.trio { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 16px; }
+.trio .card { height: 328px; display: flex; flex-direction: column; }
+.chead { padding: 16px 20px 0; }
+.chead .line { display: flex; align-items: center; gap: 8px; height: 16px; }
+.chead .line .icon { color: #5FA8BF; }
+.chead .eyebrow { color: var(--text); }
+.chead .qual { font-size: 13px; line-height: 16px; color: var(--text-subtle); white-space: nowrap; }
+.verdict { margin-top: 6px; font-size: 14px; line-height: 20px; font-weight: 600; color: var(--text); white-space: nowrap; }
+.cbody { padding: 8px 20px; flex: 1; min-height: 0; overflow: hidden; }
+.glabel { font-size: 13px; line-height: 16px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-subtle); padding: 10px 0 6px; white-space: nowrap; }
+.glabel.first { padding-top: 0; }
+.item { height: 40px; display: flex; align-items: center; gap: 8px; }
+.item .text { min-width: 0; }
+.item .t { font-size: 13px; line-height: 16px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.item .m { font-size: 13px; line-height: 16px; color: var(--text-subtle); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cfoot { height: 36px; padding: 0 20px; background: var(--bg-raised); border-top: 1px solid var(--line); display: flex; align-items: center; font-size: 13px; line-height: 18px; color: var(--text-muted); white-space: nowrap; }
+/* My Rocks */
+.rock { height: 32px; display: flex; align-items: center; gap: 5px; }
+.rock .icon { color: #5FA8BF; }
+.rock .name { font-size: 13px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rock .chip { margin-left: 4px; padding: 0 6px; letter-spacing: 0.01em; }
+.rock .chip.chip-square { border-left: 0; }  /* the 2px rule reads as a parenthesis next to the 6px radius; these match the other status chips */
+.rock .name { flex: 1; margin-right: 4px; }  /* 8px minimum before the chip; the title truncates before the chip ever leaves the padding box */
+.segs { height: 24px; display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-muted); }
+.segs .bar { display: flex; gap: 4px; }
+.segs .bar span { width: 26px; height: 6px; border-radius: 3px; background: var(--line); }
+.segs .bar span.on { background: #D9A55E; }
+.tlabel { height: 26px; display: flex; align-items: center; font-size: 13px; line-height: 16px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-subtle); white-space: nowrap; }
+.cp { height: 24px; display: flex; align-items: center; gap: 8px; font-size: 13px; line-height: 16px; color: var(--text); white-space: nowrap; }
+/* every checkpoint carries the same 6px marker slot on one left edge: filled for done, amber for late, a hollow ring for upcoming */
+.cp .mark-cp { width: 6px; height: 6px; border-radius: 9999px; flex: none; display: inline-block; }
+.cp.done { color: var(--text-subtle); }
+.cp.done > span:last-child { text-decoration: line-through; }
+.cp.done .mark-cp { background: var(--text-subtle); }
+.cp.late { color: #D9A55E; }
+.cp.late .mark-cp { background: #D9A55E; }
+.cp.next .mark-cp { border: 1px solid var(--line-input); }
+
+/* the scorecard: four rows, a 30px band under the title row for the popover, ending inside the frame */
+.scorecard { margin-top: 16px; }
+.sc-head { height: 40px; padding: 0 20px; display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+.sc-head .icon { color: #5FA8BF; }
+.sc-head .eyebrow { color: var(--text); }
+.sc-head .meeting { font-size: 14px; font-weight: 600; }
+.sc-head .right { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-subtle); }
+.sc-head .ask { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; color: #5FA8BF; }
+.scorecard th { height: 30px; }
+.scorecard td { height: 35px; padding: 0 12px; }
+.scorecard table { margin-top: 30px; } /* a band under the title row for the popover */
+.scorecard td.measurable { padding: 0 12px; }
+.scorecard td .cell { gap: 6px; }
+.scorecard td .name { font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.scorecard .auto { height: 20px; padding: 0 6px; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em; }
+.scorecard td.goal { color: var(--text-muted); }
+.scorecard td.wk { text-align: center; font-weight: 600; }
+.scorecard td.met { background: var(--success-soft); color: var(--success); }
+.scorecard td.missed { background: var(--danger-soft); color: var(--danger); }
+.scorecard td.empty { font-weight: 400; color: var(--text-subtle); }
+.scorecard th.this, .scorecard td.this { border-left: 1px solid var(--line-strong); border-right: 1px solid var(--line-strong); }
+.scorecard th.this { color: var(--text); }
+/* the popover: one line in its own band between the scorecard's title row and its header row, right-aligned over the LAST WEEK column, so it hides nothing; its caret points down the column at row 1's 93% cell */
+.content > .popover { position: absolute; left: 636px; top: 634px; width: auto; height: 28px; padding: 6px 12px; font-size: 13px; line-height: 16px; white-space: nowrap; box-shadow: 0 0 0 1px #FFFFFF0A, 0 4px 12px -6px #0000008C; }
+.content > .popover::after { content: ''; position: absolute; left: 342px; bottom: -6px; width: 10px; height: 10px; background: var(--surface-2); border-right: 1px solid var(--line-strong); border-bottom: 1px solid var(--line-strong); transform: rotate(45deg); }
+.popover .l1 { font-weight: 600; color: var(--text); }
+.popover .l2 { color: var(--text-muted); }
+.popover .l2 .see { font-weight: 600; color: #5FA8BF; }
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="brand"><img class="mark" src="/public/brand/opero/opero-centered-dark.webp" alt="Opero"></div>
+  <div class="lockup"><span class="jewel"></span><svg class="mark" viewBox="819 150 4632 980"><image href="/public/brand/modules/compass-dark.svg" x="290" y="-379" width="5691" height="2037"/></svg></div>
+  <div class="nav">
+    <div class="btn btn-secondary btn-block add"><svg class="icon" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></svg>Add</div>
+    <div class="nav-label">Mine</div>
+    <div class="nav-item active"><svg class="icon" viewBox="0 0 24 24"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>My Dashboard</div>
+    <div class="nav-item"><svg class="icon" viewBox="0 0 24 24"><path d="M8 2v3"/><path d="M16 2v3"/><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/></svg>My Meetings<span class="dot live"></span></div>
+    <div class="nav-label">Company</div>
+    <div class="nav-item"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>Company Goals</div>
+    <div class="nav-item"><svg class="icon" viewBox="0 0 24 24"><rect x="16" y="16" width="6" height="6" rx="1"/><rect x="2" y="16" width="6" height="6" rx="1"/><rect x="9" y="2" width="6" height="6" rx="1"/><path d="M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3"/><path d="M12 12V8"/></svg>Accountability Chart</div>
+    <div class="nav-item"><svg class="icon" viewBox="0 0 24 24"><path d="m13.56 11.747 4.332-.924"/><path d="m16 21-3.105-6.21"/><path d="m6.158 8.633 1.114 4.456"/><path d="m8 21 3.105-6.21"/><circle cx="12" cy="13" r="2"/></svg>V/TO</div>
+    <div class="nav-label">Manage</div>
+    <div class="nav-item"><svg class="icon" viewBox="0 0 24 24"><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"/><circle cx="12" cy="12" r="3"/></svg>Administration</div>
+    <div class="nav-item"><svg class="icon" viewBox="0 0 24 24"><rect width="20" height="5" x="2" y="3" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/><path d="M10 12h4"/></svg>Compass Archives</div>
+  </div>
+  <div class="foot"><div class="discs"><span class="jewel m-build"></span><span class="jewel m-studios"></span><span class="jewel m-playbook"></span><span class="jewel m-university"></span><span class="jewel m-compass current"></span></div>Switch module</div>
+</div>
+
+<div class="header">
+  <div class="pill"><img class="oppie" src="/public/brand/oppie/oppie-rest-dark.svg" width="20" height="20" alt="">Ask Oppie anything</div>
+  <div class="hdr-right">
+    <div class="icon-btn"><svg class="icon" viewBox="0 0 24 24"><path d="M10.268 21a2 2 0 0 0 3.464 0"/><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"/></svg></div>
+    <div class="avatar">DK</div>
+  </div>
+</div>
+
+<div class="content">
+  <div class="glow" style="left:-162px;top:72px"></div>
+  <div class="crumbs">Compass<svg class="icon" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg><span class="current">My Dashboard</span></div>
+  <div class="page-header">
+    <div>
+      <h1 class="title">Good morning, Dana.</h1>
+      <div class="context">Period 3 · week 6 of 17 · PM Weekly meets tomorrow at 9:00</div>
+    </div>
+    <div class="actions">
+      <div class="btn btn-primary">Open PM Weekly</div>
+    </div>
+  </div>
+
+  <div class="card meridian">
+    <div class="labels">
+      <span class="eyebrow left-eyebrow">Period 3 · Week 6 of 17 · Your Rocks</span>
+      <span class="eyebrow weeks-left">11 weeks left</span>
+    </div>
+    <div class="track-wrap">
+      <div class="track"><span style="width:35%"></span></div>
+      <span class="today" style="left:35%"></span>
+      <span class="marker done" style="left:12%"></span>
+      <span class="marker late" style="left:31.5%"></span>
+      <span class="marker" style="left:70%"></span>
+      <span class="marker" style="left:90%"></span>
+      <span class="callout" style="left:31.5%">Paint vendor onboarded · 4 days late</span>
+      <span class="tl" style="left:12%">Make-ready checklist canvas built</span>
+      <span class="tl" style="left:35%">Today · week 6</span>
+      <span class="tl" style="left:70%">Under 12 days for four straight weeks</span>
+      <span class="tl" style="left:90%">Period review</span>
+    </div>
+  </div>
+
+  <div class="trio">
+    <div class="card card-flush">
+      <div class="chead">
+        <div class="line"><svg class="icon i14" viewBox="0 0 24 24"><path d="M13 5h8"/><path d="M13 12h8"/><path d="M13 19h8"/><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/></svg><span class="eyebrow">My To-Dos</span><span class="qual">4 open</span></div>
+        <div class="verdict">2 this week · 2 later</div>
+      </div>
+      <div class="cbody">
+        <div class="glabel first">This week</div>
+        <div class="item"><span class="checkbox"></span><div class="text"><div class="t">Walk the Maple Row turns with Theo</div><div class="m">Tomorrow · PM Weekly</div></div></div>
+        <div class="item"><span class="checkbox"></span><div class="text"><div class="t">Review the Horizon renewal letters with Elena</div><div class="m">In 3 days · Leadership L10</div></div></div>
+        <div class="glabel">Later</div>
+        <div class="item"><span class="checkbox"></span><div class="text"><div class="t">Review the vendor insurance list</div><div class="m">In 9 days · PM Weekly</div></div></div>
+        <div class="item"><span class="checkbox"></span><div class="text"><div class="t">Approve the preventive maintenance calendar</div><div class="m">In 12 days · PM Weekly</div></div></div>
+      </div>
+      <div class="cfoot">+ Add a to-do</div>
+    </div>
+
+    <div class="card card-flush">
+      <div class="chead">
+        <div class="line"><svg class="icon i14" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg><span class="eyebrow">Issues</span><span class="qual">4 open</span></div>
+        <div class="verdict">None over 30 days · oldest raised 6 days ago</div>
+      </div>
+      <div class="cbody">
+        <div class="glabel first">PM Weekly</div>
+        <div class="item"><span class="avatar-sm">TL</span><div class="text"><div class="t">Turnover crew is two people short</div><div class="m">Theo · 6 days ago</div></div></div>
+        <div class="item"><span class="avatar-sm">PR</span><div class="text"><div class="t">Carpet lead time is now three weeks</div><div class="m">Priya · 2 days ago</div></div></div>
+        <div class="item"><span class="avatar-sm">MB</span><div class="text"><div class="t">Millbrook Plaza lot lighting keeps failing</div><div class="m">Marcus · yesterday</div></div></div>
+        <div class="glabel">Leadership L10</div>
+        <div class="item"><span class="avatar-sm">EV</span><div class="text"><div class="t">Leasing handoff for Horizon floor 4</div><div class="m">Elena · 4 days ago</div></div></div>
+      </div>
+      <div class="cfoot">+ Add an Issue</div>
+    </div>
+
+    <div class="card card-flush">
+      <div class="chead">
+        <div class="line"><svg class="icon i14" viewBox="0 0 24 24"><path d="m8 3 4 8 5-5 5 15H2L8 3z"/></svg><span class="eyebrow">My Rocks</span><span class="qual">Period 3</span></div>
+        <div class="verdict">2 on track · 1 off track</div>
+      </div>
+      <div class="cbody">
+        <div class="rock"><svg class="icon i16" viewBox="0 0 24 24"><path d="m8 3 4 8 5-5 5 15H2L8 3z"/></svg><span class="name">Cut average turn time to 12 days</span><span class="chip chip-warning chip-square">Off track</span></div>
+        <div class="segs"><span class="bar"><span class="on"></span><span></span><span></span></span>1 of 3</div>
+        <div class="tlabel">Timetable from the Smart Rock Sheet</div>
+        <div class="cp done"><span class="mark-cp"></span><span>Make-ready checklist canvas built · done</span></div>
+        <div class="cp late"><span class="mark-cp"></span><span>Paint vendor onboarded · 4 days late</span></div>
+        <div class="cp next"><span class="mark-cp"></span><span>Under 12 days for four straight weeks · in 6 weeks</span></div>
+        <div class="rock"><svg class="icon i16" viewBox="0 0 24 24"><path d="m8 3 4 8 5-5 5 15H2L8 3z"/></svg><span class="name">Renewal letters 120 days ahead</span><span class="chip chip-module chip-square">On track</span></div>
+        <div class="rock"><svg class="icon i16" viewBox="0 0 24 24"><path d="m8 3 4 8 5-5 5 15H2L8 3z"/></svg><span class="name">Stand up the vendor scorecard</span><span class="chip chip-module chip-square">On track</span></div>
+      </div>
+      <div class="cfoot">+ Add a Rock</div>
+    </div>
+  </div>
+
+  <div class="card card-flush scorecard">
+    <div class="sc-head">
+      <svg class="icon i14" viewBox="0 0 24 24"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg><span class="eyebrow">Scorecard</span><span class="meeting">PM Weekly</span>
+      <div class="right"><span>Newest week on the right</span><span>·</span><span class="ask"><img class="oppie" src="/public/brand/oppie/oppie-rest-dark.svg" width="16" height="16" alt="">Ask Oppie to suggest a measurable</span></div>
+    </div>
+    <table>
+      <colgroup><col style="width:326px"><col style="width:110px"><col style="width:115px"><col style="width:115px"><col style="width:115px"><col style="width:115px"><col style="width:115px"><col style="width:115px"></colgroup>
+      <thead><tr><th>Measurable</th><th>Goal</th><th class="center">5 wks ago</th><th class="center">4 wks ago</th><th class="center">3 wks ago</th><th class="center">2 wks ago</th><th class="center">Last week</th><th class="center this">This week</th></tr></thead>
+      <tbody>
+        <tr><td class="measurable"><div class="cell"><span class="avatar-sm">TL</span><span class="name">Work orders closed within 48 hours</span><span class="chip chip-module auto">auto</span></div></td><td class="goal">At least 85%</td><td class="wk met">88%</td><td class="wk met">91%</td><td class="wk missed">84%</td><td class="wk met">90%</td><td class="wk met">93%</td><td class="wk met this">89%</td></tr>
+        <tr><td class="measurable"><div class="cell"><span class="avatar-sm">PR</span><span class="name">Residential leased</span><span class="chip chip-module auto">auto</span></div></td><td class="goal">At least 95%</td><td class="wk missed">94.6%</td><td class="wk met">95.1%</td><td class="wk met">95.8%</td><td class="wk met">96.2%</td><td class="wk met">96.2%</td><td class="wk met this">95.9%</td></tr>
+        <tr><td class="measurable"><div class="cell"><span class="avatar-sm">EV</span><span class="name">Renewals signed 90 days ahead</span></div></td><td class="goal">At least 6</td><td class="wk met">7</td><td class="wk missed">5</td><td class="wk met">8</td><td class="wk met">6</td><td class="wk met">9</td><td class="wk empty this">not in yet</td></tr>
+        <tr><td class="measurable"><div class="cell"><span class="avatar-sm">PR</span><span class="name">Average turn days</span><span class="chip chip-module auto">auto</span></div></td><td class="goal">At most 12</td><td class="wk missed">15.2</td><td class="wk missed">14.1</td><td class="wk missed">13.4</td><td class="wk missed">12.8</td><td class="wk met">11.9</td><td class="wk missed this">12.4</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card-raised popover">
+    <span class="l1">93% · 41 of 44 closed within 48 hours</span> <span class="l2">· <span class="see">See the 3 that missed</span></span>
+  </div>
+</div>
+
+</body>
+</html>

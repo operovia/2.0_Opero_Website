@@ -118,11 +118,18 @@ const platform = section({
       'Modules',
       'Module',
       {
-        module: choice('Module', moduleOptions, { hint: 'Its mark and jewel color come from the brand files.' }),
+        module: choice('Module', moduleOptions, { hint: 'Its mark, jewel color and screenshot come from the brand files.' }),
         description: text('Description', { max: 160, multiline: true }),
+        inside: text('Screenshot caption', {
+          max: 220,
+          multiline: true,
+          hint: 'Under the screenshot that opens from Look inside: what the person is looking at.',
+        }),
       },
       { min: 1, max: 5 },
     ),
+    lookInsideLabel: text('Look inside button', { max: 30, hint: 'On each module card. Opens a screenshot of the module.' }),
+    insideHeading: text('Screenshot heading', { max: 60, hint: '{module} becomes the module name, so "Inside {module}" reads Inside Studios.' }),
     oppieTitle: text('Oppie note', { max: 60, hint: 'Beside the Oppie mark, in the middle of the lines joining the CRM and the modules.' }),
     oppieDetail: text('Oppie note, second line', { optional: true, max: 80 }),
   },
@@ -135,12 +142,36 @@ const platform = section({
     coreTitle: 'A CRM built for property management',
     coreText: 'Every property, suite, tenant, and prospect in one place, driving leasing, property management, and facilities.',
     modules: [
-      { module: 'build', description: 'Your own people create custom apps with AI, no developers required.' },
-      { module: 'studios', description: 'Project boards and workflows.' },
-      { module: 'playbook', description: 'Your SOPs and process documentation.' },
-      { module: 'university', description: 'Training for your team.' },
-      { module: 'compass', description: 'Running the business on EOS.' },
+      {
+        module: 'build',
+        description: 'Your own people create custom apps with AI, no developers required.',
+        inside:
+          'An app a property manager made by describing it to Oppie: a renewal tracker running on the live leases, with the next change already underway.',
+      },
+      {
+        module: 'studios',
+        description: 'Project boards and workflows.',
+        inside:
+          'A project board for the turn season: every unit with its status, owner, day of the twelve-day turn and next step, tied to the property it belongs to.',
+      },
+      {
+        module: 'playbook',
+        description: 'Your SOPs and process documentation.',
+        inside: 'A procedure with its steps, owner and version, found the way you would ask a colleague: Oppie answers from the manual and opens the page.',
+      },
+      {
+        module: 'university',
+        description: 'Training for your team.',
+        inside: 'A course path for a new team member: the articles in order, the one up next with its knowledge check, progress, and what is due this week.',
+      },
+      {
+        module: 'compass',
+        description: 'Running the business on EOS.',
+        inside: "The weekly scorecard and this Period's Rocks on the morning before the leadership meeting, every number scored against its goal.",
+      },
     ],
+    lookInsideLabel: 'Look inside',
+    insideHeading: 'Inside {module}',
     oppieTitle: 'Oppie knows all of it.',
     oppieDetail: 'Ask anything in plain English.',
   },
@@ -546,7 +577,11 @@ const investorsRound = section({
       hint: "The smallest investment, and the slider's lower end. The minimum shown in the terms above is its own text; edit it to match.",
     }),
     maximum: number('Largest investment on the slider, in dollars', { min: 1, integer: true, hint: 'No more than the round.' }),
-    step: number('Slider step, in dollars', { min: 1, integer: true, hint: 'Must fit a whole number of times between the minimum and the largest investment.' }),
+    step: number('Slider step, in dollars', {
+      min: 1,
+      integer: true,
+      hint: 'Must fit a whole number of times between the minimum and the largest investment.',
+    }),
     start: number('Starting amount, in dollars', {
       min: 1,
       integer: true,
@@ -622,7 +657,8 @@ const investorsRound = section({
     const issues = [];
     if (maximum > raise) issues.push({ field: 'maximum', message: 'The largest investment on the slider cannot be more than the round.' });
     if (minimum > maximum) issues.push({ field: 'minimum', message: 'The minimum investment cannot be more than the largest investment on the slider.' });
-    if (start < minimum || start > maximum) issues.push({ field: 'start', message: 'The starting amount must be between the minimum and the largest investment.' });
+    if (start < minimum || start > maximum)
+      issues.push({ field: 'start', message: 'The starting amount must be between the minimum and the largest investment.' });
     if (maximum >= minimum && (maximum - minimum) % step !== 0) {
       issues.push({ field: 'step', message: 'The slider step must fit a whole number of times between the minimum and the largest investment.' });
     }
@@ -950,7 +986,14 @@ export const pages = {
     label: 'Investor Hub',
     description: "The founder's story for investors, and a way to get in touch. Only guests who came through the front door and signed-in admins see it.",
     path: INVESTOR_HUB_PATH,
-    sections: { intro: investorsIntro, story: investorsStory, next: investorsNext, platform: investorsPlatform, round: investorsRound, contact: investorsContact },
+    sections: {
+      intro: investorsIntro,
+      story: investorsStory,
+      next: investorsNext,
+      platform: investorsPlatform,
+      round: investorsRound,
+      contact: investorsContact,
+    },
   },
   privacy: {
     label: 'Privacy page',

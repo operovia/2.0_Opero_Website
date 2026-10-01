@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en" class="m-playbook">
+<head>
+<meta charset="utf-8">
+<title>Playbook</title>
+<link rel="stylesheet" href="/scripts/module-shots/shell.css">
+<style>
+/* Playbook: Dana reads 3.2 Move-Out Inspection Standard with Oppie's answer hanging under the header. Page rules only; the frame is shell.css. */
+
+/* the answer band, y 80 to 152, pushes the breadcrumb and page header down */
+.answer { margin-top: 16px; height: 72px; padding: 0 20px; display: flex; align-items: center; gap: 16px; }
+.answer .rule { width: 3px; height: 40px; border-radius: 2px; background: #D9A55E; flex: none; }
+.answer .oppie { width: 28px; height: 28px; }
+.answer .lines { display: flex; flex-direction: column; min-width: 0; }
+.answer .line1 { font-size: 16px; line-height: 22px; font-weight: 500; color: var(--text); white-space: nowrap; }
+.answer .line2 { font-size: 13px; line-height: 18px; color: var(--text-subtle); white-space: nowrap; }
+.answer .tools { margin-left: auto; display: flex; align-items: center; gap: 8px; flex: none; }
+.answer .btn .icon { width: 14px; height: 14px; }
+.content .crumbs { margin-top: 8px; }
+
+/* the reading sheet and the margin column */
+.spread { display: flex; gap: 16px; align-items: flex-start; }
+/* the frame crops the sheet at y 900: the top padding and the prose offset are set so the cut falls in a line gap, never through glyphs */
+.sheet { width: 680px; height: 700px; flex: none; background: var(--surface-2); border: 1px solid var(--line-strong); border-radius: 14px; padding: 47px 48px 40px; overflow: hidden; }
+.stamp-row { display: flex; align-items: flex-start; gap: 12px; }
+.stamp-row .stamp { margin-top: -2px; flex: none; white-space: nowrap; }
+.stamp { display: inline-flex; align-items: center; height: 22px; padding: 0 8px; border: 1px solid #AF843B; border-radius: 6px; color: #D9A55E; font-size: 13px; line-height: 16px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; }
+.stamp-row .meta { min-width: 0; }
+.gold-rule { height: 1px; background: #D9A55E; margin-top: 16px; }
+.article { padding-top: 32px; }
+.article h2 { font-size: 18px; line-height: 24px; font-weight: 700; color: var(--text); margin: 28px 0 12px; }
+.article h2:first-child { margin-top: 0; }
+.article p { font-size: 16px; line-height: 27px; color: var(--text); }
+.article p + p { margin-top: 14px; }
+.article ul { padding-left: 24px; }
+.article li { position: relative; font-size: 16px; line-height: 27px; color: var(--text); }
+.article li + li { margin-top: 6px; }
+.article li::before { content: ''; position: absolute; left: -18px; top: 11px; width: 6px; height: 6px; border-radius: 9999px; background: var(--text-subtle); }
+.article mark { background: #D9A55E38; color: var(--text); border-radius: 2px; padding: 0 2px; }
+
+.margin { width: 432px; flex: none; display: flex; flex-direction: column; gap: 12px; }
+.margin .card { padding: 20px; }
+.ack-num { margin-top: 10px; display: flex; align-items: baseline; gap: 8px; }
+.ack-num .big { font-size: 24px; line-height: 32px; font-weight: 700; color: var(--text); }
+.ack-num .word { font-size: 13px; line-height: 18px; color: var(--text-muted); }
+.ack-track { margin-top: 10px; }
+.ack-left { margin-top: 10px; font-size: 13px; line-height: 18px; color: var(--text-muted); }
+
+.filters { margin-top: 12px; display: flex; gap: 16px; }
+.comment { margin-top: 10px; }
+.comment .who { display: flex; align-items: center; gap: 8px; }
+.comment .name { font-size: 13px; line-height: 18px; font-weight: 600; color: var(--text); }
+.comment .when { font-size: 13px; line-height: 18px; color: var(--text-subtle); }
+.comment .note { margin-top: 8px; font-size: 14px; line-height: 21px; color: var(--text); }
+.comment .acts { margin-top: 8px; font-size: 13px; line-height: 18px; font-weight: 600; color: var(--text-muted); }
+.compose { margin-top: 8px; }
+.compose .hint { margin-top: 8px; font-size: 13px; line-height: 18px; color: var(--text-subtle); }
+.compose .post { margin-top: 10px; display: flex; justify-content: flex-end; }
+
+.revs { margin-top: 8px; display: flex; flex-direction: column; gap: 10px; }
+.rev { display: flex; align-items: flex-start; font-size: 13px; line-height: 18px; }
+.rev .tag { width: 40px; flex: none; font-weight: 700; color: #D9A55E; }
+.rev .when { color: var(--text-subtle); }
+.rev .change { color: var(--text); }
+.rev .text { min-width: 0; }
+
+/* the frame crops the sheet and the margin column at y 900: a short fade to the canvas over both, so they read as scrolled content rather than a hard cut */
+.content > .fade { position: absolute; left: 24px; right: 24px; bottom: 0; height: 40px; background: linear-gradient(to bottom, transparent, var(--bg)); pointer-events: none; }
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="brand"><img class="mark" src="/public/brand/opero/opero-centered-dark.webp" alt="Opero"></div>
+  <div class="lockup"><span class="jewel"></span><svg class="mark" viewBox="817 150 4637 980"><image href="/public/brand/modules/playbook-dark.svg" x="290" y="-379" width="5693" height="2037"/></svg></div>
+  <div class="nav">
+    <div class="nav-label">The Book</div>
+    <div class="nav-item"><svg class="icon" viewBox="0 0 24 24"><path d="M12 5v16"/><path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z"/></svg>Cover</div>
+    <div class="nav-item active"><svg class="icon" viewBox="0 0 24 24"><path d="M3 5h.01"/><path d="M3 12h.01"/><path d="M3 19h.01"/><path d="M8 5h13"/><path d="M8 12h13"/><path d="M8 19h13"/></svg>Contents</div>
+    <div class="nav-item"><svg class="icon" viewBox="0 0 24 24"><path d="M17 3a2 2 0 0 1 2 2v15a1 1 0 0 1-1.496.868l-4.512-2.578a2 2 0 0 0-1.984 0l-4.512 2.578A1 1 0 0 1 5 20V5a2 2 0 0 1 2-2z"/></svg>Bookmarks</div>
+    <div class="nav-item"><svg class="icon" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>Revisions</div>
+    <div class="nav-item"><svg class="icon" viewBox="0 0 24 24"><path d="m16 6-8.414 8.586a2 2 0 0 0 2.829 2.829l8.414-8.586a4 4 0 1 0-5.657-5.657l-8.379 8.551a6 6 0 1 0 8.485 8.485l8.379-8.551"/></svg>Appendix</div>
+    <div class="nav-item"><svg class="icon" viewBox="0 0 24 24"><path d="M13 21h8"/><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/></svg>Editorial<span class="badge">2</span></div>
+    <div class="nav-item"><svg class="icon" viewBox="0 0 24 24"><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"/><circle cx="12" cy="12" r="3"/></svg>Administration</div>
+  </div>
+  <div class="foot"><div class="discs"><span class="jewel m-build"></span><span class="jewel m-studios"></span><span class="jewel m-playbook current"></span><span class="jewel m-university"></span><span class="jewel m-compass"></span></div>Switch module</div>
+</div>
+
+<div class="header">
+  <div class="pill active"><img class="oppie" src="/public/brand/oppie/oppie-rest-dark.svg" width="20" height="20" alt="">how long do we have to send the move-out statement?<svg class="icon i16 close" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></div>
+  <div class="hdr-right">
+    <div class="icon-btn"><svg class="icon" viewBox="0 0 24 24"><path d="M10.268 21a2 2 0 0 0 3.464 0"/><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"/></svg></div>
+    <div class="avatar">DK</div>
+  </div>
+</div>
+
+<div class="content">
+  <div class="glow" style="left:-162px;top:-38px"></div>
+
+  <div class="card-raised answer">
+    <span class="rule"></span>
+    <img class="oppie" src="/public/brand/oppie/oppie-rest-dark.svg" width="28" height="28" alt="">
+    <div class="lines">
+      <div class="line1">21 days from move-out. It is in this article under Deadlines, and it was 28 days until v4, two days ago.</div>
+      <div class="line2">Answered from the Playbook · Property Management · 3.2 Move-Out Inspection Standard</div>
+    </div>
+    <div class="tools">
+      <span class="btn btn-secondary">Go to Deadlines<svg class="icon" viewBox="0 0 24 24"><path d="m7 7 10 10"/><path d="M17 7v10H7"/></svg></span>
+      <span class="btn btn-ghost btn-icon"><svg class="icon i16" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></span>
+    </div>
+  </div>
+
+  <div class="crumbs">Playbook<svg class="icon" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>Property Management<svg class="icon" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>Inspections<svg class="icon" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg><span class="current">Move-Out Inspection Standard</span></div>
+
+  <div class="page-header">
+    <div>
+      <h1 class="title">Move-Out Inspection Standard</h1>
+      <div class="context"><span>Article 3.2</span><span>·</span><span>Chapter 3, Inspections</span><span>·</span><span class="chip chip-success">Published</span><span>·</span><span>v4</span><span>·</span><span>Review every 12mo</span></div>
+    </div>
+    <div class="actions">
+      <span class="btn btn-ghost btn-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/></svg></span>
+      <span class="btn btn-ghost">Revert to Draft</span>
+      <span class="btn btn-secondary">Start New Version</span>
+      <span class="btn btn-secondary"><svg class="icon" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>History</span>
+      <span class="btn btn-primary">Edit</span>
+    </div>
+  </div>
+
+  <div class="spread">
+    <div class="sheet">
+      <div class="stamp-row">
+        <span class="stamp">Published · v4</span>
+        <span class="meta">Owner Dana Kowalski ·&nbsp;Updated 2 days ago ·&nbsp;Reviewed 10 months ago<br>Review due in 48 days</span>
+      </div>
+      <div class="gold-rule"></div>
+      <div class="article">
+        <h2>When the inspection happens</h2>
+        <p>The move-out inspection happens within two business days of the resident handing in keys, and always before any vendor enters the unit. The property manager walks the unit with the maintenance lead. The resident is offered the chance to attend; attendance is offered, not required.</p>
+        <h2>What gets recorded</h2>
+        <ul>
+          <li>Photographs of every room, not only the rooms with findings.</li>
+          <li>A reading for every meter, with a photograph of the dial.</li>
+          <li>Each finding against the move-in condition report: the room, the item, and whether it is wear or damage.</li>
+          <li>Keys, fobs and remotes returned, counted against the handover record.</li>
+        </ul>
+        <h2>Deadlines</h2>
+        <p>The itemized move-out statement goes to the resident within <mark>21 days</mark> of move-out, counted from the day the keys are returned. A turn that cannot start within two days of the inspection is marked Stuck on the Turn Prep canvas so the crew sees it the same morning.</p>
+      </div>
+    </div>
+
+    <div class="margin">
+      <div class="card">
+        <div class="eyebrow"><svg class="icon" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="m16 9-5.5 5.5L8 12"/></svg>Required reading</div>
+        <div class="ack-num"><span class="big">21 of 24</span><span class="word">acknowledged</span></div>
+        <div class="track ack-track"><span style="width:87%;background:#AF843B"></span></div>
+        <div class="ack-left">Still to acknowledge: Sam O., Luis M., Elena V. · due in 4 days</div>
+      </div>
+
+      <div class="card">
+        <div class="eyebrow"><svg class="icon" viewBox="0 0 24 24"><path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z"/></svg>Comments · 1 open</div>
+        <div class="filters">
+          <span class="check-label"><span class="checkbox"></span>Show resolved</span>
+          <span class="check-label"><span class="checkbox"></span>Show archived</span>
+        </div>
+        <div class="comment">
+          <div class="who"><span class="avatar-sm">PR</span><span class="name">Priya Raman</span><span class="when">2 days ago</span><span class="chip chip-warning right">Open</span></div>
+          <div class="note">Two business days conflicts with 3.1, which says 72 hours. Pick one and make 3.1 follow.</div>
+          <div class="acts">Reply · Resolve</div>
+        </div>
+        <div class="compose">
+          <div class="input">Add a comment, use @ to mention a teammate</div>
+          <div class="hint">Mentions notify the person and the article author.</div>
+          <div class="post"><span class="btn btn-secondary btn-sm">Post comment</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="eyebrow"><svg class="icon" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>Revisions</div>
+        <div class="revs">
+          <div class="rev"><span class="tag">v4</span><div class="text"><div class="when">2 days ago</div><div class="change">Statement deadline shortened from 28 days to 21.</div></div></div>
+          <div class="rev"><span class="tag">v3</span><div class="text"><div class="when">4 months ago</div><div class="change">Added the requirement to photograph every room.</div></div></div>
+          <div class="rev"><span class="tag">v2</span><div class="text"><div class="when">14 months ago</div><div class="change">Clarified that resident attendance is offered, not required.</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="fade"></div>
+</div>
+
+</body>
+</html>

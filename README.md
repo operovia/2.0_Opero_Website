@@ -91,6 +91,10 @@ ADMIN_EMAIL=you@operovia.com ADMIN_PASSWORD='a new long password' npm run admin:
 
 Each time the site starts, it applies any database updates that arrived with new code, then checks that each one really took: an update its record has no trace of, or whose tables are not all there, is applied again, skipping what is already in place. If that fails, a red notice at the top of every admin page says why, and the pages that need the missing update (Guests, for one) cannot load until it runs. Deal with the cause the notice names, then press Update the database now; it applies only what is missing. The Site health card on the Dashboard shows the same status and the last errors the server hit, so you can paste them to whoever is helping you.
 
+## The module screenshots
+
+Each module card on the home page has a Look inside link that opens a screenshot of the module in a lightbox. The pictures are drawn, not captured: `scripts/module-shots/<module>.html` is the screen, with fictional data, and `node scripts/module-shots/render.mjs` renders them to `public/modules/<module>.png` (set `CHROME_PATH` to a Chromium if none is installed for Playwright). Edit the caption under each picture in Content, Home, Platform.
+
 ## For developers
 
 | Command | What it does |

@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en" class="m-studios">
+<head>
+<meta charset="utf-8">
+<title>Studios</title>
+<link rel="stylesheet" href="/scripts/module-shots/shell.css">
+<style>
+/* Studios: Priya's Turn Prep canvas in Table view. Page rules only; the frame is shell.css. */
+
+/* sidebar: the studio switcher and the canvas tree */
+.switcher { display: flex; align-items: center; gap: 8px; width: 240px; padding: 0 12px; }
+.studio-pill { width: 196px; height: 36px; background: var(--bg); border: 1px solid var(--line-strong); border-radius: 10px; padding: 0 10px; display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: var(--text); white-space: nowrap; }
+.studio-pill .sq { width: 20px; height: 20px; border-radius: 6px; background: #7050A0; color: #F2F4F6; display: flex; align-items: center; justify-content: center; flex: none; }
+.studio-pill .sq .icon { width: 12px; height: 12px; }
+.studio-pill .chev { margin-left: auto; color: var(--text-subtle); }
+.nav-label.canvases { margin-top: 8px; }
+.tree { position: relative; padding-left: 14px; }
+.tree::before { content: ''; position: absolute; left: 9px; top: 0; bottom: 10px; width: 2px; background: #7050A03D; }  /* ends on the last row's text line */
+.tree .nav-item { padding: 0 10px; gap: 8px; }
+.tree .nav-item .fold { color: var(--text-subtle); }
+.tree .nav-item .icon { width: 16px; height: 16px; }
+.tree .nav-item .icon.i12 { width: 12px; height: 12px; }
+.tree .nav-item .icon.i14 { width: 14px; height: 14px; }
+.tree .nav-item.canvas { margin-left: 24px; }
+.tree .nav-item.canvas.active::before { left: -46px; }  /* the stroke stays at the sidebar edge, x 4, like the other modules */
+
+/* page header: the context line runs under the action row, which sits at the top right */
+.page-header.ph { position: relative; }
+.ctx-chip { height: 18px; }
+.ctx-chip .chip { margin: -2px 0; }
+.page-header.ph .actions { position: absolute; right: 0; top: 12px; }
+.title .pencil { color: var(--text-subtle); }
+
+/* the two groups */
+.group { margin-bottom: 16px; --g: #9878CC; }
+.group.g-grey { --g: #8E939C; }
+.rail { border-left: 4px solid var(--g); }
+.group-head { height: 38px; padding: 0 16px; background: var(--bg-raised); display: flex; align-items: center; gap: 8px; color: var(--g); white-space: nowrap; }
+.group-name { font-size: 15px; font-weight: 600; }
+.group-count { font-size: 13px; font-weight: 500; color: var(--text-subtle); }
+.group th { height: 36px; }
+.group td { height: 44px; }
+.group th.rail, .group td.rail { padding: 0; text-align: center; }
+.group td.rail .checkbox { vertical-align: middle; }
+.unit { gap: 6px; }
+th.unit-h { padding-left: 32px; }  /* 14px cell padding plus the 12px row chevron and its 6px gap, so UNIT shares a left edge with the numbers */
+.unit-no { font-weight: 600; }
+.talk { display: inline-flex; align-items: center; gap: 4px; margin-left: 4px; color: var(--text-subtle); font-size: 13px; }
+td.status { padding: 0; text-align: center; font-weight: 600; color: var(--text); }
+.st-progress { background: #7050A0; }
+.st-stuck { background: #A63F44; }
+.st-ready { background: #3A8864; }
+td.status.st-none { background: #363A42; color: var(--text-muted); }
+.col-prop { padding: 0 8px; }
+.prop { padding: 0 8px; }
+.prop > span { color: var(--text); }
+.col-prog { padding: 0 10px; }
+.prog .track { width: 110px; flex: none; }
+.prog .day { font-size: 13px; }
+.avatar-sm.unassigned { background: none; border: 1px dashed var(--line-input); }
+.add-item { height: 36px; display: flex; align-items: center; padding-left: 50px; border-top: 1px solid var(--line); font-size: 13px; font-weight: 500; color: var(--text-subtle); }
+.add-group { width: 200px; }
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="brand"><img class="mark" src="/public/brand/opero/opero-centered-dark.webp" alt="Opero"></div>
+  <div class="lockup"><span class="jewel"></span><svg class="mark" viewBox="819 150 3751 980"><image href="/public/brand/modules/studios-dark.svg" x="290" y="-379" width="4809" height="2037"/></svg></div>
+  <div class="nav">
+    <div class="nav-label">Studio</div>
+    <div class="switcher">
+      <div class="studio-pill"><span class="sq"><svg class="icon" viewBox="0 0 24 24"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/></svg></span>Residential PM<svg class="icon i14 chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></div>
+      <div class="btn btn-secondary btn-square"><svg class="icon" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></svg></div>
+    </div>
+    <div class="nav-label canvases">Canvases</div>
+    <div class="tree">
+      <div class="nav-item"><svg class="icon i12 fold" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg><svg class="icon" viewBox="0 0 24 24"><path d="m6 14 1.5-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.54 6a2 2 0 0 1-1.95 1.5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H18a2 2 0 0 1 2 2v2"/></svg>Turns</div>
+      <div class="nav-item canvas active"><svg class="icon i14" viewBox="0 0 24 24"><path d="M3 9h18"/><path d="M9 3v18"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg>Turn Prep</div>
+      <div class="nav-item canvas"><svg class="icon i14" viewBox="0 0 24 24"><path d="M3 9h18"/><path d="M9 3v18"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg>Make-ready checklist</div>
+      <div class="nav-item"><svg class="icon i12 fold" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg><svg class="icon" viewBox="0 0 24 24"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>Leasing</div>
+      <div class="nav-item"><svg class="icon i14" viewBox="0 0 24 24"><path d="M3 9h18"/><path d="M9 3v18"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg>Renewal Tracker</div>
+      <div class="nav-item"><svg class="icon i14" viewBox="0 0 24 24"><path d="M3 9h18"/><path d="M9 3v18"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg>Resident Requests</div>
+      <div class="nav-item"><svg class="icon i14" viewBox="0 0 24 24"><path d="M3 9h18"/><path d="M9 3v18"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg>Keys Logged</div>
+      <div class="nav-item ghost">+ New folder</div>
+    </div>
+  </div>
+  <div class="foot"><div class="discs"><span class="jewel m-build"></span><span class="jewel m-studios current"></span><span class="jewel m-playbook"></span><span class="jewel m-university"></span><span class="jewel m-compass"></span></div>Switch module</div>
+</div>
+
+<div class="header">
+  <div class="pill"><img class="oppie" src="/public/brand/oppie/oppie-rest-dark.svg" width="20" height="20" alt="">Ask Oppie anything</div>
+  <div class="hdr-right">
+    <div class="icon-btn"><svg class="icon" viewBox="0 0 24 24"><path d="M10.268 21a2 2 0 0 0 3.464 0"/><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"/></svg></div>
+    <div class="avatar">PR</div>
+  </div>
+</div>
+
+<div class="content">
+  <div class="glow" style="left:-162px;top:72px"></div>
+  <div class="crumbs">Studios<svg class="icon" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>Residential PM<svg class="icon" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg><span class="current">Turn Prep</span></div>
+  <div class="page-header ph">
+    <div>
+      <h1 class="title">Turn Prep<svg class="icon i16 pencil" viewBox="0 0 24 24"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg></h1>
+      <div class="context ctx-chip">2 groups · 7 columns · 9 items<span class="chip chip-module"><img class="oppie" src="/public/brand/oppie/oppie-rest-dark.svg" width="12" height="12" alt="">Oppie is trained on this canvas</span></div>
+    </div>
+    <div class="actions">
+      <div class="btn btn-secondary"><svg class="icon" viewBox="0 0 24 24"><path d="M3 9h18"/><path d="M9 3v18"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg>Main Table<svg class="icon" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></div>
+      <div class="btn btn-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M10 20a1 1 0 0 0 .553.895l2 1A1 1 0 0 0 14 21v-7a2 2 0 0 1 .517-1.341L21.74 4.67A1 1 0 0 0 21 3H3a1 1 0 0 0-.742 1.67l7.225 7.989A2 2 0 0 1 10 14z"/></svg></div>
+      <div class="btn btn-icon"><svg class="icon" viewBox="0 0 24 24"><path d="m21 16-4 4-4-4"/><path d="M17 20V4"/><path d="m3 8 4-4 4 4"/><path d="M7 4v16"/></svg></div>
+      <div class="btn btn-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"/><path d="M14.084 14.158a3 3 0 0 1-4.242-4.242"/><path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143"/><path d="m2 2 20 20"/></svg></div>
+      <div class="btn btn-icon"><svg class="icon" viewBox="0 0 24 24"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg></div>
+      <div class="btn btn-secondary"><svg class="icon" viewBox="0 0 24 24"><path d="M15.914 4a1.5 1.5 0 00-2.474-1.561l-9 9A1.5 1.5 0 005.5 14h4.002a.5.5 0 01.471.666L8.086 20a1.5 1.5 0 002.475 1.56l9-9A1.5 1.5 0 0018.5 10h-3.997a.5.5 0 01-.472-.667z"/></svg>Automations · 3</div>
+      <div class="btn btn-secondary"><svg class="icon" viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>PDF Templates · 1</div>
+      <div class="btn btn-secondary"><svg class="icon" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></svg>Share</div>
+      <div class="btn btn-primary"><svg class="icon" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></svg>Add Item</div>
+    </div>
+  </div>
+
+<div class="card card-flush group g-violet">
+  <div class="group-head rail"><svg class="icon i14" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg><span class="group-name">In turn now</span><span class="group-count">· 6 items</span></div>
+  <table>
+    <colgroup><col style="width:40px"><col style="width:120px"><col style="width:140px"><col style="width:150px"><col style="width:130px"><col style="width:208px"><col style="width:100px"><col style="width:240px"></colgroup>
+    <thead><tr><th class="rail"></th><th class="unit-h">Unit</th><th class=" center">Status</th><th class="">Property</th><th class="">Owner</th><th class="">Progress</th><th class="">Move-in</th><th class="">Next step</th></tr></thead>
+    <tbody>
+<tr>
+  <td class="first rail"><span class="checkbox"></span></td>
+  <td><div class="cell unit"><svg class="icon i12" viewBox="0 0 24 24" style="color:var(--line-input)"><path d="m9 18 6-6-6-6"/></svg><span class="unit-no">214</span><span class="talk"><svg class="icon i14" viewBox="0 0 24 24"><path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z"/></svg>2</span></div></td>
+  <td class="status st-progress">In progress</td>
+  <td class="col-prop"><span class="chip chip-outline prop"><svg class="icon i14" viewBox="0 0 24 24"><path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 1 1 0 10h-2"/><line x1="8" x2="16" y1="12" y2="12"/></svg><span>Maple Row</span></span></td>
+  <td><div class="cell"><span class="avatar-sm">TL</span><span>Theo L.</span></div></td>
+  <td class="col-prog"><div class="cell prog"><span class="track"><span style="width:67%;background:#9878CC"></span></span><span class="day">Day 8 of 12</span></div></td>
+  <td>In 4 days</td>
+  <td class="muted">Second coat of paint, then clean</td>
+</tr>
+<tr>
+  <td class="first rail"><span class="checkbox"></span></td>
+  <td><div class="cell unit"><svg class="icon i12" viewBox="0 0 24 24" style="color:var(--line-input)"><path d="m9 18 6-6-6-6"/></svg><span class="unit-no">307</span><span class="talk"><svg class="icon i14" viewBox="0 0 24 24"><path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z"/></svg>4</span></div></td>
+  <td class="status st-stuck">Stuck</td>
+  <td class="col-prop"><span class="chip chip-outline prop"><svg class="icon i14" viewBox="0 0 24 24"><path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 1 1 0 10h-2"/><line x1="8" x2="16" y1="12" y2="12"/></svg><span>Maple Row</span></span></td>
+  <td><div class="cell"><span class="avatar-sm">TL</span><span>Theo L.</span></div></td>
+  <td class="col-prog"><div class="cell prog"><span class="track"><span style="width:100%;background:#E3787B"></span></span><span class="day">Day 13 of 12</span></div></td>
+  <td><span class="danger">Tomorrow</span></td>
+  <td class="muted">Waiting on carpet from Kestrel</td>
+</tr>
+<tr>
+  <td class="first rail"><span class="checkbox"></span></td>
+  <td><div class="cell unit"><svg class="icon i12" viewBox="0 0 24 24" style="color:var(--line-input)"><path d="m9 18 6-6-6-6"/></svg><span class="unit-no">118</span></div></td>
+  <td class="status st-ready">Ready to show</td>
+  <td class="col-prop"><span class="chip chip-outline prop"><svg class="icon i14" viewBox="0 0 24 24"><path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 1 1 0 10h-2"/><line x1="8" x2="16" y1="12" y2="12"/></svg><span>Maple Row</span></span></td>
+  <td><div class="cell"><span class="avatar-sm">PR</span><span>Priya R.</span></div></td>
+  <td class="col-prog"><div class="cell prog"><span class="track"><span style="width:75%;background:#9878CC"></span></span><span class="day">Day 9 of 12</span></div></td>
+  <td>In 6 days</td>
+  <td class="muted">Final walkthrough with Sam</td>
+</tr>
+<tr>
+  <td class="first rail"><span class="checkbox"></span></td>
+  <td><div class="cell unit"><svg class="icon i12" viewBox="0 0 24 24" style="color:var(--line-input)"><path d="m9 18 6-6-6-6"/></svg><span class="unit-no">402</span></div></td>
+  <td class="status st-progress">In progress</td>
+  <td class="col-prop"><span class="chip chip-outline prop"><svg class="icon i14" viewBox="0 0 24 24"><path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 1 1 0 10h-2"/><line x1="8" x2="16" y1="12" y2="12"/></svg><span>Fenwick Lofts</span></span></td>
+  <td><div class="cell"><span class="avatar-sm">LM</span><span>Luis M.</span></div></td>
+  <td class="col-prog"><div class="cell prog"><span class="track"><span style="width:25%;background:#9878CC"></span></span><span class="day">Day 3 of 12</span></div></td>
+  <td>In 10 days</td>
+  <td class="muted">Appliance check</td>
+</tr>
+<tr>
+  <td class="first rail"><span class="checkbox"></span></td>
+  <td><div class="cell unit"><svg class="icon i12" viewBox="0 0 24 24" style="color:var(--line-input)"><path d="m9 18 6-6-6-6"/></svg><span class="unit-no">115</span><span class="talk"><svg class="icon i14" viewBox="0 0 24 24"><path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z"/></svg>1</span></div></td>
+  <td class="status st-progress">In progress</td>
+  <td class="col-prop"><span class="chip chip-outline prop"><svg class="icon i14" viewBox="0 0 24 24"><path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 1 1 0 10h-2"/><line x1="8" x2="16" y1="12" y2="12"/></svg><span>Fenwick Lofts</span></span></td>
+  <td><div class="cell"><span class="avatar-sm">LM</span><span>Luis M.</span></div></td>
+  <td class="col-prog"><div class="cell prog"><span class="track"><span style="width:42%;background:#9878CC"></span></span><span class="day">Day 5 of 12</span></div></td>
+  <td>In 8 days</td>
+  <td class="muted">Patch and paint</td>
+</tr>
+<tr>
+  <td class="first rail"><span class="checkbox"></span></td>
+  <td><div class="cell unit"><svg class="icon i12" viewBox="0 0 24 24" style="color:var(--line-input)"><path d="m9 18 6-6-6-6"/></svg><span class="unit-no">2B</span></div></td>
+  <td class="status st-none">Not started</td>
+  <td class="col-prop"><span class="chip chip-outline prop"><svg class="icon i14" viewBox="0 0 24 24"><path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 1 1 0 10h-2"/><line x1="8" x2="16" y1="12" y2="12"/></svg><span>Juniper Flats</span></span></td>
+  <td><div class="cell"><span class="avatar-sm unassigned"></span><span class="subtle">Unassigned</span></div></td>
+  <td class="col-prog"><div class="cell prog"><span class="track"><span style="width:0%;background:#9878CC"></span></span><span class="day">Day 0 of 12</span></div></td>
+  <td>In 12 days</td>
+  <td class="muted">Move-out inspection today</td>
+</tr>
+    </tbody>
+  </table>
+  <div class="add-item rail">+ Add Item</div>
+</div>
+<div class="card card-flush group g-grey">
+  <div class="group-head rail"><svg class="icon i14" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg><span class="group-name">Move-outs next week</span><span class="group-count">· 3 items</span></div>
+  <table>
+    <colgroup><col style="width:40px"><col style="width:120px"><col style="width:140px"><col style="width:150px"><col style="width:130px"><col style="width:208px"><col style="width:100px"><col style="width:240px"></colgroup>
+    <thead><tr><th class="rail"></th><th class="unit-h">Unit</th><th class=" center">Status</th><th class="">Property</th><th class="">Owner</th><th class="">Progress</th><th class="">Move-in</th><th class="">Next step</th></tr></thead>
+    <tbody>
+<tr>
+  <td class="first rail"><span class="checkbox"></span></td>
+  <td><div class="cell unit"><svg class="icon i12" viewBox="0 0 24 24" style="color:var(--line-input)"><path d="m9 18 6-6-6-6"/></svg><span class="unit-no">221</span></div></td>
+  <td class="status st-none">Not started</td>
+  <td class="col-prop"><span class="chip chip-outline prop"><svg class="icon i14" viewBox="0 0 24 24"><path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 1 1 0 10h-2"/><line x1="8" x2="16" y1="12" y2="12"/></svg><span>Maple Row</span></span></td>
+  <td><div class="cell"><span class="avatar-sm">PR</span><span>Priya R.</span></div></td>
+  <td class="col-prog"><div class="cell prog"><span class="track"><span style="width:0%"></span></span></div></td>
+  <td>In 19 days</td>
+  <td class="muted">Schedule the inspection</td>
+</tr>
+<tr>
+  <td class="first rail"><span class="checkbox"></span></td>
+  <td><div class="cell unit"><svg class="icon i12" viewBox="0 0 24 24" style="color:var(--line-input)"><path d="m9 18 6-6-6-6"/></svg><span class="unit-no">309</span></div></td>
+  <td class="status st-none">Not started</td>
+  <td class="col-prop"><span class="chip chip-outline prop"><svg class="icon i14" viewBox="0 0 24 24"><path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 1 1 0 10h-2"/><line x1="8" x2="16" y1="12" y2="12"/></svg><span>Fenwick Lofts</span></span></td>
+  <td><div class="cell"><span class="avatar-sm">PR</span><span>Priya R.</span></div></td>
+  <td class="col-prog"><div class="cell prog"><span class="track"><span style="width:0%"></span></span></div></td>
+  <td>In 21 days</td>
+  <td class="muted">Notice received</td>
+</tr>
+<tr>
+  <td class="first rail"><span class="checkbox"></span></td>
+  <td><div class="cell unit"><svg class="icon i12" viewBox="0 0 24 24" style="color:var(--line-input)"><path d="m9 18 6-6-6-6"/></svg><span class="unit-no">4A</span></div></td>
+  <td class="status st-none">Not started</td>
+  <td class="col-prop"><span class="chip chip-outline prop"><svg class="icon i14" viewBox="0 0 24 24"><path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 1 1 0 10h-2"/><line x1="8" x2="16" y1="12" y2="12"/></svg><span>Juniper Flats</span></span></td>
+  <td><div class="cell"><span class="avatar-sm">LM</span><span>Luis M.</span></div></td>
+  <td class="col-prog"><div class="cell prog"><span class="track"><span style="width:0%"></span></span></div></td>
+  <td>In 23 days</td>
+  <td class="muted">Pre-inspection with the resident</td>
+</tr>
+    </tbody>
+  </table>
+  <div class="add-item rail">+ Add Item</div>
+</div>
+
+  <div class="btn btn-dashed add-group"><svg class="icon" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></svg>Add Group</div>
+</div>
+
+</body>
+</html>

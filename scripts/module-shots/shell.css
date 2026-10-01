@@ -1,0 +1,222 @@
+/* shell.css: the frame every module screenshot starts from (scripts/module-shots/<module>.html).
+   Rendered by scripts/module-shots/render.mjs at 1440 x 900 CSS px, dark theme only. Every color is a literal copy of
+   the website's dark tokens (src/theme/tokens.ts). Paths are root-relative to the REPO ROOT, which the renderer serves.
+   Pages link this file and keep only their own rules in their <style>. See README.md beside this file. */
+
+/* ---------- font: Plus Jakarta Sans, self-hosted, the only face ---------- */
+@font-face { font-family: 'Plus Jakarta Sans'; src: url('/src/theme/fonts/PlusJakartaSans-Variable.woff2') format('woff2'); font-weight: 200 800; font-style: normal; }
+@font-face { font-family: 'Plus Jakarta Sans'; src: url('/src/theme/fonts/PlusJakartaSans-Italic-Variable-Latin.woff2') format('woff2'); font-weight: 200 800; font-style: italic; }
+
+/* ---------- tokens ---------- */
+:root {
+  --bg: #0F1115;             /* canvas */
+  --bg-raised: #13161B;      /* canvasRaised: table headers, sunken strips */
+  --surface: #171A1F;        /* cards, sidebar, header */
+  --surface-2: #1E2127;      /* surfaceRaised: popovers, the answer band, the reading sheet, bubbles */
+  --line: #272A31;           /* hairlines */
+  --line-strong: #363A42;    /* secondary button and input borders */
+  --line-input: #6A6F79;     /* checkbox and crumb chevron color */
+  --text: #F2F4F6;
+  --text-muted: #B3B8C0;
+  --text-subtle: #8E939C;    /* the lightest text that carries words */
+  --accent: #E6E9EC;         /* primary buttons, silver */
+  --on-accent: #0F1115;      /* text on primary buttons and on solid status cells */
+  --accent-soft: #F2F4F614;  /* active nav fill, avatar fill, neutral chips */
+  --success: #63B08A;  --success-soft: #63B08A1F;
+  --warning: #D9A55E;  --warning-soft: #D9A55E1F;
+  --danger: #E3787B;   --danger-soft: #D2696C24;
+  --shadow-sm: 0 1px 2px #00000066;
+  --shadow-md: 0 8px 24px -8px #0000008C, 0 0 0 1px #FFFFFF0A;
+  --shadow-lg: 0 30px 80px -24px #000000B3, 0 0 0 1px #FFFFFF0F;
+  /* the five jewels, dark stops [highlight, base, shade, deep] */
+  --jewel-crimson-hi: #D2696C; --jewel-crimson-base: #A63F44; --jewel-crimson-shade: #8A2930; --jewel-crimson-deep: #6B1C22;
+  --jewel-violet-hi: #9878CC;  --jewel-violet-base: #7050A0;  --jewel-violet-shade: #583A86;  --jewel-violet-deep: #412968;
+  --jewel-gold-hi: #D9A55E;    --jewel-gold-base: #AF843B;    --jewel-gold-shade: #916C28;    --jewel-gold-deep: #74521B;
+  --jewel-green-hi: #63B08A;   --jewel-green-base: #3A8864;   --jewel-green-shade: #24704E;   --jewel-green-deep: #16563A;
+  --jewel-teal-hi: #5FA8BF;    --jewel-teal-base: #367F95;    --jewel-teal-shade: #206678;    --jewel-teal-deep: #144E5D;
+  /* the module this page belongs to: a page sets one of the .m-* classes on <html>; Studios is the default */
+  --m-hi: #9878CC; --m-base: #7050A0; --m-shade: #583A86; --m-deep: #412968; --m-soft: #7050A03D; --m-ring: #7050A040;
+}
+/* Module accent classes. On <html> they color the whole page; on a .jewel they color that one disc (the foot).
+   --m-soft is the base at 24% alpha, --m-ring the base at 25%. A module-tone chip is --m-hi text on --m-soft. */
+.m-build      { --m-hi: #D2696C; --m-base: #A63F44; --m-shade: #8A2930; --m-deep: #6B1C22; --m-soft: #A63F443D; --m-ring: #A63F4440; }
+.m-studios    { --m-hi: #9878CC; --m-base: #7050A0; --m-shade: #583A86; --m-deep: #412968; --m-soft: #7050A03D; --m-ring: #7050A040; }
+.m-playbook   { --m-hi: #D9A55E; --m-base: #AF843B; --m-shade: #916C28; --m-deep: #74521B; --m-soft: #AF843B3D; --m-ring: #AF843B40; }
+.m-university { --m-hi: #63B08A; --m-base: #3A8864; --m-shade: #24704E; --m-deep: #16563A; --m-soft: #3A88643D; --m-ring: #3A886440; }
+.m-compass    { --m-hi: #5FA8BF; --m-base: #367F95; --m-shade: #206678; --m-deep: #144E5D; --m-soft: #367F953D; --m-ring: #367F9540; }
+
+/* ---------- base ---------- */
+* { box-sizing: border-box; }
+html, body { margin: 0; width: 1440px; height: 900px; overflow: hidden; background: var(--bg); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; line-height: 20px; -webkit-font-smoothing: antialiased; font-variant-numeric: tabular-nums; }
+body { position: relative; }
+h1, h2, h3, p, ul { margin: 0; }
+ul { padding: 0; list-style: none; }
+img { display: block; }
+/* Icons: inline SVG on a 24 viewBox, paths copied from node_modules/lucide-react/dist/esm/icons/<name>.mjs. */
+svg.icon { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+svg.icon.i16 { width: 16px; height: 16px; }
+svg.icon.i14 { width: 14px; height: 14px; }
+svg.icon.i12 { width: 12px; height: 12px; }
+.mark { display: block; width: auto; flex: none; }
+/* A jewel disc: the website's own layered gradient, colored by the --m-* in scope. Size it per use. */
+.jewel { border-radius: 9999px; display: inline-block; flex: none; background: radial-gradient(6% 6% at 31% 26%, #FFFFFFD1 80%, transparent 100%), radial-gradient(18% 15.5% at 33% 26.5%, #FFFFFF85 0%, transparent 100%), radial-gradient(circle closest-side, transparent 94%, #0000001F 96%), radial-gradient(40% 40% at 74% 82%, #FFFFFF1A 0%, transparent 100%), radial-gradient(86% 86% at 30% 24%, transparent 55%, #00000038 100%), radial-gradient(103.3% 103.3% at 30% 24%, var(--m-hi) 0%, var(--m-base) 38%, var(--m-shade) 72%, var(--m-deep) 100%); }
+.dot { width: 6px; height: 6px; border-radius: 9999px; display: inline-block; flex: none; background: currentColor; }
+
+/* ---------- sidebar: x 0 to 264, y 0 to 900 ---------- */
+.sidebar { position: absolute; left: 0; top: 0; width: 264px; height: 900px; background: var(--surface); }
+.sidebar::after { content: ''; position: absolute; right: 0; top: 64px; bottom: 0; width: 1px; background: var(--line); }  /* starts 64px down so sidebar plus header read as one top strip */
+/* Brand band (y 0 to 64): the Opero lockup with the jewels centered under the wordmark, already trimmed (1200 x 453). */
+.brand { height: 64px; padding: 0 20px; display: flex; align-items: center; }
+.brand .mark { height: 40px; }   /* about 106px wide */
+/* Module row (y 64 to 112): a 16px jewel disc, then the module wordmark trimmed to its artwork and set 18px tall
+   (<svg class="mark" viewBox="bounds"><image href="/public/brand/modules/<module>-dark.svg" .../></svg>, see README). */
+.lockup { height: 48px; padding: 0 20px; display: flex; align-items: center; gap: 10px; }
+.lockup .jewel { width: 16px; height: 16px; }
+.lockup .mark { height: 18px; }
+/* Nav from y 120 */
+.nav { padding: 8px 12px 0; }
+.nav-label { font-size: 13px; line-height: 16px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-subtle); padding: 12px 12px 6px; }
+.nav-item { position: relative; height: 38px; padding: 0 12px; border-radius: 10px; display: flex; align-items: center; gap: 10px; font-size: 14px; line-height: 20px; font-weight: 500; color: var(--text-muted); margin-bottom: 2px; white-space: nowrap; }
+.nav-item .icon { opacity: .9; }
+.nav-item.active { background: var(--accent-soft); color: var(--text); font-weight: 600; }
+.nav-item.active::before { content: ''; position: absolute; left: -8px; top: 50%; transform: translateY(-50%); width: 3px; height: 20px; border-radius: 2px; background: var(--m-base); }  /* the signature stroke, in the module base */
+.nav-item.ghost { font-size: 13px; color: var(--text-subtle); font-weight: 500; }
+.badge { margin-left: auto; font-size: 13px; line-height: 16px; font-weight: 600; background: var(--surface-2); color: var(--text-muted); padding: 1px 8px; border-radius: 9999px; }
+/* Foot (y 836 to 900): five 10px discs in brand order, each wearing its .m-* class, the current one ringed. */
+.foot { position: absolute; left: 0; right: 0; bottom: 0; height: 64px; border-top: 1px solid var(--line); padding: 0 20px; display: flex; align-items: center; gap: 12px; font-size: 13px; line-height: 18px; font-weight: 500; color: var(--text-subtle); }
+.foot .discs { display: flex; gap: 6px; }
+.foot .discs .jewel { width: 10px; height: 10px; }
+.foot .discs .jewel.current { box-shadow: 0 0 0 2px var(--surface), 0 0 0 3px var(--text); }
+
+/* ---------- header: x 264 to 1440, y 0 to 64 ---------- */
+.header { position: absolute; left: 264px; top: 0; width: 1176px; height: 64px; background: var(--surface); border-bottom: 1px solid var(--line); padding: 0 24px; display: flex; align-items: center; }
+/* Oppie's seat: the pill centered on x 852. <img> of oppie-rest-dark.svg at 20px, then 'Ask Oppie anything'. */
+.pill { position: absolute; left: 50%; top: 12px; transform: translateX(-50%); width: 440px; height: 40px; border-radius: 9999px; background: var(--bg); border: 1px solid var(--line); padding: 0 14px 0 12px; display: flex; align-items: center; gap: 10px; font-size: 13px; line-height: 18px; color: var(--text-subtle); white-space: nowrap; }
+.pill .oppie { width: 20px; height: 20px; }
+.pill.active { background: var(--surface); border-color: var(--m-base); box-shadow: 0 0 0 3px var(--m-ring); color: var(--text); font-weight: 500; }
+.pill .close { margin-left: auto; color: var(--text-subtle); }
+.hdr-right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+.icon-btn { width: 36px; height: 36px; border-radius: 9999px; display: flex; align-items: center; justify-content: center; color: var(--text-muted); }
+
+/* ---------- content: x 264 to 1440, y 64 to 900 (inner x 288 to 1416) ---------- */
+.content { position: absolute; left: 264px; top: 64px; width: 1176px; height: 836px; padding: 0 24px 24px; overflow: hidden; }
+.content > * { position: relative; }
+/* The focal glow: first child of .content, painted under everything; each page sets left and top so its center
+   sits on the focal element's top-left corner. */
+.glow { position: absolute; width: 900px; height: 520px; border-radius: 50%; background: radial-gradient(closest-side, var(--m-base), transparent); opacity: .24; pointer-events: none; }
+.crumbs { height: 32px; display: flex; align-items: center; gap: 6px; font-size: 13px; line-height: 16px; font-weight: 500; color: var(--text-subtle); white-space: nowrap; }  /* y 64 to 96 */
+.crumbs .icon { width: 14px; height: 14px; color: var(--line-input); }  /* lucide chevron-right between crumbs */
+.crumbs .current { color: var(--text); font-weight: 600; }
+.page-header { display: flex; align-items: flex-start; justify-content: space-between; padding: 12px 0 10px; border-bottom: 1px solid var(--line); margin-bottom: 16px; }  /* title y 108 to 140, context y 146 to 164, rule y 174, content from y 190 */
+.title { font-size: 24px; line-height: 32px; font-weight: 700; letter-spacing: -0.01em; margin: 0; display: flex; align-items: center; gap: 8px; }
+.context { margin-top: 6px; font-size: 13px; line-height: 18px; color: var(--text-muted); display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+.actions { display: flex; gap: 8px; align-items: center; flex: none; }
+
+/* ---------- Oppie ---------- */
+/* At rest: <img class="oppie" src="/public/brand/oppie/oppie-rest-dark.svg" width="N" height="N" alt="">; 20px in the pill,
+   12px in a chip, 20px beside a chat turn, 28px in an answer band. Never drawn by hand, never an orb. */
+img.oppie { display: inline-block; flex: none; }
+/* Thinking (Build only): the whole source of /public/brand/oppie/oppie-thinking-dark.svg pasted inline ONCE inside
+   <span class="oppie-thinking">, frozen here so the still shows the pills caught mid-turn, rippling left to right. */
+.oppie-thinking { display: inline-block; width: 22px; height: 22px; flex: none; }
+.oppie-thinking svg { width: 100%; height: 100%; display: block; }
+.oppie-thinking .oppie-bar, .oppie-thinking .oppie-shade, .oppie-thinking .oppie-glint { animation-play-state: paused !important; }
+.oppie-thinking g.oppie-bar:nth-of-type(1), .oppie-thinking g.oppie-bar:nth-of-type(1) .oppie-shade, .oppie-thinking g.oppie-bar:nth-of-type(1) .oppie-glint { animation-delay: -0.56s !important; }
+.oppie-thinking g.oppie-bar:nth-of-type(2), .oppie-thinking g.oppie-bar:nth-of-type(2) .oppie-shade, .oppie-thinking g.oppie-bar:nth-of-type(2) .oppie-glint { animation-delay: -0.40s !important; }
+.oppie-thinking g.oppie-bar:nth-of-type(3), .oppie-thinking g.oppie-bar:nth-of-type(3) .oppie-shade, .oppie-thinking g.oppie-bar:nth-of-type(3) .oppie-glint { animation-delay: -0.24s !important; }
+.oppie-thinking g.oppie-bar:nth-of-type(4), .oppie-thinking g.oppie-bar:nth-of-type(4) .oppie-shade, .oppie-thinking g.oppie-bar:nth-of-type(4) .oppie-glint { animation-delay: -0.08s !important; }
+.oppie-thinking g.oppie-bar:nth-of-type(5), .oppie-thinking g.oppie-bar:nth-of-type(5) .oppie-shade, .oppie-thinking g.oppie-bar:nth-of-type(5) .oppie-glint { animation-delay: 0.08s !important; }
+
+/* ---------- buttons ---------- */
+.btn { height: 36px; padding: 0 14px; border-radius: 10px; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; border: 1px solid transparent; white-space: nowrap; }
+.btn .icon { width: 16px; height: 16px; }
+.btn-primary { background: var(--accent); color: var(--on-accent); }  /* silver on every screen; the module color is never a button */
+.btn-secondary { background: var(--surface); border-color: var(--line-strong); color: var(--text); }
+.btn-ghost { color: var(--text-muted); }
+.btn-dashed { border: 1px dashed var(--line-strong); color: var(--text-subtle); }
+.btn-sm { height: 32px; padding: 0 12px; }
+.btn-icon { width: 36px; padding: 0; justify-content: center; border-radius: 9999px; color: var(--text-muted); }
+.btn-square { width: 36px; padding: 0; justify-content: center; }
+.btn-block { width: 100%; justify-content: center; }
+.btn[disabled], .btn.is-working { opacity: .45; }
+/* Segmented control */
+.seg { display: inline-flex; height: 36px; border: 1px solid var(--line-strong); border-radius: 10px; padding: 2px; gap: 2px; }
+.seg span { display: inline-flex; align-items: center; gap: 6px; padding: 0 12px; border-radius: 8px; font-size: 13px; font-weight: 600; color: var(--text-muted); white-space: nowrap; }
+.seg span .icon { width: 14px; height: 14px; }
+.seg span.on { background: var(--accent-soft); color: var(--text); }
+.seg-sm { height: 28px; }
+.seg-sm span { padding: 0 10px; }
+
+/* ---------- chips and status pills ---------- */
+.chip { display: inline-flex; align-items: center; gap: 6px; height: 22px; padding: 0 10px; border-radius: 9999px; font-size: 13px; line-height: 16px; font-weight: 600; white-space: nowrap; flex: none; }
+.chip .icon { width: 14px; height: 14px; }
+.chip .oppie { width: 12px; height: 12px; }
+.chip-module { background: var(--m-soft); color: var(--m-hi); }
+.chip-success { background: var(--success-soft); color: var(--success); }
+.chip-warning { background: var(--warning-soft); color: var(--warning); }
+.chip-danger { background: var(--danger-soft); color: var(--danger); }
+.chip-neutral { background: var(--accent-soft); color: var(--text-muted); }
+.chip-outline { border: 1px solid var(--line-strong); color: var(--text-muted); }
+.chip-square { border-radius: 6px; border-left: 2px solid currentColor; text-transform: uppercase; letter-spacing: 0.04em; }  /* Compass status chips */
+.eyebrow { font-size: 13px; line-height: 16px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-subtle); display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+.eyebrow .icon { width: 14px; height: 14px; }
+
+/* ---------- cards ---------- */
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow-sm); padding: 20px; }
+.card-raised { background: var(--surface-2); border: 1px solid var(--line-strong); border-radius: 14px; box-shadow: var(--shadow-md); }
+.card-flush { padding: 0; overflow: hidden; }
+.card-title { font-size: 20px; line-height: 28px; font-weight: 700; }
+.section-title { font-size: 16px; line-height: 22px; font-weight: 600; }
+
+/* ---------- tables ---------- */
+table { border-collapse: collapse; width: 100%; table-layout: fixed; }
+th { height: 36px; background: var(--bg-raised); font-size: 13px; line-height: 16px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-subtle); text-align: left; padding: 0 14px; white-space: nowrap; overflow: hidden; }
+td { height: 40px; padding: 0 14px; border-top: 1px solid var(--line); font-size: 13px; line-height: 18px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+td.num, th.num { text-align: right; }
+td.first { font-weight: 600; }
+td.center, th.center { text-align: center; }
+.cell { display: flex; align-items: center; gap: 8px; }  /* for cells that hold an icon, an avatar or a chip beside text */
+
+/* ---------- tabs ---------- */
+.tabs { display: flex; gap: 20px; height: 32px; border-bottom: 1px solid var(--line); }
+.tab { position: relative; display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--text-subtle); white-space: nowrap; }
+.tab .icon { width: 14px; height: 14px; }
+.tab.on { color: var(--text); }
+.tab.on::after { content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--m-hi); }  /* the underline is the one module-tone element of a tab row */
+
+/* ---------- inputs ---------- */
+.input { height: 36px; background: var(--bg); border: 1px solid var(--line-strong); border-radius: 10px; padding: 0 12px; font-size: 13px; color: var(--text-subtle); display: flex; align-items: center; gap: 8px; white-space: nowrap; }  /* placeholder text in --text-subtle */
+.input .icon { width: 16px; height: 16px; }
+.input .value { color: var(--text); }
+.textarea { background: var(--bg); border: 1px solid var(--line-strong); border-radius: 10px; padding: 10px 12px; font-size: 13px; line-height: 18px; color: var(--text-subtle); }
+.checkbox { width: 16px; height: 16px; border-radius: 4px; border: 1px solid var(--line-input); flex: none; display: inline-block; }
+.check-label { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; line-height: 18px; color: var(--text-muted); }
+
+/* ---------- avatars (initials, never photos) ---------- */
+.avatar { width: 32px; height: 32px; border-radius: 9999px; background: var(--accent-soft); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: var(--text); flex: none; }
+.avatar-sm { width: 24px; height: 24px; border-radius: 9999px; background: var(--accent-soft); display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: var(--text); flex: none; }  /* decorative: the name is always printed beside it, so 11px is allowed here only */
+.avatar-xs { width: 22px; height: 22px; border-radius: 9999px; background: var(--accent-soft); display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: var(--text); flex: none; }
+.person { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; }
+
+/* ---------- progress ---------- */
+.track { height: 6px; border-radius: 3px; background: var(--line); overflow: hidden; }
+.track > span { display: block; height: 100%; border-radius: 3px; background: var(--m-hi); }  /* set width per use; override background when the fill is semantic */
+.track-thin { height: 3px; border-radius: 2px; }
+
+/* ---------- type scale and helpers ---------- */
+.body { font-size: 14px; line-height: 22px; }
+.prose { font-size: 16px; line-height: 27px; }
+.meta { font-size: 13px; line-height: 18px; color: var(--text-subtle); }
+.muted { color: var(--text-muted); }
+.subtle { color: var(--text-subtle); }
+.success { color: var(--success); }
+.warning { color: var(--warning); }
+.danger { color: var(--danger); }
+.num-kpi { font-size: 28px; line-height: 32px; font-weight: 800; }
+.num-ring { font-size: 32px; line-height: 36px; font-weight: 800; }
+.num-hero { font-size: 48px; line-height: 52px; font-weight: 800; }
+.row { display: flex; align-items: center; gap: 8px; }
+.stack { display: flex; flex-direction: column; }
+.grow { flex: 1; min-width: 0; }
+.right { margin-left: auto; }
+.truncate { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

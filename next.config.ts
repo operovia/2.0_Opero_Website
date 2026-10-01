@@ -4,7 +4,12 @@ import type { NextConfig } from 'next';
 const hosts = (value: string | undefined) =>
   (value ?? '')
     .split(',')
-    .map((h) => h.trim().replace(/^https?:\/\//, '').replace(/\/.*$/, ''))
+    .map((h) =>
+      h
+        .trim()
+        .replace(/^https?:\/\//, '')
+        .replace(/\/.*$/, ''),
+    )
     .filter(Boolean);
 
 // The site's own public hostnames. Behind some proxies the forwarded host
@@ -45,7 +50,7 @@ const nextConfig: NextConfig = {
   },
   images: {
     formats: ['image/avif', 'image/webp'],
-    localPatterns: [{ pathname: '/media/**' }, { pathname: '/brand/**' }],
+    localPatterns: [{ pathname: '/media/**' }, { pathname: '/brand/**' }, { pathname: '/modules/**' }],
   },
   async headers() {
     return [

@@ -1,8 +1,12 @@
+import { Maximize2 } from 'lucide-react';
+import Image from 'next/image';
 import { Reveal, RevealGroup, RevealItem } from '@/components/motion/reveal';
 import { BrandMark } from '@/components/brand/brand-mark';
+import { MODULE_LABELS, MODULE_SHOT, moduleShotPath } from '@/content/constants';
 import type { SectionData } from '@/content/registry';
 import { cn } from '@/lib/cn';
 import { Container, SectionIntro } from '../layout-parts';
+import { ModuleLightbox } from './module-lightbox';
 import { PlatformNetwork } from './platform-network';
 
 const jewel = {
@@ -47,18 +51,42 @@ export function Platform({ content }: { content: SectionData<'home', 'platform'>
             >
               {content.modules.map((item) => (
                 <RevealItem as="li" key={item.module}>
-                  <div className={cn('module-card group relative h-full overflow-hidden rounded-2xl border border-line bg-surface p-6', glow[item.module])}>
+                  <div
+                    className={cn(
+                      'module-card group relative flex h-full flex-col overflow-hidden rounded-2xl border border-line bg-surface p-6',
+                      glow[item.module],
+                    )}
+                  >
                     <span aria-hidden className={cn('relative block size-9 rounded-full shadow-md', jewel[item.module])} />
                     <h3 className="mt-8">
                       <BrandMark name={`module-${item.module}`} className="h-6" />
                     </h3>
                     <p className="mt-3 text-sm text-fg-muted">{item.description}</p>
+                    {/* A small view of the screen; it opens full size in the lightbox, or, without JavaScript, as the picture itself. */}
+                    <a href={moduleShotPath(item.module)} data-module-shot={item.module} className="group/shot mt-auto block rounded-lg pt-6 outline-none">
+                      <span className="block overflow-hidden rounded-lg border border-line-strong bg-canvas-raised shadow-md transition-transform duration-[var(--o-duration-base)] ease-[var(--o-ease-out)] group-hover/shot:-translate-y-0.5 group-focus-visible/shot:ring-2 group-focus-visible/shot:ring-focus-ring group-focus-visible/shot:ring-offset-2 group-focus-visible/shot:ring-offset-surface">
+                        <Image
+                          src={moduleShotPath(item.module)}
+                          alt=""
+                          width={MODULE_SHOT.width}
+                          height={MODULE_SHOT.height}
+                          sizes="(min-width: 64rem) 14rem, (min-width: 40rem) 40vw, 90vw"
+                          className="block h-auto w-full"
+                        />
+                      </span>
+                      <span className="mt-2.5 inline-flex items-center gap-1.5 text-xs font-medium text-fg-muted transition-colors group-hover/shot:text-fg group-focus-visible/shot:text-fg">
+                        <Maximize2 className="size-3.5" aria-hidden />
+                        {content.lookInsideLabel}
+                        <span className="sr-only">: {MODULE_LABELS[item.module]}</span>
+                      </span>
+                    </a>
                   </div>
                 </RevealItem>
               ))}
             </RevealGroup>
           </div>
         </Reveal>
+        <ModuleLightbox modules={content.modules} heading={content.insideHeading} />
       </Container>
     </section>
   );
