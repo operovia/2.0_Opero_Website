@@ -93,7 +93,7 @@ Each time the site starts, it applies any database updates that arrived with new
 
 ## The module screenshots
 
-Each module card on the home page has a magnifying glass (Look inside) that opens a screenshot of the module in a lightbox. The pictures are drawn, not captured: `scripts/module-shots/<module>.html` is the screen, with fictional data, and `node scripts/module-shots/render.mjs` renders them to `public/modules/<module>.png` (set `CHROME_PATH` to a Chromium if none is installed for Playwright). Edit the caption under each picture in Content, Home, Platform.
+Each module card on the home page opens a screenshot of the module in a lightbox when pressed. The pictures are drawn, not captured: `scripts/module-shots/<module>.html` is the screen, with fictional data, and `node scripts/module-shots/render.mjs` renders them to `public/modules/<module>.png` (set `CHROME_PATH` to a Chromium if none is installed for Playwright). Edit the caption under each picture in Content, Home, Platform.
 
 ## For developers
 

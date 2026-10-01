@@ -1,4 +1,3 @@
-import { Search } from 'lucide-react';
 import { Reveal, RevealGroup, RevealItem } from '@/components/motion/reveal';
 import { BrandMark } from '@/components/brand/brand-mark';
 import { MODULE_LABELS, moduleShotPath } from '@/content/constants';
@@ -90,32 +89,25 @@ export function Platform({ content }: { content: SectionData<'home', 'platform'>
             >
               {content.modules.map((item) => (
                 <RevealItem as="li" key={item.module}>
-                  <div
+                  {/* The whole card opens the module's screen in the lightbox, or, without JavaScript, the picture itself. */}
+                  <a
+                    href={moduleShotPath(item.module)}
+                    data-module-shot={item.module}
+                    title={content.lookInsideLabel}
                     className={cn(
-                      'module-card group relative flex h-full flex-col overflow-hidden rounded-2xl border border-line bg-surface p-6',
+                      'module-card relative flex h-full flex-col overflow-hidden rounded-2xl border border-line bg-surface p-6 focus-visible:ring-2 focus-visible:ring-focus-ring focus-visible:ring-offset-2 focus-visible:ring-offset-canvas focus-visible:outline-none',
                       glow[item.module],
                     )}
                   >
-                    <div className="flex items-center justify-between">
-                      <span aria-hidden className={cn('relative block size-8 rounded-full shadow-md', jewel[item.module])} />
-                      {/* The magnifying glass opens the module's screen in the lightbox, or, without JavaScript, the picture itself. */}
-                      <a
-                        href={moduleShotPath(item.module)}
-                        data-module-shot={item.module}
-                        title={content.lookInsideLabel}
-                        className="grid size-9 place-items-center rounded-full border border-line-strong bg-surface-raised text-fg-muted shadow-sm transition-colors hover:border-line-input hover:text-fg focus-visible:ring-2 focus-visible:ring-focus-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface focus-visible:outline-none"
-                      >
-                        <Search className="size-4" aria-hidden />
-                        <span className="sr-only">
-                          {content.lookInsideLabel}: {MODULE_LABELS[item.module]}
-                        </span>
-                      </a>
-                    </div>
+                    <span aria-hidden className={cn('relative block size-8 rounded-full shadow-md', jewel[item.module])} />
                     <h3 className="mt-7">
                       <BrandMark name={`module-${item.module}`} className="h-6" />
                     </h3>
                     <p className="mt-3 text-sm text-fg-muted">{item.description}</p>
-                  </div>
+                    <span className="sr-only">
+                      {content.lookInsideLabel}: {MODULE_LABELS[item.module]}
+                    </span>
+                  </a>
                 </RevealItem>
               ))}
             </RevealGroup>

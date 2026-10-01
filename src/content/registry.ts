@@ -135,9 +135,9 @@ const platform = section({
       },
       { min: 1, max: 5 },
     ),
-    lookInsideLabel: text('Look inside button', {
+    lookInsideLabel: text('Look inside label', {
       max: 30,
-      hint: 'The magnifying glass on each module card: its tooltip and its name for screen readers. Opens a screenshot of the module.',
+      hint: "Each module card opens a screenshot of the module when pressed; this is the card's tooltip and what screen readers hear.",
     }),
     insideHeading: text('Screenshot heading', { max: 60, hint: '{module} becomes the module name, so "Inside {module}" reads Inside Studios.' }),
     oppieTitle: text('Oppie note', { max: 60, hint: 'Beside the Oppie mark, in the middle of the lines joining the core and the modules.' }),
