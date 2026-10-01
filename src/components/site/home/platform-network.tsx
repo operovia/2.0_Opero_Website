@@ -68,7 +68,7 @@ export function PlatformNetwork({ modules, title, detail }: Props) {
       style={{ '--links': count } as CSSProperties}
     >
       {count > 1 ? (
-        <div aria-hidden className="platform-thread absolute top-1/2 hidden h-px -translate-y-1/2 lg:block" style={{ backgroundImage: thread }}>
+        <div aria-hidden className="platform-thread absolute hidden h-px lg:block" style={{ backgroundImage: thread }}>
           <span className="absolute inset-y-0 left-0 w-1/2 overflow-hidden">
             <Light variants={leftward} delay={start} />
           </span>
@@ -84,7 +84,7 @@ export function PlatformNetwork({ modules, title, detail }: Props) {
           return (
             <div key={`${module}-${i}`} className="relative">
               {outer ? <span className={cn('platform-corner', i === 0 ? 'platform-corner-start' : 'platform-corner-end', corner[module])} /> : null}
-              <span className={cn('absolute bottom-0 left-1/2 w-px -translate-x-1/2 overflow-hidden', outer ? 'platform-drop-outer' : 'top-1/2', line[module])}>
+              <span className={cn('platform-drop absolute bottom-0 overflow-hidden', outer ? 'platform-drop-outer' : 'platform-drop-inner', line[module])}>
                 <Light variants={down} delay={reaches(i)} vertical />
               </span>
               <span className={cn('absolute bottom-0 left-1/2 size-2.5 -translate-x-1/2 translate-y-1/2 rounded-full', jewel[module])} />
@@ -93,7 +93,7 @@ export function PlatformNetwork({ modules, title, detail }: Props) {
         })}
       </div>
       {/* One line from the core down to Oppie, at the middle of the thread; light runs up it from Oppie. */}
-      <div aria-hidden className="platform-stem absolute top-0 bottom-1/2 hidden w-px -translate-x-1/2 lg:block">
+      <div aria-hidden className="platform-stem absolute top-0 hidden w-px lg:block">
         <span className="absolute inset-0 overflow-hidden bg-fg-subtle/40">
           <Light variants={up} delay={start} vertical />
         </span>

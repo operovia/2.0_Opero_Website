@@ -1027,8 +1027,16 @@
   /* The radius of the two corners where the joining line turns down to the first and last modules. */
   --corner: calc(var(--o-space-unit) * 4);
 }
-/* The half pixel keeps its ends exactly on the corners' edges, so no seam draws where they meet. */
+/*
+ * Every line here is placed by its edges, a half pixel either side of the
+ * point it marks, never centered with a transform: the browser rounds box
+ * edges to whole pixels, the same way for every line and corner, while a
+ * half-pixel transform would blur a line across two pixels and show a step
+ * wherever it meets a corner. Where two lines meet, one ends exactly where
+ * the other begins.
+ */
 .platform-thread {
+  top: calc(50% - 0.5px);
   left: calc(var(--col) / 2 - 0.5px + 2 * var(--corner));
   width: calc(var(--span) + 1px - 4 * var(--corner));
 }
@@ -1060,7 +1068,14 @@
   border-right-style: solid;
   border-top-right-radius: var(--corner);
 }
-/* The first and last modules' lines start where their corner ends. */
+/* The line down to each module: the inner ones start just under the joining line, the first and last where their corner ends. */
+.platform-drop {
+  left: calc(50% - 0.5px);
+  width: 1px;
+}
+.platform-drop-inner {
+  top: calc(50% + 0.5px);
+}
 .platform-drop-outer {
   top: calc(50% - 0.5px + 2 * var(--corner));
 }
@@ -1069,8 +1084,10 @@
     left: calc(var(--col) / 2 + var(--span) / 2);
   }
 }
+/* The stem from the core down to the joining line, ending where that line begins. */
 .platform-stem {
-  left: calc(var(--col) / 2 + var(--span) / 2);
+  left: calc(var(--col) / 2 + var(--span) / 2 - 0.5px);
+  bottom: calc(50% + 0.5px);
 }
 
 /* Design partner card: a border of jewel light that turns slowly. */
