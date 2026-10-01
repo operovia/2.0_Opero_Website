@@ -35,7 +35,7 @@ The renderer serves the repo root, so every reference is root-relative to it:
     <link rel="stylesheet" href="/scripts/module-shots/shell.css">
     <style>/* page-specific rules only */</style></head>
     <body>
-      <div class="sidebar"> .brand, .lockup, .nav, .foot </div>
+      <div class="sidebar"> .brand, .nav, .foot </div>
       <div class="header"> .pill, .hdr-right </div>
       <div class="content"> .glow, .crumbs, .page-header, then the page </div>
     </body></html>
@@ -46,9 +46,8 @@ Geometry: sidebar x 0 to 264; header x 264 to 1440, y 0 to 64; content inner x 2
 
 ### Marks
 
-- Opero lockup, sidebar brand band: `<img class="mark" src="/public/brand/opero/opero-centered-dark.webp" alt="Opero">` (already trimmed; the shell sets it 40px tall, about 106px wide).
-- Module wordmark, trimmed to its artwork, 18px tall, after a 16px `.jewel` disc:
-  `<div class="lockup"><span class="jewel"></span><svg class="mark" viewBox="BOUNDS"><image href="/public/brand/modules/<module>-dark.svg" x="290" y="-379" width="W" height="2037"/></svg></div>`
+- Sidebar brand band, where an app's name sits: the module's own name, its wordmark trimmed to its artwork and set 24px tall, after a 20px `.jewel` disc. The Opero lockup does not appear on these screens.
+  `<div class="brand"><span class="jewel"></span><svg class="mark" viewBox="BOUNDS"><image href="/public/brand/modules/<module>-dark.svg" x="290" y="-379" width="W" height="2037"/></svg></div>`
   with, per module (from `public/brand/manifest.json`):
   - build: `viewBox="819 150 2377 980"`, width 3435
   - studios: `viewBox="819 150 3751 980"`, width 4809
