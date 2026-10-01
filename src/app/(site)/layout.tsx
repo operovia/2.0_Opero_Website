@@ -8,8 +8,7 @@ import { SiteFooter } from '@/components/site/site-footer';
 import { SiteHeader } from '@/components/site/site-header';
 import { openGraph } from '@/content/metadata';
 import { getPage, getPublicSettings, isPreview } from '@/content/store';
-import { getSession } from '@/server/auth/session';
-import { getGuest } from '@/server/guests';
+import { requireEntry } from '@/server/entry';
 import { investorHubHidden, withVisibleLinks } from '@/server/investor-hub';
 import { siteUrl } from '@/server/env';
 
@@ -27,11 +26,11 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function SiteLayout({ children }: LayoutProps<'/'>) {
-  const [{ settings }, site, preview, session, guest] = await Promise.all([getPublicSettings(), getPage('site'), isPreview(), getSession(), getGuest()]);
+  const [{ settings }, site, preview, access] = await Promise.all([getPublicSettings(), getPage('site'), isPreview(), requireEntry()]);
 
-  if (settings.maintenanceMode && !session) return <MaintenancePage content={site.maintenance} />;
+  if (settings.maintenanceMode && !access.admin) return <MaintenancePage content={site.maintenance} />;
 
-  const hubHidden = investorHubHidden(session !== null || guest !== null);
+  const hubHidden = investorHubHidden(access);
   const header = withVisibleLinks(site.header, hubHidden, siteUrl());
   const footer = withVisibleLinks(site.footer, hubHidden, siteUrl());
 
@@ -59,7 +58,7 @@ export default async function SiteLayout({ children }: LayoutProps<'/'>) {
       </main>
       <SiteFooter content={footer} email={settings.contactEmail} />
       <DemoDialog content={site.demoForm} />
-      {session ? <AdminDoor /> : null}
+      {access.admin ? <AdminDoor /> : null}
       {settings.analyticsSnippet ? <div hidden dangerouslySetInnerHTML={{ __html: settings.analyticsSnippet }} /> : null}
     </MotionRoot>
   );

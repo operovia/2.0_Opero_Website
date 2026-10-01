@@ -1,12 +1,20 @@
-import { FOUNDER_PATH, INVESTOR_HUB_PATH } from '@/content/constants';
+import { FOUNDER_PATH, type GuestRole, INVESTOR_HUB_PATH } from '@/content/constants';
+
+/** Who is looking: a signed-in admin, a guest who came through the front door with a role, or nobody in particular. */
+export type Access = { admin: boolean; role: GuestRole | null };
 
 /**
- * The Investor Hub shows only to people with a key: guests who came through
- * the front door and signed-in admins. Everyone else gets the public Founder
- * page instead, and exactly one of the two tabs is ever in the header.
+ * The Investor Hub shows only to signed-in admins and to guests invited as
+ * investors. Everyone else gets the Founder page instead, and exactly one of
+ * the two tabs is ever in the header.
  */
-export function investorHubHidden(keyed: boolean): boolean {
-  return !keyed;
+export function investorHubHidden({ admin, role }: Access): boolean {
+  return !admin && role !== 'investor';
+}
+
+/** While the site is private, only admins and guests of either role see it; everyone else is sent to the front door. */
+export function siteClosed(privateSite: boolean, { admin, role }: Access): boolean {
+  return privateSite && !admin && role === null;
 }
 
 /** Whether a link, written as a path or as a full address on this site, goes to the given page. */

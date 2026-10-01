@@ -1,4 +1,5 @@
 import { renderEmail, type RenderedEmail } from './layout';
+import { GUEST_ROLE_LABELS, type GuestRole } from '@/content/constants';
 
 type Email = RenderedEmail & { subject: string };
 
@@ -24,16 +25,18 @@ export function adminInviteEmail({ inviterName, url, expiresInDays }: { inviterN
 }
 
 /** Sent the first time a guest gives their address at the front door. */
-export function guestEnteredNotification({ email, ip }: { email: string; ip: string }, adminUrl: string): Email {
+export function guestEnteredNotification({ email, role, ip }: { email: string; role: GuestRole; ip: string }, adminUrl: string): Email {
   const subject = `${email} entered the site as a guest`;
+  const { label, sees } = GUEST_ROLE_LABELS[role];
   return {
     subject,
     ...renderEmail({
       preheader: `${email} came through the front door for the first time.`,
       heading: 'A guest came in',
-      body: [`${email} came through the front door for the first time and can now see the Investor Hub. Their key keeps working until you remove the address.`],
+      body: [`${email} came through the front door for the first time and can now see ${sees}. Their key keeps working until you remove the address.`],
       details: [
         ['Email', email],
+        ['Invited as', label],
         ['IP address', ip],
       ],
       button: { label: 'Open the guest list', url: adminUrl },

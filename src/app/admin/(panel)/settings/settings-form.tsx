@@ -18,6 +18,7 @@ export type SettingsFormValues = {
   homeMetaDescription: string;
   analyticsSnippet: string;
   maintenanceMode: boolean;
+  privateSite: boolean;
 };
 
 export function SettingsForm({ values, images }: { values: SettingsFormValues; images: { id: string; filename: string }[] }) {
@@ -34,6 +35,7 @@ export function SettingsForm({ values, images }: { values: SettingsFormValues; i
     homeMetaDescription: values.homeMetaDescription,
     analyticsSnippet: values.analyticsSnippet,
     maintenanceMode: values.maintenanceMode ? 'on' : '',
+    privateSite: values.privateSite ? 'on' : '',
   };
 
   return (
@@ -79,16 +81,32 @@ export function SettingsForm({ values, images }: { values: SettingsFormValues; i
       <Card>
         <CardHeader title="Search and sharing" description="How the home page appears in search results and when shared." />
         <CardBody className="space-y-6">
-          <Field name="homeMetaTitle" label="Home page title" hint="Shown in browser tabs and search results. Aim for under 60 characters." error={e.homeMetaTitle} required>
+          <Field
+            name="homeMetaTitle"
+            label="Home page title"
+            hint="Shown in browser tabs and search results. Aim for under 60 characters."
+            error={e.homeMetaTitle}
+            required
+          >
             {(p) => <Input {...p} defaultValue={v.homeMetaTitle} />}
           </Field>
-          <Field name="homeMetaDescription" label="Home page description" hint="Shown under the title in search results. Aim for under 160 characters." error={e.homeMetaDescription} required>
+          <Field
+            name="homeMetaDescription"
+            label="Home page description"
+            hint="Shown under the title in search results. Aim for under 160 characters."
+            error={e.homeMetaDescription}
+            required
+          >
             {(p) => <Textarea {...p} rows={3} defaultValue={v.homeMetaDescription} />}
           </Field>
           <Field
             name="socialImageId"
             label="Default social share image"
-            hint={images.length ? 'Shown when a page is shared on social media or in messages.' : 'Upload an image in Media to choose it here. Until then a generated image is used.'}
+            hint={
+              images.length
+                ? 'Shown when a page is shared on social media or in messages.'
+                : 'Upload an image in Media to choose it here. Until then a generated image is used.'
+            }
             error={e.socialImageId}
           >
             {(p) => (
@@ -111,6 +129,18 @@ export function SettingsForm({ values, images }: { values: SettingsFormValues; i
           <Field name="analyticsSnippet" label="Analytics snippet" hint="Added to every public page. Leave empty for no analytics." error={e.analyticsSnippet}>
             {(p) => <Textarea {...p} rows={5} spellCheck={false} className="font-mono" defaultValue={v.analyticsSnippet} />}
           </Field>
+        </CardBody>
+      </Card>
+
+      <Card>
+        <CardHeader title="Front door" description="Who can see the site at all." />
+        <CardBody>
+          <Switch
+            name="privateSite"
+            defaultChecked={v.privateSite === 'on'}
+            label="Private site"
+            description="Everyone enters through the front door with an address on the guest list, and search engines are kept out. Off, the site is public, and the door only opens the Investor Hub for guests invited as investors."
+          />
         </CardBody>
       </Card>
 

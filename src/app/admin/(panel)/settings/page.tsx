@@ -35,10 +35,14 @@ export default async function SettingsPage() {
           homeMetaDescription: settings.homeMetaDescription,
           analyticsSnippet: settings.analyticsSnippet,
           maintenanceMode: settings.maintenanceMode,
+          privateSite: settings.privateSite,
         }}
       />
       <Card>
-        <CardHeader title="Investor Hub" description="The Investor Hub opens for the people on the guest list, and for you while signed in. Everyone else gets the Founder page." />
+        <CardHeader
+          title="Guests"
+          description="The guest list says who may come in through the front door and what they see: a visitor the site, an investor the site and the Investor Hub. You see everything while signed in."
+        />
         <CardBody>
           <ButtonLink href="/admin/guests" variant="secondary" size="sm">
             Manage the guest list

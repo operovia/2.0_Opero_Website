@@ -62,7 +62,7 @@ function copyFor(content: Content, answer: Answer): { message: string; help: str
 
 const dissolve = { duration: seconds(duration.slow), ease: ease.standard };
 
-type Props = { content: Content; contactEmail: string; alreadyIn: boolean };
+type Props = { content: Content; contactEmail: string; alreadyIn: boolean; publicSite: boolean };
 
 /**
  * The front door (/welcome): one dark screen with the mark, a point of light
@@ -74,7 +74,7 @@ type Props = { content: Content; contactEmail: string; alreadyIn: boolean };
  * canvas, and the veil (src/components/door/door-veil.tsx) takes over at the
  * exact spot of the mark before the home page is pushed.
  */
-export function Door({ content, contactEmail, alreadyIn }: Props) {
+export function Door({ content, contactEmail, alreadyIn, publicSite }: Props) {
   const [state, formAction] = useActionState(enterDoor, idleState);
   // Read once: the action's cookie write re-renders the page, and nothing on screen may change under the guest mid-choreography.
   const [inside] = useState(alreadyIn);
@@ -363,12 +363,14 @@ export function Door({ content, contactEmail, alreadyIn }: Props) {
           className="door-fade flex w-full flex-col items-center gap-3 py-10 text-center [animation-delay:700ms] sm:flex-row sm:items-end sm:justify-between sm:text-left"
         >
           <p className="text-micro font-semibold text-fg-subtle uppercase">{content.companyLine}</p>
-          <p className="text-sm text-fg-subtle">
-            {content.publicLine}{' '}
-            <Link href="/" prefetch={false} className={linkStyle}>
-              {content.publicLinkLabel}
-            </Link>
-          </p>
+          {publicSite ? (
+            <p className="text-sm text-fg-subtle">
+              {content.publicLine}{' '}
+              <Link href="/" prefetch={false} className={linkStyle}>
+                {content.publicLinkLabel}
+              </Link>
+            </p>
+          ) : null}
         </m.div>
       </div>
     </main>

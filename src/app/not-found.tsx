@@ -5,16 +5,15 @@ import { SiteFooter } from '@/components/site/site-footer';
 import { SiteHeader } from '@/components/site/site-header';
 import { getPage, getPublicSettings } from '@/content/store';
 import { plainHeadline } from '@/lib/headline';
-import { getSession } from '@/server/auth/session';
+import { requireEntry } from '@/server/entry';
 import { siteUrl } from '@/server/env';
-import { getGuest } from '@/server/guests';
 import { investorHubHidden, withVisibleLinks } from '@/server/investor-hub';
 
-/** An address that matches no page. It has no site frame around it, so it brings its own header and footer. */
+/** An address that matches no page. It has no site frame around it, so it brings its own header and footer, and the site's gate. */
 export default async function NotFound() {
-  const [site, { settings }, session, guest] = await Promise.all([getPage('site'), getPublicSettings(), getSession(), getGuest()]);
-  if (settings.maintenanceMode && !session) return <MaintenancePage content={site.maintenance} />;
-  const hubHidden = investorHubHidden(session !== null || guest !== null);
+  const [site, { settings }, access] = await Promise.all([getPage('site'), getPublicSettings(), requireEntry()]);
+  if (settings.maintenanceMode && !access.admin) return <MaintenancePage content={site.maintenance} />;
+  const hubHidden = investorHubHidden(access);
   return (
     <>
       {/* Not-found pages take no metadata export; React moves this title into the head. */}

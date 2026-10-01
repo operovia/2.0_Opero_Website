@@ -16,6 +16,7 @@ export async function getSettings(): Promise<SiteSettings> {
       socialImageId: null,
       analyticsSnippet: '',
       maintenanceMode: false,
+      privateSite: true,
       updatedBy: null,
       updatedAt: new Date(0),
     }

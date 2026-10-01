@@ -3,6 +3,7 @@ import { and, asc, eq, gt, max, sql } from 'drizzle-orm';
 import { cookies } from 'next/headers';
 import { cache } from 'react';
 import { z } from 'zod';
+import { GUEST_ROLES, type GuestRole } from '@/content/constants';
 import { db } from '@/db/client';
 import { guestInvites, guestSessions } from '@/db/schema';
 import { GUEST_COOKIE, GUEST_COOKIE_INSECURE, GUEST_TTL_SECONDS } from '@/server/auth/constants';
@@ -21,7 +22,7 @@ import { getSettings, notificationRecipients } from '@/server/settings';
  * key stops working on the very next request everywhere.
  */
 
-export type Guest = { inviteId: string; email: string; sessionId: string };
+export type Guest = { inviteId: string; email: string; role: GuestRole; sessionId: string };
 
 const GUEST_TTL_MS = GUEST_TTL_SECONDS * 1000;
 /** Extend a session's expiry at most this often. */
@@ -57,7 +58,7 @@ export const getGuest = cache(async (): Promise<Guest | null> => {
   const id = sha256(token);
 
   const [row] = await db
-    .select({ lastSeenAt: guestSessions.lastSeenAt, inviteId: guestInvites.id, email: guestInvites.email })
+    .select({ lastSeenAt: guestSessions.lastSeenAt, inviteId: guestInvites.id, email: guestInvites.email, role: guestInvites.role })
     .from(guestSessions)
     .innerJoin(guestInvites, eq(guestSessions.inviteId, guestInvites.id))
     .where(and(eq(guestSessions.id, id), gt(guestSessions.expiresAt, new Date())))
@@ -71,13 +72,13 @@ export const getGuest = cache(async (): Promise<Guest | null> => {
       .where(eq(guestSessions.id, id));
   }
 
-  return { inviteId: row.inviteId, email: row.email, sessionId: id };
+  return { inviteId: row.inviteId, email: row.email, role: row.role, sessionId: id };
 });
 
 /** The invite for an already-normalized address: one indexed lookup, the same cost whether or not it matches. */
-export async function findInvite(email: string): Promise<{ id: string; email: string; firstEnteredAt: Date | null } | null> {
+export async function findInvite(email: string): Promise<{ id: string; email: string; role: GuestRole; firstEnteredAt: Date | null } | null> {
   const [row] = await db
-    .select({ id: guestInvites.id, email: guestInvites.email, firstEnteredAt: guestInvites.firstEnteredAt })
+    .select({ id: guestInvites.id, email: guestInvites.email, role: guestInvites.role, firstEnteredAt: guestInvites.firstEnteredAt })
     .from(guestInvites)
     .where(eq(guestInvites.email, email))
     .limit(1);
@@ -120,10 +121,10 @@ export async function recordGuestEntry(inviteId: string): Promise<{ firstTime: b
 }
 
 /** Tells the notification recipients that a guest entered for the first time. Failures are logged, never thrown. */
-export async function notifyGuestEntered(invite: { email: string }, ip: string): Promise<void> {
+export async function notifyGuestEntered(invite: { email: string; role: GuestRole }, ip: string): Promise<void> {
   try {
     const settings = await getSettings();
-    const message = guestEnteredNotification({ email: invite.email, ip }, `${siteUrl()}/admin/guests`);
+    const message = guestEnteredNotification({ email: invite.email, role: invite.role, ip }, `${siteUrl()}/admin/guests`);
     const results = await sendEmails(notificationRecipients(settings).map((to) => ({ to, ...message })));
     for (const result of results) if (!result.ok) console.error('[opero] Could not send a guest entry notification:', result.error);
   } catch (error) {
@@ -135,6 +136,7 @@ export type GuestRow = {
   id: string;
   email: string;
   note: string;
+  role: GuestRole;
   createdAt: Date;
   firstEnteredAt: Date | null;
   lastEnteredAt: Date | null;
@@ -149,6 +151,7 @@ export async function listGuests(): Promise<GuestRow[]> {
       id: guestInvites.id,
       email: guestInvites.email,
       note: guestInvites.note,
+      role: guestInvites.role,
       createdAt: guestInvites.createdAt,
       firstEnteredAt: guestInvites.firstEnteredAt,
       lastEnteredAt: guestInvites.lastEnteredAt,
@@ -160,11 +163,22 @@ export async function listGuests(): Promise<GuestRow[]> {
     .orderBy(asc(guestInvites.createdAt), asc(guestInvites.email));
 }
 
+/** Whether a value names a guest role. */
+export function isGuestRole(value: unknown): value is GuestRole {
+  return typeof value === 'string' && (GUEST_ROLES as readonly string[]).includes(value);
+}
+
 /**
- * Adds addresses to the list. Each is normalized and checked for the shape of
- * an email address; ones already on the list are left as they are.
+ * Adds addresses to the list, all with the same role and note. Each is
+ * normalized and checked for the shape of an email address; ones already on
+ * the list are left as they are, role included.
  */
-export async function addGuests(emails: string[], note: string, adminId: string | null): Promise<{ added: string[]; existing: string[]; invalid: string[] }> {
+export async function addGuests(
+  emails: string[],
+  role: GuestRole,
+  note: string,
+  adminId: string | null,
+): Promise<{ added: string[]; existing: string[]; invalid: string[] }> {
   const valid: string[] = [];
   const invalid: string[] = [];
   const seen = new Set<string>();
@@ -179,11 +193,21 @@ export async function addGuests(emails: string[], note: string, adminId: string 
 
   const inserted = await db
     .insert(guestInvites)
-    .values(valid.map((email) => ({ email, note: note.trim(), invitedBy: adminId })))
+    .values(valid.map((email) => ({ email, role, note: note.trim(), invitedBy: adminId })))
     .onConflictDoNothing({ target: guestInvites.email })
     .returning({ email: guestInvites.email });
   const added = new Set(inserted.map((row) => row.email));
   return { added: valid.filter((email) => added.has(email)), existing: valid.filter((email) => !added.has(email)), invalid };
+}
+
+/** Changes what a guest may see. Their open sessions follow at once: the role is read with the key on every request. */
+export async function setGuestRole(id: string, role: GuestRole): Promise<{ email: string; changed: boolean } | null> {
+  if (!isUuid(id)) return null;
+  const [before] = await db.select({ email: guestInvites.email, role: guestInvites.role }).from(guestInvites).where(eq(guestInvites.id, id)).limit(1);
+  if (!before) return null;
+  if (before.role === role) return { email: before.email, changed: false };
+  await db.update(guestInvites).set({ role }).where(eq(guestInvites.id, id));
+  return { email: before.email, changed: true };
 }
 
 /** Takes an address off the list. Its sessions go with it, so its key stops working at once. */

@@ -3,6 +3,7 @@ import type { MetadataRoute } from 'next';
 import { connection } from 'next/server';
 import { FOUNDER_PATH } from '@/content/constants';
 import { db } from '@/db/client';
+import { getPublicSettings } from '@/content/store';
 import { contentSections } from '@/db/schema';
 import { siteUrl } from '@/server/env';
 
@@ -22,10 +23,16 @@ const pages: Entry[] = [
   { page: 'privacy', path: '/privacy', priority: 0.3 },
 ];
 
-/** The public pages at the site's own address. Surveys, the admin, the front door, and the Investor Hub (guests and admins only) are left out on purpose. */
+/**
+ * The public pages at the site's own address. Surveys, the admin, the front
+ * door, and the Investor Hub (investors and admins only) are left out on
+ * purpose, and a private site lists nothing.
+ */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // The address and the dates come from the running site, never from build time.
   await connection();
+  const { settings } = await getPublicSettings();
+  if (settings.privateSite) return [];
   const base = siteUrl();
   const rows = await db
     .select({ page: contentSections.page, updated: max(contentSections.publishedAt) })

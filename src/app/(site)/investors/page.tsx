@@ -12,14 +12,13 @@ import { openGraph } from '@/content/metadata';
 import { getPage } from '@/content/store';
 import { cn } from '@/lib/cn';
 import { renderHeadline } from '@/lib/headline';
-import { getSession } from '@/server/auth/session';
-import { getGuest } from '@/server/guests';
+import { getAccess, requireEntry } from '@/server/entry';
 import { investorHubHidden } from '@/server/investor-hub';
 
 export async function generateMetadata(): Promise<Metadata> {
-  const [{ intro }, session, guest] = await Promise.all([getPage('investors'), getSession(), getGuest()]);
+  const [{ intro }, access] = await Promise.all([getPage('investors'), getAccess()]);
   // Hidden pages give away nothing, not even their title.
-  if (investorHubHidden(session !== null || guest !== null)) notFound();
+  if (investorHubHidden(access)) notFound();
   const title = intro.eyebrow || 'Investor Hub';
   return {
     title,
@@ -39,8 +38,8 @@ const lines = (text: string) =>
     .filter(Boolean);
 
 export default async function InvestorsPage() {
-  const [session, guest] = await Promise.all([getSession(), getGuest()]);
-  if (investorHubHidden(session !== null || guest !== null)) notFound();
+  const access = await requireEntry();
+  if (investorHubHidden(access)) notFound();
   const { intro, story, next, platform, round, contact } = await getPage('investors');
   const areas = platform.areas.map((area) => ({ name: area.name, today: lines(area.today), extended: lines(area.extended), next: lines(area.next) }));
   // Worked out from the lists, so they always agree with them.

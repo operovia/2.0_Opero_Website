@@ -23,3 +23,14 @@ export const DOOR_ENHANCED_FIELD = 'enhanced';
 export type DoorAnswer = 'wrong' | 'empty' | 'invalid' | 'limited' | 'trouble';
 
 export const DOOR_ANSWERS: readonly DoorAnswer[] = ['wrong', 'empty', 'invalid', 'limited', 'trouble'];
+
+/**
+ * What a guest on the list may see: a visitor the site, an investor the site
+ * and the Investor Hub. A private site lets only guests (and admins) in at all.
+ */
+export const GUEST_ROLES = ['visitor', 'investor'] as const;
+export type GuestRole = (typeof GUEST_ROLES)[number];
+export const GUEST_ROLE_LABELS: Record<GuestRole, { label: string; sees: string }> = {
+  visitor: { label: 'Visitor', sees: 'the site' },
+  investor: { label: 'Investor', sees: 'the site and the Investor Hub' },
+};

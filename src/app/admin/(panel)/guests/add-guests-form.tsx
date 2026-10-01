@@ -1,9 +1,10 @@
 'use client';
 
 import { useActionState } from 'react';
-import { Field, Input, Textarea } from '@/components/ui/field';
+import { Field, Input, Select, Textarea } from '@/components/ui/field';
 import { Notice } from '@/components/ui/notice';
 import { SubmitButton } from '@/components/ui/submit-button';
+import { GUEST_ROLE_LABELS, GUEST_ROLES } from '@/content/constants';
 import { idleState } from '@/lib/forms';
 import { addGuestsAction } from './actions';
 
@@ -27,6 +28,23 @@ export function AddGuestsForm() {
             defaultValue={state.values?.people ?? ''}
             placeholder={'Jane Doe <jane@example.com>\njohn@example.com'}
           />
+        )}
+      </Field>
+      <Field
+        name="role"
+        label="They may see"
+        hint="A visitor sees the site. An investor sees the site and the Investor Hub. You can change this later from the list."
+        error={state.fieldErrors?.role}
+        required
+      >
+        {(p) => (
+          <Select {...p} defaultValue={state.values?.role ?? 'visitor'}>
+            {GUEST_ROLES.map((role) => (
+              <option key={role} value={role}>
+                {GUEST_ROLE_LABELS[role].label}: {GUEST_ROLE_LABELS[role].sees}
+              </option>
+            ))}
+          </Select>
         )}
       </Field>
       <Field name="note" label="Note" hint="A reminder to yourself of who they are. Only you see it." error={state.fieldErrors?.note} optionalLabel="optional">

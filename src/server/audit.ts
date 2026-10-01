@@ -24,6 +24,7 @@ export type AuditAction =
   | 'survey.export'
   | 'survey.responses.delete'
   | 'guest.add'
+  | 'guest.role'
   | 'guest.remove'
   /** Written with no actor; the target is the address that came in. */
   | 'door.enter';

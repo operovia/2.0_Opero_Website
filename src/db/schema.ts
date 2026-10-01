@@ -1,20 +1,9 @@
 import { sql } from 'drizzle-orm';
-import {
-  bigint,
-  boolean,
-  check,
-  index,
-  integer,
-  jsonb,
-  pgTable,
-  text,
-  timestamp,
-  uniqueIndex,
-  uuid,
-} from 'drizzle-orm/pg-core';
+import { bigint, boolean, check, index, integer, jsonb, pgTable, text, timestamp, uniqueIndex, uuid } from 'drizzle-orm/pg-core';
 import type { SceneTable } from '../content/scene-table';
 import type { RichDoc } from '../lib/rich-text/types';
 import { questionTypes, surveyStatuses, type SurveyAnswers, type SurveyOption } from '../surveys/types';
+import { GUEST_ROLES } from '@/content/constants';
 
 const createdAt = () => timestamp('created_at', { withTimezone: true }).notNull().defaultNow();
 const updatedAt = () =>
@@ -114,6 +103,8 @@ export const guestInvites = pgTable(
     email: text('email').notNull(),
     /** The owner's note to himself about who this is. */
     note: text('note').notNull().default(''),
+    /** What the guest may see: a visitor the site, an investor the site and the Investor Hub. */
+    role: text('role', { enum: GUEST_ROLES }).notNull().default('visitor'),
     invitedBy: uuid('invited_by').references(() => adminUsers.id, { onDelete: 'set null' }),
     /** The first and the latest time this address came through the door. */
     firstEnteredAt: timestamp('first_entered_at', { withTimezone: true }),
@@ -152,7 +143,10 @@ export const siteSettings = pgTable(
     siteName: text('site_name').notNull(),
     contactEmail: text('contact_email').notNull(),
     /** Who receives demo requests and partner applications. */
-    notificationRecipients: text('notification_recipients').array().notNull().default(sql`'{}'::text[]`),
+    notificationRecipients: text('notification_recipients')
+      .array()
+      .notNull()
+      .default(sql`'{}'::text[]`),
     /** "design partner" by default; flows into copy through the {partner} tokens. */
     partnerProgramLabel: text('partner_program_label').notNull(),
     socialImageId: uuid('social_image_id').references(() => media.id, { onDelete: 'set null' }),
@@ -160,6 +154,8 @@ export const siteSettings = pgTable(
     homeMetaDescription: text('home_meta_description').notNull(),
     analyticsSnippet: text('analytics_snippet').notNull().default(''),
     maintenanceMode: boolean('maintenance_mode').notNull().default(false),
+    /** Everyone enters through the front door with an address on the guest list; off, the site is public. */
+    privateSite: boolean('private_site').notNull().default(true),
     updatedBy: uuid('updated_by').references(() => adminUsers.id, { onDelete: 'set null' }),
     updatedAt: updatedAt(),
   },
@@ -234,7 +230,10 @@ export const consoleScenes = pgTable(
     answerTag: text('answer_tag').notNull().default(''),
     answerMain: text('answer_main').notNull(),
     answerSupport: text('answer_support').notNull().default(''),
-    chips: text('chips').array().notNull().default(sql`'{}'::text[]`),
+    chips: text('chips')
+      .array()
+      .notNull()
+      .default(sql`'{}'::text[]`),
     /** An optional small grid in the answer, such as a rent roll (src/content/scene-table.ts). */
     answerTable: jsonb('answer_table').$type<SceneTable>(),
     /** Oppie's optional question after the answer, such as offering an export. */

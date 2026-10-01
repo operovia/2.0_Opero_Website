@@ -22,5 +22,5 @@ export async function generateMetadata(): Promise<Metadata> {
  */
 export default async function WelcomePage() {
   const [{ door }, { settings }, guest] = await Promise.all([getPage('welcome'), getPublicSettings(), getGuest()]);
-  return <Door content={door} contactEmail={settings.contactEmail} alreadyIn={guest !== null} />;
+  return <Door content={door} contactEmail={settings.contactEmail} alreadyIn={guest !== null} publicSite={!settings.privateSite} />;
 }

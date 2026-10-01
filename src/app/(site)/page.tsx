@@ -8,6 +8,7 @@ import { Problem } from '@/components/site/home/problem';
 import { Proof } from '@/components/site/home/proof';
 import { openGraph } from '@/content/metadata';
 import { getPage, getPublicSettings, getScenes } from '@/content/store';
+import { requireEntry } from '@/server/entry';
 
 export async function generateMetadata(): Promise<Metadata> {
   const { settings } = await getPublicSettings();
@@ -19,6 +20,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function HomePage() {
+  await requireEntry();
   const [home, scenes] = await Promise.all([getPage('home'), getScenes()]);
   return (
     <>

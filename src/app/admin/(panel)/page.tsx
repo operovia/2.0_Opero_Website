@@ -47,6 +47,20 @@ export default async function DashboardPage() {
         </Notice>
       ) : null}
 
+      {settings.privateSite ? (
+        <Notice title="The site is private">
+          Only people on the guest list, and you while signed in, can see it; everyone else meets the front door.{' '}
+          <Link href="/admin/guests" className="font-medium text-fg underline underline-offset-4">
+            Guests
+          </Link>
+          {' or '}
+          <Link href="/admin/settings" className="font-medium text-fg underline underline-offset-4">
+            Settings
+          </Link>
+          .
+        </Notice>
+      ) : null}
+
       {toReview ? (
         <Notice title="Drafted copy to review">
           {toReview === 1 ? 'One section was' : `${toReview} sections were`} drafted for the site rather than taken from approved copy.{' '}

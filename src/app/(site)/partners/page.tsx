@@ -8,6 +8,7 @@ import { openGraph } from '@/content/metadata';
 import { getPage } from '@/content/store';
 import { cn } from '@/lib/cn';
 import { plainHeadline, renderHeadline } from '@/lib/headline';
+import { requireEntry } from '@/server/entry';
 
 export async function generateMetadata(): Promise<Metadata> {
   const { intro } = await getPage('partners');
@@ -18,6 +19,7 @@ export async function generateMetadata(): Promise<Metadata> {
 const jewels = ['jewel-crimson', 'jewel-violet', 'jewel-gold', 'jewel-green', 'jewel-teal'];
 
 export default async function PartnersPage() {
+  await requireEntry();
   const { intro, gets, asks, selection, apply } = await getPage('partners');
   return (
     <>

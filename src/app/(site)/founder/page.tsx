@@ -5,6 +5,7 @@ import { FOUNDER_PATH } from '@/content/constants';
 import { openGraph } from '@/content/metadata';
 import { getPage } from '@/content/store';
 import { plainHeadline } from '@/lib/headline';
+import { requireEntry } from '@/server/entry';
 
 export async function generateMetadata(): Promise<Metadata> {
   const [{ page }, { intro }] = await Promise.all([getPage('founder'), getPage('investors')]);
@@ -23,6 +24,7 @@ export async function generateMetadata(): Promise<Metadata> {
  * the Investor Hub's sections so both pages always say the same thing.
  */
 export default async function FounderPage() {
+  await requireEntry();
   const [{ page }, { intro, story }] = await Promise.all([getPage('founder'), getPage('investors')]);
   return (
     <>

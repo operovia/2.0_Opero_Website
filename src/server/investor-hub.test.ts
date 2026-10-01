@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { investorHubHidden, linksToFounder, linksToInvestorHub, visibleLinks, withVisibleLinks } from './investor-hub';
+import { investorHubHidden, linksToFounder, linksToInvestorHub, siteClosed, visibleLinks, withVisibleLinks } from './investor-hub';
 
 const site = 'https://opero.example';
 
@@ -9,19 +9,42 @@ const partners = { label: 'Design partners', href: '/partners' };
 const absoluteFounder = { label: 'Founder', href: 'https://opero.example/founder/' };
 const absoluteHub = { label: 'Investor Hub', href: 'https://opero.example/investors?from=nav' };
 
+const nobody = { admin: false, role: null } as const;
+const visitor = { admin: false, role: 'visitor' } as const;
+const investor = { admin: false, role: 'investor' } as const;
+const admin = { admin: true, role: null } as const;
+
 describe('Investor Hub visibility', () => {
-  it('is hidden from visitors', () => {
-    expect(investorHubHidden(false)).toBe(true);
+  it('is hidden from people without a key and from guests invited as visitors', () => {
+    expect(investorHubHidden(nobody)).toBe(true);
+    expect(investorHubHidden(visitor)).toBe(true);
   });
 
-  it('shows to anyone with a key: a guest or a signed-in admin', () => {
-    const guest = { inviteId: 'i', email: 'g@example.com', sessionId: 's' };
-    const session = { sessionId: 's', user: { id: 'u', email: 'a@example.com', name: 'A' } };
-    expect(investorHubHidden(null !== null || guest !== null)).toBe(false);
-    expect(investorHubHidden(session !== null || null !== null)).toBe(false);
-    expect(investorHubHidden(session !== null || guest !== null)).toBe(false);
+  it('shows to guests invited as investors and to signed-in admins', () => {
+    expect(investorHubHidden(investor)).toBe(false);
+    expect(investorHubHidden(admin)).toBe(false);
+    expect(investorHubHidden({ admin: true, role: 'visitor' })).toBe(false);
+  });
+});
+
+describe('a private site', () => {
+  it('is closed to people without a key', () => {
+    expect(siteClosed(true, nobody)).toBe(true);
   });
 
+  it('is open to guests of either role and to admins', () => {
+    expect(siteClosed(true, visitor)).toBe(false);
+    expect(siteClosed(true, investor)).toBe(false);
+    expect(siteClosed(true, admin)).toBe(false);
+  });
+
+  it('is open to everyone once the setting is off', () => {
+    expect(siteClosed(false, nobody)).toBe(false);
+    expect(siteClosed(false, visitor)).toBe(false);
+  });
+});
+
+describe('the Investor Hub tab', () => {
   it.each(['/investors', '/investors/', '/investors#talk', '/investors?from=nav', 'https://opero.example/investors'])('recognizes the hub at %j', (href) => {
     expect(linksToInvestorHub(href, site)).toBe(true);
     expect(linksToFounder(href, site)).toBe(false);
