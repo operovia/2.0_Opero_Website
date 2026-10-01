@@ -49,7 +49,7 @@ export default async function DashboardPage() {
 
       {settings.privateSite ? (
         <Notice title="The site is private">
-          Only people on the guest list, and you while signed in, can see it; everyone else meets the front door.{' '}
+          Only people on the guest list, and you on any browser where you are signed in, can see it; everyone else meets the front door.{' '}
           <Link href="/admin/guests" className="font-medium text-fg underline underline-offset-4">
             Guests
           </Link>

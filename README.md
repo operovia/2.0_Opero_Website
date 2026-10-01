@@ -29,7 +29,7 @@ Sign in at `/admin` and open Content to change the words on any page. While you 
 
 ## Who can see the site
 
-The site is private until you say otherwise: everyone meets the front door (`/welcome`) and enters the email address their invitation went to. Only addresses on the guest list open it, and you see everything while signed in. Turn this off under Settings, Front door, to make the site public; the door then only opens the Investor Hub.
+The site is private until you say otherwise: everyone meets the front door (`/welcome`) and enters the email address their invitation went to. Only addresses on the guest list open it, and you see everything while signed in to the admin. That sign-in lives in the browser: a new browser, a phone, or a different address for the site (the Replit development address and the published one are separate) meets the door until you sign in at `/admin` there once, and Replit's embedded preview pane can never keep it. The door itself greets a signed-in admin, like a guest whose browser holds the key, and lets them straight in. Turn the private site off under Settings, Front door, to make the site public; the door then only opens the Investor Hub.
 
 Each guest has a role, chosen when you add them and changeable from the list:
 
