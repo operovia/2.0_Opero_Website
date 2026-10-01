@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { SectionEditor } from '@/components/admin/content/section-editor';
 import { PageHeader } from '@/components/ui/page-header';
+import { withSeed } from '@/content/fields';
 import { getPageDef, getSectionDef } from '@/content/registry';
 import { requireAdmin } from '@/server/auth/session';
 import { sectionForEdit } from '@/server/content-admin';
@@ -20,9 +21,10 @@ export default async function EditSectionPage({ params }: PageProps<'/admin/cont
   if (!pageDef || !data) notFound();
 
   const { def, row, versions } = data;
-  // Only the section's current fields: content saved before a field was removed still carries it.
+  // Only the section's current fields, each one filled: content saved before a field was removed still carries it, and content saved
+  // before a field existed (in a list item too) takes the seed's copy for it.
   const current = (stored: unknown) => {
-    const merged: Record<string, unknown> = { ...def.seed, ...((stored as Record<string, unknown> | null) ?? {}) };
+    const merged = withSeed(def.fields, def.seed as Record<string, unknown>, stored);
     return Object.fromEntries(Object.keys(def.fields).map((key) => [key, merged[key]]));
   };
   const draft = current(row?.draft);

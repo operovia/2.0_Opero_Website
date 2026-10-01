@@ -1,6 +1,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
+import { withSeed } from '@/content/fields';
 import { getPageDef, getSectionDef } from '@/content/registry';
 import { audit } from '@/server/audit';
 import { requireAdmin } from '@/server/auth/session';
@@ -61,9 +62,7 @@ export async function discardDraftAction(page: string, section: string): Promise
   if (!getSectionDef(page, section)) return unknownSection;
   const published = await discardDraft(page, section);
   refresh(page, section);
-  return published
-    ? { ok: true, message: 'Changes discarded. The draft matches the live site again.', values: published }
-    : unknownSection;
+  return published ? { ok: true, message: 'Changes discarded. The draft matches the live site again.', values: published } : unknownSection;
 }
 
 export async function rollbackAction(page: string, section: string, versionId: string): Promise<EditorResult> {
@@ -73,7 +72,7 @@ export async function rollbackAction(page: string, section: string, versionId: s
   const old = await versionData(page, section, versionId);
   if (!old) return { ok: false, message: 'That version is no longer available.' };
   // Older content is re-validated against today's fields before it goes live.
-  const result = validateSection(def, { ...def.seed, ...old.data });
+  const result = validateSection(def, withSeed(def.fields, def.seed as Record<string, unknown>, old.data));
   if (!result.ok) return { ok: false, message: `Version ${old.version} no longer fits this section's fields, so it cannot be restored.` };
   const version = await publish(page, section, result.data, user.id, `Restored version ${old.version}`);
   await audit({ id: user.id, email: user.email }, 'content.rollback', {

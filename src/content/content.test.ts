@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { isSafeHref, richDocSchema, richToText, textToRich } from '@/lib/rich-text';
-import { schemaFor, text } from './fields';
+import { schemaFor, text, withSeed } from './fields';
 import { plainHeadline } from '@/lib/headline';
 import { defaultSettings } from '@/server/seed';
 import { allSections, pages } from './registry';
@@ -50,6 +50,59 @@ describe('seed content', () => {
   });
 });
 
+describe('content saved before a field existed', () => {
+  const def = pages.home.sections.platform;
+  const seed = def.seed as unknown as Record<string, unknown>;
+  // The platform section as first published: no screenshot captions, no core panel, no Oppie note.
+  const saved = {
+    eyebrow: 'The platform.',
+    headline: 'Our own headline',
+    modules: [
+      { module: 'studios', description: 'Boards.' },
+      { module: 'build', description: 'Apps.' },
+    ],
+  };
+
+  it('takes the seed for a missing field, and for a missing field in a list item from the item with the same choice', () => {
+    const merged = withSeed(def.fields, seed, saved);
+    expect(merged.headline).toBe('Our own headline');
+    expect(merged.coreLabel).toBe(def.seed.coreLabel);
+    const modules = merged.modules as { module: string; description: string; inside: string }[];
+    expect(modules.map((m) => m.description)).toEqual(['Boards.', 'Apps.']);
+    expect(modules[0]!.inside).toBe(def.seed.modules.find((m) => m.module === 'studios')!.inside);
+    expect(modules[1]!.inside).toBe(def.seed.modules.find((m) => m.module === 'build')!.inside);
+    expect(schemaFor(def.fields, def.check).safeParse(merged).success).toBe(true);
+  });
+
+  it('fails without it, which is what kept the editor from publishing', () => {
+    expect(schemaFor(def.fields, def.check).safeParse({ ...seed, ...saved }).success).toBe(false);
+  });
+
+  it('keeps every saved value, empty ones included', () => {
+    const merged = withSeed(def.fields, seed, { ...saved, modules: [{ module: 'compass', description: 'EOS.', inside: '' }] });
+    expect(merged.modules).toEqual([{ module: 'compass', description: 'EOS.', inside: '' }]);
+  });
+
+  it('matches by place in a list without a choice', () => {
+    const fields = { stats: { kind: 'list', label: 'Stats', itemLabel: 'Stat', fields: { value: text('Value'), label: text('Label') } } } as const;
+    const merged = withSeed(
+      fields,
+      {
+        stats: [
+          { value: '1', label: 'one' },
+          { value: '2', label: 'two' },
+        ],
+      },
+      { stats: [{ value: '9' }, { value: '8' }, { value: '7' }] },
+    );
+    expect(merged.stats).toEqual([{ value: '9', label: 'one' }, { value: '8', label: 'two' }, { value: '7' }]);
+  });
+
+  it('starts from the seed when nothing was saved', () => {
+    expect(withSeed(def.fields, seed, null)).toEqual(seed);
+  });
+});
+
 describe('headlines', () => {
   it('take line breaks and emphasis everywhere', () => {
     const headlines = allSections().flatMap(({ page, section, def }) =>
@@ -79,9 +132,17 @@ describe('rich text', () => {
   });
 
   it('refuses unsafe links and strips unknown attributes', () => {
-    const bad = { type: 'doc', content: [{ type: 'paragraph', content: [{ type: 'text', text: 'x', marks: [{ type: 'link', attrs: { href: 'javascript:alert(1)' } }] }] }] };
+    const bad = {
+      type: 'doc',
+      content: [{ type: 'paragraph', content: [{ type: 'text', text: 'x', marks: [{ type: 'link', attrs: { href: 'javascript:alert(1)' } }] }] }],
+    };
     expect(richDocSchema.safeParse(bad).success).toBe(false);
-    const extra = { type: 'doc', content: [{ type: 'paragraph', content: [{ type: 'text', text: 'x', marks: [{ type: 'link', attrs: { href: '/partners', target: '_blank', class: 'x' } }] }] }] };
+    const extra = {
+      type: 'doc',
+      content: [
+        { type: 'paragraph', content: [{ type: 'text', text: 'x', marks: [{ type: 'link', attrs: { href: '/partners', target: '_blank', class: 'x' } }] }] },
+      ],
+    };
     const parsed = richDocSchema.parse(extra);
     expect(parsed.content[0]!.content![0]).toEqual({ type: 'text', text: 'x', marks: [{ type: 'link', attrs: { href: '/partners' } }] });
   });

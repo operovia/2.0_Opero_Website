@@ -60,14 +60,23 @@ export type Values<F extends Fields> = { [K in keyof F]: FieldValue<F[K]> };
 export const text = (label: string, options: Omit<TextField, 'kind' | 'label'> = {}): TextField => ({ kind: 'text', label, ...options });
 export const rich = (label: string, options: Omit<RichField, 'kind' | 'label'> = {}): RichField => ({ kind: 'rich', label, ...options });
 export const link = (label: string, options: Omit<LinkField, 'kind' | 'label'> = {}): LinkField => ({ kind: 'link', label, ...options });
-export const choice = <V extends string>(label: string, options: readonly { value: V; label: string }[], rest: Omit<ChoiceField<V>, 'kind' | 'label' | 'options'> = {}): ChoiceField<V> => ({
+export const choice = <V extends string>(
+  label: string,
+  options: readonly { value: V; label: string }[],
+  rest: Omit<ChoiceField<V>, 'kind' | 'label' | 'options'> = {},
+): ChoiceField<V> => ({
   kind: 'choice',
   label,
   options,
   ...rest,
 });
 export const number = (label: string, options: Omit<NumberField, 'kind' | 'label'> = {}): NumberField => ({ kind: 'number', label, ...options });
-export const list = <I extends Record<string, ItemField>>(label: string, itemLabel: string, fields: I, options: Omit<ListField<I>, 'kind' | 'label' | 'itemLabel' | 'fields'> = {}): ListField<I> => ({
+export const list = <I extends Record<string, ItemField>>(
+  label: string,
+  itemLabel: string,
+  fields: I,
+  options: Omit<ListField<I>, 'kind' | 'label' | 'itemLabel' | 'fields'> = {},
+): ListField<I> => ({
   kind: 'list',
   label,
   itemLabel,
@@ -90,7 +99,10 @@ const tidyLines = (value: string) =>
 function itemSchema(field: ItemField): z.ZodType {
   switch (field.kind) {
     case 'text': {
-      let s = z.string().trim().max(field.max ?? 2000, `Keep this under ${field.max ?? 2000} characters.`);
+      let s = z
+        .string()
+        .trim()
+        .max(field.max ?? 2000, `Keep this under ${field.max ?? 2000} characters.`);
       if (!field.optional) s = s.min(1, `${field.label} cannot be empty.`);
       // One break between lines: blank lines and spaces around a break would only add gaps.
       return field.headline ? z.preprocess((value) => (typeof value === 'string' ? tidyLines(value) : value), s) : s;
@@ -126,6 +138,36 @@ function fieldSchema(field: Field): z.ZodType {
   if (field.min) s = s.min(field.min, `Add at least ${field.min} ${field.itemLabel.toLowerCase()}${field.min === 1 ? '' : 's'}.`);
   if (field.max) s = s.max(field.max, `Add at most ${field.max}.`);
   return s;
+}
+
+/**
+ * Saved content with every field the section has today. A field saved before
+ * it existed takes the seed's copy, at the top level and inside list items
+ * alike: an item missing a field takes it from the seed's matching item, the
+ * one with the same choice (the same module) or else the one in the same
+ * place. Everything that was saved, empty values included, stays as it was.
+ * Without this, one new field in a list would make saved content fail
+ * validation, so the editor could not publish it and the site would fall
+ * back to the seed for the whole section.
+ */
+export function withSeed(fields: Fields, seed: Record<string, unknown>, stored: unknown): Record<string, unknown> {
+  const saved = stored && typeof stored === 'object' && !Array.isArray(stored) ? (stored as Record<string, unknown>) : {};
+  const merged: Record<string, unknown> = { ...seed, ...saved };
+  for (const [key, field] of Object.entries(fields)) {
+    const items = saved[key];
+    if (field.kind !== 'list' || !Array.isArray(items)) continue;
+    const seedItems = (Array.isArray(seed[key]) ? seed[key] : []) as Record<string, unknown>[];
+    const choice = Object.entries(field.fields).find(([, itemField]) => itemField.kind === 'choice')?.[0];
+    merged[key] = items.map((item, index) => {
+      if (!item || typeof item !== 'object') return item;
+      const savedItem = item as Record<string, unknown>;
+      const match = (choice !== undefined ? seedItems.find((seedItem) => seedItem[choice] === savedItem[choice]) : undefined) ?? seedItems[index] ?? {};
+      const filled = { ...savedItem };
+      for (const itemKey of Object.keys(field.fields)) if (filled[itemKey] === undefined && match[itemKey] !== undefined) filled[itemKey] = match[itemKey];
+      return filled;
+    });
+  }
+  return merged;
 }
 
 /** A problem found across a section's fields, shown on the field named. */

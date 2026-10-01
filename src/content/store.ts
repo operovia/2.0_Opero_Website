@@ -8,7 +8,7 @@ import { consoleScenes, contentSections, media, siteState } from '@/db/schema';
 import { getSession } from '@/server/auth/session';
 import { onContentChange } from '@/server/content-version';
 import { getSettings, type SiteSettings } from '@/server/settings';
-import { schemaFor } from './fields';
+import { schemaFor, withSeed } from './fields';
 import { getSectionDef, pages, type PageData, type PageKey, type SectionDef } from './registry';
 import type { SceneTable } from './scene-table';
 import { contentTokens, fillTokensDeep } from './tokens';
@@ -165,7 +165,7 @@ const snapshotForRequest = cache(async (): Promise<Snapshot> => {
 
 function resolveSection(snapshot: Snapshot, page: PageKey, key: string, def: SectionDef): unknown {
   const stored = snapshot.sections.get(`${page}.${key}`);
-  const merged = { ...def.seed, ...(stored ?? {}) };
+  const merged = withSeed(def.fields, def.seed as Record<string, unknown>, stored);
   const parsed = schemaFor(def.fields, def.check).safeParse(merged);
   if (!parsed.success) {
     console.error(`[opero] Stored content for ${page}.${key} is invalid; showing the default copy.`, parsed.error.issues);
