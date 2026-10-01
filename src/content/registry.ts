@@ -114,6 +114,13 @@ const platform = section({
     body: rich('Body'),
     coreTitle: text('Core CRM title', { max: 80 }),
     coreText: text('Core CRM description', { max: 240, multiline: true }),
+    coreProperty: text('Drawing: property', { max: 24, hint: 'The four kinds of record in the drawing on the CRM card, under their icons.' }),
+    coreSuites: text('Drawing: suites', { max: 24 }),
+    coreTenants: text('Drawing: tenants', { max: 24 }),
+    coreProspects: text('Drawing: prospects', { max: 24 }),
+    coreLeasing: text('Drawing: leasing', { max: 30, hint: 'The three lines of work the CRM drives, joined to the drawing.' }),
+    coreManagement: text('Drawing: property management', { max: 30 }),
+    coreFacilities: text('Drawing: facilities', { max: 30 }),
     modules: list(
       'Modules',
       'Module',
@@ -141,6 +148,13 @@ const platform = section({
     ),
     coreTitle: 'A CRM built for property management',
     coreText: 'Every property, suite, tenant, and prospect in one place, driving leasing, property management, and facilities.',
+    coreProperty: 'Property',
+    coreSuites: 'Suites',
+    coreTenants: 'Tenants',
+    coreProspects: 'Prospects',
+    coreLeasing: 'Leasing',
+    coreManagement: 'Property management',
+    coreFacilities: 'Facilities',
     modules: [
       {
         module: 'build',

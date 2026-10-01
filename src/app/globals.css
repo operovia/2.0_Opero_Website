@@ -960,6 +960,25 @@
 }
 
 /*
+ * The drawing on the CRM card (src/components/site/home/core-record.tsx): the
+ * frame the four kinds of record sit in, edged in the wordmark's metal like
+ * the platform frame around it.
+ */
+.core-place::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: inherit;
+  background: var(--o-metal);
+  mask:
+    linear-gradient(black 0 0) content-box exclude,
+    linear-gradient(black 0 0);
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/*
  * The platform section's network (src/components/site/home/platform-network.tsx),
  * drawn over the module columns: five columns with the grid's gap. The line
  * joining the modules runs from the first module's column to the last one's,

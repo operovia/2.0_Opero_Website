@@ -8,7 +8,7 @@ const { links } = tokens.motion;
 const seconds = (ms: number) => ms / 1000;
 
 /* Each light runs along its line once; `custom` is when it starts, in seconds. */
-const run = (from: { x?: string; y?: string }, to: { x?: string; y?: string }, duration: number): Variants => ({
+export const lightRun = (from: { x?: string; y?: string }, to: { x?: string; y?: string }, duration: number): Variants => ({
   off: from,
   on: (delay: number) => ({ ...to, transition: { delay, duration: seconds(duration), ease: 'linear' } }),
 });
@@ -18,10 +18,10 @@ const run = (from: { x?: string; y?: string }, to: { x?: string; y?: string }, d
  * or down a module's line, `across` the line joining the modules.
  */
 export const lightRuns = {
-  up: run({ y: '100%' }, { y: '-100%' }, links.reach),
-  down: run({ y: '-100%' }, { y: '100%' }, links.reach),
-  leftward: run({ x: '100%' }, { x: '-100%' }, links.across),
-  rightward: run({ x: '-100%' }, { x: '100%' }, links.across),
+  up: lightRun({ y: '100%' }, { y: '-100%' }, links.reach),
+  down: lightRun({ y: '-100%' }, { y: '100%' }, links.reach),
+  leftward: lightRun({ x: '100%' }, { x: '-100%' }, links.across),
+  rightward: lightRun({ x: '-100%' }, { x: '100%' }, links.across),
 } as const;
 
 type Props = Omit<HTMLMotionProps<'span'>, 'variants' | 'custom'> & {

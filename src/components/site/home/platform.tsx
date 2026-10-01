@@ -6,6 +6,7 @@ import { MODULE_LABELS, MODULE_SHOT, moduleShotPath } from '@/content/constants'
 import type { SectionData } from '@/content/registry';
 import { cn } from '@/lib/cn';
 import { Container, SectionIntro } from '../layout-parts';
+import { CoreRecord } from './core-record';
 import { ModuleLightbox } from './module-lightbox';
 import { PlatformNetwork } from './platform-network';
 
@@ -38,7 +39,19 @@ export function Platform({ content }: { content: SectionData<'home', 'platform'>
               <BrandMark name="opero" className="h-7 sm:h-8" />
             </div>
             <div className="relative overflow-hidden rounded-2xl border border-line-strong bg-surface p-8 sm:p-10">
-              <div className="mx-auto max-w-2xl text-center">
+              {/* The core as a drawing: the four kinds of record in one place, and the three lines of work it drives. */}
+              <CoreRecord
+                labels={{
+                  property: content.coreProperty,
+                  suites: content.coreSuites,
+                  tenants: content.coreTenants,
+                  prospects: content.coreProspects,
+                  leasing: content.coreLeasing,
+                  management: content.coreManagement,
+                  facilities: content.coreFacilities,
+                }}
+              />
+              <div className="mx-auto mt-8 max-w-2xl text-center">
                 <h3 className="text-2xl font-semibold text-fg">{content.coreTitle}</h3>
                 <p className="mt-3 text-lg text-fg-muted">{content.coreText}</p>
               </div>
