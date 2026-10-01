@@ -11,8 +11,9 @@ export type ModuleShot = { module: ModuleName; description: string; inside: stri
 
 type Props = { modules: ModuleShot[] };
 
+/** On phones the buttons are round, with only the arrow showing: the names would not fit beside the dots. Screen readers hear the names everywhere. */
 const navButton =
-  'inline-flex h-10 items-center gap-1.5 rounded-full border border-line-strong bg-surface px-4 text-sm font-medium text-fg transition-colors hover:border-line-input hover:bg-surface-raised disabled:pointer-events-none disabled:opacity-40';
+  'inline-flex h-10 items-center gap-1.5 rounded-full border border-line-strong bg-surface px-4 text-sm font-medium text-fg transition-colors hover:border-line-input hover:bg-surface-raised disabled:pointer-events-none disabled:opacity-40 max-sm:w-10 max-sm:justify-center max-sm:gap-0 max-sm:px-0';
 
 /**
  * The screenshots behind "Look inside" on the module cards, in one native
@@ -113,7 +114,7 @@ export function ModuleLightbox({ modules }: Props) {
               <ChevronLeft className="size-4" aria-hidden />
               <span>
                 <span className="sr-only">Previous module: </span>
-                {MODULE_LABELS[modules[(active - 1 + count) % count]!.module]}
+                <span className="max-sm:sr-only">{MODULE_LABELS[modules[(active - 1 + count) % count]!.module]}</span>
               </span>
             </button>
             <ol className="flex items-center gap-2" aria-label="Modules">
@@ -133,7 +134,7 @@ export function ModuleLightbox({ modules }: Props) {
             <button type="button" onClick={() => go(1)} className={navButton}>
               <span>
                 <span className="sr-only">Next module: </span>
-                {MODULE_LABELS[modules[(active + 1) % count]!.module]}
+                <span className="max-sm:sr-only">{MODULE_LABELS[modules[(active + 1) % count]!.module]}</span>
               </span>
               <ChevronRight className="size-4" aria-hidden />
             </button>
