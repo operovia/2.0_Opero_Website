@@ -31,14 +31,14 @@ const toModule: Record<ModuleKey, string> = {
 type Props = { modules: readonly ModuleKey[]; title: string; detail: string };
 
 /**
- * How the platform fits together, between the CRM card and the module cards.
- * Oppie sits in the middle of the line that joins every module, in the
- * modules' colors, and lines run up from that line to the CRM and down to
- * each module: one per module column on wide screens, one each way on narrow
- * ones. When it first comes into view Oppie turns over once and light runs
- * out from it along every line; after that the mark keeps a slow flicker
- * going, and pressing it holds it still. The lines are decorative; Oppie's
- * note is not.
+ * How the platform fits together, between the core panel and the module
+ * cards. Oppie sits in the middle of the line that joins every module, in
+ * the modules' colors; one line runs up from Oppie to the core, and a line
+ * runs down from the joining line to each module (on narrow screens, one
+ * line above Oppie and one below). When it first comes into view Oppie turns
+ * over once and light runs out from it along every line; after that the mark
+ * keeps a slow flicker going, and pressing it holds it still. The lines are
+ * decorative; Oppie's note is not.
  */
 export function PlatformNetwork({ modules, title, detail }: Props) {
   // The mark keeps a light on; whoever would rather it held still presses it.
@@ -46,7 +46,7 @@ export function PlatformNetwork({ modules, title, detail }: Props) {
   const count = modules.length;
   const start = seconds(links.delay);
   const middle = (count - 1) / 2;
-  // Light leaving Oppie passes each module's column in turn, nearest first.
+  // Light leaving Oppie along the joining line passes each module's column in turn, nearest first.
   const reaches = (i: number) => start + (seconds(links.across) * ((middle ? Math.abs(i - middle) / middle : 0) + 0.5)) / 2;
   const thread = `linear-gradient(to right, ${modules.map((module, i) => `var(--o-module-${module}-base) ${(i / Math.max(count - 1, 1)) * 100}%`).join(', ')})`;
 
@@ -71,17 +71,20 @@ export function PlatformNetwork({ modules, title, detail }: Props) {
       <div aria-hidden className="absolute inset-0 hidden grid-cols-5 gap-4 lg:grid">
         {modules.map((module, i) => (
           <div key={`${module}-${i}`} className="relative">
-            <span className="absolute top-0 bottom-1/2 left-1/2 w-px -translate-x-1/2 overflow-hidden bg-fg-subtle/40">
-              <Light variants={up} delay={reaches(i)} vertical />
-            </span>
             <span className={cn('absolute top-1/2 bottom-0 left-1/2 w-px -translate-x-1/2 overflow-hidden bg-linear-to-b from-fg-subtle/40', toModule[module])}>
               <Light variants={down} delay={reaches(i)} vertical />
             </span>
-            <span className="absolute top-0 left-1/2 size-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-fg-subtle/60" />
             <span className={cn('absolute top-1/2 left-1/2 size-2 -translate-x-1/2 -translate-y-1/2 rounded-full', jewel[module])} />
             <span className={cn('absolute bottom-0 left-1/2 size-2.5 -translate-x-1/2 translate-y-1/2 rounded-full', jewel[module])} />
           </div>
         ))}
+      </div>
+      {/* One line from the core down to Oppie, at the middle of the thread; light runs up it from Oppie. */}
+      <div aria-hidden className="platform-stem absolute top-0 bottom-1/2 hidden w-px -translate-x-1/2 lg:block">
+        <span className="absolute inset-0 overflow-hidden bg-fg-subtle/40">
+          <Light variants={up} delay={start} vertical />
+        </span>
+        <span className="absolute top-0 left-1/2 size-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-fg-subtle/60" />
       </div>
       <span aria-hidden className="relative h-8 w-px overflow-hidden bg-fg-subtle/40 lg:hidden">
         <Light variants={up} delay={start} vertical />

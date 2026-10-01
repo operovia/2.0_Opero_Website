@@ -1018,7 +1018,7 @@
  * The platform section's network (src/components/site/home/platform-network.tsx),
  * drawn over the module columns: five columns with the grid's gap. The line
  * joining the modules runs from the first module's column to the last one's,
- * and Oppie sits in its middle.
+ * and Oppie sits in its middle, under the one line up to the core.
  */
 .platform-band {
   --gap: calc(var(--o-space-unit) * 4);
@@ -1033,6 +1033,9 @@
   @variant lg {
     left: calc(var(--col) / 2 + var(--span) / 2);
   }
+}
+.platform-stem {
+  left: calc(var(--col) / 2 + var(--span) / 2);
 }
 
 /* Design partner card: a border of jewel light that turns slowly. */
