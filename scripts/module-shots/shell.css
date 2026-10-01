@@ -65,12 +65,12 @@ svg.icon.i12 { width: 12px; height: 12px; }
 /* ---------- sidebar: x 0 to 264, y 0 to 900 ---------- */
 .sidebar { position: absolute; left: 0; top: 0; width: 264px; height: 900px; background: var(--surface); }
 .sidebar::after { content: ''; position: absolute; right: 0; top: 64px; bottom: 0; width: 1px; background: var(--line); }  /* starts 64px down so sidebar plus header read as one top strip */
-/* Brand band (y 0 to 64): the module's own name where an app's name sits, a 20px jewel disc and then the module
+/* Brand band (y 0 to 64): the module's own name where an app's name sits, a 20px jewel disc and, 16px on, the module
    wordmark trimmed to its artwork and set 36px tall
    (<svg class="mark" viewBox="bounds"><image href="/public/brand/modules/<module>-dark.svg" .../></svg>, see README). */
-.brand { height: 64px; padding: 0 20px; display: flex; align-items: center; gap: 10px; }
+.brand { height: 64px; padding: 0 20px; display: flex; align-items: center; gap: 16px; }
 .brand .jewel { width: 20px; height: 20px; }
-.brand .mark { height: 36px; }   /* University, the widest, ends near x 230 of the 244 the band allows */
+.brand .mark { height: 36px; }   /* University, the widest, ends near x 236 of the 244 the band allows */
 /* Nav from y 72 */
 .nav { padding: 8px 12px 0; }
 .nav-label { font-size: 13px; line-height: 16px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-subtle); padding: 12px 12px 6px; }

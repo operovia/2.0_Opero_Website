@@ -46,7 +46,7 @@ Geometry: sidebar x 0 to 264; header x 264 to 1440, y 0 to 64; content inner x 2
 
 ### Marks
 
-- Sidebar brand band, where an app's name sits: the module's own name, its wordmark trimmed to its artwork and set 36px tall, after a 20px `.jewel` disc. The Opero lockup does not appear on these screens.
+- Sidebar brand band, where an app's name sits: the module's own name, its wordmark trimmed to its artwork and set 36px tall, 16px after a 20px `.jewel` disc. The Opero lockup does not appear on these screens.
   `<div class="brand"><span class="jewel"></span><svg class="mark" viewBox="BOUNDS"><image href="/public/brand/modules/<module>-dark.svg" x="290" y="-379" width="W" height="2037"/></svg></div>`
   with, per module (from `public/brand/manifest.json`):
   - build: `viewBox="819 150 2377 980"`, width 3435
