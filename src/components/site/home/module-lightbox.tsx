@@ -9,7 +9,7 @@ import { cn } from '@/lib/cn';
 
 export type ModuleShot = { module: ModuleName; description: string; inside: string };
 
-type Props = { modules: ModuleShot[]; heading: string };
+type Props = { modules: ModuleShot[] };
 
 const navButton =
   'inline-flex h-10 items-center gap-1.5 rounded-full border border-line-strong bg-surface px-4 text-sm font-medium text-fg transition-colors hover:border-line-input hover:bg-surface-raised disabled:pointer-events-none disabled:opacity-40';
@@ -21,7 +21,7 @@ const navButton =
  * point at the image files themselves, so without JavaScript they still show
  * the picture. The dialog traps focus and returns it to the link afterwards.
  */
-export function ModuleLightbox({ modules, heading }: Props) {
+export function ModuleLightbox({ modules }: Props) {
   const dialog = useRef<HTMLDialogElement>(null);
   const closeButton = useRef<HTMLButtonElement>(null);
   const [active, setActive] = useState(0);
@@ -50,8 +50,6 @@ export function ModuleLightbox({ modules, heading }: Props) {
 
   const current = modules[active];
   if (!current) return null;
-  // The Opero logo stands where the heading says {opero}; copy saved before the logo took the module's place says {module}, and reads the same.
-  const [before = '', after = ''] = heading.replace('{module}', '{opero}').split('{opero}');
 
   return (
     <dialog
@@ -70,13 +68,10 @@ export function ModuleLightbox({ modules, heading }: Props) {
     >
       <div className="relative flex max-h-[calc(100dvh-2*var(--o-gutter))] flex-col overflow-y-auto">
         <div className="flex items-center justify-between gap-4 border-b border-line px-5 py-4 sm:px-6">
-          <h2 id="module-shot-title" className="flex min-w-0 items-center gap-2.5 text-base font-semibold text-fg">
-            {/* The words sit 4px up from center (half their bottom margin), so they share a baseline with the logo's letters rather than centering on the letters and jewels together. */}
-            {before.trim() ? <span className="mb-2">{before.trim()}</span> : null}
-            {/* Sighted visitors read the module's name in the picture itself; screen readers hear it here, where the logo shows. */}
+          {/* The Opero logo is the heading. Sighted visitors read the module's name in the picture itself; screen readers hear it here. */}
+          <h2 id="module-shot-title" className="flex min-w-0 items-center">
             <BrandMark name="opero" decorative className="h-7 sm:h-8" />
             <span className="sr-only">{MODULE_LABELS[current.module]}</span>
-            {after.trim() ? <span className="mb-2">{after.trim()}</span> : null}
           </h2>
           <button
             ref={closeButton}

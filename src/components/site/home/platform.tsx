@@ -113,7 +113,7 @@ export function Platform({ content }: { content: SectionData<'home', 'platform'>
             </RevealGroup>
           </div>
         </Reveal>
-        <ModuleLightbox modules={content.modules} heading={content.insideHeading} />
+        <ModuleLightbox modules={content.modules} />
       </Container>
     </section>
   );
