@@ -1024,10 +1024,45 @@
   --gap: calc(var(--o-space-unit) * 4);
   --col: calc((100% - 4 * var(--gap)) / 5);
   --span: calc((var(--links) - 1) * (var(--col) + var(--gap)));
+  /* The radius of the two corners where the joining line turns down to the first and last modules. */
+  --corner: calc(var(--o-space-unit) * 4);
 }
+/* The half pixel keeps its ends exactly on the corners' edges, so no seam draws where they meet. */
 .platform-thread {
-  left: calc(var(--col) / 2);
-  width: var(--span);
+  left: calc(var(--col) / 2 - 0.5px + 2 * var(--corner));
+  width: calc(var(--span) + 1px - 4 * var(--corner));
+}
+/*
+ * The corners: a quarter circle of hairline, its color from the module's
+ * border utility, in place of a right angle. The box is twice the radius,
+ * so a straight run follows the arc on both sides, and the joining line and
+ * the module's line start where those runs end: the arc alone would thin
+ * out to nothing where it turns tangent, and lines laid over the runs would
+ * draw brighter where they overlap.
+ */
+.platform-corner {
+  position: absolute;
+  top: calc(50% - 0.5px);
+  width: calc(var(--corner) * 2);
+  height: calc(var(--corner) * 2);
+  border-top-width: 1px;
+  border-top-style: solid;
+}
+.platform-corner-start {
+  left: calc(50% - 0.5px);
+  border-left-width: 1px;
+  border-left-style: solid;
+  border-top-left-radius: var(--corner);
+}
+.platform-corner-end {
+  right: calc(50% - 0.5px);
+  border-right-width: 1px;
+  border-right-style: solid;
+  border-top-right-radius: var(--corner);
+}
+/* The first and last modules' lines start where their corner ends. */
+.platform-drop-outer {
+  top: calc(50% - 0.5px + 2 * var(--corner));
 }
 .platform-oppie {
   @variant lg {

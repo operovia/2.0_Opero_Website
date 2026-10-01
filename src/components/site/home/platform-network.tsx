@@ -19,13 +19,22 @@ const jewel: Record<ModuleKey, string> = {
   compass: 'jewel-compass',
 };
 
-/** Below the line joining the modules, each line takes on its module's color. */
-const toModule: Record<ModuleKey, string> = {
-  build: 'to-module-build',
-  studios: 'to-module-studios',
-  playbook: 'to-module-playbook',
-  university: 'to-module-university',
-  compass: 'to-module-compass',
+/** Below the line joining the modules, each line is its module's color. */
+const line: Record<ModuleKey, string> = {
+  build: 'bg-module-build',
+  studios: 'bg-module-studios',
+  playbook: 'bg-module-playbook',
+  university: 'bg-module-university',
+  compass: 'bg-module-compass',
+};
+
+/** The corner the joining line turns at its two ends, in that module's color. */
+const corner: Record<ModuleKey, string> = {
+  build: 'border-module-build',
+  studios: 'border-module-studios',
+  playbook: 'border-module-playbook',
+  university: 'border-module-university',
+  compass: 'border-module-compass',
 };
 
 type Props = { modules: readonly ModuleKey[]; title: string; detail: string };
@@ -69,15 +78,19 @@ export function PlatformNetwork({ modules, title, detail }: Props) {
         </div>
       ) : null}
       <div aria-hidden className="absolute inset-0 hidden grid-cols-5 gap-4 lg:grid">
-        {modules.map((module, i) => (
-          <div key={`${module}-${i}`} className="relative">
-            <span className={cn('absolute top-1/2 bottom-0 left-1/2 w-px -translate-x-1/2 overflow-hidden bg-linear-to-b from-fg-subtle/40', toModule[module])}>
-              <Light variants={down} delay={reaches(i)} vertical />
-            </span>
-            <span className={cn('absolute top-1/2 left-1/2 size-2 -translate-x-1/2 -translate-y-1/2 rounded-full', jewel[module])} />
-            <span className={cn('absolute bottom-0 left-1/2 size-2.5 -translate-x-1/2 translate-y-1/2 rounded-full', jewel[module])} />
-          </div>
-        ))}
+        {modules.map((module, i) => {
+          // At its two ends the joining line turns the corner down to the module; in between, the lines drop straight from it.
+          const outer = count > 1 && (i === 0 || i === count - 1);
+          return (
+            <div key={`${module}-${i}`} className="relative">
+              {outer ? <span className={cn('platform-corner', i === 0 ? 'platform-corner-start' : 'platform-corner-end', corner[module])} /> : null}
+              <span className={cn('absolute bottom-0 left-1/2 w-px -translate-x-1/2 overflow-hidden', outer ? 'platform-drop-outer' : 'top-1/2', line[module])}>
+                <Light variants={down} delay={reaches(i)} vertical />
+              </span>
+              <span className={cn('absolute bottom-0 left-1/2 size-2.5 -translate-x-1/2 translate-y-1/2 rounded-full', jewel[module])} />
+            </div>
+          );
+        })}
       </div>
       {/* One line from the core down to Oppie, at the middle of the thread; light runs up it from Oppie. */}
       <div aria-hidden className="platform-stem absolute top-0 bottom-1/2 hidden w-px -translate-x-1/2 lg:block">
