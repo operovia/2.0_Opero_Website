@@ -119,6 +119,13 @@ type Props = {
   greet?: boolean;
   /** Finer details for a mark shown big, 120px and up, where the icon-size highlight and outline read heavy. */
   large?: boolean;
+  /**
+   * Keeps a light on: the whole mark dims and brightens slowly at uneven
+   * moments, like a pilot light, while it is on screen. At the owner's
+   * request, for the mark in the middle of the platform network. It cycles
+   * for as long as it shows, so give it a way to be paused.
+   */
+  flicker?: boolean;
   /** Size with a size class, e.g. `size-10`. The pills fill the middle 80%. */
   className?: string;
   /** Hide from assistive tech when a surrounding label already names it. */
@@ -132,7 +139,17 @@ type Props = {
  * graphite over it, a shade for its side, its highlight, and a fine rim.
  * Motion is transform and opacity only.
  */
-export function OppieMark({ state = 'rest', on = 'dark', still = false, paused = false, greet = false, large = false, className, decorative }: Props) {
+export function OppieMark({
+  state = 'rest',
+  on = 'dark',
+  still = false,
+  paused = false,
+  greet = false,
+  large = false,
+  flicker = false,
+  className,
+  decorative,
+}: Props) {
   // Gradient ids must be unique on the page, and plain enough for url(#...).
   const id = `oppie${useId().replace(/[^a-zA-Z0-9_-]/g, '')}`;
   const ref = useRef<HTMLSpanElement>(null);
@@ -151,6 +168,7 @@ export function OppieMark({ state = 'rest', on = 'dark', still = false, paused =
       className={cn('oppie inline-block shrink-0', className)}
       data-spinning={spinning ? '' : undefined}
       data-greeting={greeting ? '' : undefined}
+      data-flicker={flicker && !still ? '' : undefined}
       data-paused={paused || asleep ? '' : undefined}
       {...a11y}
     >

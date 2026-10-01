@@ -387,17 +387,53 @@
 .oppie[data-spinning] .oppie-glint {
   animation: oppie-glint var(--o-oppie-turn) linear calc(var(--o-oppie-stagger) * var(--oppie-index)) infinite;
 }
+/*
+ * At the owner's request, a mark that keeps a light on (`flicker`) dims a
+ * little and brightens again at uneven moments, slowly, like a pilot light.
+ * The whole mark fades, never the pills, so the flip stays the flip.
+ */
+.oppie[data-flicker] > svg {
+  --dip: calc(1 - var(--o-oppie-flicker-low));
+  animation: oppie-flicker var(--o-oppie-flicker) ease-in-out infinite;
+}
 /* After the rules above and as specific, because their animation shorthand resets the play state to running. */
 .oppie[data-paused] .oppie-pill,
 .oppie[data-paused] .oppie-shade,
-.oppie[data-paused] .oppie-glint {
+.oppie[data-paused] .oppie-glint,
+.oppie[data-paused] > svg {
   animation-play-state: paused;
 }
 @media (prefers-reduced-motion: reduce) {
   .oppie-pill,
   .oppie-shade,
-  .oppie-glint {
+  .oppie-glint,
+  .oppie > svg {
     animation: none !important;
+  }
+}
+@keyframes oppie-flicker {
+  0%,
+  80%,
+  100% {
+    opacity: 1;
+  }
+  13% {
+    opacity: calc(1 - var(--dip) * 0.5);
+  }
+  22% {
+    opacity: calc(1 - var(--dip) * 0.1);
+  }
+  41% {
+    opacity: calc(1 - var(--dip));
+  }
+  52% {
+    opacity: calc(1 - var(--dip) * 0.2);
+  }
+  66% {
+    opacity: calc(1 - var(--dip) * 0.7);
+  }
+  90% {
+    opacity: calc(1 - var(--dip) * 0.4);
   }
 }
 

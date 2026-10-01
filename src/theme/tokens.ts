@@ -406,6 +406,9 @@ export const tokens = {
       turn: 1600,
       stagger: 160,
       greetDelay: 400,
+      /** At the owner's request, a mark that keeps a light on (`flicker`) dims as far as `flickerLow` and back at uneven moments over each `flicker`, like a pilot light. */
+      flicker: 6400,
+      flickerLow: 0.72,
     },
     /**
      * The front door (src/components/door): on arrival the point of light

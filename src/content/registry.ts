@@ -140,7 +140,7 @@ const platform = section({
       hint: 'The magnifying glass on each module card: its tooltip and its name for screen readers. Opens a screenshot of the module.',
     }),
     insideHeading: text('Screenshot heading', { max: 60, hint: '{module} becomes the module name, so "Inside {module}" reads Inside Studios.' }),
-    oppieTitle: text('Oppie note', { max: 60, hint: 'Beside the Oppie mark, in the middle of the lines joining the CRM and the modules.' }),
+    oppieTitle: text('Oppie note', { max: 60, hint: 'Beside the Oppie mark, in the middle of the lines joining the core and the modules.' }),
     oppieDetail: text('Oppie note, second line', { optional: true, max: 80 }),
   },
   seed: {
@@ -188,8 +188,8 @@ const platform = section({
     ],
     lookInsideLabel: 'Look inside',
     insideHeading: 'Inside {module}',
-    oppieTitle: 'Oppie knows all of it.',
-    oppieDetail: 'Ask anything in plain English.',
+    oppieTitle: 'Oppie knows all.',
+    oppieDetail: '',
   },
 });
 

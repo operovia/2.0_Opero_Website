@@ -1,7 +1,7 @@
 'use client';
 
 import { m } from 'motion/react';
-import type { CSSProperties } from 'react';
+import { useState, type CSSProperties } from 'react';
 import { OppieMark } from '@/components/brand/oppie-mark';
 import { cn } from '@/lib/cn';
 import { tokens, type ModuleKey } from '@/theme/tokens';
@@ -36,9 +36,13 @@ type Props = { modules: readonly ModuleKey[]; title: string; detail: string };
  * modules' colors, and lines run up from that line to the CRM and down to
  * each module: one per module column on wide screens, one each way on narrow
  * ones. When it first comes into view Oppie turns over once and light runs
- * out from it along every line. The lines are decorative; Oppie's note is not.
+ * out from it along every line; after that the mark keeps a slow flicker
+ * going, and pressing it holds it still. The lines are decorative; Oppie's
+ * note is not.
  */
 export function PlatformNetwork({ modules, title, detail }: Props) {
+  // The mark keeps a light on; whoever would rather it held still presses it.
+  const [held, setHeld] = useState(false);
   const count = modules.length;
   const start = seconds(links.delay);
   const middle = (count - 1) / 2;
@@ -83,7 +87,15 @@ export function PlatformNetwork({ modules, title, detail }: Props) {
         <Light variants={up} delay={start} vertical />
       </span>
       <div className="platform-oppie relative z-10 flex items-center gap-3 rounded-2xl border border-line-strong bg-surface-raised py-2.5 pr-5 pl-3 shadow-lg lg:absolute lg:top-1/2 lg:-translate-x-1/2 lg:-translate-y-1/2">
-        <OppieMark decorative greet className="size-9" />
+        <button
+          type="button"
+          onClick={() => setHeld((h) => !h)}
+          aria-label={held ? "Resume Oppie's flicker" : "Pause Oppie's flicker"}
+          title={held ? 'Resume the flicker' : 'Pause the flicker'}
+          className="rounded-full focus-visible:ring-2 focus-visible:ring-focus-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface-raised focus-visible:outline-none"
+        >
+          <OppieMark decorative greet flicker paused={held} className="block size-9" />
+        </button>
         <p>
           <span className="block text-sm font-semibold text-fg">{title}</span>
           {detail ? <span className="block text-xs text-fg-muted">{detail}</span> : null}
