@@ -40,7 +40,7 @@ To invite someone, open Guests in the admin, add their email address (with the r
 
 Survey links keep working for the people they were sent to whether or not the site is private. Search engines are told to stay away while it is private.
 
-The Founder page (`/founder`) shows the founder's introduction (headline, photo, name, role, and the LinkedIn icon) and the story in two columns. Its eyebrow and search description are edited in Content, Founder page; everything else on it comes from the Investor Hub's Introduction and The story sections, so an edit there changes both pages.
+The Founder page (`/founder`) shows the founder's introduction (headline, photo, name, role, and the LinkedIn icon) and the story in two columns. Its eyebrow and search description are edited in Content, Founder page; everything else on it comes from the Investor Hub's Introduction and The story sections, so an edit there changes both pages. Signed-in admins see the Investor Hub instead, so to see the site as a visitor does, press View as a visitor beside the Admin pill at the foot of any page: the header then shows the Founder page and the Investor Hub is hidden, until you press Leave visitor view or close the browser.
 
 The Investor Hub (`/investors`) tells the whole story for investors and ends with a short contact form; messages arrive in Inquiries. Only investors on the guest list and signed-in admins see it; everyone else gets "page not found" there. Search engines never index it. Edit its copy in Content, Investor Hub. The LinkedIn icon beside your name links to the profile set there, under Introduction; leave that empty to hide the icon.
 

@@ -58,7 +58,7 @@ export default async function SiteLayout({ children }: LayoutProps<'/'>) {
       </main>
       <SiteFooter content={footer} email={settings.contactEmail} />
       <DemoDialog content={site.demoForm} />
-      {access.admin ? <AdminDoor /> : null}
+      {access.admin ? <AdminDoor asVisitor={access.asVisitor === true} /> : null}
       {settings.analyticsSnippet ? <div hidden dangerouslySetInnerHTML={{ __html: settings.analyticsSnippet }} /> : null}
     </MotionRoot>
   );

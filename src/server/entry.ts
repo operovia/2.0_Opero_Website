@@ -1,4 +1,5 @@
 import 'server-only';
+import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { cache } from 'react';
 import { DOOR_PATH } from '@/content/constants';
@@ -6,11 +7,17 @@ import { getPublicSettings } from '@/content/store';
 import { getSession } from '@/server/auth/session';
 import { getGuest } from '@/server/guests';
 import { siteClosed, type Access } from '@/server/investor-hub';
+import { VISITOR_VIEW_COOKIE } from '@/server/visitor-view';
 
-/** Who is looking at this request: a signed-in admin, a guest with a role, or nobody in particular. Cached per request. */
+/**
+ * Who is looking at this request: a signed-in admin, a guest with a role, or
+ * nobody in particular; and whether an admin is seeing the site as a visitor
+ * does, which only an admin can. Cached per request.
+ */
 export const getAccess = cache(async (): Promise<Access> => {
-  const [session, guest] = await Promise.all([getSession(), getGuest()]);
-  return { admin: session !== null, role: guest?.role ?? null };
+  const [session, guest, store] = await Promise.all([getSession(), getGuest(), cookies()]);
+  const admin = session !== null;
+  return { admin, role: guest?.role ?? null, asVisitor: admin && store.get(VISITOR_VIEW_COOKIE)?.value === '1' };
 });
 
 /**

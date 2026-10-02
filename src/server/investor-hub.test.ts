@@ -25,6 +25,11 @@ describe('Investor Hub visibility', () => {
     expect(investorHubHidden(admin)).toBe(false);
     expect(investorHubHidden({ admin: true, role: 'visitor' })).toBe(false);
   });
+
+  it('is hidden from an admin viewing the site as a visitor', () => {
+    expect(investorHubHidden({ ...admin, asVisitor: true })).toBe(true);
+    expect(investorHubHidden({ ...admin, asVisitor: false })).toBe(false);
+  });
 });
 
 describe('a private site', () => {

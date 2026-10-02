@@ -1,3 +1,4 @@
+import { AdminDoor } from '@/components/site/admin-door';
 import { DemoDialog } from '@/components/site/demo-dialog';
 import { MaintenancePage } from '@/components/site/maintenance-page';
 import { NotFoundContent } from '@/components/site/not-found-content';
@@ -24,6 +25,7 @@ export default async function NotFound() {
       </main>
       <SiteFooter content={withVisibleLinks(site.footer, hubHidden, siteUrl())} email={settings.contactEmail} />
       <DemoDialog content={site.demoForm} />
+      {access.admin ? <AdminDoor asVisitor={access.asVisitor === true} /> : null}
     </>
   );
 }

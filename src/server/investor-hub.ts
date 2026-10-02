@@ -1,15 +1,20 @@
 import { FOUNDER_PATH, type GuestRole, INVESTOR_HUB_PATH } from '@/content/constants';
 
-/** Who is looking: a signed-in admin, a guest who came through the front door with a role, or nobody in particular. */
-export type Access = { admin: boolean; role: GuestRole | null };
+/**
+ * Who is looking: a signed-in admin, a guest who came through the front door
+ * with a role, or nobody in particular. `asVisitor` is an admin who switched
+ * to seeing the site as a visitor does (getAccess reads it only for admins).
+ */
+export type Access = { admin: boolean; role: GuestRole | null; asVisitor?: boolean };
 
 /**
  * The Investor Hub shows only to signed-in admins and to guests invited as
  * investors. Everyone else gets the Founder page instead, and exactly one of
- * the two tabs is ever in the header.
+ * the two tabs is ever in the header. An admin viewing the site as a visitor
+ * gets the visitor's side.
  */
-export function investorHubHidden({ admin, role }: Access): boolean {
-  return !admin && role !== 'investor';
+export function investorHubHidden({ admin, role, asVisitor }: Access): boolean {
+  return asVisitor === true || (!admin && role !== 'investor');
 }
 
 /** While the site is private, only admins and guests of either role see it; everyone else is sent to the front door. */
