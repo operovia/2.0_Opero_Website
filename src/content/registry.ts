@@ -1,7 +1,7 @@
 import { textToRich } from '@/lib/rich-text';
 import { choice, link, list, number, rich, text, type Fields, type SectionCheck, type Values } from './fields';
 import { tokenHelp } from './tokens';
-import { DEMO_TARGET, DOOR_PATH, FOUNDER_PATH, INVESTOR_HUB_PATH } from './constants';
+import { DEMO_TARGET, DOOR_PATH, FOUNDER_PATH, GO_PATH, GO_SCREEN_LABELS, INVESTOR_HUB_PATH, type GoScreenName } from './constants';
 
 /**
  * Every editable section of every public page: its fields and its seed copy.
@@ -206,6 +206,81 @@ const oppie = section({
       'Oppie is the AI assistant built into every corner of the platform, and it knows your portfolio. The ceiling height in Suite 200 at Horizon? Available spaces at the Guardian Building? Lease expirations coming up this quarter? Ask in plain English and get an answer from your live data, in seconds.',
     ),
     closing: "AI isn't a feature bolted on. It's how the platform works, every step of the way.",
+  },
+});
+
+const goScreenOptions = (Object.keys(GO_SCREEN_LABELS) as GoScreenName[]).map((value) => ({ value, label: GO_SCREEN_LABELS[value] }));
+
+const go = section({
+  label: 'OperoGo',
+  description: 'The mobile app: what it does, where to get it, and the phone screens that show it. The screens are drawn (scripts/go-shots), not captured.',
+  draftCopy: true,
+  fields: {
+    eyebrow: text('Eyebrow', { optional: true, max: 60 }),
+    headline: text('Headline', { max: 160, headline: true }),
+    body: rich('Body'),
+    storesLine: text('Stores line', { max: 120, hint: 'Above the two store buttons.' }),
+    appStoreLabel: text('App Store button', { max: 30 }),
+    appStoreUrl: link('App Store link', {
+      optional: true,
+      hint: "The app's page on the App Store. Empty until the app is listed; the button then shows without a link.",
+    }),
+    playLabel: text('Google Play button', { max: 30 }),
+    playUrl: link('Google Play link', {
+      optional: true,
+      hint: "The app's page on Google Play. Empty until the app is listed; the button then shows without a link.",
+    }),
+    signInLine: text('Sign-in line', { optional: true, max: 160, hint: 'Under the store buttons. How people sign in.' }),
+    features: list('What it does', 'Feature', { title: text('Title', { max: 60 }), body: text('Line', { max: 240, multiline: true }) }, { min: 1, max: 6 }),
+    screens: list(
+      'Screens',
+      'Screen',
+      {
+        screen: choice('Screen', goScreenOptions, { hint: 'Which drawn screen shows; the pictures come from the repo.' }),
+        title: text('Title', { max: 40 }),
+        caption: text('Caption', { max: 160, multiline: true }),
+      },
+      { min: 1, max: 4 },
+    ),
+  },
+  seed: {
+    eyebrow: 'OperoGo',
+    headline: 'Take Opero *with you*.',
+    body: textToRich(
+      'OperoGo is the native mobile app, built for the people who are never at a desk: property managers walking a building, leasing agents on a tour, the field team on the road. It runs on the same live data as the platform, so what you see on your phone is what the office sees, and what you record on site is in the system before you leave the parking lot.',
+    ),
+    storesLine: 'A native app for iPhone and Android.',
+    appStoreLabel: 'App Store',
+    appStoreUrl: '',
+    playLabel: 'Google Play',
+    playUrl: '',
+    signInLine: 'Sign in with your company account, with Face ID or a fingerprint to make it quick.',
+    features: [
+      {
+        title: 'Ask Oppie, hands free',
+        body: 'Talk to Oppie the way you would to a colleague: ask about a property, add a note, log an activity, or call a contact, without typing a word.',
+      },
+      {
+        title: 'Inspections that guide you',
+        body: 'Walk a property stop by stop with the route on the floor plan, mark each item, take photos as you go, and turn a finding into a work order on the spot.',
+      },
+      {
+        title: 'Leasing in your hand',
+        body: 'Prospects and deals, the space directory, the stacking plan, and a deal analyzer for working a scenario on the way to the meeting.',
+      },
+      { title: 'Field ops and the fleet', body: 'Vehicle inspections, incident reports, and service requests, with photos, from the truck.' },
+      {
+        title: 'The operations manual, on site',
+        body: "Every property's operations manual, from the electrical room to the roof, readable and editable where you stand.",
+      },
+      { title: 'Report a building issue', body: 'A leak, an outage, damage: report it with a photo and a location, and follow it to resolution.' },
+    ],
+    screens: [
+      { screen: 'home', title: 'Home', caption: 'Everything you have access to, one tap away, and Oppie listening.' },
+      { screen: 'oppie', title: 'Oppie', caption: 'Ask about a property out loud and get the answer read back.' },
+      { screen: 'inspection', title: 'Guided inspection', caption: 'Stop by stop, with photos, and a finding that becomes a work order.' },
+      { screen: 'leasing', title: 'Stacking plan', caption: 'Every floor and suite: what is leased, what is coming up, what is open.' },
+    ],
   },
 });
 
@@ -798,7 +873,7 @@ const header = section({
       'Link',
       { label: text('Label', { max: 40, hint: tokenHelp }), href: link('Link', { hint: buttonTargetHint }) },
       {
-        max: 5,
+        max: 6,
         hint: `A link to ${FOUNDER_PATH} shows to visitors, and a link to ${INVESTOR_HUB_PATH} shows to guests and signed-in admins in its place, never both at once.`,
       },
     ),
@@ -809,6 +884,7 @@ const header = section({
     links: [
       { label: 'Platform', href: '/#platform' },
       { label: 'Oppie', href: '/#oppie' },
+      { label: 'OperoGo', href: GO_PATH },
       { label: '{Partners}', href: '/partners' },
       { label: 'Founder', href: FOUNDER_PATH },
       { label: 'Investor Hub', href: INVESTOR_HUB_PATH },
@@ -986,9 +1062,9 @@ const door = section({
 export const pages = {
   home: {
     label: 'Home page',
-    description: 'The main page, in seven sections.',
+    description: 'The main page, in eight sections.',
     path: '/',
-    sections: { hero, problem, platform, oppie, proof, partner, closing },
+    sections: { hero, problem, platform, oppie, go, proof, partner, closing },
   },
   partners: {
     label: 'Partners page',

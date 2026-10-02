@@ -32,6 +32,7 @@ While `serve` runs, the owner should not press Run: Next.js allows one dev serve
 - **Opero** is the product. **Operovia, Inc.** is the company (Delaware corporation, Ann Arbor, Michigan). Use "Operovia" only for company contexts: footer, legal, contact.
 - Opero is an operating platform for property management companies, built around a core CRM. The five modules are **Studios, Playbook, University, Compass, Build**. Always use the bare module names, never "Opero Studios".
 - The AI assistant is **Oppie**. Always that spelling.
+- **OperoGo** is the mobile app, one word with a capital G: a native app for iPhone and Android, with its own section on the home page (`/#operogo`). Its icon is the owner's file in `public/brand/operogo/` (`<BrandMark name="operogo">`), and its drawn phone screens come from `scripts/go-shots` (see the README there).
 - Opero was built inside **Oxford Companies** in Ann Arbor, which is named publicly.
 - Say property management, never real estate: "real estate" makes people think of realtors, which Opero is not. That covers Oxford Companies too (a commercial and residential property management firm).
 - Never claim to replace or beat Yardi or any accounting system; say nothing about accounting. Budgeting and financial reporting, which run today through API connections, may be shown as what they are, without the word accounting.

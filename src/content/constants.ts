@@ -38,3 +38,9 @@ export const GUEST_ROLE_LABELS: Record<GuestRole, { label: string; sees: string 
 /** The modules by their bare names, in brand order, for browser code (the registry's options are server-only). */
 export const MODULE_LABELS = { build: 'Build', studios: 'Studios', playbook: 'Playbook', university: 'University', compass: 'Compass' } as const;
 export type ModuleName = keyof typeof MODULE_LABELS;
+
+/** The drawn OperoGo screens (src/assets/go), in the order the section shows them by default, with the label each goes by. */
+export const GO_SCREEN_LABELS = { home: 'Home', oppie: 'Oppie', inspection: 'Guided inspection', leasing: 'Stacking plan' } as const;
+export type GoScreenName = keyof typeof GO_SCREEN_LABELS;
+/** The OperoGo section's anchor on the home page. */
+export const GO_PATH = '/#operogo';

@@ -47,10 +47,11 @@ export function SiteHeader({ content }: Props) {
         </Link>
 
         <nav aria-label="Main" className="hidden md:block">
-          <ul className="flex items-center gap-8">
+          {/* Five links: a tighter gap and no wrapping until lg, where there is room for the full gap. */}
+          <ul className="flex items-center gap-4 lg:gap-8">
             {content.links.map((item) => (
               <li key={item.href + item.label}>
-                <SiteLink href={item.href} className="text-sm font-medium text-fg-muted transition-colors hover:text-fg">
+                <SiteLink href={item.href} className="text-sm font-medium whitespace-nowrap text-fg-muted transition-colors hover:text-fg">
                   {item.label}
                 </SiteLink>
               </li>

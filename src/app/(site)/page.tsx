@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Closing } from '@/components/site/home/closing';
+import { Go } from '@/components/site/home/go';
 import { Hero } from '@/components/site/home/hero';
 import { OppieSection } from '@/components/site/home/oppie';
 import { PartnerInvite } from '@/components/site/home/partner';
@@ -28,6 +29,7 @@ export default async function HomePage() {
       <Problem content={home.problem} />
       <Platform content={home.platform} />
       <OppieSection content={home.oppie} />
+      <Go content={home.go} />
       <Proof content={home.proof} />
       <PartnerInvite content={home.partner} />
       <Closing content={home.closing} />

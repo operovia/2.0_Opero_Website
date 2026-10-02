@@ -1023,6 +1023,35 @@
 }
 
 /*
+ * The OperoGo section (src/components/site/home/go.tsx): the app icon with a
+ * soft glow under it, and the phones, each edged in the wordmark's metal like
+ * the platform frame. The phones' row scrolls sideways on narrow screens
+ * without showing a scrollbar.
+ */
+.go-icon {
+  filter: drop-shadow(0 18px 40px color-mix(in oklab, var(--o-fg) 18%, transparent));
+}
+.go-phone::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: inherit;
+  background: var(--o-metal);
+  mask:
+    linear-gradient(black 0 0) content-box exclude,
+    linear-gradient(black 0 0);
+  opacity: 0.55;
+  pointer-events: none;
+}
+.go-phones {
+  scrollbar-width: none;
+}
+.go-phones::-webkit-scrollbar {
+  display: none;
+}
+
+/*
  * The platform section's network (src/components/site/home/platform-network.tsx),
  * drawn over the module columns: five columns with the grid's gap. The line
  * joining the modules runs from the first module's column to the last one's,

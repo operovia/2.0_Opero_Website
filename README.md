@@ -95,6 +95,10 @@ Each time the site starts, it applies any database updates that arrived with new
 
 Each module card on the home page opens a screenshot of the module in a lightbox when pressed. In the lightbox, Zoom in (the magnifying glass) or a click on the picture shows it closer: move the mouse across it, drag it with a finger, or use the arrow keys to look around, and click again, press Zoom out or Escape to step back. The pictures are drawn, not captured: `scripts/module-shots/<module>.html` is the screen, with fictional data, and `node scripts/module-shots/render.mjs` renders them to `src/assets/modules/<module>.png` (set `CHROME_PATH` to a Chromium if none is installed for Playwright). A re-rendered picture gets a new web address of its own, so browsers never keep showing the old one. Edit the caption under each picture in Content, Home, Platform.
 
+## The OperoGo section
+
+The home page's OperoGo section describes the mobile app and shows four phone screens. Like the module screenshots, the screens are drawn, not captured: `scripts/go-shots/<screen>.html` is each screen, with fictional data, and `node scripts/go-shots/render.mjs` renders them to `src/assets/go/<screen>.png` (set `CHROME_PATH` to a Chromium if none is installed for Playwright). Everything the section says, the two store buttons and the caption under each phone are edited in Content, Home page, OperoGo. The store buttons become links once the app's App Store and Google Play pages are entered there.
+
 ## For developers
 
 | Command | What it does |
