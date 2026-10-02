@@ -34,7 +34,8 @@ creative license, not captures: each `<screen>.html` is a screen, `shell.css` is
 A screen inside a module shows a back chevron before the icon: `<div class="back"><svg class="icon" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></div>`
 as the app bar's first child, the title is the module or screen name, and the subtitle says where you are.
 
-Geometry: status bar y 0 to 54; app bar y 54 to 114 (its accent bar is the bottom 3px); content y 114 to 760 with 16px side
+Geometry: status bar y 0 to 54, around the Dynamic Island (x 132 to 258, y 11 to 48), which the site's phone frame
+(`src/components/site/home/phone-frame.tsx`) draws over every screen, so nothing goes there; app bar y 54 to 114 (its accent bar is the bottom 3px); content y 114 to 760 with 16px side
 padding (inner x 16 to 374); banner y 760 to 844. Content that is meant to run off the bottom runs under the banner; nothing
 else is clipped. The `.glow` is the first child of `.content`.
 

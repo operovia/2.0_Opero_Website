@@ -49,6 +49,8 @@ function themeDeclarations(theme: ThemeName): string {
   for (const [key, value] of Object.entries(tokens.shadow[theme])) vars[`shadow-${key}`] = value;
 
   vars['metal'] = metalGradient(theme);
+  // The OperoGo phone's band: the metal shaded to titanium (src/components/site/home/phone-frame.tsx).
+  vars['phone-band'] = `linear-gradient(${tokens.brand.phone.bandShade}, ${tokens.brand.phone.bandShade}), ${metalGradient(theme)}`;
   vars['jewel-light-specular'] = tokens.brand.jewelLight.specular;
   vars['jewel-light-edge'] = tokens.brand.jewelLight.edge[theme];
   vars['aurora-opacity'] = tokens.brand.aurora.opacity[theme];
@@ -108,6 +110,10 @@ function sharedDeclarations(): string {
   vars['door-iris-scale'] = tokens.motion.door.irisScale;
   vars['door-glow'] = `${tokens.brand.door.glow}%`;
   vars['door-band'] = `${tokens.brand.door.band}%`;
+  // The OperoGo phone (src/components/site/home/phone-frame.tsx): its glass and its camera, the same on both themes.
+  vars['phone-glass'] = tokens.brand.phone.glass;
+  vars['phone-lens'] = tokens.brand.phone.lens;
+  vars['phone-glint'] = tokens.brand.phone.glint;
 
   return declarations(vars);
 }

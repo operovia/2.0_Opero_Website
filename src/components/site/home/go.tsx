@@ -10,6 +10,8 @@ import { renderHeadline } from '@/lib/headline';
 import { Aurora } from '../aurora';
 import { Container, Eyebrow } from '../layout-parts';
 import { SiteLink } from '../site-link';
+import { GoLightbox } from './go-lightbox';
+import { PhoneFrame } from './phone-frame';
 
 const storeBadge = 'inline-flex h-14 min-w-44 flex-col justify-center rounded-xl border border-line-strong bg-surface px-5 text-left shadow-sm';
 
@@ -36,9 +38,10 @@ function StoreBadge({ href, label, platform }: { href: string; label: string; pl
 
 /**
  * OperoGo, the mobile app: the icon and the words, the two stores, the drawn
- * phone screens (scripts/go-shots), and what the app does. The screens stand
- * in a row on wide screens, two by two on tablets, and scroll sideways on
- * phones, snapping one at a time.
+ * phone screens (scripts/go-shots) in iPhones, and what the app does. The
+ * phones stand in a row on wide screens, two by two on tablets, and scroll
+ * sideways on phones, snapping one at a time. Pressing a phone opens its
+ * screen large in the lightbox, where it can be zoomed.
  */
 export function Go({ content }: { content: SectionData<'home', 'go'> }) {
   return (
@@ -85,17 +88,19 @@ export function Go({ content }: { content: SectionData<'home', 'go'> }) {
               key={`${item.screen}-${index}`}
               className={cn('w-[72vw] max-w-72 shrink-0 snap-center sm:w-auto sm:max-w-none', index % 2 ? 'lg:mt-10' : '')}
             >
-              <div className="go-phone relative rounded-[2.75rem] bg-canvas-raised p-2 shadow-lg">
-                <div className="overflow-hidden rounded-[2.25rem] bg-canvas">
+              {/* A link to the picture itself, which the lightbox opens in its place (go-lightbox.tsx). */}
+              <a href={GO_SHOTS[item.screen].src} data-go-shot={index} title={content.lookCloserLabel} className="phone-link cursor-zoom-in">
+                <span className="sr-only">{content.lookCloserLabel}: </span>
+                <PhoneFrame>
                   <Image
                     src={GO_SHOTS[item.screen]}
                     alt={`The ${GO_SCREEN_LABELS[item.screen]} screen of OperoGo.`}
                     sizes="(min-width: 64rem) 16rem, (min-width: 40rem) 40vw, 72vw"
                     quality={85}
-                    className="block h-auto w-full"
+                    className="absolute inset-0 h-full w-full object-cover"
                   />
-                </div>
-              </div>
+                </PhoneFrame>
+              </a>
               <p className="mt-5 text-sm font-semibold text-fg">{item.title}</p>
               <p className="mt-1 text-sm text-fg-muted">{item.caption}</p>
             </RevealItem>
@@ -111,6 +116,7 @@ export function Go({ content }: { content: SectionData<'home', 'go'> }) {
           ))}
         </RevealGroup>
       </Container>
+      <GoLightbox screens={content.screens} />
     </section>
   );
 }

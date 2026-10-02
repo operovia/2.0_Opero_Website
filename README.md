@@ -97,7 +97,7 @@ Each module card on the home page opens a screenshot of the module in a lightbox
 
 ## The OperoGo section
 
-The home page's OperoGo section describes the mobile app and shows four phone screens. Like the module screenshots, the screens are drawn, not captured: `scripts/go-shots/<screen>.html` is each screen, with fictional data, and `node scripts/go-shots/render.mjs` renders them to `src/assets/go/<screen>.png` (set `CHROME_PATH` to a Chromium if none is installed for Playwright). Everything the section says, the two store buttons and the caption under each phone are edited in Content, Home page, OperoGo. The store buttons become links once the app's App Store and Google Play pages are entered there.
+The home page's OperoGo section describes the mobile app and shows four phone screens. Like the module screenshots, the screens are drawn, not captured: `scripts/go-shots/<screen>.html` is each screen, with fictional data, and `node scripts/go-shots/render.mjs` renders them to `src/assets/go/<screen>.png` (set `CHROME_PATH` to a Chromium if none is installed for Playwright). On the page the screens stand in iPhones, and pressing a phone opens its screen large in the same iPhone, where Zoom in (the magnifying glass) or a click or tap on the screen looks closer, as on the module screenshots. Everything the section says, the two store buttons, the caption under each phone and the Look closer label (each phone's tooltip) are edited in Content, Home page, OperoGo. The store buttons become links once the app's App Store and Google Play pages are entered there.
 
 ## For developers
 

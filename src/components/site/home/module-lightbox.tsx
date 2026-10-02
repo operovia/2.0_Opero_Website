@@ -2,35 +2,16 @@
 
 import { ChevronLeft, ChevronRight, X, ZoomIn, ZoomOut } from 'lucide-react';
 import Image from 'next/image';
-import { useEffect, useRef, useState, type PointerEvent } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { BrandMark } from '@/components/brand/brand-mark';
 import { MODULE_LABELS, type ModuleName } from '@/content/constants';
 import { MODULE_SHOTS } from '@/content/module-shots';
 import { cn } from '@/lib/cn';
-import { tokens } from '@/theme/tokens';
+import { closeButton as closeButtonClass, OUT, pillButton, useZoom } from './lightbox';
 
 export type ModuleShot = { module: ModuleName; description: string; inside: string };
 
 type Props = { modules: ModuleShot[] };
-
-/** On phones the buttons are round, with only the icon showing: the words would not fit. Screen readers hear the words everywhere. */
-const pillButton =
-  'inline-flex h-10 items-center gap-1.5 rounded-full border border-line-strong bg-surface px-4 text-sm font-medium text-fg transition-colors hover:border-line-input hover:bg-surface-raised disabled:pointer-events-none disabled:opacity-40 max-sm:w-10 max-sm:justify-center max-sm:gap-0 max-sm:px-0';
-
-/**
- * Where a zoomed picture is looking: the point of the picture, as shares of
- * its width and height, that shows at the same share of the frame. Moving the
- * pointer across the frame therefore moves across the whole picture.
- */
-type Zoom = { on: boolean; x: number; y: number };
-const OUT: Zoom = { on: false, x: 0.5, y: 0.5 };
-const clamp = (n: number) => Math.min(1, Math.max(0, n));
-/** How far one arrow key moves a zoomed picture, as a share of the way across. */
-const STEP = 0.1;
-/** A press that moves less than this before it lets go is a click or a tap, not a drag. */
-const TAP_PX = 6;
-/** Zoomed, a picture shows at least twice its fitted size, and at least the size it was drawn at, which is its own width in CSS pixels; never more than four times. */
-const zoomFactor = (drawnWidth: number, frameWidth: number) => (frameWidth ? Math.min(4, Math.max(2, drawnWidth / frameWidth)) : 2);
 
 /**
  * The screenshots behind the module cards, in one native modal dialog: a link
@@ -43,21 +24,19 @@ const zoomFactor = (drawnWidth: number, frameWidth: number) => (frameWidth ? Mat
  * (most laptops) the caption and the arrows stand beside it rather than under
  * it. The magnifying glass, or a click or tap on the picture, zooms in: the
  * picture then follows the mouse across the frame, or the finger as it drags,
- * or the arrow keys; another click, the magnifying glass or Escape zooms out.
+ * or the arrow keys; another click, the magnifying glass or Escape zooms out
+ * (useZoom in lightbox.ts, shared with the OperoGo screens).
  */
 export function ModuleLightbox({ modules }: Props) {
   const dialog = useRef<HTMLDialogElement>(null);
   const closeButton = useRef<HTMLButtonElement>(null);
-  const frame = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
   // Once opened, every screenshot is fetched, so moving between modules is instant.
   const [opened, setOpened] = useState(false);
-  const [zoom, setZoom] = useState<Zoom>(OUT);
-  // True for a moment after zooming in or out (or a key press moves the picture), so that change eases while following the pointer does not.
-  const [easing, setEasing] = useState(false);
-  const easingTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
-  const [frameWidth, setFrameWidth] = useState(0);
-  const press = useRef<{ id: number; x: number; y: number; zoomX: number; zoomY: number; moved: boolean } | null>(null);
+  const current = modules[active];
+  const frame = useRef<HTMLDivElement>(null);
+  const zoomer = useZoom(frame, current ? MODULE_SHOTS[current.module].width / 2 : 0);
+  const { zoom, setZoom } = zoomer;
 
   useEffect(() => {
     const onClick = (event: MouseEvent) => {
@@ -75,74 +54,14 @@ export function ModuleLightbox({ modules }: Props) {
     };
     document.addEventListener('click', onClick);
     return () => document.removeEventListener('click', onClick);
-  }, [modules]);
-
-  // The frame's width decides which size of the picture to fetch and how far zooming goes.
-  useEffect(() => {
-    const element = frame.current;
-    if (!element) return;
-    const observer = new ResizeObserver(([entry]) => setFrameWidth(Math.round(entry?.contentRect.width ?? 0)));
-    observer.observe(element);
-    return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => () => clearTimeout(easingTimer.current), []);
+  }, [modules, setZoom]);
 
   const count = modules.length;
-  const current = modules[active];
   if (!current) return null;
-  const factor = zoomFactor(MODULE_SHOTS[current.module].width / 2, frameWidth);
-
-  /** Zooms in or out, or moves by a key press, easing into place. */
-  function ease(next: Zoom | ((zoom: Zoom) => Zoom)): void {
-    setEasing(true);
-    clearTimeout(easingTimer.current);
-    easingTimer.current = setTimeout(() => setEasing(false), tokens.motion.duration.base);
-    setZoom(next);
-  }
 
   function show(index: number): void {
     setActive((index + count) % count);
     setZoom(OUT);
-  }
-
-  /** The point under the pointer, as shares of the frame. */
-  function pointAt(event: PointerEvent<HTMLDivElement>): { x: number; y: number } {
-    const box = event.currentTarget.getBoundingClientRect();
-    return { x: clamp((event.clientX - box.left) / box.width), y: clamp((event.clientY - box.top) / box.height) };
-  }
-
-  function onPointerDown(event: PointerEvent<HTMLDivElement>): void {
-    if (event.button !== 0) return;
-    press.current = { id: event.pointerId, x: event.clientX, y: event.clientY, zoomX: zoom.x, zoomY: zoom.y, moved: false };
-    // A finger dragging a zoomed picture keeps it even when it strays outside the frame.
-    if (zoom.on && event.pointerType !== 'mouse') event.currentTarget.setPointerCapture(event.pointerId);
-  }
-
-  function onPointerMove(event: PointerEvent<HTMLDivElement>): void {
-    const held = press.current?.id === event.pointerId ? press.current : null;
-    if (held && Math.hypot(event.clientX - held.x, event.clientY - held.y) > TAP_PX) held.moved = true;
-    if (!zoom.on) return;
-    if (event.pointerType === 'mouse') {
-      setZoom({ on: true, ...pointAt(event) });
-    } else if (held) {
-      // The picture moves with the finger: dragging left shows more of the right.
-      const box = event.currentTarget.getBoundingClientRect();
-      const reach = factor - 1;
-      setZoom({
-        on: true,
-        x: clamp(held.zoomX - (event.clientX - held.x) / (box.width * reach)),
-        y: clamp(held.zoomY - (event.clientY - held.y) / (box.height * reach)),
-      });
-    }
-  }
-
-  function onPointerUp(event: PointerEvent<HTMLDivElement>): void {
-    const held = press.current?.id === event.pointerId ? press.current : null;
-    press.current = null;
-    if (!held || held.moved) return;
-    // A click or a tap: zoom in on that point, or back out.
-    ease(zoom.on ? OUT : { on: true, ...pointAt(event) });
   }
 
   return (
@@ -151,24 +70,12 @@ export function ModuleLightbox({ modules }: Props) {
       aria-labelledby="module-shot-title"
       aria-describedby="module-shot-caption"
       onKeyDown={(event) => {
-        if (zoom.on) {
-          const moves: Record<string, [number, number]> = { ArrowLeft: [-STEP, 0], ArrowRight: [STEP, 0], ArrowUp: [0, -STEP], ArrowDown: [0, STEP] };
-          const move = moves[event.key];
-          if (!move) return;
-          event.preventDefault();
-          ease((z) => ({ on: true, x: clamp(z.x + move[0]), y: clamp(z.y + move[1]) }));
-          return;
-        }
-        if (count < 2) return;
+        if (zoomer.onKey(event) || count < 2) return;
         if (event.key === 'ArrowRight') show(active + 1);
         if (event.key === 'ArrowLeft') show(active - 1);
       }}
       // Escape zooms out first, then closes.
-      onCancel={(event) => {
-        if (!zoom.on) return;
-        event.preventDefault();
-        ease(OUT);
-      }}
+      onCancel={zoomer.onCancel}
       onClose={() => setZoom(OUT)}
       onClick={(event) => {
         if (event.target === dialog.current) dialog.current?.close();
@@ -202,16 +109,11 @@ export function ModuleLightbox({ modules }: Props) {
             </ol>
           ) : null}
           <div className="flex items-center gap-2">
-            <button type="button" onClick={() => ease(zoom.on ? OUT : { on: true, x: 0.5, y: 0.5 })} className={pillButton}>
+            <button type="button" onClick={zoomer.toggle} className={pillButton}>
               {zoom.on ? <ZoomOut className="size-4" aria-hidden /> : <ZoomIn className="size-4" aria-hidden />}
               <span className="max-sm:sr-only">{zoom.on ? 'Zoom out' : 'Zoom in'}</span>
             </button>
-            <button
-              ref={closeButton}
-              type="button"
-              onClick={() => dialog.current?.close()}
-              className="inline-flex size-10 shrink-0 items-center justify-center rounded-full text-fg-muted transition-colors hover:bg-accent-soft hover:text-fg"
-            >
+            <button ref={closeButton} type="button" onClick={() => dialog.current?.close()} className={closeButtonClass}>
               <X className="size-5" aria-hidden />
               <span className="sr-only">Close</span>
             </button>
@@ -222,16 +124,9 @@ export function ModuleLightbox({ modules }: Props) {
           <figure className="m-0">
             <div
               ref={frame}
-              className={cn(
-                'module-shot relative aspect-[16/10] w-full overflow-hidden bg-canvas-raised select-none',
-                zoom.on ? 'cursor-zoom-out touch-none' : 'cursor-zoom-in touch-manipulation',
-              )}
-              data-easing={easing ? '' : undefined}
+              className={cn('zoom-frame relative aspect-[16/10] w-full overflow-hidden bg-canvas-raised select-none', zoomer.frameClass)}
               aria-live="polite"
-              onPointerDown={onPointerDown}
-              onPointerMove={onPointerMove}
-              onPointerUp={onPointerUp}
-              onPointerCancel={() => (press.current = null)}
+              {...zoomer.frameProps}
             >
               {opened
                 ? modules.map((item, index) => {
@@ -242,15 +137,12 @@ export function ModuleLightbox({ modules }: Props) {
                         key={item.module}
                         src={MODULE_SHOTS[item.module]}
                         alt={`A screen from ${MODULE_LABELS[item.module]}.`}
-                        // Fetched at the frame's size, and at the zoomed size once zoomed in, so a close look stays sharp.
-                        sizes={zoomed ? `${Math.ceil(factor * frameWidth)}px` : frameWidth ? `${frameWidth}px` : '100vw'}
+                        sizes={zoomer.sizes(zoomed)}
                         quality={85}
                         priority={shown}
                         draggable={false}
                         className={cn('absolute inset-0 h-full w-full origin-top-left object-cover', shown ? '' : 'invisible')}
-                        style={
-                          zoomed ? { transform: `translate(${-zoom.x * (factor - 1) * 100}%, ${-zoom.y * (factor - 1) * 100}%) scale(${factor})` } : undefined
-                        }
+                        style={zoomer.style(zoomed)}
                       />
                     );
                   })

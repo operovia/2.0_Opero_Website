@@ -267,6 +267,20 @@ export const tokens = {
       glow: 14,
       band: 40,
     },
+    /**
+     * The iPhone the OperoGo screens stand in (src/components/site/home/phone-frame.tsx):
+     * the black glass around the screen, which the Dynamic Island is cut from,
+     * and the front camera in the island, a dark lens with a faint glint. The
+     * same on both themes, since a phone is an object, not a surface. Its band
+     * and buttons are the wordmark's metal under `bandShade` (28% black), so
+     * they read as titanium rather than a bright ring.
+     */
+    phone: {
+      glass: '#000000',
+      lens: '#121A26',
+      glint: '#33445C',
+      bandShade: '#00000047',
+    },
   },
 
   /**

@@ -1024,31 +1024,126 @@
 
 /*
  * The OperoGo section (src/components/site/home/go.tsx): the app icon with a
- * soft glow under it, and the phones, each edged in the wordmark's metal like
- * the platform frame. The phones' row scrolls sideways on narrow screens
- * without showing a scrollbar.
+ * soft glow under it, and the phones. The phones' row scrolls sideways on
+ * narrow screens without showing a scrollbar. Each phone is a link that opens
+ * its screen in the lightbox: it rises a little under the pointer, and the
+ * focus ring follows its outline.
  */
 .go-icon {
   filter: drop-shadow(0 18px 40px color-mix(in oklab, var(--o-fg) 18%, transparent));
 }
-.go-phone::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  padding: 1px;
-  border-radius: inherit;
-  background: var(--o-metal);
-  mask:
-    linear-gradient(black 0 0) content-box exclude,
-    linear-gradient(black 0 0);
-  opacity: 0.55;
-  pointer-events: none;
+.phone-link {
+  display: block;
+  transition: transform var(--o-duration-slow) var(--o-ease-out);
+}
+@media (hover: hover) {
+  .phone-link:hover {
+    transform: translate3d(0, -4px, 0);
+  }
+}
+.phone-link:focus-visible {
+  outline: none;
+}
+.phone-link:focus-visible .phone-body {
+  outline: 2px solid var(--o-focus-ring);
+  outline-offset: 4px;
 }
 .go-phones {
   scrollbar-width: none;
 }
 .go-phones::-webkit-scrollbar {
   display: none;
+}
+
+/*
+ * The iPhone the OperoGo screens stand in (src/components/site/home/phone-frame.tsx),
+ * drawn to an iPhone's proportions as shares of its own width (cqw), so it
+ * scales from the row on the page to the lightbox. From the outside in: the
+ * band in the wordmark's metal shaded to titanium, with the buttons on its sides; the black
+ * glass; and the screen, its corners concentric with the band's, as on the
+ * display. The Dynamic Island sits over the top of the screen, at the size
+ * and place it has on the phone. The screens were drawn at 390 x 844 and the
+ * band and the glass take 3.9% of the width on each side, so the phone is
+ * 0.4823 times as wide as it is tall; the screen keeps the drawing's shape.
+ */
+.phone {
+  position: relative;
+  container-type: inline-size;
+  aspect-ratio: 0.4823;
+}
+.phone-body {
+  position: absolute;
+  inset: 0;
+  padding: 1cqw;
+  border-radius: 16.8cqw;
+  background: var(--o-phone-band);
+  box-shadow: var(--o-shadow-lg);
+}
+.phone-glass {
+  height: 100%;
+  padding: 2.9cqw;
+  border-radius: 15.8cqw;
+  background: var(--o-phone-glass);
+}
+.phone-screen {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 12.9cqw;
+  background: var(--o-phone-glass);
+}
+.phone-island {
+  position: absolute;
+  z-index: 1;
+  top: 2.6cqw;
+  left: 50%;
+  width: 29.6cqw;
+  height: 8.8cqw;
+  margin-left: -14.8cqw;
+  border-radius: var(--o-radius-full);
+  background: var(--o-phone-glass);
+  pointer-events: none;
+}
+/* The front camera, at the island's right end. */
+.phone-island::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 2.9cqw;
+  width: 2.9cqw;
+  height: 2.9cqw;
+  margin-top: -1.45cqw;
+  border-radius: var(--o-radius-full);
+  background: radial-gradient(circle at 35% 35%, var(--o-phone-glint), var(--o-phone-lens) 62%);
+}
+/* The buttons stand just proud of the band: the Action button and the volume buttons on the left, the side button on the right. */
+.phone-key {
+  position: absolute;
+  width: 1.2cqw;
+  border-radius: 0.6cqw;
+  background: var(--o-phone-band);
+}
+.phone-key-action,
+.phone-key-up,
+.phone-key-down {
+  left: -0.7cqw;
+}
+.phone-key-side {
+  right: -0.7cqw;
+  top: 26.5%;
+  height: 13.6%;
+}
+.phone-key-action {
+  top: 16.8%;
+  height: 4.6%;
+}
+.phone-key-up {
+  top: 24.8%;
+  height: 8.6%;
+}
+.phone-key-down {
+  top: 35.2%;
+  height: 8.6%;
 }
 
 /*
@@ -1304,22 +1399,54 @@
   font-weight: var(--o-weight-semibold);
 }
 
-/* Demo request dialog (src/components/site/demo-dialog.tsx) and the module screenshots (src/components/site/home/module-lightbox.tsx). */
+/*
+ * Demo request dialog (src/components/site/demo-dialog.tsx), the module
+ * screenshots (src/components/site/home/module-lightbox.tsx) and the OperoGo
+ * screens (src/components/site/home/go-lightbox.tsx).
+ */
 .demo-dialog[open],
-.module-dialog[open] {
+.module-dialog[open],
+.go-dialog[open] {
   animation: dialog-in var(--o-duration-slow) var(--o-ease-out);
 }
-/* The lightbox's picture: zooming in or out eases; following the pointer while zoomed does not, or it would lag behind. */
-.module-shot[data-easing] img {
+/* A lightbox's picture (useZoom in src/components/site/home/lightbox.ts): zooming in or out eases; following the pointer while zoomed does not, or it would lag behind. */
+.zoom-frame[data-easing] img {
   transition: transform var(--o-duration-base) var(--o-ease-out);
 }
 @media (prefers-reduced-motion: reduce) {
-  .module-shot img {
+  .zoom-frame img {
     transition: none !important;
   }
 }
+/*
+ * The OperoGo lightbox takes the window's height, and its phone fills the
+ * slot the top bar and the words leave, at the phone's own proportions: the
+ * slot is a size container and the phone is as wide as fits both its width
+ * and its height. Beside the phone, on wide windows, the words take a column
+ * of 18rem, so the dialog is only as wide as the phone at full height needs:
+ * the top bar (4rem and its border) and the slot's padding (1.5rem a side)
+ * come off the height, and the column, the padding and the borders go on.
+ */
+.go-dialog {
+  height: calc(100dvh - 2 * var(--o-gutter));
+  max-height: none;
+  width: min(100% - 2 * var(--o-gutter), 32rem);
+  max-width: none;
+}
+@media (min-width: 48rem) {
+  .go-dialog {
+    width: min(100% - 2 * var(--o-gutter), (100dvh - 2 * var(--o-gutter) - 7rem - 3px) * 0.4823 + 21rem + 3px);
+  }
+}
+.go-shot-slot {
+  container-type: size;
+}
+.go-shot-slot > .phone {
+  width: min(100cqw, 100cqh * 0.4823);
+}
 .demo-dialog[open]::backdrop,
-.module-dialog[open]::backdrop {
+.module-dialog[open]::backdrop,
+.go-dialog[open]::backdrop {
   backdrop-filter: blur(6px);
   animation: backdrop-in var(--o-duration-slow) var(--o-ease-out);
 }

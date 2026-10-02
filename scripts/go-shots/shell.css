@@ -66,9 +66,12 @@ svg.icon.i28 { width: 28px; height: 28px; }
 .j-green   { --j-hi: var(--jewel-green-hi);   --j-base: var(--jewel-green-base);   --j-shade: var(--jewel-green-shade);   --j-deep: var(--jewel-green-deep); }
 .j-teal    { --j-hi: var(--jewel-teal-hi);    --j-base: var(--jewel-teal-base);    --j-shade: var(--jewel-teal-shade);    --j-deep: var(--jewel-teal-deep); }
 
-/* ---------- status bar: y 0 to 54 ---------- */
-.status { position: absolute; left: 0; top: 0; width: 390px; height: 54px; display: flex; align-items: flex-end; justify-content: space-between; padding: 0 30px 8px 34px; font-size: 16px; line-height: 20px; font-weight: 600; }
-.status .glyphs { display: flex; align-items: center; gap: 7px; }
+/* ---------- status bar: y 0 to 54, laid out around the Dynamic Island as on the phone. The site's phone frame draws the
+   island over it (x 132 to 258, y 11 to 48), so the bar leaves that space empty: the time stands in the middle of the left
+   ear, the glyphs in the middle of the right one, both level with the island's middle. ---------- */
+.status { position: absolute; left: 0; top: 0; width: 390px; height: 54px; display: grid; grid-template-columns: 1fr 126px 1fr; align-items: center; padding-top: 5px; font-size: 16px; line-height: 20px; font-weight: 600; }
+.status > span:first-child { justify-self: center; }
+.status .glyphs { grid-column: 3; justify-self: center; display: flex; align-items: center; gap: 7px; }
 .status .bars { display: flex; align-items: flex-end; gap: 2px; height: 12px; }
 .status .bars i { display: block; width: 3px; border-radius: 1px; background: var(--text); }
 .status .bars i:nth-child(1) { height: 4px; } .status .bars i:nth-child(2) { height: 6px; } .status .bars i:nth-child(3) { height: 9px; } .status .bars i:nth-child(4) { height: 12px; }

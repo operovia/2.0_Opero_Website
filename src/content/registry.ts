@@ -242,6 +242,10 @@ const go = section({
       },
       { min: 1, max: 4 },
     ),
+    lookCloserLabel: text('Look closer label', {
+      max: 30,
+      hint: "Each phone opens its screen large when pressed, where it can be zoomed; this is the phone's tooltip and what screen readers hear.",
+    }),
   },
   seed: {
     eyebrow: 'OperoGo',
@@ -255,6 +259,7 @@ const go = section({
     playLabel: 'Google Play',
     playUrl: '',
     signInLine: 'Sign in with your company account, with Face ID or a fingerprint to make it quick.',
+    lookCloserLabel: 'Look closer',
     features: [
       {
         title: 'Ask Oppie, hands free',
