@@ -7,12 +7,21 @@ function trimmed(name: string): string {
   return (process.env[name] ?? '').trim();
 }
 
-/** The public origin of the site, used for links in emails, sitemaps, and metadata. */
+/**
+ * The public origin of the site, used for links in emails, sitemaps, and
+ * metadata: SITE_URL, else the app's Replit address, else localhost. The
+ * development server in Replit's workspace always uses its own address, the
+ * dev URL. Replit keeps one list of Secrets for the workspace and the
+ * published app, so SITE_URL (the public address) reaches the development
+ * server too, and its links must lead back to it and its own database.
+ */
 export function siteUrl(): string {
+  const devDomain = process.env.NODE_ENV === 'production' ? '' : trimmed('REPLIT_DEV_DOMAIN');
+  if (devDomain) return `https://${devDomain}`;
   const explicit = trimmed('SITE_URL');
   if (explicit) return explicit.replace(/\/+$/, '');
   // Replit exposes its domains; any other host should set SITE_URL.
-  const replitDomain = trimmed('REPLIT_DOMAINS').split(',')[0]?.trim() || trimmed('REPLIT_DEV_DOMAIN');
+  const replitDomain = trimmed('REPLIT_DOMAINS').split(',')[0]?.trim();
   if (replitDomain) return `https://${replitDomain}`;
   return `http://localhost:${trimmed('PORT') || '3000'}`;
 }
