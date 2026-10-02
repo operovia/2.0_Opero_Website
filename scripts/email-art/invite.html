@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Opero invitation</title>
+<style>
+/* The invitation graphic for emails: 1200 x 630, shown at 600 wide, so sharp on high-density screens. Colors are literal
+   copies of the website's dark tokens (src/theme/tokens.ts); the words are the site's own (the door's eyebrow, the home
+   page's headline, the door's button for a guest already in). Rendered by render.mjs beside this file. */
+@font-face { font-family: 'Plus Jakarta Sans'; src: url('/src/theme/fonts/PlusJakartaSans-Variable.woff2') format('woff2'); font-weight: 200 800; font-style: normal; }
+@font-face { font-family: 'Plus Jakarta Sans'; src: url('/src/theme/fonts/PlusJakartaSans-Italic-Variable-Latin.woff2') format('woff2'); font-weight: 200 800; font-style: italic; }
+* { box-sizing: border-box; }
+html, body { margin: 0; width: 1200px; height: 630px; background: transparent; }
+.card { position: relative; width: 1200px; height: 630px; border-radius: 28px; overflow: hidden; background: #0F1115; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-font-smoothing: antialiased; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+/* The aurora: the five jewels' base colors, soft and low, as on the site's hero. */
+.aurora { position: absolute; inset: 0; opacity: 0.5; background:
+  radial-gradient(38% 55% at 10% 12%, #7050A0 0%, transparent 100%),
+  radial-gradient(34% 50% at 92% 18%, #367F95 0%, transparent 100%),
+  radial-gradient(32% 48% at 16% 100%, #A63F44 0%, transparent 100%),
+  radial-gradient(30% 46% at 90% 100%, #AF843B 0%, transparent 100%),
+  radial-gradient(26% 40% at 55% 108%, #3A8864 0%, transparent 100%); filter: blur(30px); }
+.edge { position: absolute; inset: 0; border-radius: 28px; box-shadow: inset 0 0 0 1px #FFFFFF14; pointer-events: none; }
+.content { position: relative; display: flex; flex-direction: column; align-items: center; }
+.logo { width: 300px; height: auto; display: block; }
+.eyebrow { margin-top: 30px; font-size: 15px; line-height: 20px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: #8E939C; }
+/* The wordmark's metal, top to bottom, as the site's headlines. */
+.headline { margin: 16px 0 0; max-width: 1000px; font-size: 52px; line-height: 1.2; letter-spacing: 0.006em; font-weight: 500; background: linear-gradient(to bottom, #F2F4F6 0%, #CFD3D8 24%, #A9AEB6 52%, #C6CBD1 80%, #E6E9EC 100%); -webkit-background-clip: text; background-clip: text; color: transparent; padding-bottom: 6px; }
+.button { margin-top: 34px; display: inline-flex; align-items: center; gap: 12px; height: 64px; padding: 0 34px; border-radius: 9999px; background: #E6E9EC; color: #0F1115; font-size: 21px; font-weight: 600; box-shadow: 0 18px 40px -16px #000000B3; }
+.button svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.address { margin-top: 22px; font-size: 16px; line-height: 20px; font-weight: 500; letter-spacing: 0.02em; color: #8E939C; }
+</style></head>
+<body>
+  <div class="card">
+    <div class="aurora"></div>
+    <div class="content">
+      <img class="logo" src="/public/brand/opero/opero-centered-dark.webp" alt="">
+      <div class="eyebrow">By invitation</div>
+      <h1 class="headline"><em>The</em> AI-driven operating platform<br>for property management.</h1>
+      <div class="button">Go to Opero<svg viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></div>
+      <div class="address">operovia.com</div>
+    </div>
+    <div class="edge"></div>
+  </div>
+</body></html>

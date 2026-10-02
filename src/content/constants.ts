@@ -19,6 +19,22 @@ export const DOOR_PATH = '/welcome';
 /** A hidden field on the door's form. The script sets it to '1' before submitting; without JavaScript it stays empty, so the action knows no reveal can play and redirects instead. */
 export const DOOR_ENHANCED_FIELD = 'enhanced';
 
+/**
+ * The query parameter that fills in the door's address, so a link in an email
+ * can carry the address its invitation went to: /welcome?email=name@firm.com.
+ * Whoever follows the link, the email's first reader or anyone it was
+ * forwarded to, finds the address filled in and only has to press enter.
+ */
+export const DOOR_EMAIL_PARAM = 'email';
+
+/**
+ * The door takes no address sent sooner than this after the page opened:
+ * faster than a person types, so a bot (the door's action enforces it). A
+ * person who presses enter at once on an address a link filled in is held
+ * until then by the door itself, while the checking light runs.
+ */
+export const DOOR_MIN_FILL_MS = 2500;
+
 /** What the door answers when it does not open, in FormState.message; the door maps each code to its copy. */
 export type DoorAnswer = 'wrong' | 'empty' | 'invalid' | 'limited' | 'trouble';
 

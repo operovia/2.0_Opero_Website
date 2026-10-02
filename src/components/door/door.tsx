@@ -12,7 +12,7 @@ import { Eyebrow, SiteButton } from '@/components/site/layout-parts';
 import { Light } from '@/components/site/light';
 import { SpamTraps, stampElapsed } from '@/components/site/spam-traps';
 import { Input } from '@/components/ui/field';
-import { DOOR_ANSWERS, DOOR_ENHANCED_FIELD, type DoorAnswer } from '@/content/constants';
+import { DOOR_ANSWERS, DOOR_ENHANCED_FIELD, DOOR_MIN_FILL_MS, type DoorAnswer } from '@/content/constants';
 import type { SectionData } from '@/content/registry';
 import { cn } from '@/lib/cn';
 import { idleState, type FormState } from '@/lib/forms';
@@ -62,7 +62,8 @@ function copyFor(content: Content, answer: Answer): { message: string; help: str
 
 const dissolve = { duration: seconds(duration.slow), ease: ease.standard };
 
-type Props = { content: Content; contactEmail: string; alreadyIn: boolean; publicSite: boolean };
+/** `prefill`: the address a link to the door carried in ?email=, already in the field. */
+type Props = { content: Content; contactEmail: string; alreadyIn: boolean; publicSite: boolean; prefill: string };
 
 /**
  * The front door (/welcome): one dark screen with the mark, a point of light
@@ -74,13 +75,13 @@ type Props = { content: Content; contactEmail: string; alreadyIn: boolean; publi
  * canvas, and the veil (src/components/door/door-veil.tsx) takes over at the
  * exact spot of the mark before the home page is pushed.
  */
-export function Door({ content, contactEmail, alreadyIn, publicSite }: Props) {
+export function Door({ content, contactEmail, alreadyIn, publicSite, prefill }: Props) {
   const [state, formAction] = useActionState(enterDoor, idleState);
   // Read once: the action's cookie write re-renders the page, and nothing on screen may change under the guest mid-choreography.
   const [inside] = useState(alreadyIn);
   const [phase, setPhase] = useState<Phase>('idle');
   const [status, setStatus] = useState<Status>('');
-  const [value, setValue] = useState(() => state.values?.email ?? '');
+  const [value, setValue] = useState(() => state.values?.email ?? prefill);
   const [answer, setAnswer] = useState<Answer | null>(() => answerFrom(state));
   const [tinted, setTinted] = useState(() => answerFrom(state) !== null);
   const [held, setHeld] = useState(false);
@@ -93,6 +94,8 @@ export function Door({ content, contactEmail, alreadyIn, publicSite }: Props) {
   const mark = useRef<HTMLDivElement>(null);
   const entry = useRef<HTMLElement>(null);
   const answering = useRef<((state: FormState) => void) | null>(null);
+  // Set while a send is held back until the page has been open long enough (see submit).
+  const deferred = useRef(false);
   const alive = useRef(true);
   const id = useId();
   const inputId = `${id}-email`;
@@ -195,11 +198,17 @@ export function Door({ content, contactEmail, alreadyIn, publicSite }: Props) {
   }
 
   function submit(event: FormEvent<HTMLFormElement>): void {
+    const form = event.currentTarget;
+    if (deferred.current) {
+      // The send held back below, now late enough: the check is already running and waits on its answer.
+      deferred.current = false;
+      stampElapsed(form);
+      return;
+    }
     if (phase !== 'idle') {
       event.preventDefault();
       return;
     }
-    stampElapsed(event.currentTarget);
     if (enhanced.current) enhanced.current.value = '1';
     const answered = new Promise<FormState>((resolve) => {
       answering.current = resolve;
@@ -209,6 +218,19 @@ export function Door({ content, contactEmail, alreadyIn, publicSite }: Props) {
     setAnswer(null);
     setTinted(false);
     void check(answered);
+    // An address a link filled in can be sent at once, sooner than the action accepts from a person: the light
+    // runs, and the send waits until then (with a little room).
+    const early = DOOR_MIN_FILL_MS + 150 - performance.now();
+    if (early > 0) {
+      event.preventDefault();
+      setTimeout(() => {
+        if (!alive.current) return;
+        deferred.current = true;
+        form.requestSubmit();
+      }, early);
+      return;
+    }
+    stampElapsed(form);
   }
 
   /** A returning guest plays the reveal again from S0, with no check. Without JavaScript the button is a plain link home. */

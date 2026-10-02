@@ -3,7 +3,7 @@
 import { redirect } from 'next/navigation';
 import { after } from 'next/server';
 import { z } from 'zod';
-import { DOOR_ENHANCED_FIELD, type DoorAnswer } from '@/content/constants';
+import { DOOR_ENHANCED_FIELD, DOOR_MIN_FILL_MS, type DoorAnswer } from '@/content/constants';
 import { failure, formValues, success, type FormState } from '@/lib/forms';
 import { audit } from '@/server/audit';
 import { sha256 } from '@/server/crypto';
@@ -12,8 +12,6 @@ import { ELAPSED_FIELD, HONEYPOT_FIELD } from '@/server/inquiries-fields';
 import { hit, retryWording } from '@/server/rate-limit';
 import { clientIp } from '@/server/request';
 
-/** As the public forms' screening (src/server/inquiries.ts): a form sent faster than this was not filled in by a person. */
-const MIN_FILL_MS = 2500;
 const EMAIL_MAX = 254;
 const emailShape = z.email();
 
@@ -28,7 +26,8 @@ type Verdict = { open: true } | { open: false; code: DoorAnswer; wait?: string }
 async function check(formData: FormData, typed: string): Promise<Verdict> {
   if (String(formData.get(HONEYPOT_FIELD) ?? '') !== '') return { open: false, code: 'wrong' };
   const elapsed = Number(formData.get(ELAPSED_FIELD) || NaN);
-  if (Number.isFinite(elapsed) && elapsed < MIN_FILL_MS) return { open: false, code: 'wrong' };
+  // As the public forms' screening (src/server/inquiries.ts): a form sent faster than a person fills it was not filled in by one.
+  if (Number.isFinite(elapsed) && elapsed < DOOR_MIN_FILL_MS) return { open: false, code: 'wrong' };
 
   const address = normalizeGuestEmail(typed);
   if (!address) return { open: false, code: 'empty' };
