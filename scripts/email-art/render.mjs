@@ -1,5 +1,6 @@
-// Renders the email invitation graphic: scripts/email-art/invite.html becomes public/email/opero-invite.png, 1200 x 630
-// with rounded, transparent corners, served by the site at /email/opero-invite.png (outside the front door's gate).
+// Renders the email invitation graphic: scripts/email-art/invite.html becomes public/email/opero-invite.png, the 1200 x 630
+// card with rounded corners on white, 1280 x 710 and opaque, so it blends into a white email. The site serves it at
+// /email/opero-invite.png (outside the front door's gate).
 //
 //   node scripts/email-art/render.mjs
 //
@@ -34,11 +35,11 @@ const port = server.address().port;
 
 const browser = await chromium.launch({ executablePath: process.env.CHROME_PATH || undefined });
 try {
-  const page = await browser.newPage({ viewport: { width: 1200, height: 630 }, deviceScaleFactor: 1 });
+  const page = await browser.newPage({ viewport: { width: 1280, height: 710 }, deviceScaleFactor: 1 });
   page.on('requestfailed', (request) => console.error('failed to load:', request.url()));
   await page.goto(`http://127.0.0.1:${port}/scripts/email-art/invite.html`, { waitUntil: 'networkidle' });
   await page.evaluate(() => document.fonts.ready);
-  await page.screenshot({ path: out, type: 'png', omitBackground: true });
+  await page.screenshot({ path: out, type: 'png' });
   console.log(path.relative(root, out));
 } finally {
   await browser.close();

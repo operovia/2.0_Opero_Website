@@ -2,13 +2,15 @@
 <html lang="en">
 <head><meta charset="utf-8"><title>Opero invitation</title>
 <style>
-/* The invitation graphic for emails: 1200 x 630, shown at 600 wide, so sharp on high-density screens. Colors are literal
+/* The invitation graphic for emails: a 1200 x 630 card on white, 40px all round (1280 x 710), so it sits in a white email
+   with its rounded corners and nothing see-through; shown at about 640 wide, so sharp on high-density screens. Colors are literal
    copies of the website's dark tokens (src/theme/tokens.ts); the words are the site's own (the door's eyebrow, the home
    page's headline, the door's button for a guest already in). Rendered by render.mjs beside this file. */
 @font-face { font-family: 'Plus Jakarta Sans'; src: url('/src/theme/fonts/PlusJakartaSans-Variable.woff2') format('woff2'); font-weight: 200 800; font-style: normal; }
 @font-face { font-family: 'Plus Jakarta Sans'; src: url('/src/theme/fonts/PlusJakartaSans-Italic-Variable-Latin.woff2') format('woff2'); font-weight: 200 800; font-style: italic; }
 * { box-sizing: border-box; }
-html, body { margin: 0; width: 1200px; height: 630px; background: transparent; }
+html, body { margin: 0; width: 1280px; height: 710px; background: #FFFFFF; }
+body { padding: 40px; }
 .card { position: relative; width: 1200px; height: 630px; border-radius: 28px; overflow: hidden; background: #0F1115; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-font-smoothing: antialiased; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
 /* The aurora: the five jewels' base colors, soft and low, as on the site's hero. */
 .aurora { position: absolute; inset: 0; opacity: 0.5; background:

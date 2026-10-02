@@ -1,7 +1,8 @@
 # The email invitation graphic
 
-`invite.html` is a 1200 x 630 card for the top of an email: the Opero logo, By invitation, the home page's headline, a
-Go to Opero button and operovia.com, on the dark canvas with the jewels' aurora. Its colors are literal copies of the
+`invite.html` is a 1200 x 630 card for an email, with rounded corners, on white with 40px all round (1280 x 710 in all, nothing
+see-through), so it blends into a white email: the Opero logo, By invitation, the home page's headline, a Go to Opero
+button and operovia.com, on the dark canvas with the jewels' aurora. Its colors are literal copies of the
 site's dark tokens and its words are the site's own, so nothing on it is new copy.
 
 `node scripts/email-art/render.mjs` renders it to `public/email/opero-invite.png` (set `CHROME_PATH` to a Chromium if
