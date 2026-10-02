@@ -295,7 +295,15 @@ const proof = section({
     eyebrow: text('Eyebrow', { optional: true, max: 60 }),
     headline: text('Headline', { max: 160, headline: true }),
     body: rich('Body'),
-    stats: list('Stats', 'Stat', { value: text('Value', { max: 30 }), label: text('Label', { max: 80 }) }, { min: 1, max: 6 }),
+    stats: list(
+      'Stats',
+      'Stat',
+      {
+        value: text('Value', { max: 30, hint: 'The figure, shown large: 100+, for example.' }),
+        label: text('Label', { max: 80, hint: 'What the figure counts, shown small under it: People work in it daily, for example.' }),
+      },
+      { min: 1, max: 6 },
+    ),
   },
   seed: {
     eyebrow: '',
