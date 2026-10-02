@@ -301,7 +301,7 @@ const proof = section({
     eyebrow: '',
     headline: 'Not a demo. A daily operating system.',
     body: textToRich(
-      'Opero was built inside Oxford Companies, a commercial and residential property management firm in Ann Arbor, where it runs the business every day: leasing, property management, facilities, projects, training, meetings. Seventy-plus people work in it. Six figures of annual software spend, replaced. Every feature exists because an operator needed it.',
+      "Opero was built inside the founder's former company, a commercial and residential property management firm, where it runs the business every day: leasing, property management, facilities, projects, training, meetings. Seventy-plus people work in it. Six figures of annual software spend, replaced. Every feature exists because an operator needed it.",
     ),
     stats: [
       { value: '70+', label: 'People work in it daily' },
@@ -369,7 +369,7 @@ const partnersIntro = section({
     eyebrow: 'For owner-operators and property managers',
     headline: 'Become a {partner}.',
     body: textToRich(
-      "Opero isn't a concept. It runs Oxford Companies, a commercial and residential property management firm in Ann Arbor, every day: leasing, property management, facilities, projects, training, and meetings. Now we're opening it to a small group of firms as {partners}.\n\nFor twelve months you work directly with the team that built it, shaping the platform around how your firm actually operates, at preferred founding terms. You get the platform early, and a real say in where it goes.",
+      "Opero isn't a concept. It runs our flagship operator, a commercial and residential property management firm, every day: leasing, property management, facilities, projects, training, and meetings. Now we're opening it to a small group of firms as {partners}.\n\nFor twelve months you work directly with the team that built it, shaping the platform around how your firm actually operates, at preferred founding terms. You get the platform early, and a real say in where it goes.",
     ),
   },
 });
@@ -522,7 +522,7 @@ const investorsStory = section({
     problemBody:
       'Operators run on a patchwork of disconnected apps, each with its own login, its own bill, and its own version of the truth. None of them know the properties.',
     solutionTitle: 'The solution',
-    solutionBody: 'Opero: one platform built around a core CRM, with Oppie, the AI assistant, in every step. It runs Oxford Companies every day.',
+    solutionBody: 'Opero: one platform built around a core CRM, with Oppie, the AI assistant, in every step. It runs our flagship operator every day.',
   },
 });
 
@@ -543,7 +543,7 @@ const investorsNext = section({
     heading: 'Where it goes next',
     todayLabel: 'Today',
     todayTitle: 'In production',
-    todayBody: 'Seventy-plus people at Oxford Companies work in it every day, and it has replaced six figures of annual software spend.',
+    todayBody: 'Seventy-plus people at our flagship operator work in it every day, and it has replaced six figures of annual software spend.',
     nextLabel: 'Next',
     nextTitle: 'The commercial release',
     nextBody: 'The same system, for operators who did not build it, starting with a small group of {partners}.',
@@ -555,7 +555,7 @@ const areaLines = 'One per line.';
 const investorsPlatform = section({
   label: 'Today and on deck',
   description:
-    "What runs at Oxford today against what the new build adds, area by area, from the investor room's capability table. The counts on the page are worked out from these lists.",
+    "What runs at our flagship operator today against what the new build adds, area by area, from the investor room's capability table. The counts on the page are worked out from these lists.",
   draftCopy: true,
   fields: {
     headline: text('Headline', { max: 120, headline: true }),
@@ -569,7 +569,7 @@ const investorsPlatform = section({
       'Area',
       {
         name: text('Name', { max: 40 }),
-        today: text('Running at Oxford today', { max: 1200, multiline: true, hint: areaLines }),
+        today: text('Running today', { max: 1200, multiline: true, hint: areaLines }),
         extended: text('Running today, extended in the new build', { optional: true, max: 1200, multiline: true, hint: areaLines }),
         next: text('New in the new build', { optional: true, max: 1200, multiline: true, hint: areaLines }),
       },
@@ -577,10 +577,10 @@ const investorsPlatform = section({
     ),
   },
   seed: {
-    headline: "What runs at Oxford today, and what's on deck.",
+    headline: "What runs today, and what's on deck.",
     intro:
-      'Described from the running system, not from a roadmap. Everything running at Oxford Companies today carries into the new build, which adds the rest.',
-    todayLabel: 'Running at Oxford today',
+      'Described from the running system, not from a roadmap. Everything running at our flagship operator today carries into the new build, which adds the rest.',
+    todayLabel: 'Running today',
     nextLabel: 'On deck for the new build',
     extendedLabel: 'Extended',
     extendedNote: 'Running today, extended in the new build',

@@ -4,6 +4,10 @@
  * in anything a visitor, recipient, or admin reads. Scans source, seed
  * content, emails, docs, and brand files. AGENTS.md is written by Next.js
  * itself and is skipped.
+ *
+ * Also: the company Opero was built inside is never named (CLAUDE.md). It is
+ * the founder's former company, or our flagship operator. Only the migrations
+ * that replace the name in saved content may contain it.
  */
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
@@ -15,6 +19,9 @@ const skipDirs = new Set(['node_modules', '.next', '.git', 'fonts']);
 const textExt = /\.(ts|tsx|js|mjs|cjs|json|md|mdx|css|html|txt|sql|example)$/;
 const skipFiles = new Set(['docs/brief.md']);
 const dashes = /[–—]/;
+// Spelled in two parts, so this file does not name it either.
+const formerName = new RegExp(['ox', 'ford'].join(''), 'i');
+const mayName = new Set(['drizzle/0009_round_labels.sql', 'drizzle/0013_flagship_operator.sql']);
 
 function walk(dir, out) {
   let entries;
@@ -31,7 +38,7 @@ function walk(dir, out) {
   }
 }
 
-const targets = [];
+const targets = [join(root, 'docs/brief.md')];
 for (const dir of roots) walk(join(root, dir), targets);
 for (const file of files) {
   try {
@@ -41,19 +48,25 @@ for (const file of files) {
 }
 
 const problems = [];
-for (const file of targets) {
+const named = [];
+for (const file of new Set(targets)) {
   const rel = relative(root, file);
-  if (skipFiles.has(rel) || rel === 'scripts/check-copy.mjs') continue;
+  if (rel === 'scripts/check-copy.mjs') continue;
   readFileSync(file, 'utf8')
     .split('\n')
     .forEach((line, i) => {
-      if (dashes.test(line)) problems.push(`${rel}:${i + 1}: ${line.trim()}`);
+      if (dashes.test(line) && !skipFiles.has(rel)) problems.push(`${rel}:${i + 1}: ${line.trim()}`);
+      if (formerName.test(line) && !mayName.has(rel)) named.push(`${rel}:${i + 1}: ${line.trim()}`);
     });
 }
 
 if (problems.length) {
   console.error('Em or en dashes found. Use commas, periods, or colons instead:\n');
   for (const p of problems) console.error(`  ${p}`);
-  process.exit(1);
 }
+if (named.length) {
+  console.error("\nThe founder's former company is named. Say the founder's former company, or our flagship operator:\n");
+  for (const p of named) console.error(`  ${p}`);
+}
+if (problems.length || named.length) process.exit(1);
 console.log(`Copy check passed (${targets.length} files).`);

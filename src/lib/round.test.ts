@@ -62,10 +62,10 @@ describe('the sums', () => {
 
   it('dilutes every existing holder by the same factor: Mifsud 70.0% becomes 64.75%', () => {
     expect(diluted(0.7, 0.075)).toBeCloseTo(0.6475, 10);
-    const [mifsud, oxford, plan] = model(50_000).rows;
+    const [mifsud, operator, plan] = model(50_000).rows;
     expect(mifsud!.today).toBeCloseTo(0.7, 10);
     expect(mifsud!.after).toBeCloseTo(0.6475, 10);
-    expect(oxford!.after).toBeCloseTo(0.15 * 0.925, 10);
+    expect(operator!.after).toBeCloseTo(0.15 * 0.925, 10);
     expect(plan!.after).toBeCloseTo(0.15 * 0.925, 10);
   });
 
