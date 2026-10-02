@@ -5,7 +5,9 @@
 /* The invitation graphic for emails: a 1200 x 630 card on white, 40px all round (1280 x 710), so it sits in a white email
    with its rounded corners and nothing see-through; shown at about 640 wide, so sharp on high-density screens. Colors are literal
    copies of the website's dark tokens (src/theme/tokens.ts); the words are the site's own (the door's eyebrow, the home
-   page's headline, the door's button for a guest already in). Rendered by render.mjs beside this file. */
+   page's headline, the door's button for a guest already in). Rendered by render.mjs beside this file.
+   With ?name= (render.mjs --name) it is one guest's own card: the home page's greeting for them, over the red carpet the
+   site rolls out for them (src/components/site/carpet.tsx), with the headline beneath as a smaller line. */
 @font-face { font-family: 'Plus Jakarta Sans'; src: url('/src/theme/fonts/PlusJakartaSans-Variable.woff2') format('woff2'); font-weight: 200 800; font-style: normal; }
 @font-face { font-family: 'Plus Jakarta Sans'; src: url('/src/theme/fonts/PlusJakartaSans-Italic-Variable-Latin.woff2') format('woff2'); font-weight: 200 800; font-style: italic; }
 * { box-sizing: border-box; }
@@ -27,6 +29,16 @@ body { padding: 40px; }
 .headline { margin: 16px 0 0; max-width: 1000px; font-size: 52px; line-height: 1.2; letter-spacing: 0.006em; font-weight: 500; background: linear-gradient(to bottom, #F2F4F6 0%, #CFD3D8 24%, #A9AEB6 52%, #C6CBD1 80%, #E6E9EC 100%); -webkit-background-clip: text; background-clip: text; color: transparent; padding-bottom: 6px; }
 .button { margin-top: 34px; display: inline-flex; align-items: center; gap: 12px; height: 64px; padding: 0 34px; border-radius: 9999px; background: #E6E9EC; color: #0F1115; font-size: 21px; font-weight: 600; box-shadow: 0 18px 40px -16px #000000B3; }
 .button svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+/* One guest's card: the greeting in the metal, the name in italics, over the red carpet in the crimson jewel's stops. */
+.personal { display: none; }
+body[data-name] .general { display: none; }
+body[data-name] .welcome { display: flex; }
+body[data-name] .tagline { display: block; }
+.welcome { margin-top: 16px; flex-direction: column; align-items: stretch; gap: 18px; }
+.greeting { margin: 0; font-size: 62px; line-height: 1.2; letter-spacing: 0.006em; font-weight: 500; background: linear-gradient(to bottom, #F2F4F6 0%, #CFD3D8 24%, #A9AEB6 52%, #C6CBD1 80%, #E6E9EC 100%); -webkit-background-clip: text; background-clip: text; color: transparent; padding-bottom: 6px; }
+.carpet { height: 6px; border-radius: 9999px; background: linear-gradient(to bottom, #D2696C, #A63F44 35%, #6B1C22); box-shadow: 0 0 22px 3px #A63F4459; }
+.tagline { margin: 26px 0 0; font-size: 24px; line-height: 1.35; font-weight: 400; color: #B3B8C0; }
+.tagline em { font-style: italic; }
 .address { margin-top: 22px; font-size: 16px; line-height: 20px; font-weight: 500; letter-spacing: 0.02em; color: #8E939C; }
 </style></head>
 <body>
@@ -35,10 +47,22 @@ body { padding: 40px; }
     <div class="content">
       <img class="logo" src="/public/brand/opero/opero-centered-dark.webp" alt="">
       <div class="eyebrow">By invitation</div>
-      <h1 class="headline"><em>The</em> AI-driven operating platform<br>for property management.</h1>
+      <h1 class="headline general"><em>The</em> AI-driven operating platform<br>for property management.</h1>
+      <div class="welcome personal">
+        <h1 class="greeting">Welcome, <em data-greeting-name></em>.</h1>
+        <div class="carpet"></div>
+      </div>
+      <p class="tagline personal"><em>The</em> AI-driven operating platform for property management.</p>
       <div class="button">Go to Opero<svg viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></div>
       <div class="address">operovia.com</div>
     </div>
     <div class="edge"></div>
   </div>
+  <script>
+    const name = new URLSearchParams(location.search).get('name');
+    if (name) {
+      document.body.dataset.name = '';
+      document.querySelector('[data-greeting-name]').textContent = name;
+    }
+  </script>
 </body></html>

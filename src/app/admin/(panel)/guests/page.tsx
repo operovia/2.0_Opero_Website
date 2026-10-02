@@ -2,14 +2,15 @@ import type { Metadata } from 'next';
 import { Card, CardBody, CardHeader } from '@/components/ui/card';
 import { ConfirmSubmit } from '@/components/ui/confirm-submit';
 import { EmptyState, PageHeader } from '@/components/ui/page-header';
+import { Input } from '@/components/ui/field';
 import { SubmitButton } from '@/components/ui/submit-button';
 import { Time } from '@/components/ui/time';
-import { DOOR_PATH, GUEST_ROLE_LABELS } from '@/content/constants';
+import { DOOR_PATH, GREETING_MAX, GUEST_ROLE_LABELS } from '@/content/constants';
 import { requireAdmin } from '@/server/auth/session';
 import { siteUrl } from '@/server/env';
-import { listGuests } from '@/server/guests';
+import { guestLink, guestLinkPath, listGuests } from '@/server/guests';
 import { getSettings } from '@/server/settings';
-import { removeGuestAction, setGuestRoleAction } from './actions';
+import { makeGuestLinkAction, removeGuestAction, setGuestGreetingAction, setGuestRoleAction } from './actions';
 import { AddGuestsForm } from './add-guests-form';
 import { DoorLink } from './door-link';
 
@@ -38,7 +39,10 @@ export default async function GuestsPage() {
 
       <div className="grid grid-cols-1 items-start gap-6 xl:grid-cols-2">
         <Card>
-          <CardHeader title="Invite someone" description="Add their address below, then send them the door link from your own email. The site sends nothing." />
+          <CardHeader
+            title="Invite someone"
+            description="Add their address below, then send them the door link from your own email. The site sends nothing. Each guest also has a personal link, on the list below: it fills in their address, and with a welcome name the door and the home page greet them by it."
+          />
           <CardBody className="space-y-5">
             <DoorLink link={doorLink} />
             <div className="space-y-2">
@@ -89,6 +93,37 @@ export default async function GuestsPage() {
                         </span>
                       ) : null}
                     </p>
+                    {/* The welcome name, and the personal link that greets them by it. */}
+                    <div className="mt-3 space-y-2">
+                      <form action={setGuestGreetingAction} className="flex max-w-md items-center gap-2">
+                        <input type="hidden" name="id" value={guest.id} />
+                        <label htmlFor={`greeting-${guest.id}`} className="shrink-0 text-sm text-fg-muted">
+                          Welcome name
+                        </label>
+                        <Input
+                          id={`greeting-${guest.id}`}
+                          name="greeting"
+                          variant="compact"
+                          defaultValue={guest.greeting}
+                          maxLength={GREETING_MAX}
+                          placeholder="Fifth Wall, for example"
+                          autoComplete="off"
+                        />
+                        <SubmitButton variant="secondary" size="sm" pendingLabel="Saving">
+                          Save
+                        </SubmitButton>
+                      </form>
+                      {guest.linkToken ? (
+                        <DoorLink link={guestLink(guest.linkToken)} preview={guestLinkPath(guest.linkToken)} compact />
+                      ) : (
+                        <form action={makeGuestLinkAction}>
+                          <input type="hidden" name="id" value={guest.id} />
+                          <SubmitButton variant="secondary" size="sm" pendingLabel="Making">
+                            Make a personal link
+                          </SubmitButton>
+                        </form>
+                      )}
+                    </div>
                   </div>
                   <div className="flex flex-wrap items-center gap-2">
                     <form action={setGuestRoleAction}>

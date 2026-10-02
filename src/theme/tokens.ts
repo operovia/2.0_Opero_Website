@@ -458,6 +458,19 @@ export const tokens = {
       release: 0.5,
       giveUp: 6000,
     },
+    /**
+     * The red carpet a guest's personal link rolls out (src/components/site/carpet.tsx):
+     * along the door's line it waits `doorDelay` after the page paints, until
+     * the line is drawn, then unrolls over `door`; under the greeting above
+     * the home page's headline it waits `greetingDelay` and unrolls over
+     * `greeting`, shorter as the carpet is.
+     */
+    carpet: {
+      doorDelay: 1100,
+      door: 1600,
+      greetingDelay: 400,
+      greeting: 1000,
+    },
   },
 } as const;
 

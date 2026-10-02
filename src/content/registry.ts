@@ -63,6 +63,11 @@ const hero = section({
     consoleFooterLeft: text('Console footer, first line', { max: 60, hint: 'Shown in capitals.' }),
     consoleFooterRight: text('Console footer, second line', { max: 60, hint: 'Shown in capitals.' }),
     consoleNote: text('Console note', { optional: true, max: 80, hint: 'Small print under the console. Leave empty to hide it.' }),
+    guestGreeting: text('Guest greeting', {
+      max: 80,
+      headline: true,
+      hint: 'Above the headline, over a short red carpet, for a guest with a welcome name on the Guests page. {name} becomes their welcome name. Everyone else sees no greeting.',
+    }),
   },
   seed: {
     headline: '*The* AI-driven operating platform for property management.',
@@ -76,6 +81,7 @@ const hero = section({
     consoleFooterLeft: 'Ask in plain English',
     consoleFooterRight: 'Answers from your live data',
     consoleNote: 'Illustrative data',
+    guestGreeting: 'Welcome, *{name}*.',
   },
 });
 
@@ -1056,6 +1062,15 @@ const door = section({
     eyebrow: text('Eyebrow', { optional: true, max: 60, hint: 'Optional. Small capitals above the title.' }),
     title: text('Title', { max: 120, headline: true, hint: 'Words between asterisks are set in italics.' }),
     intro: text('Introduction', { max: 200 }),
+    personalTitle: text('Personal link: title', {
+      max: 120,
+      headline: true,
+      hint: 'In place of the title for a guest who opens their personal link and has a welcome name on the Guests page, over a red carpet along the line. {name} becomes their welcome name.',
+    }),
+    personalIntro: text('Personal link: introduction', {
+      max: 200,
+      hint: 'In place of the introduction, under the personal title. Their address is already filled in.',
+    }),
     emailLabel: text('Email label', { max: 40 }),
     submitLabel: text('Enter button', { max: 30, hint: "The round arrow button's name for screen readers and its tooltip." }),
     checkingLabel: text('Button while checking', { max: 30 }),
@@ -1086,6 +1101,8 @@ const door = section({
     eyebrow: 'By invitation',
     title: 'You were *invited* here.',
     intro: 'Enter the email address your invitation was sent to.',
+    personalTitle: 'Welcome, *{name}*.',
+    personalIntro: 'Your address is already filled in. Step in whenever you are ready.',
     emailLabel: 'Email address',
     submitLabel: 'Enter',
     checkingLabel: 'Checking',

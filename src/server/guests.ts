@@ -3,7 +3,7 @@ import { and, asc, eq, gt, max, sql } from 'drizzle-orm';
 import { cookies } from 'next/headers';
 import { cache } from 'react';
 import { z } from 'zod';
-import { GUEST_ROLES, type GuestRole } from '@/content/constants';
+import { DOOR_INVITE_PARAM, DOOR_PATH, GUEST_ROLES, type GuestRole } from '@/content/constants';
 import { db } from '@/db/client';
 import { guestInvites, guestSessions } from '@/db/schema';
 import { GUEST_COOKIE, GUEST_COOKIE_INSECURE, GUEST_TTL_SECONDS } from '@/server/auth/constants';
@@ -22,13 +22,14 @@ import { getSettings, notificationRecipients } from '@/server/settings';
  * key stops working on the very next request everywhere.
  */
 
-export type Guest = { inviteId: string; email: string; role: GuestRole; sessionId: string };
+/** `greeting`: the name the site welcomes them by, or empty. */
+export type Guest = { inviteId: string; email: string; role: GuestRole; greeting: string; sessionId: string };
 
 const GUEST_TTL_MS = GUEST_TTL_SECONDS * 1000;
 /** Extend a session's expiry at most this often. */
 const TOUCH_INTERVAL_MS = 60 * 60 * 1000;
 
-/** Rate limits for the door, per caller and per address (the address key holds a hash, never the address). */
+/** Rate limits for the door: every try per caller, and the misses per address (the address key holds a hash, never the address). */
 export const DOOR_LIMITS = { ip: { limit: 30, windowSeconds: 900 }, address: { limit: 5, windowSeconds: 900 } } as const;
 
 /** Every answer from the door waits until at least this long after it started, hit or miss, so timing gives nothing away. */
@@ -58,7 +59,13 @@ export const getGuest = cache(async (): Promise<Guest | null> => {
   const id = sha256(token);
 
   const [row] = await db
-    .select({ lastSeenAt: guestSessions.lastSeenAt, inviteId: guestInvites.id, email: guestInvites.email, role: guestInvites.role })
+    .select({
+      lastSeenAt: guestSessions.lastSeenAt,
+      inviteId: guestInvites.id,
+      email: guestInvites.email,
+      role: guestInvites.role,
+      greeting: guestInvites.greeting,
+    })
     .from(guestSessions)
     .innerJoin(guestInvites, eq(guestSessions.inviteId, guestInvites.id))
     .where(and(eq(guestSessions.id, id), gt(guestSessions.expiresAt, new Date())))
@@ -72,7 +79,7 @@ export const getGuest = cache(async (): Promise<Guest | null> => {
       .where(eq(guestSessions.id, id));
   }
 
-  return { inviteId: row.inviteId, email: row.email, role: row.role, sessionId: id };
+  return { inviteId: row.inviteId, email: row.email, role: row.role, greeting: row.greeting, sessionId: id };
 });
 
 /** The invite for an already-normalized address: one indexed lookup, the same cost whether or not it matches. */
@@ -142,6 +149,10 @@ export type GuestRow = {
   lastEnteredAt: Date | null;
   /** The latest visit on any of the guest's browsers, or null when none has a session. */
   lastSeenAt: Date | null;
+  /** The name the site welcomes them by, or empty. */
+  greeting: string;
+  /** The secret in their personal link, or null until one is made. */
+  linkToken: string | null;
 };
 
 /** Every guest on the list, oldest first. */
@@ -156,6 +167,8 @@ export async function listGuests(): Promise<GuestRow[]> {
       firstEnteredAt: guestInvites.firstEnteredAt,
       lastEnteredAt: guestInvites.lastEnteredAt,
       lastSeenAt: max(guestSessions.lastSeenAt),
+      greeting: guestInvites.greeting,
+      linkToken: guestInvites.linkToken,
     })
     .from(guestInvites)
     .leftJoin(guestSessions, eq(guestSessions.inviteId, guestInvites.id))
@@ -193,7 +206,7 @@ export async function addGuests(
 
   const inserted = await db
     .insert(guestInvites)
-    .values(valid.map((email) => ({ email, role, note: note.trim(), invitedBy: adminId })))
+    .values(valid.map((email) => ({ email, role, note: note.trim(), invitedBy: adminId, linkToken: randomToken() })))
     .onConflictDoNothing({ target: guestInvites.email })
     .returning({ email: guestInvites.email });
   const added = new Set(inserted.map((row) => row.email));
@@ -208,6 +221,69 @@ export async function setGuestRole(id: string, role: GuestRole): Promise<{ email
   if (before.role === role) return { email: before.email, changed: false };
   await db.update(guestInvites).set({ role }).where(eq(guestInvites.id, id));
   return { email: before.email, changed: true };
+}
+
+/** The shape of a personal link's secret: 32 random bytes in base64url. Checked before any lookup. */
+const LINK_TOKEN = /^[A-Za-z0-9_-]{43}$/;
+
+/** The path of a guest's personal link: the front door with their secret, which fills in their address and greets them. */
+export function guestLinkPath(token: string): string {
+  return `${DOOR_PATH}?${DOOR_INVITE_PARAM}=${token}`;
+}
+
+/** A guest's personal link, in full, for an invitation. */
+export function guestLink(token: string): string {
+  return `${siteUrl()}${guestLinkPath(token)}`;
+}
+
+/**
+ * The guest a personal link names, by the secret in it, or null. Only the
+ * door asks, to fill in the address and the welcome name; coming in still
+ * takes the address, through the door's own action.
+ */
+export async function findInviteByLink(token: unknown): Promise<{ id: string; email: string; greeting: string } | null> {
+  if (typeof token !== 'string' || !LINK_TOKEN.test(token)) return null;
+  const [row] = await db
+    .select({ id: guestInvites.id, email: guestInvites.email, greeting: guestInvites.greeting })
+    .from(guestInvites)
+    .where(eq(guestInvites.linkToken, token))
+    .limit(1);
+  return row ?? null;
+}
+
+/**
+ * The welcome name the home page greets this visitor by, or empty: a
+ * guest's own, from the list. A signed-in admin previewing a guest's
+ * personal link lands on the home page with its secret (?invite=), and sees
+ * that guest's greeting; anywhere else the parameter means nothing.
+ */
+export async function greetingFor(admin: boolean, token: unknown): Promise<string> {
+  if (admin) return (await findInviteByLink(token))?.greeting ?? '';
+  return (await getGuest())?.greeting ?? '';
+}
+
+/** Gives a guest a personal link if they have none yet. Returns their address, or null when the id names nobody. */
+export async function makeGuestLink(id: string): Promise<{ email: string } | null> {
+  if (!isUuid(id)) return null;
+  const [row] = await db
+    .update(guestInvites)
+    .set({ linkToken: sql`coalesce(${guestInvites.linkToken}, ${randomToken()})` })
+    .where(eq(guestInvites.id, id))
+    .returning({ email: guestInvites.email });
+  return row ?? null;
+}
+
+/** Sets the name the site welcomes a guest by (empty for none), and gives them a personal link if they have none, since the link is where the greeting shows first. */
+export async function setGuestGreeting(id: string, greeting: string): Promise<{ email: string; changed: boolean } | null> {
+  if (!isUuid(id)) return null;
+  const [before] = await db.select({ greeting: guestInvites.greeting }).from(guestInvites).where(eq(guestInvites.id, id)).limit(1);
+  if (!before) return null;
+  const [row] = await db
+    .update(guestInvites)
+    .set({ greeting, linkToken: sql`coalesce(${guestInvites.linkToken}, ${randomToken()})` })
+    .where(eq(guestInvites.id, id))
+    .returning({ email: guestInvites.email });
+  return row ? { email: row.email, changed: before.greeting !== greeting } : null;
 }
 
 /** Takes an address off the list. Its sessions go with it, so its key stops working at once. */

@@ -5,7 +5,8 @@ import { GUEST_ROLE_LABELS } from '@/content/constants';
 import { failure, formValues, success, type FormState } from '@/lib/forms';
 import { audit } from '@/server/audit';
 import { requireAdmin } from '@/server/auth/session';
-import { addGuests, isGuestRole, removeGuest, setGuestRole } from '@/server/guests';
+import { normalizeGreeting } from '@/lib/greeting';
+import { addGuests, isGuestRole, makeGuestLink, removeGuest, setGuestGreeting, setGuestRole } from '@/server/guests';
 import { clientIp } from '@/server/request';
 import { MAX_RECIPIENTS_PER_PASTE, parseRecipients } from '@/surveys/recipients';
 
@@ -73,6 +74,25 @@ export async function setGuestRoleAction(formData: FormData): Promise<void> {
   const result = await setGuestRole(String(formData.get('id') ?? ''), role);
   if (!result?.changed) return;
   await audit({ id: user.id, email: user.email }, 'guest.role', { target: result.email, details: { role }, ip: await clientIp() });
+  revalidatePath('/admin/guests');
+}
+
+/** Sets the name the site welcomes a guest by, or clears it. Their personal link is made if they have none. */
+export async function setGuestGreetingAction(formData: FormData): Promise<void> {
+  const { user } = await requireAdmin();
+  const greeting = normalizeGreeting(String(formData.get('greeting') ?? ''));
+  const result = await setGuestGreeting(String(formData.get('id') ?? ''), greeting);
+  if (!result) return;
+  if (result.changed) await audit({ id: user.id, email: user.email }, 'guest.greeting', { target: result.email, details: { greeting }, ip: await clientIp() });
+  revalidatePath('/admin/guests');
+}
+
+/** Makes a personal link for a guest added before links existed. */
+export async function makeGuestLinkAction(formData: FormData): Promise<void> {
+  const { user } = await requireAdmin();
+  const result = await makeGuestLink(String(formData.get('id') ?? ''));
+  if (!result) return;
+  await audit({ id: user.id, email: user.email }, 'guest.link', { target: result.email, ip: await clientIp() });
   revalidatePath('/admin/guests');
 }
 

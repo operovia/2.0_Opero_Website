@@ -109,9 +109,13 @@ export const guestInvites = pgTable(
     /** The first and the latest time this address came through the door. */
     firstEnteredAt: timestamp('first_entered_at', { withTimezone: true }),
     lastEnteredAt: timestamp('last_entered_at', { withTimezone: true }),
+    /** The name the site welcomes them by ("Fifth Wall"): on the door their personal link opens, and above the home page's headline. Empty for none. */
+    greeting: text('greeting').notNull().default(''),
+    /** The secret in their personal link (/welcome?invite=): 32 random bytes. The link fills in their address and greets them; null until made. */
+    linkToken: text('link_token'),
     createdAt: createdAt(),
   },
-  (t) => [uniqueIndex('guest_invites_email_key').on(t.email)],
+  (t) => [uniqueIndex('guest_invites_email_key').on(t.email), uniqueIndex('guest_invites_link_token_key').on(t.linkToken)],
 );
 
 export const guestSessions = pgTable(

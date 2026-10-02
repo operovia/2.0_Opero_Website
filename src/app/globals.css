@@ -901,6 +901,122 @@
 }
 
 /*
+ * The red carpet (src/components/site/carpet.tsx), rolled out for a guest
+ * whose personal link names them: along the door's line, and under their
+ * greeting above the home page's headline. A runner in the crimson jewel,
+ * lit along its top and glowing softly beneath, slides out of its track
+ * while the roll rides its leading edge and fades once the carpet is down.
+ * The track clips only across, so the glow travels with the runner. Both
+ * move by transform alone, wait --carpet-delay, and take --carpet-duration;
+ * under reduced motion the carpet is simply there.
+ */
+.carpet {
+  position: relative;
+  display: block;
+  height: var(--o-space-unit);
+}
+.carpet-track {
+  position: absolute;
+  inset: 0;
+  overflow-x: clip;
+  overflow-y: visible;
+}
+.carpet-runner,
+.carpet-roll {
+  position: absolute;
+  inset: 0;
+  animation-name: carpet-unroll;
+  animation-duration: var(--carpet-duration, 0ms);
+  animation-delay: var(--carpet-delay, 0ms);
+  animation-timing-function: var(--o-ease-in-out);
+  animation-fill-mode: both;
+}
+/* The roll comes into view as it starts to move, so nothing waits at the end of the line before then. */
+.carpet-roll {
+  animation-name: carpet-unroll, carpet-roll-in;
+  animation-duration: var(--carpet-duration, 0ms), var(--o-duration-base);
+}
+.carpet-runner {
+  border-radius: var(--o-radius-full);
+  background: linear-gradient(to bottom, var(--o-jewel-crimson-highlight), var(--o-jewel-crimson-base) 35%, var(--o-jewel-crimson-deep));
+}
+/* The glow: a soft band of the jewel's color around the runner, faded out toward its ends. */
+.carpet-runner::before {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  top: 50%;
+  height: calc(var(--o-space-unit) * 6);
+  translate: 0 -50%;
+  background: linear-gradient(to bottom, transparent, color-mix(in oklab, var(--o-jewel-crimson-base) 30%, transparent) 50%, transparent);
+  mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+}
+/* The roll: a short crimson cylinder across the runner's leading edge, lit from the left. */
+.carpet-roll::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 0;
+  width: calc(var(--o-space-unit) * 1.25);
+  height: calc(var(--o-space-unit) * 2.5);
+  translate: 50% -50%;
+  border-radius: var(--o-radius-full);
+  background: linear-gradient(to right, var(--o-jewel-crimson-deep), var(--o-jewel-crimson-highlight) 45%, var(--o-jewel-crimson-base));
+  animation-name: carpet-roll-out;
+  animation-duration: var(--o-duration-slow);
+  animation-delay: calc(var(--carpet-delay, 0ms) + var(--carpet-duration, 0ms));
+  animation-timing-function: var(--o-ease-out);
+  animation-fill-mode: both;
+}
+@keyframes carpet-unroll {
+  from {
+    transform: translate3d(-100%, 0, 0);
+  }
+}
+@keyframes carpet-roll-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes carpet-roll-out {
+  to {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .carpet-runner,
+  .carpet-roll,
+  .carpet-roll::after {
+    animation-delay: 0ms !important;
+  }
+}
+/* On the door the carpet lies along the line, and steps aside for the rose tint of a miss. */
+.door-carpet {
+  --carpet-delay: var(--o-carpet-door-delay);
+  --carpet-duration: var(--o-carpet-door);
+  position: absolute;
+  inset-inline: 0;
+  top: 50%;
+  translate: 0 -50%;
+  transition: opacity var(--o-duration-base) var(--o-ease-standard);
+}
+.door-field[data-answer] .door-carpet {
+  opacity: 0;
+}
+.hero-carpet {
+  --carpet-delay: var(--o-carpet-greeting-delay);
+  --carpet-duration: var(--o-carpet-greeting);
+}
+/* Arriving from the door, the greeting's carpet waits with the rest of the hero (see the arrival rules above). */
+@media (prefers-reduced-motion: no-preference) {
+  html[data-door-arrival='held'] .hero-carpet .carpet-runner,
+  html[data-door-arrival='held'] .hero-carpet .carpet-roll,
+  html[data-door-arrival='held'] .hero-carpet .carpet-roll::after {
+    animation-play-state: paused;
+  }
+}
+
+/*
  * The veil's ring of light (src/components/door/door-veil.tsx): a thin band
  * that opens out from the spark, ten times over. It keeps will-change only
  * while the veil lives; the script clears it when the veil leaves.

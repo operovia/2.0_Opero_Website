@@ -59,6 +59,7 @@ function themeDeclarations(theme: ThemeName): string {
     vars[`jewel-${name}`] = jewelGradient(jewel[theme], theme);
     vars[`jewel-${name}-base`] = jewel[theme][1];
     vars[`jewel-${name}-highlight`] = jewel[theme][0];
+    vars[`jewel-${name}-deep`] = jewel[theme][3];
   }
   for (const [module, jewel] of Object.entries(tokens.modules)) {
     vars[`module-${module}`] = `var(--o-jewel-${jewel})`;
@@ -111,6 +112,8 @@ function sharedDeclarations(): string {
   vars['door-iris-scale'] = tokens.motion.door.irisScale;
   vars['door-glow'] = `${tokens.brand.door.glow}%`;
   vars['door-band'] = `${tokens.brand.door.band}%`;
+  // The red carpet (src/components/site/carpet.tsx): how long it waits and unrolls, on the door and under the home page's greeting.
+  for (const [key, value] of Object.entries(tokens.motion.carpet)) vars[`carpet-${kebab(key)}`] = `${value}ms`;
   // The OperoGo phone (src/components/site/home/phone-frame.tsx): its glass and its camera, the same on both themes.
   vars['phone-glass'] = tokens.brand.phone.glass;
   vars['phone-lens'] = tokens.brand.phone.lens;

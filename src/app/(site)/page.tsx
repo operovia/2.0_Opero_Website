@@ -7,9 +7,11 @@ import { PartnerInvite } from '@/components/site/home/partner';
 import { Platform } from '@/components/site/home/platform';
 import { Problem } from '@/components/site/home/problem';
 import { Proof } from '@/components/site/home/proof';
+import { DOOR_INVITE_PARAM } from '@/content/constants';
 import { openGraph } from '@/content/metadata';
 import { getPage, getPublicSettings, getScenes } from '@/content/store';
 import { requireEntry } from '@/server/entry';
+import { greetingFor } from '@/server/guests';
 
 export async function generateMetadata(): Promise<Metadata> {
   const { settings } = await getPublicSettings();
@@ -20,12 +22,16 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function HomePage() {
-  await requireEntry();
-  const [home, scenes] = await Promise.all([getPage('home'), getScenes()]);
+export default async function HomePage({ searchParams }: PageProps<'/'>) {
+  const access = await requireEntry();
+  const [home, scenes, greeting] = await Promise.all([
+    getPage('home'),
+    getScenes(),
+    searchParams.then((params) => greetingFor(access.admin, params[DOOR_INVITE_PARAM])),
+  ]);
   return (
     <>
-      <Hero content={home.hero} scenes={scenes} />
+      <Hero content={home.hero} scenes={scenes} greeting={greeting} />
       <Problem content={home.problem} />
       <Platform content={home.platform} />
       <OppieSection content={home.oppie} />

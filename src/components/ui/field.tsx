@@ -2,12 +2,15 @@ import { ChevronDown } from 'lucide-react';
 import type { ComponentProps, ReactNode } from 'react';
 import { cn } from '@/lib/cn';
 
+/** The boxed control, without a type size: each control sets its own, since cn() does not settle conflicting classes. */
 const control =
-  'block w-full rounded-md border border-line-input bg-surface px-3.5 text-base text-fg shadow-sm transition-[border-color,box-shadow] duration-150 placeholder:text-fg-subtle hover:border-fg-subtle focus-visible:border-focus-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring/40 disabled:opacity-60 aria-invalid:border-danger';
+  'block w-full rounded-md border border-line-input bg-surface px-3.5 text-fg shadow-sm transition-[border-color,box-shadow] duration-150 placeholder:text-fg-subtle hover:border-fg-subtle focus-visible:border-focus-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring/40 disabled:opacity-60 aria-invalid:border-danger';
 
 const inputVariants = {
   /** The ordinary boxed control. */
-  box: cn(control, 'h-11'),
+  box: cn(control, 'h-11 text-base'),
+  /** The boxed control at the height of a small button, for a field inside a list row. */
+  compact: cn(control, 'h-9 text-sm'),
   /**
    * No box at all: for a field drawn as a line, such as the front door's
    * (src/components/door/door.tsx). It sets no height or padding, so the
@@ -22,13 +25,13 @@ export function Input({ className, variant = 'box', ...props }: ComponentProps<'
 }
 
 export function Textarea({ className, rows = 4, ...props }: ComponentProps<'textarea'>) {
-  return <textarea rows={rows} className={cn(control, 'py-2.5', className)} {...props} />;
+  return <textarea rows={rows} className={cn(control, 'py-2.5 text-base', className)} {...props} />;
 }
 
 export function Select({ className, children, ...props }: ComponentProps<'select'>) {
   return (
     <span className={cn('relative block', className)}>
-      <select className={cn(control, 'h-11 appearance-none pr-10')} {...props}>
+      <select className={cn(control, 'h-11 appearance-none pr-10 text-base')} {...props}>
         {children}
       </select>
       <ChevronDown aria-hidden className="pointer-events-none absolute top-1/2 right-3.5 size-4 -translate-y-1/2 text-fg-muted" />

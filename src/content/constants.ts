@@ -28,6 +28,18 @@ export const DOOR_ENHANCED_FIELD = 'enhanced';
 export const DOOR_EMAIL_PARAM = 'email';
 
 /**
+ * The query parameter of a guest's personal link: /welcome?invite= and a
+ * secret of 32 random bytes made for that guest. The door fills in their
+ * address and, if the guest list gives them a welcome name, greets them by
+ * it. Unlike an address, the secret cannot be guessed, so the door can say
+ * the name without telling anyone who is on the list.
+ */
+export const DOOR_INVITE_PARAM = 'invite';
+
+/** The longest welcome name the guest list takes. */
+export const GREETING_MAX = 60;
+
+/**
  * The door takes no address sent sooner than this after the page opened:
  * faster than a person types, so a bot (the door's action enforces it). A
  * person who presses enter at once on an address a link filled in is held

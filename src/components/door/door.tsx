@@ -8,6 +8,7 @@ import { useActionState, useEffect, useId, useRef, useState, type CSSProperties,
 import { flushSync } from 'react-dom';
 import { enterDoor } from '@/app/(door)/welcome/actions';
 import { BrandMark } from '@/components/brand/brand-mark';
+import { Carpet } from '@/components/site/carpet';
 import { Eyebrow, SiteButton } from '@/components/site/layout-parts';
 import { Light } from '@/components/site/light';
 import { SpamTraps, stampElapsed } from '@/components/site/spam-traps';
@@ -16,6 +17,7 @@ import { DOOR_ANSWERS, DOOR_ENHANCED_FIELD, DOOR_MIN_FILL_MS, type DoorAnswer } 
 import type { SectionData } from '@/content/registry';
 import { cn } from '@/lib/cn';
 import { idleState, type FormState } from '@/lib/forms';
+import { fillName } from '@/lib/greeting';
 import { renderHeadline } from '@/lib/headline';
 import { tokens } from '@/theme/tokens';
 import { beginArrival } from './door-store';
@@ -62,8 +64,23 @@ function copyFor(content: Content, answer: Answer): { message: string; help: str
 
 const dissolve = { duration: seconds(duration.slow), ease: ease.standard };
 
-/** `prefill`: the address a link to the door carried in ?email=, already in the field. */
-type Props = { content: Content; contactEmail: string; alreadyIn: boolean; publicSite: boolean; prefill: string };
+/**
+ * `prefill`: the address already in the field, from a link to the door (?email=, or a personal link).
+ * `greeting`: the welcome name of the guest whose personal link this is, or empty; with one the door
+ * greets them by it and rolls out the red carpet. `preview`: a signed-in admin is looking at a guest's
+ * personal link, and entering plays the door without counting as the guest's visit. `destination`:
+ * where the door opens onto.
+ */
+type Props = {
+  content: Content;
+  contactEmail: string;
+  alreadyIn: boolean;
+  publicSite: boolean;
+  prefill: string;
+  greeting: string;
+  preview: boolean;
+  destination: string;
+};
 
 /**
  * The front door (/welcome): one dark screen with the mark, a point of light
@@ -75,7 +92,7 @@ type Props = { content: Content; contactEmail: string; alreadyIn: boolean; publi
  * canvas, and the veil (src/components/door/door-veil.tsx) takes over at the
  * exact spot of the mark before the home page is pushed.
  */
-export function Door({ content, contactEmail, alreadyIn, publicSite, prefill }: Props) {
+export function Door({ content, contactEmail, alreadyIn, publicSite, prefill, greeting, preview, destination }: Props) {
   const [state, formAction] = useActionState(enterDoor, idleState);
   // Read once: the action's cookie write re-renders the page, and nothing on screen may change under the guest mid-choreography.
   const [inside] = useState(alreadyIn);
@@ -122,6 +139,8 @@ export function Door({ content, contactEmail, alreadyIn, publicSite, prefill }: 
   const statusText =
     status === 'checking' ? content.checkingStatus : status === 'still' ? content.stillCheckingStatus : status === 'welcome' ? content.welcomeStatus : '';
   const shown = answer ? copyFor(content, answer) : null;
+  const title = greeting ? fillName(content.personalTitle, greeting) : inside ? content.alreadyInTitle : content.title;
+  const intro = inside ? content.alreadyInIntro : greeting ? content.personalIntro : content.intro;
   const gone = { initial: false as const, animate: opened ? { opacity: 0, y: door.lift } : { opacity: 1, y: 0 }, transition: dissolve };
 
   /** One run of the light along the line, or the same time standing still under reduced motion. */
@@ -182,7 +201,7 @@ export function Door({ content, contactEmail, alreadyIn, publicSite, prefill }: 
     const markBox = mark.current?.querySelector('svg')?.getBoundingClientRect();
     const spark = (line.current?.querySelector('.door-point') ?? entry.current)?.getBoundingClientRect();
     if (!markBox || !spark) {
-      router.push('/');
+      router.push(destination);
       return;
     }
     flushSync(() => {
@@ -194,7 +213,7 @@ export function Door({ content, contactEmail, alreadyIn, publicSite, prefill }: 
       setPhase('gone');
     });
     if (!reduced) document.documentElement.dataset.doorArrival = 'held';
-    router.push('/');
+    router.push(destination);
   }
 
   function submit(event: FormEvent<HTMLFormElement>): void {
@@ -258,10 +277,10 @@ export function Door({ content, contactEmail, alreadyIn, publicSite, prefill }: 
               </div>
             ) : null}
             <div className="door-rise mt-4 [animation-delay:400ms]">
-              <h1 className="text-2xl font-medium text-metal sm:text-3xl">{renderHeadline(inside ? content.alreadyInTitle : content.title)}</h1>
+              <h1 className="text-2xl font-medium text-metal sm:text-3xl">{renderHeadline(title)}</h1>
             </div>
             <div className="door-rise [animation-delay:460ms]">
-              <p className="mt-3 text-base text-fg-muted sm:text-lg">{inside ? content.alreadyInIntro : content.intro}</p>
+              <p className="mt-3 text-base text-fg-muted sm:text-lg">{intro}</p>
             </div>
           </m.div>
 
@@ -335,6 +354,11 @@ export function Door({ content, contactEmail, alreadyIn, publicSite, prefill }: 
                 <span className="door-line-in absolute inset-0 bg-line-input [animation-delay:300ms]" />
                 <span className="door-line-warm absolute inset-0 bg-fg" />
                 <span className="door-line-danger absolute inset-0 bg-danger opacity-0" />
+                {greeting ? (
+                  <span className="door-carpet">
+                    <Carpet />
+                  </span>
+                ) : null}
                 <span className="absolute inset-y-0 left-0 hidden w-1/2 overflow-hidden sm:block">
                   <Light data-door-light="left" initial={{ x: '100%' }} />
                 </span>
@@ -376,6 +400,12 @@ export function Door({ content, contactEmail, alreadyIn, publicSite, prefill }: 
                   {content.helpLinkLabel}
                 </a>
               </p>
+              {preview ? (
+                <p className="door-fade mt-4 text-sm text-warning [animation-delay:700ms]">
+                  Admin preview: this is their personal link as they will see it. Entering here plays the door and their greeting without counting as their
+                  visit.
+                </p>
+              ) : null}
             </m.form>
           )}
         </div>

@@ -26,6 +26,8 @@ export type AuditAction =
   | 'guest.add'
   | 'guest.role'
   | 'guest.remove'
+  | 'guest.greeting'
+  | 'guest.link'
   /** Written with no actor; the target is the address that came in. */
   | 'door.enter';
 

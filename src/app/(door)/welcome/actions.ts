@@ -6,6 +6,7 @@ import { z } from 'zod';
 import { DOOR_ENHANCED_FIELD, DOOR_MIN_FILL_MS, type DoorAnswer } from '@/content/constants';
 import { failure, formValues, success, type FormState } from '@/lib/forms';
 import { audit } from '@/server/audit';
+import { getSession } from '@/server/auth/session';
 import { sha256 } from '@/server/crypto';
 import { createGuestSession, DOOR_FLOOR_MS, DOOR_LIMITS, findInvite, normalizeGuestEmail, notifyGuestEntered, recordGuestEntry } from '@/server/guests';
 import { ELAPSED_FIELD, HONEYPOT_FIELD } from '@/server/inquiries-fields';
@@ -20,8 +21,10 @@ type Verdict = { open: true } | { open: false; code: DoorAnswer; wait?: string }
 /**
  * Whether the address opens the door. Every miss gets one of a few codes and
  * nothing says whether the address is on the list: the spam traps and an
- * unknown address answer alike, the limits are keyed on a hash of the
- * address, and the lookup costs the same whether or not it matches.
+ * unknown address answer alike, the limits are keyed on the caller and on a
+ * hash of the address, and the lookup costs the same whether or not it
+ * matches. Every try counts against the caller; only misses count against
+ * the address.
  */
 async function check(formData: FormData, typed: string): Promise<Verdict> {
   if (String(formData.get(HONEYPOT_FIELD) ?? '') !== '') return { open: false, code: 'wrong' };
@@ -33,16 +36,22 @@ async function check(formData: FormData, typed: string): Promise<Verdict> {
   if (!address) return { open: false, code: 'empty' };
   if (address.length > EMAIL_MAX || !emailShape.safeParse(address).success) return { open: false, code: 'invalid' };
 
+  // A signed-in admin at the door is previewing a guest's personal link. They are in already: a match opens
+  // without a guest key, and their tries count against neither limit, so the guest's first visit and their
+  // tries stay the guest's own.
+  if (await getSession()) return (await findInvite(address)) ? { open: true } : { open: false, code: 'wrong' };
+
   const ip = await clientIp();
-  const limits = await Promise.all([
-    hit(`door:ip:${ip}`, DOOR_LIMITS.ip.limit, DOOR_LIMITS.ip.windowSeconds),
-    hit(`door:addr:${sha256(address)}`, DOOR_LIMITS.address.limit, DOOR_LIMITS.address.windowSeconds),
-  ]);
-  const over = limits.filter((limit) => !limit.ok);
-  if (over.length) return { open: false, code: 'limited', wait: retryWording(Math.max(...over.map((limit) => limit.retryAfterSeconds))) };
+  const byIp = await hit(`door:ip:${ip}`, DOOR_LIMITS.ip.limit, DOOR_LIMITS.ip.windowSeconds);
+  if (!byIp.ok) return { open: false, code: 'limited', wait: retryWording(byIp.retryAfterSeconds) };
 
   const invite = await findInvite(address);
-  if (!invite) return { open: false, code: 'wrong' };
+  if (!invite) {
+    // Only a miss counts against the address. An address that opens may be shared, as a forwarded invitation
+    // is, and everyone holding it gets in; getting in says the address is on the list anyway.
+    const byAddress = await hit(`door:addr:${sha256(address)}`, DOOR_LIMITS.address.limit, DOOR_LIMITS.address.windowSeconds);
+    return byAddress.ok ? { open: false, code: 'wrong' } : { open: false, code: 'limited', wait: retryWording(byAddress.retryAfterSeconds) };
+  }
 
   await createGuestSession(invite.id);
   const { firstTime } = await recordGuestEntry(invite.id);
