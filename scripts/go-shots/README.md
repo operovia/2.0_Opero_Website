@@ -6,7 +6,7 @@ creative license, not captures: each `<screen>.html` is a screen, `shell.css` is
 
 - `shell.css`: the phone frame (status bar, app bar with the OperoGo icon and the module accent, the content area, the
   Report a Building Issue banner and the home indicator), the tokens, and the parts (cards, rows, chips, buttons, inputs,
-  module cards, the Oppie listening ring). Pages link it and keep only their own rules in their `<style>`.
+  module cards, the Oppie button). Pages link it and keep only their own rules in their `<style>`.
 - `render.mjs`: serves the repo root on a local port and screenshots each page at 390 x 844 CSS px, device scale 3, into
   `src/assets/go/<screen>.png` (1170 x 2532). Needs a Chromium (`CHROME_PATH` if none is installed for Playwright).
 - `src/assets/go/<screen>.png`: the rendered output, committed with the page that made it. The site imports these files
@@ -41,7 +41,7 @@ else is clipped. The `.glow` is the first child of `.content`.
 ## Marks
 
 - The OperoGo icon: `<img class="app-icon" src="/public/brand/operogo/operogo-icon-rounded.svg" alt="">` in the app bar, 34px. Elsewhere size it with a width and height; the file's own corners are rounded.
-- Oppie at rest: `<img class="oppie" src="/public/brand/oppie/oppie-rest-dark.svg" width="N" height="N" alt="">`, 56px inside the listening ring (`<div class="oppie-ring">`), 22px beside an answer, 16px in a chip. Never drawn by hand, never an orb of its own.
+- Oppie at rest: `<img class="oppie" src="/public/brand/oppie/oppie-rest-dark.svg" width="N" height="N" alt="">`, 56px inside the Oppie button (`<div class="oppie-button">`, a rectangle with soft corners), 22px beside an answer, 16px in a chip. Never drawn by hand, never an orb of its own.
 - Icons: inline SVG on a 24 viewBox, paths copied from `node_modules/lucide-react/dist/esm/icons/<name>.mjs`. No icon fonts.
 - Photos: none. A photo thumbnail is a drawn placeholder, a rounded rectangle with a soft gradient and a camera glyph.
 

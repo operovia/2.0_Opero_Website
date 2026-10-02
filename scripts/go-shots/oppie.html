@@ -3,8 +3,8 @@
 <head><meta charset="utf-8"><title>Oppie</title>
 <link rel="stylesheet" href="/scripts/go-shots/shell.css">
 <style>
-/* Oppie by voice: a short conversation, then the listening ring pinned to the bottom. Page rules only; the frame and the
-   parts (card, row, chip, oppie-ring) come from shell.css. */
+/* Oppie by voice: a short conversation, then the Oppie button pinned to the bottom. Page rules only; the frame and the
+   parts (card, row, chip, oppie-button) come from shell.css. */
 .screen { height: 100%; display: flex; flex-direction: column; }
 .turn + .turn { margin-top: 8px; }
 /* What the user said: a bubble on the right, the tail corner at the bottom right. */
@@ -16,14 +16,14 @@
 .leases { margin-top: 8px; padding-top: 2px; padding-bottom: 2px; }
 .leases .row { min-height: 0; padding: 8px 0; }
 .actions { display: flex; gap: 8px; margin-top: 8px; }
-/* Listening: the ring, a still waveform in the five jewel tones, and the hint. */
+/* Listening: the Oppie button, a still waveform in the five jewel tones, and the hint. */
 .listen { margin-top: auto; padding-bottom: 10px; display: flex; flex-direction: column; align-items: center; isolation: isolate; }
-.wave { display: flex; align-items: center; gap: 5px; height: 22px; margin-top: 8px; }
+.wave { display: flex; align-items: center; gap: 5px; height: 22px; margin-top: 12px; }
 .wave i { display: block; width: 5px; border-radius: 2.5px; background: linear-gradient(to bottom, var(--j-hi), var(--j-base)); }
 .wave i:nth-child(1) { height: 8px; }  .wave i:nth-child(2) { height: 14px; } .wave i:nth-child(3) { height: 20px; }
 .wave i:nth-child(4) { height: 12px; } .wave i:nth-child(5) { height: 22px; } .wave i:nth-child(6) { height: 18px; }
 .wave i:nth-child(7) { height: 20px; } .wave i:nth-child(8) { height: 10px; } .wave i:nth-child(9) { height: 6px; }
-.hint { margin-top: 6px; font-size: 13px; line-height: 18px; color: var(--text-subtle); }
+.hint { margin-top: 8px; font-size: 13px; line-height: 18px; color: var(--text-subtle); }
 </style></head>
 <body>
   <div class="status"><span>9:41</span><span class="glyphs"><span class="bars"><i></i><i></i><i></i><i></i></span><svg class="icon i16" viewBox="0 0 24 24"><path d="M12 20h.01"/><path d="M2 8.82a15 15 0 0 1 20 0"/><path d="M5 12.859a10 10 0 0 1 14 0"/><path d="M8.5 16.429a5 5 0 0 1 7 0"/></svg><span class="battery"></span></span></div>
@@ -49,7 +49,7 @@
       <div class="turn me"><p>Add a note to Aldergrove: renewal call this week.</p></div>
       <div class="turn said"><img class="oppie" src="/public/brand/oppie/oppie-rest-dark.svg" width="22" height="22" alt=""><p>Noted on Aldergrove Dental. Anything else?</p></div>
       <div class="listen">
-        <div class="oppie-ring"><img class="oppie" src="/public/brand/oppie/oppie-rest-dark.svg" width="56" height="56" alt=""></div>
+        <div class="oppie-button"><img class="oppie" src="/public/brand/oppie/oppie-rest-dark.svg" width="56" height="56" alt=""></div>
         <div class="wave"><i class="j-crimson"></i><i class="j-crimson"></i><i class="j-violet"></i><i class="j-violet"></i><i class="j-gold"></i><i class="j-green"></i><i class="j-green"></i><i class="j-teal"></i><i class="j-teal"></i></div>
         <div class="hint">Listening. Tap to stop.</div>
       </div>

@@ -4,16 +4,16 @@
 <link rel="stylesheet" href="/scripts/go-shots/shell.css">
 <style>
 /* Home: the greeting, the Oppie card and the module grid, in the silver Home accent. Page rules only; the frame and the
-   parts (card, input, modules, oppie-ring) come from shell.css. */
+   parts (card, input, modules, oppie-button) come from shell.css. */
 .screen { height: 100%; display: flex; flex-direction: column; }
 .greeting h1 { font-size: 26px; line-height: 32px; font-weight: 700; letter-spacing: -0.01em; }
 .greeting p { margin-top: 3px; font-size: 14px; line-height: 20px; color: var(--text-muted); }
-/* The Oppie card: the listening ring, the invitation, then the message field. isolate keeps the ring's halo inside the card. */
-.oppie-card { margin-top: 14px; padding: 10px 14px; }
+/* The Oppie card: the Oppie button, the invitation, then the message field. isolate keeps the button's halo inside the card. */
+.oppie-card { margin-top: 14px; padding: 14px; }
 .talk { display: flex; flex-direction: column; align-items: center; text-align: center; isolation: isolate; }
-.talk .ask { margin-top: 10px; font-size: 15px; line-height: 20px; font-weight: 600; }
+.talk .ask { margin-top: 12px; font-size: 15px; line-height: 20px; font-weight: 600; }
 .talk .about { margin-top: 2px; font-size: 13px; line-height: 18px; color: var(--text-subtle); }
-.oppie-card .input { margin-top: 10px; }
+.oppie-card .input { margin-top: 12px; }
 .oppie-card .input span { flex: 1; min-width: 0; }
 .oppie-card .input .icon { color: var(--text-muted); }
 /* The module grid fills what is left and ends just above the banner. */
@@ -37,7 +37,7 @@
       </div>
       <div class="card oppie-card">
         <div class="talk">
-          <div class="oppie-ring"><img class="oppie" src="/public/brand/oppie/oppie-rest-dark.svg" width="56" height="56" alt=""></div>
+          <div class="oppie-button"><img class="oppie" src="/public/brand/oppie/oppie-rest-dark.svg" width="56" height="56" alt=""></div>
           <div class="ask">Tap to talk to Oppie</div>
           <div class="about">Ask about a property, add a note, call a contact</div>
         </div>
