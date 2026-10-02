@@ -301,6 +301,8 @@ export const tokens = {
     sans: 'var(--font-jakarta), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif',
     display: 'var(--font-jakarta), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif',
     mono: 'ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace',
+    /** Mr Dafoe, self-hosted, for the founder's signature only. `--font-signature` comes from next/font (src/theme/fonts.ts). */
+    signature: 'var(--font-signature), cursive',
     weight: {
       normal: '400',
       medium: '500',

@@ -16,5 +16,18 @@ export const jakarta = localFont({
   display: 'swap',
 });
 
+/**
+ * Mr Dafoe (SIL Open Font License, see fonts/MrDafoe-OFL.txt), a handwriting
+ * face for one thing: the founder's signature at the foot of his letter
+ * (src/components/site/founder/letter.tsx). Not preloaded: the browser fetches
+ * it only when the letter opens.
+ */
+export const signature = localFont({
+  src: './fonts/MrDafoe-Regular-Latin.woff2',
+  variable: '--font-signature',
+  display: 'swap',
+  preload: false,
+});
+
 /** Class names that expose every font variable. Apply on <html>. */
-export const fontVariables = jakarta.variable;
+export const fontVariables = `${jakarta.variable} ${signature.variable}`;

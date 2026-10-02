@@ -5,10 +5,13 @@ import { LinkedInGlyph } from '@/components/site/linkedin-glyph';
 import { SiteLink } from '@/components/site/site-link';
 import type { SectionData } from '@/content/registry';
 import { renderHeadline } from '@/lib/headline';
+import { FounderLetter } from './letter';
 
 type Props = {
   /** The Investor Hub's introduction: headline, name, role, and LinkedIn profile. */
   intro: SectionData<'investors', 'intro'>;
+  /** The founder's letter, opened by the button under the headline. */
+  letter: SectionData<'investors', 'letter'>;
   /** The small line above the headline. Each page brings its own. */
   eyebrow: string;
   /** The id of the headline, for the section's aria-labelledby. */
@@ -16,11 +19,12 @@ type Props = {
 };
 
 /**
- * The founder's introduction: the headline in the founder's voice beside the
- * portrait, signed with name, role, and the LinkedIn icon. The top of both the
- * Investor Hub and the public Founder page.
+ * The founder's introduction: the headline in the founder's voice, with the
+ * button to his letter under it, beside the portrait, signed with name, role,
+ * and the LinkedIn icon. The top of both the Investor Hub and the public
+ * Founder page.
  */
-export function FounderIntro({ intro, eyebrow, titleId }: Props) {
+export function FounderIntro({ intro, letter, eyebrow, titleId }: Props) {
   return (
     <section aria-labelledby={titleId} className="relative isolate -mt-18 overflow-hidden pt-18">
       <div aria-hidden className="investor-grid absolute inset-0 -z-10" />
@@ -34,6 +38,9 @@ export function FounderIntro({ intro, eyebrow, titleId }: Props) {
           <h1 id={titleId} className="hero-rise mt-5 max-w-4xl text-display-lg font-medium text-metal">
             {renderHeadline(intro.headline)}
           </h1>
+          <div className="hero-rise">
+            <FounderLetter letter={letter} />
+          </div>
         </div>
         {/* The portrait from the investor room in the Opero repo, as supplied. Signed beneath, like the original. */}
         <figure className="hero-rise flex items-center gap-5 lg:flex-col lg:items-start">

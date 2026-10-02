@@ -40,7 +40,7 @@ const lines = (text: string) =>
 export default async function InvestorsPage() {
   const access = await requireEntry();
   if (investorHubHidden(access)) notFound();
-  const { intro, story, next, platform, round, contact } = await getPage('investors');
+  const { intro, letter, story, next, platform, round, contact } = await getPage('investors');
   const areas = platform.areas.map((area) => ({ name: area.name, today: lines(area.today), extended: lines(area.extended), next: lines(area.next) }));
   // Worked out from the lists, so they always agree with them.
   const runningToday = areas.reduce((sum, area) => sum + area.today.length + area.extended.length, 0);
@@ -48,7 +48,7 @@ export default async function InvestorsPage() {
 
   return (
     <>
-      <FounderIntro intro={intro} eyebrow={intro.eyebrow} titleId="investors-title" />
+      <FounderIntro intro={intro} letter={letter} eyebrow={intro.eyebrow} titleId="investors-title" />
       <FounderStory story={story} />
 
       <section aria-labelledby="next-title" className="border-y border-line bg-canvas-raised py-section">

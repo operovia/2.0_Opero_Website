@@ -514,6 +514,45 @@ const investorsIntro = section({
   },
 });
 
+const investorsLetter = section({
+  label: "The founder's letter",
+  description:
+    'Opened by the button under the headline at the top of the Investor Hub and the Founder page, so an edit here changes both. It closes with the signature, in a handwriting face, the name and role, and the Operovia logo.',
+  draftCopy: true,
+  fields: {
+    buttonLabel: text('Button', { max: 40 }),
+    title: text('Title', { max: 80 }),
+    date: text('Date line', { optional: true, max: 40, hint: 'Shown under the title when filled in. Empty, since the site shows no dates.' }),
+    body: rich('Letter'),
+    signature: text('Signature', { max: 30, hint: 'Written in the handwriting face, above the name.' }),
+    name: text('Name', { max: 80 }),
+    role: text('Role', { max: 80 }),
+  },
+  seed: {
+    buttonLabel: 'Read My Story',
+    title: 'Why I built Opero',
+    date: '',
+    body: textToRich(
+      [
+        'I have spent 25 years in property and asset management. It is the only career I have ever had. Along the way I have worked beside leasing agents, property managers, accountants, maintenance teams, and asset managers, and I have learned how much skill and care it takes to run properties well.',
+        'I eventually became COO of a commercial property management firm. That seat gave me a clear view of something I had felt from every seat before it. The people in this industry are very good at what they do, but the software they work in was never built for how they actually work.',
+        "Most firms run on a system of record surrounded by a patchwork of other tools: one for projects, one for procedures, one for training, one for meetings and goals. Each lives in its own world, and none of them understand the properties or the people behind the work. The job of connecting it all falls on people, through spreadsheets, re-keyed data, and knowledge that lives in someone's head.",
+        'The turning point was a renewal notice. One of the workflow tools we relied on came back with a price nearly 50% higher than the one they brought us in at, just a year earlier. My reaction was simple: this is ridiculous, and it is time to build our own.',
+        'I started by myself, on nights, weekends, vacations...any free moment I could find, while still doing my job. I am an operator, a property manager at heart, not a software engineer. AI made it possible for me to build, and 25 years in the business told me what to build.',
+        'The foundation was a CRM designed for property management. Around it I added the tools our teams relied on every day, and I built Oppie, our AI assistant, into every part of it from the first line of code. We put Opero to work at the firm, and it began replacing the tools our teams had been paying for separately, including the one that sent that renewal notice.',
+        'But I had built it for one company. When I showed it to operators at other firms, they saw their own problems in it, and I understood this was bigger than one company. Bringing it to the industry meant rebuilding it from the ground up, this time to serve many firms instead of one.',
+        'Leaving the COO role was not an easy decision. I worked a long time to earn that seat, and I walked away from it with my eyes open. I did it because I love this industry, and it deserves better: software built by someone who has done the work. I was not willing to wait for someone else to build it.',
+        'At Operovia, we hold ourselves to a simple standard: software should be a silent partner. It should work quietly in the background, make common sense, and never become the thing your business is about. Your business is your properties, your tenants, and your people, and Opero should make that work easier and then get out of the way.',
+        'Today we are a small company with a big responsibility. We are building Opero for firms across the industry, alongside operators who live this work every day. We will not get everything right the first time, and we will keep listening to the people who use it.',
+        'This industry gave me a career I am proud of. Opero is my way of giving something back to the people who keep it running.',
+      ].join('\n\n'),
+    ),
+    signature: 'joe',
+    name: 'Joe Mifsud',
+    role: 'Founder and CEO',
+  },
+});
+
 const investorsStory = section({
   label: 'The story',
   description:
@@ -1091,6 +1130,7 @@ export const pages = {
     path: INVESTOR_HUB_PATH,
     sections: {
       intro: investorsIntro,
+      letter: investorsLetter,
       story: investorsStory,
       next: investorsNext,
       platform: investorsPlatform,

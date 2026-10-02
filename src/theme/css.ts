@@ -77,6 +77,7 @@ function sharedDeclarations(): string {
   vars['font-sans'] = tokens.font.sans;
   vars['font-display'] = tokens.font.display;
   vars['font-mono'] = tokens.font.mono;
+  vars['font-signature'] = tokens.font.signature;
   for (const [key, value] of Object.entries(tokens.font.weight)) vars[`weight-${key}`] = value;
 
   for (const [key, value] of Object.entries(tokens.text)) {

@@ -25,10 +25,10 @@ export async function generateMetadata(): Promise<Metadata> {
  */
 export default async function FounderPage() {
   await requireEntry();
-  const [{ page }, { intro, story }] = await Promise.all([getPage('founder'), getPage('investors')]);
+  const [{ page }, { intro, letter, story }] = await Promise.all([getPage('founder'), getPage('investors')]);
   return (
     <>
-      <FounderIntro intro={intro} eyebrow={page.eyebrow} titleId="founder-title" />
+      <FounderIntro intro={intro} letter={letter} eyebrow={page.eyebrow} titleId="founder-title" />
       <FounderStory story={story} />
     </>
   );
