@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en" class="m-inspection">
+<head><meta charset="utf-8"><title>Inspections</title>
+<link rel="stylesheet" href="/scripts/go-shots/shell.css">
+<style>
+/* Inspections, mid-walk: page rules only. The phone, the tokens and the parts come from shell.css. */
+.stack { display: flex; flex-direction: column; gap: 10px; }
+.head { display: flex; align-items: center; justify-content: space-between; }
+.stop-name { font-size: 22px; line-height: 26px; font-weight: 700; letter-spacing: -0.01em; margin-top: 4px; }
+.head-block .progress { margin-top: 10px; }
+
+/* The floor plan: one SVG, one unit per CSS pixel so the hairlines stay crisp. */
+.plan { height: 130px; padding: 8px; }
+.plan svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.plan .walls { fill: none; stroke: var(--line-strong); stroke-width: 1; }
+.plan .gap { fill: none; stroke: var(--surface); stroke-width: 3; }
+.plan .door { fill: none; stroke: var(--line-strong); stroke-width: 1; }
+.plan .room { font-size: 11px; font-weight: 500; fill: var(--text-subtle); text-anchor: middle; }
+.plan .route { fill: none; stroke: var(--m2); stroke-width: 1.5; stroke-dasharray: 4 3; stroke-linecap: round; opacity: .85; }
+.plan .done { fill: var(--success); }
+.plan .tick { fill: none; stroke: var(--on-accent); stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+.plan .now { fill: var(--m2); }
+.plan .next { fill: var(--surface); stroke: var(--m2); stroke-width: 1.25; stroke-opacity: .9; }
+.plan .num { font-size: 10px; font-weight: 700; text-anchor: middle; fill: var(--text-muted); }
+.plan .num.on { fill: var(--on-accent); }
+
+/* Checklist rows: one line each, a little tighter than the shell's two-line row. */
+.section .label { margin-bottom: 8px; }
+.checklist { padding: 6px 14px; }
+.checklist .row { min-height: 48px; padding: 8px 0; }
+.checklist .txt { flex: 1; min-width: 0; font-size: 14px; line-height: 18px; font-weight: 500; }
+
+/* Photos: drawn placeholders, never pictures. */
+.photos { display: flex; gap: 10px; }
+.photo { width: 72px; height: 72px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex: none; }
+.photo-shot { background: linear-gradient(145deg, var(--m-soft), transparent 75%), var(--surface-2); border: 1px solid var(--line); color: var(--m-text); }
+.photo-shot:nth-child(2) { background: linear-gradient(215deg, var(--m-soft), transparent 75%), var(--surface-2); }
+.photo-shot .icon { width: 22px; height: 22px; opacity: .65; }
+.photo-add { flex-direction: column; gap: 4px; border: 1.5px dashed var(--line-strong); color: var(--text-subtle); font-size: 11px; line-height: 14px; font-weight: 600; }
+
+/* The finding. */
+.finding { background: var(--surface-2); display: flex; align-items: flex-start; gap: 12px; padding: 12px 14px; }
+.finding .icon { color: var(--warning); margin-top: 1px; }
+.finding .f1 { font-size: 15px; line-height: 20px; font-weight: 600; }
+.finding .f2 { font-size: 13px; line-height: 17px; color: var(--text-subtle); margin-top: 1px; }
+
+/* Two half-width actions. */
+.actions { display: flex; gap: 10px; }
+.actions .btn { flex: 1; padding: 0 10px; }
+</style></head>
+<body>
+  <div class="status"><span>9:41</span><span class="glyphs"><span class="bars"><i></i><i></i><i></i><i></i></span><svg class="icon i16" viewBox="0 0 24 24"><path d="M12 20h.01"/><path d="M2 8.82a15 15 0 0 1 20 0"/><path d="M5 12.859a10 10 0 0 1 14 0"/><path d="M8.5 16.429a5 5 0 0 1 7 0"/></svg><span class="battery"></span></span></div>
+  <div class="appbar">
+    <div class="back"><svg class="icon" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></div>
+    <img class="app-icon" src="/public/brand/operogo/operogo-icon-rounded.svg" alt="">
+    <span class="divider"></span>
+    <div class="titles"><div class="title">Inspections</div><div class="subtitle">Horizon · Quarterly walkthrough</div></div>
+    <div class="avatar">TL</div>
+  </div>
+  <div class="content"><div class="glow"></div>
+    <div class="stack">
+
+      <div class="head-block">
+        <div class="head"><span class="label">Stop 3 of 8</span><span class="chip chip-module">On route</span></div>
+        <h1 class="stop-name">Lobby</h1>
+        <div class="progress"><i style="width: 37.5%"></i></div>
+      </div>
+
+      <div class="card plan">
+        <svg viewBox="0 0 340 112" width="340" height="112" aria-hidden="true">
+          <defs>
+            <radialGradient id="halo"><stop offset="0" style="stop-color: var(--m2); stop-opacity: .34"/><stop offset=".55" style="stop-color: var(--m2); stop-opacity: .12"/><stop offset="1" style="stop-color: var(--m2); stop-opacity: 0"/></radialGradient>
+          </defs>
+          <g class="walls">
+            <rect x="6.5" y="26.5" width="70" height="60"/>
+            <rect x="76.5" y="5.5" width="130" height="101"/>
+            <rect x="206.5" y="5.5" width="66" height="52"/>
+            <rect x="272.5" y="5.5" width="61" height="52"/>
+            <rect x="206.5" y="57.5" width="127" height="49"/>
+          </g>
+          <path class="gap" d="M6.5 45v16M76.5 45v14M206.5 40v14M272.5 29v14"/>
+          <path class="door" d="M6.5 61h16M22.5 61A16 16 0 0 0 6.5 45"/>
+          <g class="room">
+            <text x="41.5" y="78">Entrance</text>
+            <text x="141.5" y="26">Lobby</text>
+            <text x="239.5" y="18">Elevators</text>
+            <text x="303" y="18">Stairs</text>
+            <text x="270" y="85">Mail room</text>
+          </g>
+          <polyline class="route" points="44,52 98,52 141,70 239,36 303,36"/>
+          <circle cx="141" cy="70" r="22" fill="url(#halo)"/>
+          <circle class="done" cx="44" cy="52" r="9"/><path class="tick" d="M40 52l2.5 2.5L48 49"/>
+          <circle class="done" cx="98" cy="52" r="9"/><path class="tick" d="M94 52l2.5 2.5L102 49"/>
+          <circle class="now" cx="141" cy="70" r="9.5"/><text class="num on" x="141" y="73.5">3</text>
+          <circle class="next" cx="239" cy="36" r="9"/><text class="num" x="239" y="39.5">4</text>
+          <circle class="next" cx="303" cy="36" r="9"/><text class="num" x="303" y="39.5">5</text>
+        </svg>
+      </div>
+
+      <div class="section">
+        <div class="label">Inspection guide</div>
+        <div class="card checklist">
+          <div class="row"><span class="checkbox on"><svg class="icon i14" viewBox="0 0 24 24" style="stroke-width: 2.5"><path d="M20 6 9 17l-5-5"/></svg></span><span class="txt">Flooring clean and undamaged</span><span class="chip chip-ok">Pass</span></div>
+          <div class="row"><span class="checkbox on"><svg class="icon i14" viewBox="0 0 24 24" style="stroke-width: 2.5"><path d="M20 6 9 17l-5-5"/></svg></span><span class="txt">Lighting and exit signage working</span><span class="chip chip-ok">Pass</span></div>
+          <div class="row"><span class="checkbox"></span><span class="txt">Fire extinguisher tagged and accessible</span></div>
+        </div>
+      </div>
+
+      <div class="photos">
+        <div class="photo photo-shot"><svg class="icon" viewBox="0 0 24 24"><path d="M13.997 4a2 2 0 0 1 1.76 1.05l.486.9A2 2 0 0 0 18.003 7H20a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1.997a2 2 0 0 0 1.759-1.048l.489-.904A2 2 0 0 1 10.004 4z"/><circle cx="12" cy="13" r="3"/></svg></div>
+        <div class="photo photo-shot"><svg class="icon" viewBox="0 0 24 24"><path d="M13.997 4a2 2 0 0 1 1.76 1.05l.486.9A2 2 0 0 0 18.003 7H20a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1.997a2 2 0 0 0 1.759-1.048l.489-.904A2 2 0 0 1 10.004 4z"/><circle cx="12" cy="13" r="3"/></svg></div>
+        <div class="photo photo-add"><svg class="icon i16" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></svg><span>Add photo</span></div>
+      </div>
+
+      <div class="card finding">
+        <svg class="icon" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+        <div><div class="f1">Scuffed wall by the elevators</div><div class="f2">Work order created · Brightline Painting</div></div>
+      </div>
+
+      <div class="actions">
+        <div class="btn btn-ok"><svg class="icon i16" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Pass</div>
+        <div class="btn btn-secondary"><svg class="icon i16" viewBox="0 0 24 24"><path d="M13 21h8"/><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/></svg>Add observation</div>
+      </div>
+
+    </div>
+  </div>
+  <div class="banner"><div class="bar"><svg class="icon i24" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg><div><div class="t">Report a Building Issue</div><div class="s">Leaks, outages, damage, safety</div></div><svg class="icon chev" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></div><div class="home"></div></div>
+</body></html>

@@ -1,0 +1,147 @@
+/* shell.css: the phone every OperoGo screenshot starts from (scripts/go-shots/<screen>.html).
+   Rendered by scripts/go-shots/render.mjs at 390 x 844 CSS px (an iPhone), three device pixels per CSS pixel, dark only.
+   Every color is a literal copy of the website's dark tokens (src/theme/tokens.ts); the module accents are the app's own
+   (constants/module-accents.ts in the mobile repo). Paths are root-relative to the REPO ROOT, which the renderer serves.
+   Pages link this file and keep only their own rules in their <style>. See README.md beside this file. */
+
+/* ---------- font: Plus Jakarta Sans, self-hosted, the only face ---------- */
+@font-face { font-family: 'Plus Jakarta Sans'; src: url('/src/theme/fonts/PlusJakartaSans-Variable.woff2') format('woff2'); font-weight: 200 800; font-style: normal; }
+@font-face { font-family: 'Plus Jakarta Sans'; src: url('/src/theme/fonts/PlusJakartaSans-Italic-Variable-Latin.woff2') format('woff2'); font-weight: 200 800; font-style: italic; }
+
+/* ---------- tokens ---------- */
+:root {
+  --bg: #0F1115;             /* canvas */
+  --bg-raised: #13161B;      /* canvasRaised: sunken strips, the status bar */
+  --surface: #171A1F;        /* cards, the app bar, the banner */
+  --surface-2: #1E2127;      /* surfaceRaised: bubbles, sheets, pressed rows */
+  --line: #272A31;           /* hairlines */
+  --line-strong: #363A42;    /* secondary button and input borders */
+  --line-input: #6A6F79;     /* checkbox and chevron color */
+  --text: #F2F4F6;
+  --text-muted: #B3B8C0;
+  --text-subtle: #8E939C;    /* the lightest text that carries words */
+  --accent: #E6E9EC;         /* primary buttons, silver */
+  --on-accent: #0F1115;
+  --accent-soft: #F2F4F614;  /* chips, the avatar, pressed fills */
+  --success: #63B08A;  --success-soft: #63B08A1F;
+  --warning: #D9A55E;  --warning-soft: #D9A55E1F;
+  --danger: #E3787B;   --danger-soft: #D2696C24;
+  --shadow-sm: 0 1px 2px #00000066;
+  --shadow-md: 0 8px 24px -8px #0000008C, 0 0 0 1px #FFFFFF0A;
+  /* the five jewels, dark stops [highlight, base, shade, deep], for the Oppie orb's ring and the jewel disc */
+  --jewel-crimson-hi: #D2696C; --jewel-crimson-base: #A63F44; --jewel-crimson-shade: #8A2930; --jewel-crimson-deep: #6B1C22;
+  --jewel-violet-hi: #9878CC;  --jewel-violet-base: #7050A0;  --jewel-violet-shade: #583A86;  --jewel-violet-deep: #412968;
+  --jewel-gold-hi: #D9A55E;    --jewel-gold-base: #AF843B;    --jewel-gold-shade: #916C28;    --jewel-gold-deep: #74521B;
+  --jewel-green-hi: #63B08A;   --jewel-green-base: #3A8864;   --jewel-green-shade: #24704E;   --jewel-green-deep: #16563A;
+  --jewel-teal-hi: #5FA8BF;    --jewel-teal-base: #367F95;    --jewel-teal-shade: #206678;    --jewel-teal-deep: #144E5D;
+  /* the screen's module accent: the app bar's bar and anything the page colors by module. Home is the default, silver. */
+  --m1: #CFD3D8; --m2: #F2F4F6; --m3: #A9AEB6; --m-text: #B3B8C0; --m-soft: #F2F4F614;
+}
+/* The app's own module accents, one class on <html>. */
+.m-property   { --m1: #3B82F6; --m2: #60A5FA; --m3: #818CF8; --m-text: #93C5FD; --m-soft: #3B82F626; }
+.m-leasing    { --m1: #059669; --m2: #10B981; --m3: #4ADE80; --m-text: #6EE7B7; --m-soft: #10B98126; }
+.m-field      { --m1: #0891B2; --m2: #22D3EE; --m3: #06B6D4; --m-text: #67E8F9; --m-soft: #22D3EE26; }
+.m-forms      { --m1: #7C3AED; --m2: #A78BFA; --m3: #C4B5FD; --m-text: #C4B5FD; --m-soft: #A78BFA26; }
+.m-inspection { --m1: #10B981; --m2: #34D399; --m3: #2DD4BF; --m-text: #6EE7B7; --m-soft: #34D39926; }
+.m-oppie      { --m1: #A63F44; --m2: #7050A0; --m3: #367F95; --m-text: #B3B8C0; --m-soft: #F2F4F614; }
+
+/* ---------- base ---------- */
+* { box-sizing: border-box; }
+html, body { margin: 0; width: 390px; height: 844px; overflow: hidden; background: var(--bg); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 15px; line-height: 21px; -webkit-font-smoothing: antialiased; font-variant-numeric: tabular-nums; }
+body { position: relative; }
+h1, h2, h3, p, ul { margin: 0; }
+ul { padding: 0; list-style: none; }
+img { display: block; }
+/* Icons: inline SVG on a 24 viewBox, paths copied from node_modules/lucide-react/dist/esm/icons/<name>.mjs. */
+svg.icon { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+svg.icon.i16 { width: 16px; height: 16px; }
+svg.icon.i14 { width: 14px; height: 14px; }
+svg.icon.i24 { width: 24px; height: 24px; }
+svg.icon.i28 { width: 28px; height: 28px; }
+/* A jewel disc: the website's own layered gradient over the stops named by --j-*. */
+.jewel { border-radius: 9999px; display: inline-block; flex: none; background: radial-gradient(6% 6% at 31% 26%, #FFFFFFD1 80%, transparent 100%), radial-gradient(18% 15.5% at 33% 26.5%, #FFFFFF85 0%, transparent 100%), radial-gradient(circle closest-side, transparent 94%, #0000001F 96%), radial-gradient(40% 40% at 74% 82%, #FFFFFF1A 0%, transparent 100%), radial-gradient(86% 86% at 30% 24%, transparent 55%, #00000038 100%), radial-gradient(103.3% 103.3% at 30% 24%, var(--j-hi) 0%, var(--j-base) 38%, var(--j-shade) 72%, var(--j-deep) 100%); }
+.j-crimson { --j-hi: var(--jewel-crimson-hi); --j-base: var(--jewel-crimson-base); --j-shade: var(--jewel-crimson-shade); --j-deep: var(--jewel-crimson-deep); }
+.j-violet  { --j-hi: var(--jewel-violet-hi);  --j-base: var(--jewel-violet-base);  --j-shade: var(--jewel-violet-shade);  --j-deep: var(--jewel-violet-deep); }
+.j-gold    { --j-hi: var(--jewel-gold-hi);    --j-base: var(--jewel-gold-base);    --j-shade: var(--jewel-gold-shade);    --j-deep: var(--jewel-gold-deep); }
+.j-green   { --j-hi: var(--jewel-green-hi);   --j-base: var(--jewel-green-base);   --j-shade: var(--jewel-green-shade);   --j-deep: var(--jewel-green-deep); }
+.j-teal    { --j-hi: var(--jewel-teal-hi);    --j-base: var(--jewel-teal-base);    --j-shade: var(--jewel-teal-shade);    --j-deep: var(--jewel-teal-deep); }
+
+/* ---------- status bar: y 0 to 54 ---------- */
+.status { position: absolute; left: 0; top: 0; width: 390px; height: 54px; display: flex; align-items: flex-end; justify-content: space-between; padding: 0 30px 8px 34px; font-size: 16px; line-height: 20px; font-weight: 600; }
+.status .glyphs { display: flex; align-items: center; gap: 7px; }
+.status .bars { display: flex; align-items: flex-end; gap: 2px; height: 12px; }
+.status .bars i { display: block; width: 3px; border-radius: 1px; background: var(--text); }
+.status .bars i:nth-child(1) { height: 4px; } .status .bars i:nth-child(2) { height: 6px; } .status .bars i:nth-child(3) { height: 9px; } .status .bars i:nth-child(4) { height: 12px; }
+.status .battery { position: relative; width: 27px; height: 13px; border: 1px solid #F2F4F680; border-radius: 4px; padding: 2px; }
+.status .battery::before { content: ''; display: block; width: 100%; height: 100%; border-radius: 2px; background: var(--text); }
+.status .battery::after { content: ''; position: absolute; right: -4px; top: 3.5px; width: 2px; height: 4px; border-radius: 0 1px 1px 0; background: #F2F4F680; }
+
+/* ---------- app bar: y 54 to 114, with the module accent bar along its bottom edge ---------- */
+.appbar { position: absolute; left: 0; top: 54px; width: 390px; height: 60px; background: var(--surface); display: flex; align-items: center; gap: 12px; padding: 0 16px; }
+.appbar::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: linear-gradient(to right, var(--m1), var(--m2), var(--m3)); }
+/* The OperoGo icon, the owner's file as supplied; the tile's own corners are rounded, 34px here. */
+.appbar .app-icon { width: 34px; height: 34px; flex: none; }
+.appbar .back { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; margin-left: -8px; margin-right: -6px; color: var(--text-muted); flex: none; }
+.appbar .divider { width: 1px; height: 26px; background: var(--line-strong); flex: none; }
+.appbar .titles { flex: 1; min-width: 0; }
+.appbar .title { font-size: 17px; line-height: 22px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.appbar .subtitle { font-size: 12px; line-height: 16px; color: var(--text-subtle); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.avatar { width: 32px; height: 32px; border-radius: 9999px; background: var(--accent-soft); border: 1px solid var(--line-strong); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: var(--text); flex: none; }
+
+/* ---------- content: y 114 to 760, under the banner ---------- */
+.content { position: absolute; left: 0; top: 114px; width: 390px; height: 646px; padding: 16px 16px 0; overflow: hidden; }
+/* A soft glow in the module accent behind the top of the content; first child of .content. */
+.glow { position: absolute; left: 50%; top: -120px; width: 420px; height: 300px; margin-left: -210px; border-radius: 50%; background: radial-gradient(closest-side, var(--m1), transparent); opacity: .18; pointer-events: none; }
+.content > *:not(.glow) { position: relative; }
+
+/* ---------- the banner every screen carries: y 760 to 844, Report a Building Issue, then the home indicator ---------- */
+.banner { position: absolute; left: 0; bottom: 0; width: 390px; height: 84px; background: var(--surface); border-top: 1px solid var(--line); }
+.banner .bar { position: absolute; left: 12px; right: 12px; top: 10px; height: 50px; border-radius: 14px; background: var(--danger-soft); border: 1px solid #D2696C40; display: flex; align-items: center; gap: 12px; padding: 0 14px; }
+.banner .bar .icon { color: var(--danger); }
+.banner .bar .t { font-size: 14px; line-height: 18px; font-weight: 600; }
+.banner .bar .s { font-size: 12px; line-height: 15px; color: var(--text-subtle); }
+.banner .bar .chev { margin-left: auto; color: var(--text-subtle); }
+.banner .home { position: absolute; left: 128px; bottom: 7px; width: 134px; height: 5px; border-radius: 3px; background: #F2F4F6B3; }
+
+/* ---------- parts ---------- */
+.label { font-size: 12px; line-height: 16px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-subtle); }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 14px; box-shadow: var(--shadow-sm); }
+.card-title { font-size: 15px; line-height: 20px; font-weight: 600; }
+.row { display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.row:last-child { border-bottom: 0; }
+.row .main { flex: 1; min-width: 0; }
+.row .primary { font-size: 15px; line-height: 20px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.row .secondary { font-size: 13px; line-height: 17px; color: var(--text-subtle); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.chip { display: inline-flex; align-items: center; gap: 5px; height: 24px; padding: 0 9px; border-radius: 9999px; font-size: 12px; line-height: 16px; font-weight: 600; background: var(--accent-soft); color: var(--text-muted); white-space: nowrap; }
+.chip-ok { background: var(--success-soft); color: var(--success); }
+.chip-warn { background: var(--warning-soft); color: var(--warning); }
+.chip-bad { background: var(--danger-soft); color: var(--danger); }
+.chip-module { background: var(--m-soft); color: var(--m-text); }
+.btn { height: 46px; padding: 0 18px; border-radius: 13px; font-size: 15px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 1px solid transparent; white-space: nowrap; }
+.btn-primary { background: var(--accent); color: var(--on-accent); }   /* silver on every screen; a module color is never a button */
+.btn-secondary { background: var(--surface); border-color: var(--line-strong); color: var(--text); }
+.btn-ghost { color: var(--text-muted); }
+.btn-ok { background: var(--success-soft); border-color: #63B08A40; color: var(--success); }
+.btn-bad { background: var(--danger-soft); border-color: #D2696C40; color: var(--danger); }
+.btn-block { width: 100%; }
+.input { height: 48px; border-radius: 13px; background: var(--bg); border: 1px solid var(--line-strong); padding: 0 14px; display: flex; align-items: center; gap: 10px; font-size: 15px; color: var(--text-subtle); }
+.progress { height: 6px; border-radius: 3px; background: var(--line-strong); overflow: hidden; }
+.progress i { display: block; height: 100%; border-radius: 3px; background: linear-gradient(to right, var(--m1), var(--m2)); }
+.checkbox { width: 22px; height: 22px; border-radius: 7px; border: 1.5px solid var(--line-input); flex: none; display: flex; align-items: center; justify-content: center; }
+.checkbox.on { background: var(--success); border-color: var(--success); color: var(--on-accent); }
+/* Module cards on Home: a 2 x 2 grid in the app's own tints. */
+.modules { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.module-card { height: 118px; border-radius: 16px; border: 1px solid var(--mc-border); background: var(--mc-bg); padding: 14px; display: flex; flex-direction: column; justify-content: space-between; }
+.module-card .mc-icon { width: 38px; height: 38px; border-radius: 11px; background: var(--mc-wash); display: flex; align-items: center; justify-content: center; color: var(--mc-icon); }
+.module-card .mc-name { font-size: 15px; line-height: 19px; font-weight: 600; }
+.module-card .mc-state { display: flex; align-items: center; gap: 3px; font-size: 12px; line-height: 16px; font-weight: 600; color: var(--mc-label); margin-top: 2px; }
+.mc-property { --mc-bg: #2563EB26; --mc-border: #3B82F64D; --mc-icon: #60A5FA; --mc-label: #93C5FD; --mc-wash: #60A5FA33; }
+.mc-leasing  { --mc-bg: #05966926; --mc-border: #10B9814D; --mc-icon: #34D399; --mc-label: #6EE7B7; --mc-wash: #34D39933; }
+.mc-field    { --mc-bg: #0E749026; --mc-border: #06B6D44D; --mc-icon: #22D3EE; --mc-label: #67E8F9; --mc-wash: #22D3EE33; }
+.mc-forms    { --mc-bg: #6D28D926; --mc-border: #8B5CF64D; --mc-icon: #A78BFA; --mc-label: #C4B5FD; --mc-wash: #A78BFA33; }
+/* Oppie: always the supplied file (<img src="/public/brand/oppie/oppie-rest-dark.svg">), never drawn, never an orb of its own. */
+img.oppie { display: inline-block; flex: none; }
+/* The listening ring around Oppie: a soft halo in the five jewel tones. */
+.oppie-ring { position: relative; width: 132px; height: 132px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: radial-gradient(closest-side, #1E2127 70%, transparent 100%); }
+.oppie-ring::before { content: ''; position: absolute; inset: 0; border-radius: 50%; padding: 2px; background: conic-gradient(from 200deg, var(--jewel-crimson-base), var(--jewel-violet-base), var(--jewel-gold-base), var(--jewel-green-base), var(--jewel-teal-base), var(--jewel-crimson-base)); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; opacity: .9; }
+.oppie-ring::after { content: ''; position: absolute; inset: -22px; border-radius: 50%; background: radial-gradient(closest-side, #7050A040, transparent); z-index: -1; }

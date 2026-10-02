@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en" class="m-oppie">
+<head><meta charset="utf-8"><title>Oppie</title>
+<link rel="stylesheet" href="/scripts/go-shots/shell.css">
+<style>
+/* Oppie by voice: a short conversation, then the listening ring pinned to the bottom. Page rules only; the frame and the
+   parts (card, row, chip, oppie-ring) come from shell.css. */
+.screen { height: 100%; display: flex; flex-direction: column; }
+.turn + .turn { margin-top: 8px; }
+/* What the user said: a bubble on the right, the tail corner at the bottom right. */
+.me { max-width: 80%; margin-left: auto; padding: 8px 14px; background: var(--surface-2); border: 1px solid var(--line); border-radius: 18px 18px 6px 18px; box-shadow: var(--shadow-sm); }
+/* What Oppie said: the mark beside the first line. */
+.said { display: flex; align-items: flex-start; gap: 10px; }
+.said p { flex: 1; min-width: 0; }
+/* The answer's list card: the rows carry the vertical rhythm, so the card keeps only a hairline of its own above and below. */
+.leases { margin-top: 8px; padding-top: 2px; padding-bottom: 2px; }
+.leases .row { min-height: 0; padding: 8px 0; }
+.actions { display: flex; gap: 8px; margin-top: 8px; }
+/* Listening: the ring, a still waveform in the five jewel tones, and the hint. */
+.listen { margin-top: auto; padding-bottom: 10px; display: flex; flex-direction: column; align-items: center; isolation: isolate; }
+.wave { display: flex; align-items: center; gap: 5px; height: 22px; margin-top: 8px; }
+.wave i { display: block; width: 5px; border-radius: 2.5px; background: linear-gradient(to bottom, var(--j-hi), var(--j-base)); }
+.wave i:nth-child(1) { height: 8px; }  .wave i:nth-child(2) { height: 14px; } .wave i:nth-child(3) { height: 20px; }
+.wave i:nth-child(4) { height: 12px; } .wave i:nth-child(5) { height: 22px; } .wave i:nth-child(6) { height: 18px; }
+.wave i:nth-child(7) { height: 20px; } .wave i:nth-child(8) { height: 10px; } .wave i:nth-child(9) { height: 6px; }
+.hint { margin-top: 6px; font-size: 13px; line-height: 18px; color: var(--text-subtle); }
+</style></head>
+<body>
+  <div class="status"><span>9:41</span><span class="glyphs"><span class="bars"><i></i><i></i><i></i><i></i></span><svg class="icon i16" viewBox="0 0 24 24"><path d="M12 20h.01"/><path d="M2 8.82a15 15 0 0 1 20 0"/><path d="M5 12.859a10 10 0 0 1 14 0"/><path d="M8.5 16.429a5 5 0 0 1 7 0"/></svg><span class="battery"></span></span></div>
+  <div class="appbar">
+    <div class="back"><svg class="icon" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></div>
+    <img class="app-icon" src="/public/brand/operogo/operogo-icon-rounded.svg" alt="">
+    <span class="divider"></span>
+    <div class="titles"><div class="title">Oppie</div><div class="subtitle">Listening</div></div>
+    <div class="avatar">MB</div>
+  </div>
+  <div class="content"><div class="glow"></div>
+    <div class="screen">
+      <div class="turn me"><p>Which leases at Horizon expire in the next ninety days?</p></div>
+      <div class="turn">
+        <div class="said"><img class="oppie" src="/public/brand/oppie/oppie-rest-dark.svg" width="22" height="22" alt=""><p>Three leases at Horizon expire within ninety days.</p></div>
+        <div class="card leases">
+          <div class="row"><div class="main"><div class="primary">Aldergrove Dental</div><div class="secondary">Suite 410 · 38 days</div></div><span class="chip">Outreach</span></div>
+          <div class="row"><div class="main"><div class="primary">Stonebridge Legal</div><div class="secondary">Suite 915 · 52 days</div></div><span class="chip chip-bad">No reply</span></div>
+          <div class="row"><div class="main"><div class="primary">Pinecrest Analytics</div><div class="secondary">Suite 1200 · 67 days</div></div><span class="chip chip-ok">Signed</span></div>
+        </div>
+        <div class="actions"><span class="chip chip-module">Open in Leasing</span><span class="chip chip-module">Add a note</span><span class="chip chip-module">Call Priya R.</span></div>
+      </div>
+      <div class="turn me"><p>Add a note to Aldergrove: renewal call this week.</p></div>
+      <div class="turn said"><img class="oppie" src="/public/brand/oppie/oppie-rest-dark.svg" width="22" height="22" alt=""><p>Noted on Aldergrove Dental. Anything else?</p></div>
+      <div class="listen">
+        <div class="oppie-ring"><img class="oppie" src="/public/brand/oppie/oppie-rest-dark.svg" width="56" height="56" alt=""></div>
+        <div class="wave"><i class="j-crimson"></i><i class="j-crimson"></i><i class="j-violet"></i><i class="j-violet"></i><i class="j-gold"></i><i class="j-green"></i><i class="j-green"></i><i class="j-teal"></i><i class="j-teal"></i></div>
+        <div class="hint">Listening. Tap to stop.</div>
+      </div>
+    </div>
+  </div>
+  <div class="banner"><div class="bar"><svg class="icon i24" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg><div><div class="t">Report a Building Issue</div><div class="s">Leaks, outages, damage, safety</div></div><svg class="icon chev" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></div><div class="home"></div></div>
+</body></html>

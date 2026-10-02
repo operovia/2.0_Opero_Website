@@ -9,6 +9,14 @@
       "viewBox": [0, 0, 1200, 424],
       "bounds": [0, 0, 1200, 424]
     },
+    "operogo": {
+      "label": "OperoGo",
+      "about": "The OperoGo app icon, the owner's rounded icon as supplied (public/brand/operogo, untouched): the Oppie pills over a GO switch on a dark tile. One file for both themes; the tile carries its own ground.",
+      "dark": "/brand/operogo/operogo-icon-rounded.svg",
+      "light": "/brand/operogo/operogo-icon-rounded.svg",
+      "viewBox": [0, 0, 180, 180],
+      "bounds": [0, 0, 180, 180]
+    },
     "opero-small": {
       "label": "Opero",
       "dark": "/brand/opero/opero-dark-xh22.svg",

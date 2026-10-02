@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en" class="m-leasing">
+<head><meta charset="utf-8"><title>Leasing &amp; Sales</title>
+<link rel="stylesheet" href="/scripts/go-shots/shell.css">
+<style>
+/* Leasing: the stacking plan of Horizon, one suite selected, its sheet at the bottom. Page rules only; the phone is shell.css. */
+.content { display: flex; flex-direction: column; }
+
+/* the building header */
+.head { padding: 16px; }
+.head-top { display: flex; align-items: center; gap: 12px; }
+.bld { width: 40px; height: 40px; border-radius: 12px; background: var(--m-soft); color: var(--m-text); display: flex; align-items: center; justify-content: center; flex: none; }
+.head h1 { font-size: 20px; line-height: 26px; font-weight: 700; }
+.head .sub { font-size: 13px; line-height: 17px; color: var(--text-subtle); }
+.stats { display: grid; grid-template-columns: 1fr 1fr 1fr; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--line); }
+.stat + .stat { border-left: 1px solid var(--line); padding-left: 14px; }
+.stat .fig { font-size: 22px; line-height: 28px; font-weight: 700; }
+.stat .lbl { font-size: 12px; line-height: 16px; color: var(--text-subtle); }
+
+/* the legend */
+.legend { display: flex; gap: 8px; margin-top: 16px; }
+.legend .sw { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+.chip-ok .sw { background: var(--success); }
+.chip-warn .sw { background: var(--warning); }
+.legend .sw.open { border: 1px dashed var(--line-input); }
+
+/* the stacking plan: a row per floor, the suites as blocks sized by their square feet */
+.plan { display: flex; flex-direction: column; gap: 12px; margin-top: 16px; }
+.floor { display: flex; align-items: center; gap: 8px; }
+.floor-label { width: 62px; flex: none; }
+.floor-label .label { white-space: nowrap; }
+.floor-sf { margin-top: 1px; font-size: 11px; line-height: 14px; color: var(--text-subtle); white-space: nowrap; }
+.suites { flex: 1; min-width: 0; display: flex; gap: 4px; }
+.suite { flex: var(--sf) 1 26px; min-width: 0; height: 70px; border-radius: 10px; border: 1px solid transparent; padding: 7px 6px; display: flex; flex-direction: column; justify-content: center; }
+.suite .no { font-size: 12px; line-height: 15px; font-weight: 700; }
+.suite .who { font-size: 11px; line-height: 14px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.suite .sf { font-size: 11px; line-height: 14px; color: var(--text-subtle); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.suite.ok { background: var(--success-soft); border-color: color-mix(in srgb, var(--success) 50%, transparent); }
+.suite.warn { background: var(--warning-soft); border-color: color-mix(in srgb, var(--warning) 50%, transparent); }
+.suite.vacant { border: 1px dashed var(--line-strong); }
+.suite.vacant .no { color: var(--text-muted); }
+.suite.vacant .who { color: var(--text-subtle); }
+.suite.selected { box-shadow: 0 0 0 2px var(--m2); }
+
+/* the selected suite's sheet, anchored at the bottom of the content */
+.sheet { margin-top: auto; margin-bottom: 12px; background: var(--surface-2); border-color: var(--line-strong); box-shadow: var(--shadow-md); padding: 12px 14px 16px; }
+.grab { width: 36px; height: 4px; border-radius: 2px; background: var(--line-strong); margin: 0 auto 12px; }
+.sheet-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.sheet-top .chip { flex: none; }
+.sheet-title { font-size: 15px; line-height: 20px; font-weight: 600; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sheet-sub { margin-top: 4px; font-size: 13px; line-height: 17px; color: var(--text-subtle); }
+.actions { display: flex; gap: 8px; margin-top: 14px; }
+.actions .btn { flex: 1 1 auto; height: 36px; padding: 0 10px; border-radius: 10px; font-size: 13px; }
+</style></head>
+<body>
+  <div class="status"><span>9:41</span><span class="glyphs"><span class="bars"><i></i><i></i><i></i><i></i></span><svg class="icon i16" viewBox="0 0 24 24"><path d="M12 20h.01"/><path d="M2 8.82a15 15 0 0 1 20 0"/><path d="M5 12.859a10 10 0 0 1 14 0"/><path d="M8.5 16.429a5 5 0 0 1 7 0"/></svg><span class="battery"></span></span></div>
+  <div class="appbar">
+    <div class="back"><svg class="icon" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></div>
+    <img class="app-icon" src="/public/brand/operogo/operogo-icon-rounded.svg" alt="">
+    <span class="divider"></span>
+    <div class="titles"><div class="title">Leasing &amp; Sales</div><div class="subtitle">Stacking plan · Horizon</div></div>
+    <div class="avatar">EV</div>
+  </div>
+  <div class="content"><div class="glow"></div>
+    <div class="card head">
+      <div class="head-top">
+        <div class="bld"><svg class="icon" viewBox="0 0 24 24"><path d="M10 12h4"/><path d="M10 8h4"/><path d="M14 21v-3a2 2 0 0 0-4 0v3"/><path d="M6 10H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2"/><path d="M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16"/></svg></div>
+        <div><h1>Horizon</h1><div class="sub">Office · 3 floors</div></div>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="fig">9</div><div class="lbl">Suites</div></div>
+        <div class="stat"><div class="fig">27,050</div><div class="lbl">SF</div></div>
+        <div class="stat"><div class="fig">88%</div><div class="lbl">Occupied</div></div>
+      </div>
+    </div>
+    <div class="legend"><span class="chip chip-ok"><i class="sw"></i>Leased</span><span class="chip chip-warn"><i class="sw"></i>Expiring within 12 months</span><span class="chip"><i class="sw open"></i>Vacant</span></div>
+    <div class="plan">
+      <div class="floor"><div class="floor-label"><div class="label">Floor 3</div><div class="floor-sf">10,850 SF</div></div><div class="suites">
+        <div class="suite warn selected" style="--sf: 4800"><div class="no">300</div><div class="who">Pinecrest Analytics</div><div class="sf">4,800 SF</div></div>
+        <div class="suite vacant" style="--sf: 2150"><div class="no">310</div><div class="who">Vacant</div><div class="sf">2,150 SF</div></div>
+        <div class="suite ok" style="--sf: 3900"><div class="no">320</div><div class="who">Stonebridge Legal</div><div class="sf">3,900 SF</div></div>
+      </div></div>
+      <div class="floor"><div class="floor-label"><div class="label">Floor 2</div><div class="floor-sf">10,150 SF</div></div><div class="suites">
+        <div class="suite warn" style="--sf: 6200"><div class="no">200</div><div class="who">Aldergrove Dental</div><div class="sf">6,200 SF</div></div>
+        <div class="suite ok" style="--sf: 2150"><div class="no">210</div><div class="who">Lakeshore Optometry</div><div class="sf">2,150 SF</div></div>
+        <div class="suite ok" style="--sf: 1800"><div class="no">220</div><div class="who">Fernhill Architects</div><div class="sf">1,800 SF</div></div>
+      </div></div>
+      <div class="floor"><div class="floor-label"><div class="label">Floor 1</div><div class="floor-sf">6,050 SF</div></div><div class="suites">
+        <div class="suite ok" style="--sf: 1550"><div class="no">100</div><div class="who">Copperline Coffee</div><div class="sf">1,550 SF</div></div>
+        <div class="suite vacant" style="--sf: 1200"><div class="no">110</div><div class="who">Vacant</div><div class="sf">1,200 SF</div></div>
+        <div class="suite ok" style="--sf: 3300"><div class="no">120</div><div class="who">Northgate Insurance</div><div class="sf">3,300 SF</div></div>
+      </div></div>
+    </div>
+    <div class="card sheet">
+      <div class="grab"></div>
+      <div class="sheet-top"><div class="sheet-title">Suite 300 · Pinecrest Analytics</div><span class="chip chip-warn">Expiring</span></div>
+      <div class="sheet-sub">4,800 SF · Floor 3 · Lease expires in 67 days</div>
+      <div class="actions"><span class="btn btn-secondary">Floor plan</span><span class="btn btn-secondary">3D tour</span><span class="btn btn-secondary">Lessee contacts</span></div>
+    </div>
+  </div>
+  <div class="banner"><div class="bar"><svg class="icon i24" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg><div><div class="t">Report a Building Issue</div><div class="s">Leaks, outages, damage, safety</div></div><svg class="icon chev" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></div><div class="home"></div></div>
+</body></html>

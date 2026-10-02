@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Home</title>
+<link rel="stylesheet" href="/scripts/go-shots/shell.css">
+<style>
+/* Home: the greeting, the Oppie card and the module grid, in the silver Home accent. Page rules only; the frame and the
+   parts (card, input, modules, oppie-ring) come from shell.css. */
+.screen { height: 100%; display: flex; flex-direction: column; }
+.greeting h1 { font-size: 26px; line-height: 32px; font-weight: 700; letter-spacing: -0.01em; }
+.greeting p { margin-top: 3px; font-size: 14px; line-height: 20px; color: var(--text-muted); }
+/* The Oppie card: the listening ring, the invitation, then the message field. isolate keeps the ring's halo inside the card. */
+.oppie-card { margin-top: 14px; padding: 10px 14px; }
+.talk { display: flex; flex-direction: column; align-items: center; text-align: center; isolation: isolate; }
+.talk .ask { margin-top: 10px; font-size: 15px; line-height: 20px; font-weight: 600; }
+.talk .about { margin-top: 2px; font-size: 13px; line-height: 18px; color: var(--text-subtle); }
+.oppie-card .input { margin-top: 10px; }
+.oppie-card .input span { flex: 1; min-width: 0; }
+.oppie-card .input .icon { color: var(--text-muted); }
+/* The module grid fills what is left and ends just above the banner. */
+.section { margin-top: 16px; }
+.section .label { margin-bottom: 10px; }
+.module-card .mc-icon .icon { width: 20px; height: 20px; }
+</style></head>
+<body>
+  <div class="status"><span>9:41</span><span class="glyphs"><span class="bars"><i></i><i></i><i></i><i></i></span><svg class="icon i16" viewBox="0 0 24 24"><path d="M12 20h.01"/><path d="M2 8.82a15 15 0 0 1 20 0"/><path d="M5 12.859a10 10 0 0 1 14 0"/><path d="M8.5 16.429a5 5 0 0 1 7 0"/></svg><span class="battery"></span></span></div>
+  <div class="appbar">
+    <img class="app-icon" src="/public/brand/operogo/operogo-icon-rounded.svg" alt="">
+    <span class="divider"></span>
+    <div class="titles"><div class="title">OperoGo</div><div class="subtitle">Wrenfield Property Management</div></div>
+    <div class="avatar">PR</div>
+  </div>
+  <div class="content"><div class="glow"></div>
+    <div class="screen">
+      <div class="greeting">
+        <h1>Good morning, Priya.</h1>
+        <p>3 inspections due this week · 2 prospects waiting</p>
+      </div>
+      <div class="card oppie-card">
+        <div class="talk">
+          <div class="oppie-ring"><img class="oppie" src="/public/brand/oppie/oppie-rest-dark.svg" width="56" height="56" alt=""></div>
+          <div class="ask">Tap to talk to Oppie</div>
+          <div class="about">Ask about a property, add a note, call a contact</div>
+        </div>
+        <div class="input"><span>Type a message to Oppie</span><svg class="icon" viewBox="0 0 24 24"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></svg></div>
+      </div>
+      <div class="section">
+        <div class="label">Modules</div>
+        <div class="modules">
+          <div class="module-card mc-property">
+            <div class="mc-icon"><svg class="icon" viewBox="0 0 24 24"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></svg></div>
+            <div><div class="mc-name">Property Management</div><div class="mc-state">Active<svg class="icon i14" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></div></div>
+          </div>
+          <div class="module-card mc-leasing">
+            <div class="mc-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"/><circle cx="16.5" cy="7.5" r=".5" fill="currentColor"/></svg></div>
+            <div><div class="mc-name">Leasing &amp; Sales</div><div class="mc-state">Active<svg class="icon i14" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></div></div>
+          </div>
+          <div class="module-card mc-field">
+            <div class="mc-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg></div>
+            <div><div class="mc-name">Field Ops</div><div class="mc-state">Active<svg class="icon i14" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></div></div>
+          </div>
+          <div class="module-card mc-forms">
+            <div class="mc-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M13 21h8"/><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/></svg></div>
+            <div><div class="mc-name">Forms</div><div class="mc-state">Active<svg class="icon i14" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="banner"><div class="bar"><svg class="icon i24" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg><div><div class="t">Report a Building Issue</div><div class="s">Leaks, outages, damage, safety</div></div><svg class="icon chev" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></div><div class="home"></div></div>
+</body></html>
