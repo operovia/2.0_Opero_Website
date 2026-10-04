@@ -1098,9 +1098,9 @@ const door = section({
   seed: {
     metaTitle: 'Welcome',
     metaDescription: 'A private door for invited guests of Opero.',
-    eyebrow: 'By invitation',
-    title: 'You were *invited* here.',
-    intro: 'Enter the email address your invitation was sent to.',
+    eyebrow: '',
+    title: 'This is *your* invitation.',
+    intro: 'Enter the email address it was sent to.',
     personalTitle: 'Welcome, *{name}*.',
     personalIntro: 'Your address is already filled in. Step in whenever you are ready.',
     emailLabel: 'Email address',
