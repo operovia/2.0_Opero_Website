@@ -17,34 +17,30 @@ import { SwipeRow } from './swipe-row';
 const storeBadge = 'inline-flex h-14 min-w-44 flex-col justify-center rounded-xl border border-line-strong bg-surface px-5 text-left shadow-sm';
 
 /**
- * A store button: a link once the app's page on that store is set in Content,
- * and the same button without a link until then. Text only, so no store's
- * artwork is drawn here; the official badges can take their place later.
+ * A store button: a link to the app's page on that store, shown only once
+ * that page is set in Content. In words, so no store's artwork is drawn
+ * here; the stores' official badges can take the words' place once the
+ * owner supplies them.
  */
 function StoreBadge({ href, label, platform }: { href: string; label: string; platform: string }) {
-  const inner = (
-    <>
+  return (
+    <SiteLink href={href} className={cn(storeBadge, 'transition-colors hover:border-fg-subtle hover:bg-surface-raised')}>
       <span className="text-xs text-fg-subtle">{platform}</span>
       <span className="text-base font-semibold text-fg">{label}</span>
-    </>
-  );
-  return href ? (
-    <SiteLink href={href} className={cn(storeBadge, 'transition-colors hover:border-fg-subtle hover:bg-surface-raised')}>
-      {inner}
     </SiteLink>
-  ) : (
-    <span className={storeBadge}>{inner}</span>
   );
 }
 
 /**
- * OperoGo, the mobile app: the icon and the words, the two stores, the drawn
+ * OperoGo, the mobile app: the icon and the words, the stores (or, until the app is listed, the Coming soon line), the drawn
  * phone screens (scripts/go-shots) in iPhones, and what the app does. The
  * phones stand in a row on wide screens, two by two on tablets, and scroll
  * sideways on phones, snapping one at a time; the features do the same. Pressing a phone opens its
  * screen large in the lightbox, where it can be zoomed.
  */
 export function Go({ content }: { content: SectionData<'home', 'go'> }) {
+  // Until the app is listed on a store, a plain line stands where the buttons will: nothing looks pressable that is not.
+  const listed = Boolean(content.appStoreUrl || content.playUrl);
   return (
     <section id="operogo" aria-labelledby="operogo-title" className="relative scroll-mt-18 overflow-hidden py-section">
       <Aurora intensity={0.6} />
@@ -68,11 +64,19 @@ export function Go({ content }: { content: SectionData<'home', 'go'> }) {
             <RichText doc={content.body} className="mx-auto mt-7 max-w-2xl text-lg text-fg-muted sm:text-xl" />
           </Reveal>
           <Reveal delay={0.2}>
-            <p className="mt-10 text-sm font-medium text-fg">{content.storesLine}</p>
-            <div className="mt-4 flex flex-wrap justify-center gap-3">
-              <StoreBadge href={content.appStoreUrl} label={content.appStoreLabel} platform="iPhone" />
-              <StoreBadge href={content.playUrl} label={content.playLabel} platform="Android" />
-            </div>
+            {listed ? (
+              <>
+                <p className="mt-10 text-sm font-medium text-fg">{content.storesLine}</p>
+                <div className="mt-4 flex flex-wrap justify-center gap-3">
+                  {content.appStoreUrl ? <StoreBadge href={content.appStoreUrl} label={content.appStoreLabel} platform="iPhone" /> : null}
+                  {content.playUrl ? <StoreBadge href={content.playUrl} label={content.playLabel} platform="Android" /> : null}
+                </div>
+              </>
+            ) : (
+              <p data-testid="go-coming-soon" className="mt-10 text-sm font-medium text-fg">
+                {content.comingSoonLine}
+              </p>
+            )}
             {content.signInLine ? <p className="mt-4 text-sm text-fg-subtle">{content.signInLine}</p> : null}
           </Reveal>
         </div>
