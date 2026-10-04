@@ -11,6 +11,7 @@ import { readFile, stat } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright-core';
+import { makeSets } from '../shot-sets.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(here, '..', '..');
@@ -65,3 +66,6 @@ try {
   await browser.close();
   server.close();
 }
+
+// The WebP set of each screen just drawn, which the site serves (scripts/shot-sets.mjs).
+await makeSets('go', wanted);

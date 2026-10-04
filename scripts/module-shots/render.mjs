@@ -11,6 +11,7 @@ import { readFile, stat } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright-core';
+import { makeSets } from '../shot-sets.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(here, '..', '..');
@@ -18,7 +19,18 @@ const out = path.join(root, 'src', 'assets', 'modules');
 const MODULES = ['build', 'studios', 'playbook', 'university', 'compass'];
 const WIDTH = 1440;
 const HEIGHT = 900;
-const types = { '.html': 'text/html; charset=utf-8', '.css': 'text/css', '.js': 'text/javascript', '.svg': 'image/svg+xml', '.woff2': 'font/woff2', '.ttf': 'font/ttf', '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.webp': 'image/webp' };
+const types = {
+  '.html': 'text/html; charset=utf-8',
+  '.css': 'text/css',
+  '.js': 'text/javascript',
+  '.svg': 'image/svg+xml',
+  '.woff2': 'font/woff2',
+  '.ttf': 'font/ttf',
+  '.png': 'image/png',
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.webp': 'image/webp',
+};
 
 const wanted = process.argv.slice(2).length ? process.argv.slice(2) : MODULES;
 for (const name of wanted) if (!MODULES.includes(name)) throw new Error(`Unknown module ${name}. One of: ${MODULES.join(', ')}.`);
@@ -54,3 +66,6 @@ try {
   await browser.close();
   server.close();
 }
+
+// The WebP set of each screen just drawn, which the site serves (scripts/shot-sets.mjs).
+await makeSets('modules', wanted);

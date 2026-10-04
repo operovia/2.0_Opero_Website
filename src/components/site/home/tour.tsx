@@ -1,10 +1,11 @@
 'use client';
 
 import { Pause, Play } from 'lucide-react';
-import Image, { type StaticImageData } from 'next/image';
 import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from 'react';
 import { TOUR_ID, type TourKey } from '@/content/constants';
+import type { ShotSet } from '@/content/shot-set';
 import { cn } from '@/lib/cn';
+import { ShotImage } from '../shot-image';
 import { iconButton } from './lightbox';
 
 /** One screen of the tour: a module's, or the core CRM's once its screenshot exists. The lightbox shows the same list. */
@@ -12,7 +13,7 @@ export type TourItem = {
   key: TourKey;
   /** The screen's name: the module's, or Core. */
   label: string;
-  shot: StaticImageData;
+  shot: ShotSet;
   /** The jewel-* class of the dot on its tab; the core has no jewel. */
   jewel?: string;
   /** The caption's lead, the module's description from its card; empty for the core. */
@@ -49,9 +50,9 @@ function centerIn(scroller: HTMLElement | null, child: Element | null | undefine
  * scrolls sideways and snaps, as the OperoGo phones do; a swipe selects the
  * tab of the panel it settles on, and a tab scrolls the row to its panel.
  *
- * Each panel's picture is fetched when its tab is chosen, hovered or
- * focused, so a switch shows the picture at once; the first is fetched
- * with the page.
+ * Each panel's picture loads as it nears the viewport; a hidden panel's is
+ * fetched as soon as its tab is hovered or focused, so a switch shows the
+ * picture at once.
  */
 export function Tour({ items, lookInsideLabel }: Props) {
   const [active, setActive] = useState(0);
@@ -190,17 +191,16 @@ export function Tour({ items, lookInsideLabel }: Props) {
                 ) : (
                   /* A link to the picture itself, which the lightbox opens in its place. */
                   <a
-                    href={item.shot.src}
+                    href={item.shot.original.src}
                     data-module-shot={item.key}
                     title={lookInsideLabel}
                     className={cn('block cursor-zoom-in overflow-hidden rounded-2xl border border-line bg-canvas-raised', focusRing)}
                   >
-                    <Image
-                      src={item.shot}
+                    <ShotImage
+                      set={item.shot}
                       alt={`A screen from ${item.label}.`}
                       sizes="(min-width: 72rem) 64rem, (min-width: 40rem) calc(100vw - 5rem), 86vw"
-                      quality={85}
-                      loading={chosen || warm[item.key] ? 'eager' : 'lazy'}
+                      loading={warm[item.key] ? 'eager' : 'lazy'}
                       className="block h-auto w-full"
                     />
                     <span className="sr-only">{lookInsideLabel}: </span>
@@ -212,7 +212,7 @@ export function Tour({ items, lookInsideLabel }: Props) {
                 </figcaption>
                 {item.video ? (
                   <a
-                    href={item.shot.src}
+                    href={item.shot.original.src}
                     data-module-shot={item.key}
                     className={cn(
                       'mt-4 inline-flex h-9 items-center rounded-full border border-line-strong bg-surface px-4 text-sm font-medium text-fg transition-colors hover:bg-surface-raised',
@@ -272,9 +272,9 @@ function TourVideo({ item, shown }: { item: TourItem; shown: boolean }) {
       <video
         ref={video}
         src={item.video}
-        poster={item.shot.src}
-        width={item.shot.width}
-        height={item.shot.height}
+        poster={item.shot.original.src}
+        width={item.shot.original.width}
+        height={item.shot.original.height}
         muted
         loop
         playsInline

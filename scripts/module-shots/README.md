@@ -7,7 +7,7 @@ The "inside the module" pictures on the public site: one screen per module, draw
 - `shell.css`: the shared frame. Fonts, tokens, the module accent classes, the base reset, the 1440 x 900 app frame, sidebar, header, content area, breadcrumb, page header, foot, Oppie's marks, and the common components. Only the shell agent writes it; a page never pastes or overrides its rules.
 - `<module>.html` (`build`, `studios`, `playbook`, `university`, `compass`): one screen each. Links `/scripts/module-shots/shell.css`, keeps its own page-specific CSS in one `<style>`, and nothing else external: no scripts, no web fonts, no stylesheets beyond the shell.
 - `render.mjs`: serves the repo root on a local port and screenshots each page at 1440 x 900 CSS px, device scale 2, into `src/assets/modules/<module>.png` (2880 x 1800).
-- `src/assets/modules/<module>.png`: the rendered output, committed with the page that made it. The site imports these files (`src/content/module-shots.ts`), so each picture's address carries a fingerprint of its contents and a re-rendered picture is never hidden behind a cached copy of the old one.
+- `src/assets/modules/<module>.png`: the rendered output, committed with the page that made it, and beside it the WebP set the site serves (`<module>-1280.webp`, `-1920`, `-2880`), written by `scripts/shot-sets.mjs` at the end of a render (or alone: `node scripts/shot-sets.mjs modules`). The site imports these files (`src/content/module-shots.ts`), so each picture's address carries a fingerprint of its contents and a re-rendered picture is never hidden behind a cached copy of the old one; the WebP files are served as they are, never through the image optimizer.
 
 ## Render
 

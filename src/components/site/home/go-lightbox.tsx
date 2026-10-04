@@ -1,12 +1,12 @@
 'use client';
 
 import { ChevronLeft, ChevronRight, X, ZoomIn, ZoomOut } from 'lucide-react';
-import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import { BrandMark } from '@/components/brand/brand-mark';
 import { GO_SCREEN_LABELS, type GoScreenName } from '@/content/constants';
 import { GO_SHOTS } from '@/content/go-shots';
 import { cn } from '@/lib/cn';
+import { ShotImage } from '../shot-image';
 import { closeButton as closeButtonClass, iconButton, OUT, pillButton, useZoom } from './lightbox';
 import { PhoneFrame } from './phone-frame';
 
@@ -37,7 +37,7 @@ export function GoLightbox({ screens }: { screens: GoShot[] }) {
   const [opened, setOpened] = useState(false);
   const current = screens[active];
   const frame = useRef<HTMLDivElement>(null);
-  const zoomer = useZoom(frame, current ? GO_SHOTS[current.screen].width / DRAWN_SCALE : 0);
+  const zoomer = useZoom(frame, current ? GO_SHOTS[current.screen].original.width / DRAWN_SCALE : 0);
   const { zoom, setZoom } = zoomer;
 
   useEffect(() => {
@@ -137,13 +137,12 @@ export function GoLightbox({ screens }: { screens: GoShot[] }) {
                     const shown = index === active;
                     const zoomed = shown && zoom.on;
                     return (
-                      <Image
+                      <ShotImage
                         key={`${item.screen}-${index}`}
-                        src={GO_SHOTS[item.screen]}
+                        set={GO_SHOTS[item.screen]}
                         alt={`The ${GO_SCREEN_LABELS[item.screen]} screen of OperoGo.`}
                         sizes={zoomer.sizes(zoomed)}
-                        quality={85}
-                        priority={shown}
+                        loading="eager"
                         draggable={false}
                         className={cn('absolute inset-0 h-full w-full origin-top-left object-cover', shown ? '' : 'invisible')}
                         style={zoomer.style(zoomed)}

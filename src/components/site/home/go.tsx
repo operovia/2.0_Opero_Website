@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import { BrandMark } from '@/components/brand/brand-mark';
 import { Reveal, RevealGroup, RevealItem } from '@/components/motion/reveal';
 import { RichText } from '@/components/rich-text';
@@ -9,6 +8,7 @@ import { cn } from '@/lib/cn';
 import { renderHeadline } from '@/lib/headline';
 import { Aurora } from '../aurora';
 import { Container, Eyebrow } from '../layout-parts';
+import { ShotImage } from '../shot-image';
 import { SiteLink } from '../site-link';
 import { GoLightbox } from './go-lightbox';
 import { PhoneFrame } from './phone-frame';
@@ -94,14 +94,13 @@ export function Go({ content }: { content: SectionData<'home', 'go'> }) {
               className={cn('w-[72vw] max-w-72 shrink-0 snap-center sm:w-auto sm:max-w-none', index % 2 ? 'lg:mt-10' : '')}
             >
               {/* A link to the picture itself, which the lightbox opens in its place (go-lightbox.tsx). */}
-              <a href={GO_SHOTS[item.screen].src} data-go-shot={index} title={content.lookCloserLabel} className="phone-link cursor-zoom-in">
+              <a href={GO_SHOTS[item.screen].original.src} data-go-shot={index} title={content.lookCloserLabel} className="phone-link cursor-zoom-in">
                 <span className="sr-only">{content.lookCloserLabel}: </span>
                 <PhoneFrame>
-                  <Image
-                    src={GO_SHOTS[item.screen]}
+                  <ShotImage
+                    set={GO_SHOTS[item.screen]}
                     alt={`The ${GO_SCREEN_LABELS[item.screen]} screen of OperoGo.`}
                     sizes="(min-width: 64rem) 16rem, (min-width: 40rem) 40vw, 72vw"
-                    quality={85}
                     className="absolute inset-0 h-full w-full object-cover"
                   />
                 </PhoneFrame>

@@ -9,8 +9,10 @@ creative license, not captures: each `<screen>.html` is a screen, `shell.css` is
   module cards, the Oppie button). Pages link it and keep only their own rules in their `<style>`.
 - `render.mjs`: serves the repo root on a local port and screenshots each page at 390 x 844 CSS px, device scale 3, into
   `src/assets/go/<screen>.png` (1170 x 2532). Needs a Chromium (`CHROME_PATH` if none is installed for Playwright).
-- `src/assets/go/<screen>.png`: the rendered output, committed with the page that made it. The site imports these files
-  (`src/content/go-shots.ts`), so each picture's address carries a fingerprint of its contents.
+- `src/assets/go/<screen>.png`: the rendered output, committed with the page that made it, and beside it the WebP set the
+  site serves (`<screen>-576.webp`, `-864`, `-1170`), written by `scripts/shot-sets.mjs` at the end of a render (or alone:
+  `node scripts/shot-sets.mjs go`). The site imports these files (`src/content/go-shots.ts`), so each picture's address
+  carries a fingerprint of its contents; the WebP files are served as they are, never through the image optimizer.
 
 ## Starting a page
 

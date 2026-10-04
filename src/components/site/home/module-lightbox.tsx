@@ -1,10 +1,10 @@
 'use client';
 
 import { ChevronLeft, ChevronRight, X, ZoomIn, ZoomOut } from 'lucide-react';
-import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import { BrandMark } from '@/components/brand/brand-mark';
 import { cn } from '@/lib/cn';
+import { ShotImage } from '../shot-image';
 import { closeButton as closeButtonClass, OUT, pillButton, useZoom } from './lightbox';
 import type { TourItem } from './tour';
 
@@ -32,7 +32,7 @@ export function ModuleLightbox({ items }: Props) {
   const [opened, setOpened] = useState(false);
   const current = items[active];
   const frame = useRef<HTMLDivElement>(null);
-  const zoomer = useZoom(frame, current ? current.shot.width / 2 : 0);
+  const zoomer = useZoom(frame, current ? current.shot.original.width / 2 : 0);
   const { zoom, setZoom } = zoomer;
 
   useEffect(() => {
@@ -130,13 +130,12 @@ export function ModuleLightbox({ items }: Props) {
                     const shown = index === active;
                     const zoomed = shown && zoom.on;
                     return (
-                      <Image
+                      <ShotImage
                         key={item.key}
-                        src={item.shot}
+                        set={item.shot}
                         alt={`A screen from ${item.label}.`}
                         sizes={zoomer.sizes(zoomed)}
-                        quality={85}
-                        priority={shown}
+                        loading="eager"
                         draggable={false}
                         className={cn('absolute inset-0 h-full w-full origin-top-left object-cover', shown ? '' : 'invisible')}
                         style={zoomer.style(zoomed)}
