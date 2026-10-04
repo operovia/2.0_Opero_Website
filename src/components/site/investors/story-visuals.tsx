@@ -49,7 +49,7 @@ const tiles = {
 /**
  * The problem: a cloud of apps, one for everything and none of them joined.
  * Generic icons for the kinds of tools the site names (a board tool, a wiki,
- * a training platform, an EOS tool, a listing marketing tool) and the rest of
+ * a training platform, a meetings and goals tool, a listing marketing tool) and the rest of
  * the sprawl, never a real product's logo. Positions are shares of the
  * picture's width and height; faint ones sit further back, and a few carry
  * an unread badge, the way they all ask for attention.

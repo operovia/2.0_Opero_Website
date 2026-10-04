@@ -109,13 +109,13 @@ const problem = section({
     eyebrow: 'The status quo.',
     headline: 'Your operation runs on too many apps.',
     body: textToRich(
-      'A board tool for projects. A wiki for SOPs. A training platform. An EOS tool. A marketing tool for listings. Each with its own login, its own bill, and its own version of the truth, and none of them know your properties.',
+      'A board tool for projects. A wiki for SOPs. A training platform. A meetings and goals tool. A marketing tool for listings. Each with its own login, its own bill, and its own version of the truth, and none of them know your properties.',
     ),
     apps: [
       { label: 'Project boards' },
       { label: 'SOP wiki' },
       { label: 'Training platform' },
-      { label: 'EOS tool' },
+      { label: 'Meetings and goals tool' },
       { label: 'Listing marketing' },
       { label: 'Every login that comes with them' },
     ],
@@ -163,7 +163,7 @@ const platform = section({
     eyebrow: 'The platform.',
     headline: 'One platform. Every department.',
     body: textToRich(
-      'At the core is a CRM built for property management: every property, suite, tenant, and prospect in one place, driving leasing, property management, and facilities. Around it, five modules run how you work. Studios for project boards and workflows. Playbook for your SOPs. University for training your team. Compass for running on EOS. And Build, where your own people create custom apps with AI, no developers required.',
+      'At the core is a CRM built for property management: every property, suite, tenant, and prospect in one place, driving leasing, property management, and facilities. Around it, five modules run how you work. Studios for project canvases and workflows. Playbook for your SOPs. University for training your team. Compass for your operating rhythm: priorities, scorecards and meetings. And Build, where your own people create custom apps with AI, no developers required.',
     ),
     coreLabel: 'Core functionality',
     coreDataLabel: 'Core data',
@@ -182,9 +182,9 @@ const platform = section({
       },
       {
         module: 'studios',
-        description: 'Project boards and workflows.',
+        description: 'Project canvases and workflows.',
         inside:
-          'A project board for the turn season: every unit with its status, owner, day of the twelve-day turn and next step, tied to the property it belongs to.',
+          'A project canvas for the turn season: every unit with its status, owner, day of the twelve-day turn and next step, tied to the property it belongs to.',
       },
       {
         module: 'playbook',
@@ -198,12 +198,12 @@ const platform = section({
       },
       {
         module: 'compass',
-        description: 'Running the business on EOS.',
+        description: 'Your operating rhythm: priorities, scorecards and meetings.',
         inside: "The weekly scorecard and this Period's Rocks on the morning before the leadership meeting, every number scored against its goal.",
       },
     ],
     lookInsideLabel: 'Look inside',
-    oppieTitle: 'Oppie knows all.',
+    oppieTitle: 'Oppie works across all of it.',
     oppieDetail: '',
   },
 });
@@ -394,7 +394,7 @@ const partnersIntro = section({
     eyebrow: 'For owner-operators and property managers',
     headline: 'Become a {partner}.',
     body: textToRich(
-      "Opero isn't a concept. It runs our flagship operator, a commercial and residential property management firm, every day: leasing, property management, facilities, projects, training, and meetings. Now we're opening it to a small group of firms as {partners}.\n\nFor twelve months you work directly with the team that built it, shaping the platform around how your firm actually operates, at preferred founding terms. You get the platform early, and a real say in where it goes.",
+      "Opero isn't a concept. It runs the founder's former company, a commercial and residential property management firm, every day: leasing, property management, facilities, projects, training, and meetings. Now we're opening it to a small group of firms as {partners}.\n\nFor twelve months you work directly with the team that built it, shaping the platform around how your firm actually operates, at preferred founding terms. You get the platform early, and a real say in where it goes.",
     ),
   },
 });
