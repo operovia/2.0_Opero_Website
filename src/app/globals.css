@@ -178,17 +178,22 @@
   }
 }
 
-/* One word in the five jewel colors, left to right as under the wordmark (the hero's "Intelligent"). Inside metal text it keeps its own paint. */
+/*
+ * One word in the five jewel colors, left to right as under the wordmark (the
+ * hero's "Intelligent"): each jewel's body color brightened toward its
+ * highlight, which is how the jewels read at their size; the highlights alone
+ * washed out. Inside metal text it keeps its own paint.
+ */
 @utility text-jewels {
   color: var(--o-fg);
   @supports (background-clip: text) or (-webkit-background-clip: text) {
     background-image: linear-gradient(
       90deg,
-      var(--o-jewel-crimson-highlight),
-      var(--o-jewel-violet-highlight),
-      var(--o-jewel-gold-highlight),
-      var(--o-jewel-green-highlight),
-      var(--o-jewel-teal-highlight)
+      color-mix(in oklab, var(--o-jewel-crimson-highlight) 45%, var(--o-jewel-crimson-base)),
+      color-mix(in oklab, var(--o-jewel-violet-highlight) 45%, var(--o-jewel-violet-base)),
+      color-mix(in oklab, var(--o-jewel-gold-highlight) 45%, var(--o-jewel-gold-base)),
+      color-mix(in oklab, var(--o-jewel-green-highlight) 45%, var(--o-jewel-green-base)),
+      color-mix(in oklab, var(--o-jewel-teal-highlight) 45%, var(--o-jewel-teal-base))
     );
     -webkit-background-clip: text;
     background-clip: text;
