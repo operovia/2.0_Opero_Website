@@ -12,12 +12,15 @@ describe('seed content', () => {
     expect(result.success, result.success ? '' : JSON.stringify(result.error.issues)).toBe(true);
   });
 
+  // The website review's copy deck (October 2026), approved by the owner.
   it('keeps the approved hero copy word for word', () => {
-    expect(plainHeadline(pages.home.sections.hero.seed.headline)).toBe('The AI-driven operating platform for property management.');
-    expect(pages.home.sections.hero.seed.headline).toMatch(/^\*The\* /);
-    expect(richToText(pages.home.sections.hero.seed.subhead)).toBe(
-      'One system, built around a core CRM, that replaces the patchwork of disconnected apps your teams run every day, with Oppie, your AI assistant, woven into every step.',
-    );
+    expect(plainHeadline(pages.home.sections.hero.seed.headline)).toBe('Integrated Intelligent Property Management');
+    expect(pages.home.sections.hero.seed.points.map((p) => p.text)).toEqual([
+      'One unified system to replace the patchwork of disconnected apps your teams run every day.',
+      'Anchored by a purpose-built property management core CRM.',
+      'Harnessed AI, built in from the ground up, with Oppie, your AI assistant.',
+    ]);
+    expect(defaultSettings.homeMetaTitle).toBe('Opero: Integrated Intelligent Property Management');
   });
 
   // "Real estate" reads as realtors, which Opero is not: the site says property management.

@@ -55,7 +55,12 @@ const hero = section({
   description: 'The first screen: headline, button, and the Oppie console. Console questions and answers are edited under Oppie console.',
   fields: {
     headline: text('Headline', { max: 160, headline: true }),
-    subhead: rich('Subhead'),
+    points: list(
+      'Points',
+      'Point',
+      { text: text('Line', { max: 160 }) },
+      { min: 1, max: 4, hint: 'A short list under the headline, in place of a paragraph.' },
+    ),
     buttonLabel: text('Button label', { max: 40 }),
     buttonTarget: link('Button link', { hint: buttonTargetHint }),
     supportingLine: text('Line under the button', { max: 200 }),
@@ -70,10 +75,12 @@ const hero = section({
     }),
   },
   seed: {
-    headline: '*The* AI-driven operating platform for property management.',
-    subhead: textToRich(
-      'One system, built around a core CRM, that replaces the patchwork of disconnected apps your teams run every day, with Oppie, your AI assistant, woven into every step.',
-    ),
+    headline: 'Integrated Intelligent Property Management',
+    points: [
+      { text: 'One unified system to replace the patchwork of disconnected apps your teams run every day.' },
+      { text: 'Anchored by a purpose-built property management core CRM.' },
+      { text: 'Harnessed AI, built in from the ground up, with Oppie, your AI assistant.' },
+    ],
     buttonLabel: 'Book a demo',
     buttonTarget: DEMO_TARGET,
     supportingLine: 'Built by operators inside a working commercial property management firm. Not a software lab.',

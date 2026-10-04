@@ -55,3 +55,6 @@ next-env.d.ts
 
 # Build output from the earlier pnpm workspace setup
 dist/
+
+# the website review's layout check screenshots (scripts/check-layout.mjs)
+/layout-check/

@@ -1,5 +1,4 @@
 import { DoorArrival } from '@/components/door/door-arrival';
-import { RichText } from '@/components/rich-text';
 import type { ConsoleScene } from '@/content/store';
 import type { SectionData } from '@/content/registry';
 import { fillName } from '@/lib/greeting';
@@ -27,7 +26,14 @@ export function Hero({ content, scenes, greeting }: { content: SectionData<'home
           <h1 id="hero-title" className="hero-rise text-display-lg font-medium text-metal">
             {renderHeadline(content.headline)}
           </h1>
-          <RichText doc={content.subhead} className="hero-fade mt-7 max-w-xl text-lg text-fg-muted sm:text-xl" />
+          <ul data-testid="hero-bullets" className="hero-fade mt-7 max-w-xl space-y-3 text-lg text-fg-muted sm:text-xl">
+            {content.points.map((point, i) => (
+              <li key={i} className="flex gap-3">
+                <span aria-hidden className="mt-3 size-1.5 shrink-0 rounded-full bg-fg-subtle" />
+                <span>{point.text}</span>
+              </li>
+            ))}
+          </ul>
           <div className="hero-fade mt-10 [animation-delay:120ms]">
             <SiteButton href={content.buttonTarget} size="lg">
               {content.buttonLabel}

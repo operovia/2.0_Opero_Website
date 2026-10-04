@@ -15,9 +15,9 @@ export const defaultSettings = {
   siteName: 'Opero',
   contactEmail: 'hello@operovia.com',
   partnerProgramLabel: 'design partner',
-  homeMetaTitle: 'Opero: The AI-driven operating platform for property management',
+  homeMetaTitle: 'Opero: Integrated Intelligent Property Management',
   homeMetaDescription:
-    'One system, built around a core CRM, that replaces the patchwork of disconnected apps your teams run every day, with Oppie, your AI assistant, woven into every step.',
+    'One unified system to replace the patchwork of disconnected apps your teams run every day, anchored by a purpose-built property management core CRM, with Oppie, your AI assistant, built in.',
 };
 
 async function seedAdmin(db: Db): Promise<void> {
