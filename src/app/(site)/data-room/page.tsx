@@ -35,8 +35,8 @@ export default async function DataRoomFounderPage() {
   return (
     <>
       <RoomNav room={room} />
-      {/* No eyebrow here: the strip above already names the room. */}
-      <FounderIntro intro={intro} letter={letter} eyebrow="" titleId="investors-title" />
+      {/* No eyebrow here: the strip above already names the room, and the section starts below the strip rather than rising behind it. */}
+      <FounderIntro intro={intro} letter={letter} eyebrow="" titleId="investors-title" rise={false} />
       <FounderStory story={story} />
     </>
   );

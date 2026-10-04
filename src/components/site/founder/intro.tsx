@@ -4,6 +4,7 @@ import { Container, Eyebrow } from '@/components/site/layout-parts';
 import { LinkedInGlyph } from '@/components/site/linkedin-glyph';
 import { SiteLink } from '@/components/site/site-link';
 import type { SectionData } from '@/content/registry';
+import { cn } from '@/lib/cn';
 import { renderHeadline } from '@/lib/headline';
 import { FounderLetter } from './letter';
 
@@ -16,6 +17,8 @@ type Props = {
   eyebrow: string;
   /** The id of the headline, for the section's aria-labelledby. */
   titleId: string;
+  /** Whether the section rises under the site header, so its light runs behind it (the public Founder page). Under the Data Room's strip it starts below the strip instead. */
+  rise?: boolean;
 };
 
 /**
@@ -24,9 +27,9 @@ type Props = {
  * and the LinkedIn icon. The top of both the Data Room overview and the public
  * Founder page.
  */
-export function FounderIntro({ intro, letter, eyebrow, titleId }: Props) {
+export function FounderIntro({ intro, letter, eyebrow, titleId, rise = true }: Props) {
   return (
-    <section aria-labelledby={titleId} className="relative isolate -mt-18 overflow-hidden pt-18">
+    <section aria-labelledby={titleId} className={cn('relative isolate overflow-hidden', rise && '-mt-18 pt-18')}>
       <div aria-hidden className="investor-grid absolute inset-0 -z-10" />
       <div aria-hidden className="absolute inset-0 -z-20 overflow-hidden">
         <div className="investor-glow" />
