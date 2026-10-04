@@ -2,7 +2,7 @@ import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { DEMO_TARGET } from '@/content/constants';
 
-type Props = { href: string; className?: string; children: ReactNode; 'aria-label'?: string };
+type Props = { href: string; className?: string; children: ReactNode; 'aria-label'?: string; 'data-testid'?: string };
 
 /**
  * A content-driven link: paths on this site use client navigation, other

@@ -134,6 +134,13 @@
       "when": 1791122436979,
       "tag": "0018_review_headline",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1791122791411,
+      "tag": "0019_review_console_note",
+      "breakpoints": true
     }
   ]
 }

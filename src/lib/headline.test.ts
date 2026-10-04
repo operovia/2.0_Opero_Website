@@ -26,6 +26,16 @@ describe('headlines', () => {
     expect(html('*Across\nlines*')).toBe('*Across<br/>lines*');
   });
 
+  it('sets the named word in the jewel colors, as a whole word, inside emphasis too', () => {
+    const jewels = (word: string) => `<span class="text-jewels">${word}</span>`;
+    const withAccent = (text: string, accent: string) => renderToStaticMarkup(createElement(Fragment, null, renderHeadline(text, accent)));
+    expect(withAccent('Integrated Intelligent Property Management', 'Intelligent')).toBe(`Integrated ${jewels('Intelligent')} Property Management`);
+    expect(withAccent('*Intelligent* work', 'Intelligent')).toBe(`${em(jewels('Intelligent'))} work`);
+    expect(withAccent('Intelligently done', 'Intelligent')).toBe('Intelligently done');
+    expect(withAccent('No such word', 'Intelligent')).toBe('No such word');
+    expect(withAccent('Plain', '')).toBe('Plain');
+  });
+
   it('shows plain text on one line, without the asterisks', () => {
     expect(plainHeadline('I lived with the problem.\nThen I built *the* solution.')).toBe('I lived with the problem. Then I built the solution.');
     expect(plainHeadline('*The* AI-driven operating platform for property management.')).toBe('The AI-driven operating platform for property management.');

@@ -104,6 +104,9 @@
   --text-display-lg: var(--o-text-display-lg);
   --text-display-lg--line-height: var(--o-text-display-lg-lh);
   --text-display-lg--letter-spacing: var(--o-text-display-lg-tracking);
+  --text-display-hero: var(--o-text-display-hero);
+  --text-display-hero--line-height: var(--o-text-display-hero-lh);
+  --text-display-hero--letter-spacing: var(--o-text-display-hero-tracking);
   --text-numeral: var(--o-text-numeral);
   --text-numeral--line-height: var(--o-text-numeral-lh);
   --text-numeral--letter-spacing: var(--o-text-numeral-tracking);
@@ -168,6 +171,28 @@
      */
     padding-bottom: 0.25em;
     margin-bottom: -0.25em;
+  }
+  @media (forced-colors: active) {
+    background-image: none;
+    color: CanvasText;
+  }
+}
+
+/* One word in the five jewel colors, left to right as under the wordmark (the hero's "Intelligent"). Inside metal text it keeps its own paint. */
+@utility text-jewels {
+  color: var(--o-fg);
+  @supports (background-clip: text) or (-webkit-background-clip: text) {
+    background-image: linear-gradient(
+      90deg,
+      var(--o-jewel-crimson-highlight),
+      var(--o-jewel-violet-highlight),
+      var(--o-jewel-gold-highlight),
+      var(--o-jewel-green-highlight),
+      var(--o-jewel-teal-highlight)
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
   @media (forced-colors: active) {
     background-image: none;
@@ -628,24 +653,88 @@
   border-color: color-mix(in oklab, var(--o-fg) 9%, transparent);
 }
 
-/* Console details (src/components/site/oppie-console.tsx). */
-.console-live-dot::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 9999px;
-  background: var(--o-success);
-  animation: live-pulse 2s var(--o-ease-out) infinite;
+/*
+ * Console details (src/components/site/oppie-console.tsx). Its measure
+ * follows the screen: the full scale on tall screens; on phones, and on
+ * laptops too short for it, a tighter one, so the card and the headline
+ * share the first screen (the website review's hero checks). In the tight
+ * measure the follow-up line and the second footer label step aside; on
+ * phones the first footer label goes too, the rent roll shows two of its
+ * rows, and an answer's chips stand in one row that scrolls sideways, so the
+ * card never grows past that screen. Every value is a type or spacing token.
+ */
+.console-glass {
+  --console-q: var(--o-text-base);
+  --console-q-lh: var(--o-text-base-lh);
+  --console-main: var(--o-text-2xl);
+  --console-main-lh: var(--o-text-2xl-lh);
+  --console-support: var(--o-text-sm);
+  --console-support-lh: var(--o-text-sm-lh);
+  --console-pad: calc(var(--o-space-unit) * 5);
+  --console-gap: calc(var(--o-space-unit) * 4);
+  --console-cell: calc(var(--o-space-unit) * 1.5);
+  --console-head: calc(var(--o-space-unit) * 3);
 }
-@keyframes live-pulse {
-  0% {
-    transform: scale(1);
-    opacity: 0.8;
+@media (max-width: 40rem), (min-width: 64rem) and (max-height: 46rem) {
+  .console-glass {
+    --console-q: var(--o-text-sm);
+    --console-q-lh: var(--o-text-sm-lh);
+    --console-main: var(--o-text-lg);
+    --console-main-lh: 1.35;
+    --console-support: var(--o-text-xs);
+    --console-support-lh: var(--o-text-xs-lh);
+    --console-pad: calc(var(--o-space-unit) * 3.5);
+    --console-gap: calc(var(--o-space-unit) * 2.5);
+    --console-cell: calc(var(--o-space-unit) * 0.75);
+    --console-head: calc(var(--o-space-unit) * 2);
   }
-  100% {
-    transform: scale(3);
-    opacity: 0;
+  .console-follow,
+  .console-foot-extra {
+    display: none;
   }
+}
+.console-chips {
+  flex-wrap: wrap;
+}
+@media (max-width: 40rem) {
+  .console-row-extra,
+  .console-foot {
+    display: none;
+  }
+  .console-chips {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+  }
+  .console-chips > * {
+    flex: none;
+    white-space: nowrap;
+  }
+}
+.console-head {
+  padding-block: var(--console-head);
+}
+.console-q {
+  font-size: var(--console-q);
+  line-height: var(--console-q-lh);
+}
+.console-main {
+  font-size: var(--console-main);
+  line-height: var(--console-main-lh);
+}
+.console-support {
+  font-size: var(--console-support);
+  line-height: var(--console-support-lh);
+}
+.console-body {
+  padding: var(--console-pad);
+}
+.console-gap {
+  margin-top: var(--console-gap);
+}
+.console-cell {
+  padding-block: var(--console-cell);
 }
 .console-caret {
   display: inline-block;

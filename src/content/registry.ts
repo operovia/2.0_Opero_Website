@@ -55,6 +55,11 @@ const hero = section({
   description: 'The first screen: headline, button, and the Oppie console. Console questions and answers are edited under Oppie console.',
   fields: {
     headline: text('Headline', { max: 160, headline: true }),
+    accent: text('Word in the jewel colors', {
+      optional: true,
+      max: 30,
+      hint: 'One word of the headline set in the five jewel colors, left to right as under the wordmark. It must appear in the headline exactly as written here. Leave it empty for none.',
+    }),
     points: list(
       'Points',
       'Point',
@@ -64,7 +69,6 @@ const hero = section({
     buttonLabel: text('Button label', { max: 40 }),
     buttonTarget: link('Button link', { hint: buttonTargetHint }),
     supportingLine: text('Line under the button', { max: 200 }),
-    consoleBadge: text('Console badge', { max: 20, hint: 'Shown in capitals next to a pulsing dot.' }),
     consoleFooterLeft: text('Console footer, first line', { max: 60, hint: 'Shown in capitals.' }),
     consoleFooterRight: text('Console footer, second line', { max: 60, hint: 'Shown in capitals.' }),
     consoleNote: text('Console note', { optional: true, max: 80, hint: 'Small print under the console. Leave empty to hide it.' }),
@@ -76,6 +80,7 @@ const hero = section({
   },
   seed: {
     headline: 'Integrated Intelligent Property Management',
+    accent: 'Intelligent',
     points: [
       { text: 'One unified system to replace the patchwork of disconnected apps your teams run every day.' },
       { text: 'Anchored by a purpose-built property management core CRM.' },
@@ -84,10 +89,9 @@ const hero = section({
     buttonLabel: 'Book a demo',
     buttonTarget: DEMO_TARGET,
     supportingLine: 'Built by operators inside a working commercial property management firm. Not a software lab.',
-    consoleBadge: 'Live',
     consoleFooterLeft: 'Ask in plain English',
     consoleFooterRight: 'Answers from your live data',
-    consoleNote: 'Illustrative data',
+    consoleNote: 'Illustrative data. You decide what Oppie can see and do.',
     guestGreeting: 'Welcome, *{name}*.',
   },
 });

@@ -38,7 +38,6 @@ export default async function ConsolePage() {
                 <OppieConsole
                   scenes={active}
                   labels={{
-                    badge: home.hero.consoleBadge,
                     footerLeft: home.hero.consoleFooterLeft,
                     footerRight: home.hero.consoleFooterRight,
                     note: home.hero.consoleNote,

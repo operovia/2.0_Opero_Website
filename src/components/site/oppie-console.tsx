@@ -8,7 +8,7 @@ import type { ConsoleScene } from '@/content/store';
 import { cn } from '@/lib/cn';
 import { tokens } from '@/theme/tokens';
 
-export type ConsoleLabels = { badge: string; footerLeft: string; footerRight: string; note: string };
+export type ConsoleLabels = { footerLeft: string; footerRight: string; note: string };
 
 type Phase = 'typing' | 'thinking' | 'answer' | 'shown' | 'leaving';
 type State = { index: number; phase: Phase; typed: number };
@@ -33,14 +33,23 @@ function subscribeVisibility(callback: () => void) {
 /**
  * The hero's live Oppie console: a scripted, looping demo that types a
  * portfolio question, thinks, and answers. Scenes are edited in the admin.
+ * It opens on the first question already answered, holds it for the usual
+ * time, and goes on typing from the second, so the first frame shows a
+ * complete exchange. Its measure follows the screen (the console-* classes
+ * in globals.css): tighter on phones and short laptops, so the card and the
+ * headline share the first screen.
  */
 export function OppieConsole({ scenes, labels }: { scenes: ConsoleScene[]; labels: ConsoleLabels }) {
   const reduce = useReducedMotion() ?? false;
   const rootRef = useRef<HTMLDivElement>(null);
   const inView = useInView(rootRef, { amount: 0.25 });
-  const pageVisible = useSyncExternalStore(subscribeVisibility, () => document.visibilityState === 'visible', () => true);
+  const pageVisible = useSyncExternalStore(
+    subscribeVisibility,
+    () => document.visibilityState === 'visible',
+    () => true,
+  );
   const [paused, setPaused] = useState(false);
-  const [state, setState] = useState<State>({ index: 0, phase: 'typing', typed: 0 });
+  const [state, setState] = useState<State>(() => ({ index: 0, phase: 'shown', typed: scenes[0]?.question.length ?? 0 }));
 
   const scene = scenes[state.index];
   const running = inView && pageVisible && !paused && scenes.length > 0;
@@ -82,7 +91,7 @@ export function OppieConsole({ scenes, labels }: { scenes: ConsoleScene[]; label
         className="console-glass relative overflow-hidden rounded-2xl"
       >
         {/* Header */}
-        <div className="console-rule flex items-center justify-between border-b px-5 py-3.5">
+        <div className="console-head console-rule flex items-center justify-between border-b px-5">
           <div className="flex items-center gap-1.5">
             {/* At the owner's request Oppie keeps turning while the demo runs, and holds still with it when paused. The mark's box leaves room around the pills; the negative margins keep the header its usual height. */}
             <OppieMark decorative state="thinking" paused={!running} className="-my-1 -ml-1.5 size-8" />
@@ -92,14 +101,10 @@ export function OppieConsole({ scenes, labels }: { scenes: ConsoleScene[]; label
               {reduce && state.phase === 'thinking' ? <span className="font-normal text-fg-muted"> is thinking…</span> : null}
             </span>
           </div>
-          <span className="console-rule inline-flex items-center gap-2 rounded-full border px-2.5 py-1 text-micro font-semibold text-fg-muted uppercase">
-            <span className="console-live-dot relative inline-flex size-1.5 rounded-full bg-success" aria-hidden />
-            {labels.badge}
-          </span>
         </div>
 
         {/* Scenes, stacked in one cell so the console never changes size */}
-        <div aria-hidden className="grid grid-cols-1 px-5 pt-5 pb-6">
+        <div aria-hidden className="console-body grid grid-cols-1">
           {scenes.map((s, i) => {
             const active = i === state.index;
             const typed = active ? state.typed : 0;
@@ -116,34 +121,38 @@ export function OppieConsole({ scenes, labels }: { scenes: ConsoleScene[]; label
               >
                 <div className="console-pane flex items-start gap-3 rounded-xl border px-4 py-3.5">
                   <Sparkles className="mt-0.5 size-4 shrink-0 text-fg-subtle" />
-                  <p className="text-base text-fg">
+                  <p className="console-q text-fg">
                     <span>{s.question.slice(0, typed)}</span>
                     {active && state.phase === 'typing' ? <span className="console-caret" /> : null}
                     <span className={cn('console-rest', i === 0 && 'console-first')}>{s.question.slice(typed)}</span>
                   </p>
                 </div>
 
-                <div className="relative mt-4">
+                <div className="console-gap relative">
                   <m.div
                     data-reveal={i === 0 ? '' : undefined}
                     initial={false}
                     animate={showAnswer ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
                     transition={{ duration: 0.5, ease: tokens.motion.ease.out }}
-                    className="console-pane rounded-xl border p-5"
+                    className="console-pane console-body rounded-xl border"
                   >
                     {s.answerTag ? <p className="text-eyebrow font-semibold text-fg-subtle uppercase">{s.answerTag}</p> : null}
-                    <p className="mt-2 text-2xl font-semibold text-metal">{s.answerMain}</p>
-                    {s.answerSupport ? <p className="mt-2 text-sm text-fg-muted">{s.answerSupport}</p> : null}
+                    <p className="console-main mt-2 font-semibold text-metal">{s.answerMain}</p>
+                    {s.answerSupport ? <p className="console-support mt-2 text-fg-muted">{s.answerSupport}</p> : null}
                     {s.answerTable ? (
-                      // Phones show the first three columns; wider screens show them all.
-                      <table className="mt-4 w-full text-xs">
+                      // Phones show the first three columns and the first two rows; wider screens show them all.
+                      <table className="mt-3 w-full text-xs">
                         <thead>
                           <tr>
                             {s.answerTable.columns.map((column, c) => (
                               <th
                                 key={column + c}
                                 scope="col"
-                                className={cn('pb-2 text-xs font-medium text-fg-subtle', c === 0 ? 'text-left' : 'pl-3 text-right whitespace-nowrap', c > 2 && 'hidden sm:table-cell')}
+                                className={cn(
+                                  'pb-2 text-xs font-medium text-fg-subtle',
+                                  c === 0 ? 'text-left' : 'pl-3 text-right whitespace-nowrap',
+                                  c > 2 && 'hidden sm:table-cell',
+                                )}
                               >
                                 {column}
                               </th>
@@ -158,12 +167,16 @@ export function OppieConsole({ scenes, labels }: { scenes: ConsoleScene[]; label
                               animate={{ opacity: showAnswer ? 1 : 0 }}
                               transition={{ duration: 0.4, delay: showAnswer ? 0.15 + r * 0.07 : 0, ease: tokens.motion.ease.out }}
                               data-reveal={i === 0 ? '' : undefined}
-                              className="console-rule border-t"
+                              className={cn('console-rule border-t', r >= 2 && 'console-row-extra')}
                             >
                               {row.map((cell, c) => (
                                 <td
                                   key={c}
-                                  className={cn('py-1.5', c === 0 ? 'font-medium text-fg' : 'pl-3 text-right whitespace-nowrap text-fg-muted tabular-nums', c > 2 && 'hidden sm:table-cell')}
+                                  className={cn(
+                                    'console-cell',
+                                    c === 0 ? 'font-medium text-fg' : 'pl-3 text-right whitespace-nowrap text-fg-muted tabular-nums',
+                                    c > 2 && 'hidden sm:table-cell',
+                                  )}
                                 >
                                   {cell}
                                 </td>
@@ -174,7 +187,7 @@ export function OppieConsole({ scenes, labels }: { scenes: ConsoleScene[]; label
                       </table>
                     ) : null}
                     {s.chips.length ? (
-                      <ul className="mt-4 flex flex-wrap gap-2">
+                      <ul className="console-chips mt-3 flex gap-2">
                         {s.chips.map((chip, c) => (
                           <m.li
                             key={chip + c}
@@ -195,7 +208,7 @@ export function OppieConsole({ scenes, labels }: { scenes: ConsoleScene[]; label
                         animate={{ opacity: showAnswer ? 1 : 0 }}
                         transition={{ duration: 0.4, delay: showAnswer ? 0.5 : 0, ease: tokens.motion.ease.out }}
                         data-reveal={i === 0 ? '' : undefined}
-                        className="console-rule mt-4 border-t pt-4 text-sm font-medium text-fg"
+                        className="console-follow console-rule mt-3 border-t pt-3 text-sm font-medium text-fg"
                       >
                         {s.followUp}
                       </m.p>
@@ -208,10 +221,10 @@ export function OppieConsole({ scenes, labels }: { scenes: ConsoleScene[]; label
         </div>
 
         {/* Footer */}
-        <div className="console-rule flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-t px-5 py-3">
-          <p className="flex flex-wrap gap-x-3 gap-y-1 text-micro font-semibold text-fg-subtle uppercase">
+        <div className="console-head console-rule flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-t px-5">
+          <p className="console-foot flex flex-wrap gap-x-3 gap-y-1 text-micro font-semibold text-fg-subtle uppercase">
             <span className="whitespace-nowrap">{labels.footerLeft}</span>
-            <span className="whitespace-nowrap">{labels.footerRight}</span>
+            <span className="console-foot-extra whitespace-nowrap">{labels.footerRight}</span>
           </p>
           <div className="flex shrink-0 items-center gap-1">
             {scenes.length > 1
@@ -245,7 +258,7 @@ export function OppieConsole({ scenes, labels }: { scenes: ConsoleScene[]; label
         </div>
       </div>
 
-      {labels.note ? <p className="mt-3 text-center text-xs text-fg-subtle">{labels.note}</p> : null}
+      {labels.note ? <p className="mt-2 text-center text-xs text-fg-subtle">{labels.note}</p> : null}
 
       {/* The same conversation for screen readers, without the animation. */}
       <ul className="sr-only">

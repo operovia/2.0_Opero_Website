@@ -78,15 +78,18 @@ export function SiteButton({
   variant = 'primary',
   size = 'md',
   className,
+  testId,
 }: {
   href: string;
   children: ReactNode;
   variant?: keyof typeof buttonVariants;
   size?: keyof typeof buttonSizes;
   className?: string;
+  /** A hook for the layout checks (scripts/check-layout.mjs). */
+  testId?: string;
 }) {
   return (
-    <SiteLink href={href} className={cn(buttonBase, buttonVariants[variant], buttonSizes[size], className)}>
+    <SiteLink href={href} data-testid={testId} className={cn(buttonBase, buttonVariants[variant], buttonSizes[size], className)}>
       {children}
     </SiteLink>
   );
