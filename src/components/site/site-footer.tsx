@@ -3,19 +3,19 @@ import type { SectionData } from '@/content/registry';
 import { Container } from './layout-parts';
 import { SiteLink } from './site-link';
 
+/** One short row: the Operovia mark, the contact address, and the links. The company's name and place are in the mark and the privacy notice. */
 export function SiteFooter({ content, email }: { content: SectionData<'site', 'footer'>; email: string }) {
   return (
     <footer className="border-t border-line">
-      <Container className="flex flex-col gap-10 py-14 md:flex-row md:items-end md:justify-between">
-        <div className="space-y-5">
+      <Container className="flex flex-col gap-5 py-8 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
           <BrandMark name="operovia" className="h-6" />
-          <address className="text-sm text-fg-muted not-italic">
-            <span className="block text-fg">{content.companyName}</span>
-            <span className="block">{content.location}</span>
-            <a href={`mailto:${email}`} className="mt-2 inline-block underline decoration-line-strong underline-offset-4 transition-colors hover:text-fg hover:decoration-fg">
-              {email}
-            </a>
-          </address>
+          <a
+            href={`mailto:${email}`}
+            className="text-sm text-fg-muted underline decoration-line-strong underline-offset-4 transition-colors hover:text-fg hover:decoration-fg"
+          >
+            {email}
+          </a>
         </div>
         {content.links.length ? (
           <nav aria-label="Footer">
@@ -30,9 +30,6 @@ export function SiteFooter({ content, email }: { content: SectionData<'site', 'f
             </ul>
           </nav>
         ) : null}
-      </Container>
-      <Container>
-        <p className="border-t border-line py-6 text-xs text-fg-subtle">© {content.companyName}</p>
       </Container>
     </footer>
   );

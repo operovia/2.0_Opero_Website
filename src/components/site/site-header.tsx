@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { BrandMark } from '@/components/brand/brand-mark';
+import { DATA_ROOM_PATH } from '@/content/constants';
 import type { SectionData } from '@/content/registry';
 import { cn } from '@/lib/cn';
 import { Container, SiteButton } from './layout-parts';
@@ -60,7 +61,8 @@ export function SiteHeader({ content }: Props) {
         </nav>
 
         <div className="flex items-center gap-2">
-          <SiteButton href={content.buttonTarget}>{content.buttonLabel}</SiteButton>
+          {/* Investors in the Data Room are not asked to book a demo. */}
+          {pathname.startsWith(DATA_ROOM_PATH) ? null : <SiteButton href={content.buttonTarget}>{content.buttonLabel}</SiteButton>}
           {content.links.length ? (
             <button
               type="button"
@@ -82,10 +84,7 @@ export function SiteHeader({ content }: Props) {
             <ul className="space-y-1">
               {content.links.map((item) => (
                 <li key={item.href + item.label}>
-                  <SiteLink
-                    href={item.href}
-                    className="flex h-12 items-center rounded-lg px-3 text-base font-medium text-fg hover:bg-accent-soft"
-                  >
+                  <SiteLink href={item.href} className="flex h-12 items-center rounded-lg px-3 text-base font-medium text-fg hover:bg-accent-soft">
                     {item.label}
                   </SiteLink>
                 </li>

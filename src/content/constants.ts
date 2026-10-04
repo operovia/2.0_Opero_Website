@@ -86,3 +86,7 @@ export const TOUR_ID = 'tour';
 export const TOUR_CORE_KEY = 'core';
 export const TOUR_CORE_LABEL = 'Core';
 export type TourKey = ModuleName | typeof TOUR_CORE_KEY;
+
+/** The Data Room's other tabs: The Raise (the round's terms, and what runs today against what the raise builds) and the Cap Table (with the investment model). */
+export const DATA_ROOM_RAISE_PATH = '/data-room/raise';
+export const DATA_ROOM_CAP_TABLE_PATH = '/data-room/cap-table';

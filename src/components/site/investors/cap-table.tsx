@@ -7,7 +7,7 @@ import { cn } from '@/lib/cn';
 import { clampAmount, formatCount, formatMoney, formatPercent, formatPrice, roundModel, type CapRow } from '@/lib/round';
 
 type Props = {
-  /** The round section of the Data Room overview: the copy and the figures, from the server page. */
+  /** The round section of the Data Room: the copy and the figures, from the server page. */
   content: SectionData<'investors', 'round'>;
 };
 
@@ -41,13 +41,14 @@ const barStyle = (jewel: JewelName, share: number) =>
   }) as CSSProperties;
 
 /**
- * The round: its terms in a row, what the investor gets, the investment
- * model (a slider and three figures), and the capitalization table today
- * and after the round converts. Every figure comes from the section's
- * stored numbers through src/lib/round.ts; the slider only chooses the
- * amount. Shown to guests and admins only.
+ * The Cap Table tab: the capitalization table today and after the round
+ * converts, then the investment model (a slider and three figures), whose
+ * amount is the reader's row in the table, and the small print. Every
+ * figure comes from the section's stored numbers through src/lib/round.ts;
+ * the slider only chooses the amount. Shown to guests and admins only; the
+ * round's terms stand on The Raise tab (raise-terms.tsx).
  */
-export function RoundSection({ content }: Props) {
+export function CapTableSection({ content }: Props) {
   const sliderId = useId();
   const bounds = { min: content.minimum, max: content.maximum, step: content.step };
   const [chosen, setChosen] = useState(content.start);
@@ -72,65 +73,8 @@ export function RoundSection({ content }: Props) {
 
   return (
     <>
-      {/* The terms, one figure each. */}
-      <Reveal delay={0.1}>
-        <ul className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
-          {content.terms.map((term, i) => (
-            <li key={term.value + i} className="rounded-2xl border border-line bg-surface p-5 sm:p-6">
-              <p className="text-2xl font-semibold text-fg tabular-nums">{term.value}</p>
-              <p className="mt-1.5 text-sm text-fg-muted">{term.label}</p>
-            </li>
-          ))}
-        </ul>
-      </Reveal>
-
-      <Reveal className="mt-12 max-w-3xl">
-        <h3 className="text-xl font-semibold text-fg">{content.getsHeading}</h3>
-        <p className="mt-3 text-base text-fg-muted sm:text-lg">{content.getsBody}</p>
-      </Reveal>
-
-      {/* The model: the slider chooses the amount, the three figures follow. */}
-      <Reveal className="investor-glass mt-12 rounded-2xl p-6 sm:p-10">
-        <h3 className="text-xl font-semibold text-fg">{content.modelHeading}</h3>
-        <div className="mt-8 grid grid-cols-1 gap-x-10 gap-y-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:items-end">
-          <div>
-            <label htmlFor={sliderId} className="block text-eyebrow font-semibold text-fg-subtle uppercase">
-              {content.sliderLabel}
-            </label>
-            <p className="mt-3 text-display-sm font-semibold text-fg tabular-nums">{formatMoney(amount)}</p>
-          </div>
-          <div>
-            <input
-              id={sliderId}
-              type="range"
-              className="round-range block h-11 w-full"
-              min={bounds.min}
-              max={bounds.max}
-              step={bounds.step}
-              value={amount}
-              aria-valuetext={formatMoney(amount)}
-              onChange={(e) => setChosen(Number(e.target.value))}
-              style={{ '--round-fill': `${fill}%` } as CSSProperties}
-            />
-            <div aria-hidden className="flex justify-between text-sm text-fg-subtle tabular-nums">
-              <span>{formatMoney(bounds.min)}</span>
-              <span>{formatMoney(bounds.max)}</span>
-            </div>
-          </div>
-        </div>
-        <dl className="mt-8 grid grid-cols-1 gap-6 border-t border-line pt-8 sm:grid-cols-3">
-          {stats.map((stat) => (
-            <div key={stat.label}>
-              <dt className="text-micro font-semibold text-fg-subtle uppercase">{stat.label}</dt>
-              <dd className="mt-2 text-2xl font-semibold text-fg tabular-nums sm:text-3xl">{stat.value}</dd>
-            </div>
-          ))}
-        </dl>
-      </Reveal>
-
       {/* The capitalization table, today and after the round converts. */}
-      <Reveal className="mt-12">
-        <h3 className="text-xl font-semibold text-fg">{content.capHeading}</h3>
+      <Reveal className="mt-10">
         <div className="mt-6 rounded-2xl border border-line bg-surface px-5 py-2 sm:px-6">
           {/* Explicit roles: on phones the rows and cells are shown as blocks, and WebKit drops the table's roles unless they are stated. */}
           <table role="table" className="w-full border-collapse text-left">
@@ -165,7 +109,9 @@ export function RoundSection({ content }: Props) {
                       </span>
                       {row.class ? <span className="mt-0.5 block pl-5 text-sm font-normal text-fg-muted sm:hidden">{row.class}</span> : null}
                     </th>
-                    <td role="cell" className="hidden pr-4 text-sm text-fg-muted sm:table-cell sm:py-4 sm:align-top">{row.class}</td>
+                    <td role="cell" className="hidden pr-4 text-sm text-fg-muted sm:table-cell sm:py-4 sm:align-top">
+                      {row.class}
+                    </td>
                     <td role="cell" className="mt-3 flex items-baseline justify-between gap-4 pl-5 sm:mt-0 sm:table-cell sm:pr-4 sm:pl-0 sm:py-4 sm:align-top">
                       <span className="text-sm text-fg-subtle sm:hidden">{content.todayColumn}</span>
                       <span className="text-right sm:text-left">
@@ -227,6 +173,49 @@ export function RoundSection({ content }: Props) {
           {content.priceLabel}: <span className="font-medium text-fg tabular-nums">{formatPrice(model.price)}</span>
         </p>
         <p className="mt-3 max-w-3xl text-sm text-fg-subtle">{content.capNote}</p>
+      </Reveal>
+      {/* The model: the slider chooses the amount, the three figures follow. */}
+      <Reveal className="investor-glass mt-12 rounded-2xl p-6 sm:p-10">
+        <h2 className="text-xl font-semibold text-fg">{content.modelHeading}</h2>
+        <div className="mt-8 grid grid-cols-1 gap-x-10 gap-y-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:items-end">
+          <div>
+            <label htmlFor={sliderId} className="block text-eyebrow font-semibold text-fg-subtle uppercase">
+              {content.sliderLabel}
+            </label>
+            <p className="mt-3 text-display-sm font-semibold text-fg tabular-nums">{formatMoney(amount)}</p>
+          </div>
+          <div>
+            <input
+              id={sliderId}
+              type="range"
+              className="round-range block h-11 w-full"
+              min={bounds.min}
+              max={bounds.max}
+              step={bounds.step}
+              value={amount}
+              aria-valuetext={formatMoney(amount)}
+              onChange={(e) => setChosen(Number(e.target.value))}
+              style={{ '--round-fill': `${fill}%` } as CSSProperties}
+            />
+            <div aria-hidden className="flex justify-between text-sm text-fg-subtle tabular-nums">
+              <span>{formatMoney(bounds.min)}</span>
+              <span>{formatMoney(bounds.max)}</span>
+            </div>
+          </div>
+        </div>
+        <dl className="mt-8 grid grid-cols-1 gap-6 border-t border-line pt-8 sm:grid-cols-3">
+          {stats.map((stat) => (
+            <div key={stat.label}>
+              <dt className="text-micro font-semibold text-fg-subtle uppercase">{stat.label}</dt>
+              <dd className="mt-2 text-2xl font-semibold text-fg tabular-nums sm:text-3xl">{stat.value}</dd>
+            </div>
+          ))}
+        </dl>
+      </Reveal>
+
+      {/* The small print, under the model as under The Raise. */}
+      <Reveal className="mt-12 max-w-3xl">
+        <p className="text-sm text-fg-subtle">{content.disclaimer}</p>
       </Reveal>
     </>
   );

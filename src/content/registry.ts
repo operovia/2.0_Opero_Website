@@ -526,13 +526,13 @@ const partnersApply = section({
 const investorsIntro = section({
   label: 'Introduction',
   description:
-    "The top of the page, in the founder's voice. The public Founder page shows the same headline, photo, name, role, and LinkedIn icon, so an edit here changes both.",
+    "The top of the Data Room's Founder tab, in the founder's voice. The public Founder page shows the same headline, photo, name, role, and LinkedIn icon, so an edit here changes both.",
   draftCopy: true,
   fields: {
     eyebrow: text('Eyebrow', {
       optional: true,
       max: 60,
-      hint: 'Kept for the record. The Overview shows none, since the strip above it names the room; the Founder page has its own.',
+      hint: 'Kept for the record. The Data Room shows none, since the strip above it names the room; the Founder page has its own.',
     }),
     headline: text('Headline', { max: 120, headline: true }),
     name: text('Signed by', { max: 80 }),
@@ -553,7 +553,7 @@ const investorsIntro = section({
 const investorsLetter = section({
   label: "The founder's letter",
   description:
-    'Opened by the button under the headline at the top of the Investor Hub and the Founder page, so an edit here changes both. It closes with the signature, in a handwriting face, the name and role, and the Operovia logo.',
+    "Opened by the button under the headline at the top of the Data Room's Founder tab and the Founder page, so an edit here changes both. It closes with the signature, in a handwriting face, the name and role, and the Operovia logo.",
   draftCopy: true,
   fields: {
     buttonLabel: text('Button', { max: 40 }),
@@ -785,6 +785,11 @@ const investorsRound = section({
     youLabel: text('Label for the reader in the table', { max: 40 }),
     othersLabel: text('Label for the rest of the round in the table', { max: 60 }),
     capNote: text('Note under the table', { max: 800, multiline: true }),
+    disclaimer: text('Small print', {
+      max: 600,
+      multiline: true,
+      hint: 'At the foot of The Raise and the Cap Table. Have counsel review it before the room goes live.',
+    }),
   },
   seed: {
     eyebrow: 'The round',
@@ -827,6 +832,8 @@ const investorsRound = section({
     othersLabel: 'Other pre-seed investors',
     capNote:
       "The flagship operator's position was purchased at formation and is not part of this round. The dilution from the round falls on the holders already on the table. Your ownership is your investment divided by the cap, so it does not change if the round grows. Share counts after the round assume the full round is raised and are illustrative; the percentages are the terms.",
+    disclaimer:
+      'This page is a summary for discussion purposes only. It is not an offer to sell, or a solicitation of an offer to buy, any security. Any offering will be made only to qualified investors through definitive documents.',
   },
   // The slider's figures must agree with each other, or the model's sums no longer add up.
   check: ({ raise, minimum, maximum, step, start }) => {
@@ -840,41 +847,6 @@ const investorsRound = section({
       issues.push({ field: 'step', message: 'The slider step must fit a whole number of times between the minimum and the largest investment.' });
     }
     return issues;
-  },
-});
-
-const investorsContact = section({
-  label: 'Contact form',
-  description: 'Heading, labels, thank-you message, and the note under the form. Messages arrive in Inquiries.',
-  draftCopy: true,
-  fields: {
-    headline: text('Headline', { max: 120, headline: true }),
-    intro: text('Introduction', { max: 300, multiline: true }),
-    nameLabel: text('Name label', { max: 60 }),
-    firmLabel: text('Firm label', { max: 60 }),
-    emailLabel: text('Email label', { max: 60 }),
-    phoneLabel: text('Phone label', { max: 60 }),
-    messageLabel: text('Message label', { max: 60 }),
-    optionalLabel: text('Marker for optional fields', { max: 30 }),
-    submitLabel: text('Submit button', { max: 40 }),
-    thankYouTitle: text('Thank-you heading', { max: 120 }),
-    thankYouBody: text('Thank-you message', { max: 400, multiline: true }),
-    disclaimer: text('Note under the form', { max: 600, multiline: true, hint: 'Small print. Have counsel review it before the page goes live.' }),
-  },
-  seed: {
-    headline: "Let's talk.",
-    intro: 'Write to me directly. I read and answer every message myself.',
-    nameLabel: 'Name',
-    firmLabel: 'Firm or fund',
-    emailLabel: 'Email',
-    phoneLabel: 'Phone',
-    messageLabel: 'Message',
-    optionalLabel: '(optional)',
-    submitLabel: 'Send message',
-    thankYouTitle: 'Thank you.',
-    thankYouBody: "I'll be in touch personally.",
-    disclaimer:
-      'This page is a summary for discussion purposes only. It is not an offer to sell, or a solicitation of an offer to buy, any security. Any offering will be made only to qualified investors through definitive documents.',
   },
 });
 
@@ -986,13 +958,11 @@ const footer = section({
   label: 'Footer',
   description: 'The contact email comes from Settings.',
   fields: {
-    companyName: text('Company name', { max: 80 }),
-    location: text('Location', { max: 80 }),
+    companyName: text('Company name', { max: 80, hint: 'In the small line at the foot of survey pages.' }),
     links: list('Links', 'Link', { label: text('Label', { max: 40 }), href: link('Link', { hint: buttonTargetHint }) }, { max: 6 }),
   },
   seed: {
     companyName: 'Operovia, Inc.',
-    location: 'Ann Arbor, Michigan',
     links: [{ label: 'Privacy', href: '/privacy' }],
   },
 });
@@ -1065,7 +1035,7 @@ const notFound = section({
 const founderPage = section({
   label: 'Page',
   description:
-    'The eyebrow above the headline and the description for search results. The headline, photo, name, role, and LinkedIn are edited under Data Room: Overview, Introduction, and the story under Data Room: Overview, The story.',
+    'The eyebrow above the headline and the description for search results. The headline, photo, name, role, and LinkedIn are edited under Data Room, Introduction, and the story under Data Room, The story.',
   draftCopy: true,
   fields: {
     eyebrow: text('Eyebrow', { optional: true, max: 60 }),
@@ -1165,8 +1135,10 @@ const dataRoomDocuments = section({
     'The words around the folders and documents: the strip at the top of the Data Room, the headline, the labels. The folders and documents themselves are arranged under Data Room in the admin.',
   draftCopy: true,
   fields: {
-    label: text('Name', { max: 40, hint: "The room's name: in the strip at the top of both of its pages, above the headline, and in the browser tab." }),
-    overviewTab: text('Overview tab', { max: 30, hint: 'The first page: the story, the round, and the contact form.' }),
+    label: text('Name', { max: 40, hint: "The room's name: in the strip at the top of its pages, above the headline, and in the browser tab." }),
+    founderTab: text('Founder tab', { max: 30, hint: "The first page: the founder's introduction and story." }),
+    raiseTab: text('The Raise tab', { max: 30, hint: "The round's terms, and what runs today against what the raise builds." }),
+    capTableTab: text('Cap Table tab', { max: 30, hint: 'The capitalization table, with the investment model under it.' }),
     documentsTab: text('Documents tab', { max: 30 }),
     headline: text('Headline', { max: 120, headline: true }),
     intro: text('Introduction', { max: 240, multiline: true }),
@@ -1189,7 +1161,9 @@ const dataRoomDocuments = section({
   },
   seed: {
     label: 'Data Room',
-    overviewTab: 'Overview',
+    founderTab: 'Founder',
+    raiseTab: 'The Raise',
+    capTableTab: 'Cap Table',
     documentsTab: 'Documents',
     headline: 'The *documents*.',
     intro: 'Everything shared with investors, in one place: decks, updates, and the materials behind the round.',
@@ -1224,9 +1198,9 @@ export const pages = {
     sections: { intro: partnersIntro, gets: partnersGets, asks: partnersAsks, selection: partnersSelection, apply: partnersApply },
   },
   investors: {
-    label: 'Data Room: Overview',
+    label: 'Data Room',
     description:
-      "The Data Room's first page: the founder's story for investors, what runs today, the round, and a way to get in touch. Only guests invited as investors and signed-in admins see it; the documents are arranged under Data Room in the admin, and the words around them under Data Room: Documents.",
+      "The Data Room's Founder, The Raise and Cap Table tabs: the founder's story for investors, the round's terms, what runs today against what the raise builds, and the capitalization table with the investment model. Only guests invited as investors and signed-in admins see them; the documents are arranged under Data Room in the admin, and the words around them under Data Room: Documents.",
     path: DATA_ROOM_PATH,
     sections: {
       intro: investorsIntro,
@@ -1235,7 +1209,6 @@ export const pages = {
       next: investorsNext,
       platform: investorsPlatform,
       round: investorsRound,
-      contact: investorsContact,
     },
   },
   privacy: {
@@ -1259,7 +1232,7 @@ export const pages = {
   founder: {
     label: 'Founder page',
     description:
-      "The founder's introduction and story, for everyone. The headline, photo, name, role, and LinkedIn are edited under Data Room: Overview, Introduction, and the story under Data Room: Overview, The story.",
+      "The founder's introduction and story, for everyone. The headline, photo, name, role, and LinkedIn are edited under Data Room, Introduction, and the story under Data Room, The story.",
     path: FOUNDER_PATH,
     sections: { page: founderPage },
   },

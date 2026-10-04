@@ -52,7 +52,7 @@ export default async function DataRoomFilesPage({ searchParams }: PageProps<'/da
 
   return (
     <>
-      <RoomNav label={copy.label} tabs={{ overview: copy.overviewTab, documents: copy.documentsTab }} />
+      <RoomNav room={copy} />
       <section aria-labelledby="room-title" className="py-section">
         <Container size="5xl">
           <Eyebrow>{copy.label}</Eyebrow>
