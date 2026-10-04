@@ -2,7 +2,6 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { sql } from 'drizzle-orm';
 import { readMigrationFiles } from 'drizzle-orm/migrator';
-import { migrate } from 'drizzle-orm/node-postgres/migrator';
 import type { Db } from './client';
 import { sqlState } from './errors';
 
@@ -12,17 +11,22 @@ const MIGRATIONS_FOLDER = path.join(/*turbopackIgnore: true*/ process.cwd(), 'dr
 export class DatabaseMismatchError extends Error {}
 
 /**
- * Applies any migrations in /drizzle that have not run yet, then makes sure
- * each of them really did. The migrator decides by date: it skips every
- * migration older than the newest row in its record, so a row from another
- * tool dated after them all makes it skip them all, and nothing else would
- * notice. So any migration the record does not vouch for, or whose tables
- * and columns are not all there, is applied again statement by statement,
- * skipping what is already in place. Safe to call on every start.
+ * Applies the migrations in /drizzle the database still needs, and makes
+ * sure each of them really did run. The record (drizzle.__drizzle_migrations,
+ * the one Drizzle's own migrator keeps) vouches for a migration when it holds
+ * the file's hash: everything after the last one it vouches for, and
+ * everything from the first migration whose tables and columns are not all
+ * there, is applied statement by statement, skipping what is already in
+ * place. Going by the hashes rather than by date, as Drizzle's migrator
+ * does, means a stray row dated after every migration cannot make it skip
+ * them all, and a table that exists ahead of its migration (made by another
+ * tool, or by a run the record lost) cannot stop a start: Drizzle's migrator
+ * would fail on it with "relation already exists". Safe to call on every
+ * start.
  */
 export async function runMigrations(db: Db): Promise<{ repaired: string[] }> {
   await adoptUntrackedTables(db);
-  await migrate(db, { migrationsFolder: MIGRATIONS_FOLDER });
+  await ensureRecord(db);
   const plan = await planMigrations(db);
   for (const migration of plan.todo) await applyAgain(db, migration, plan.recorded.has(migration.hash));
   return { repaired: plan.todo.map((migration) => migration.tag) };
@@ -179,6 +183,12 @@ export function tolerated(statement: string, code: string | null): boolean {
   return false;
 }
 
+/** The migrator's record, as Drizzle's own migrator makes it, so a fresh database can take its first migration. */
+async function ensureRecord(db: Db): Promise<void> {
+  await db.execute(sql`create schema if not exists drizzle`);
+  await db.execute(sql`create table if not exists drizzle.__drizzle_migrations (id serial primary key, hash text not null, created_at bigint)`);
+}
+
 /** Runs one migration's statements, skipping those whose work is already done, and records it unless the record has it. */
 async function applyAgain(db: Db, migration: Migration, recorded: boolean): Promise<void> {
   await db.transaction(async (tx) => {
@@ -197,7 +207,7 @@ async function applyAgain(db: Db, migration: Migration, recorded: boolean): Prom
       await tx.execute(sql`insert into drizzle.__drizzle_migrations (hash, created_at) values (${migration.hash}, ${migration.when})`);
     }
   });
-  console.log(`[opero] Applied ${migration.tag}, which the database did not have.`);
+  console.log(recorded ? `[opero] Applied ${migration.tag} again: the database did not have all of it.` : `[opero] Applied ${migration.tag}.`);
 }
 
 /* ------------------------------------------------------------------------ */
@@ -239,9 +249,8 @@ async function adoptUntrackedTables(db: Db): Promise<void> {
     );
   }
 
-  // The same journal table the migrator creates, holding the row it would have written.
-  await db.execute(sql`create schema if not exists drizzle`);
-  await db.execute(sql`create table if not exists drizzle.__drizzle_migrations (id serial primary key, hash text not null, created_at bigint)`);
+  // The record, holding the row the first migration would have written.
+  await ensureRecord(db);
   await db.execute(sql`insert into drizzle.__drizzle_migrations (hash, created_at) values (${first.hash}, ${first.when})`);
   console.log("[opero] The database already had the site's tables; recorded the first migration as applied.");
 }
