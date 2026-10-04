@@ -1,7 +1,7 @@
 import { textToRich } from '@/lib/rich-text';
 import { choice, link, list, number, rich, text, type Fields, type SectionCheck, type Values } from './fields';
 import { tokenHelp } from './tokens';
-import { DEMO_TARGET, DOOR_PATH, FOUNDER_PATH, GO_PATH, GO_SCREEN_LABELS, INVESTOR_HUB_PATH, type GoScreenName } from './constants';
+import { DATA_ROOM_FILES_PATH, DATA_ROOM_PATH, DEMO_TARGET, DOOR_PATH, FOUNDER_PATH, GO_PATH, GO_SCREEN_LABELS, type GoScreenName } from './constants';
 
 /**
  * Every editable section of every public page: its fields and its seed copy.
@@ -503,7 +503,11 @@ const investorsIntro = section({
     "The top of the page, in the founder's voice. The public Founder page shows the same headline, photo, name, role, and LinkedIn icon, so an edit here changes both.",
   draftCopy: true,
   fields: {
-    eyebrow: text('Eyebrow', { optional: true, max: 60 }),
+    eyebrow: text('Eyebrow', {
+      optional: true,
+      max: 60,
+      hint: 'Kept for the record. The Overview shows none, since the strip above it names the room; the Founder page has its own.',
+    }),
     headline: text('Headline', { max: 120, headline: true }),
     name: text('Signed by', { max: 80 }),
     role: text('Role', { max: 80 }),
@@ -511,7 +515,7 @@ const investorsIntro = section({
     description: text('Search and share description', { max: 200, multiline: true, hint: 'Shown in search results and link previews.' }),
   },
   seed: {
-    eyebrow: 'Investor Hub',
+    eyebrow: 'Data Room',
     headline: 'I lived the problem. Then I built the solution.',
     name: 'Joe Mifsud',
     role: 'Founder',
@@ -932,7 +936,7 @@ const header = section({
       { label: text('Label', { max: 40, hint: tokenHelp }), href: link('Link', { hint: buttonTargetHint }) },
       {
         max: 6,
-        hint: `A link to ${FOUNDER_PATH} shows to visitors, and a link to ${INVESTOR_HUB_PATH} shows to guests and signed-in admins in its place, never both at once.`,
+        hint: `A link to ${FOUNDER_PATH} shows to visitors, and a link to ${DATA_ROOM_PATH} shows to guests invited as investors and to signed-in admins in its place, never both at once.`,
       },
     ),
     buttonLabel: text('Button label', { max: 40 }),
@@ -945,7 +949,7 @@ const header = section({
       { label: 'OperoGo', href: GO_PATH },
       { label: '{Partners}', href: '/partners' },
       { label: 'Founder', href: FOUNDER_PATH },
-      { label: 'Investor Hub', href: INVESTOR_HUB_PATH },
+      { label: 'Data Room', href: DATA_ROOM_PATH },
     ],
     buttonLabel: 'Book a demo',
     buttonTarget: DEMO_TARGET,
@@ -1035,7 +1039,7 @@ const notFound = section({
 const founderPage = section({
   label: 'Page',
   description:
-    'The eyebrow above the headline and the description for search results. The headline, photo, name, role, and LinkedIn are edited under Investor Hub, Introduction, and the story under Investor Hub, The story.',
+    'The eyebrow above the headline and the description for search results. The headline, photo, name, role, and LinkedIn are edited under Data Room: Overview, Introduction, and the story under Data Room: Overview, The story.',
   draftCopy: true,
   fields: {
     eyebrow: text('Eyebrow', { optional: true, max: 60 }),
@@ -1090,7 +1094,10 @@ const door = section({
     helpLinkLabel: text('Lost invitation link', { max: 40, hint: 'Opens an email to the contact address in Settings.' }),
     publicLine: text('Public site line', { max: 80 }),
     publicLinkLabel: text('Public site link', { max: 40, hint: 'Goes to the home page.' }),
-    companyLine: text('Company line', { max: 80, hint: 'Not shown: the Operovia logo stands at the foot of the door, and screen readers read this in its place.' }),
+    companyLine: text('Company line', {
+      max: 80,
+      hint: 'Not shown: the Operovia logo stands at the foot of the door, and screen readers read this in its place.',
+    }),
     alreadyInTitle: text('Already in: title', { max: 120, headline: true, hint: 'Shown to a guest whose browser already holds the key.' }),
     alreadyInIntro: text('Already in: line', { max: 200 }),
     alreadyInButton: text('Already in: button', { max: 40 }),
@@ -1126,6 +1133,55 @@ const door = section({
   },
 });
 
+const dataRoomDocuments = section({
+  label: 'The documents page',
+  description:
+    'The words around the folders and documents: the strip at the top of the Data Room, the headline, the labels. The folders and documents themselves are arranged under Data Room in the admin.',
+  draftCopy: true,
+  fields: {
+    label: text('Name', { max: 40, hint: "The room's name: in the strip at the top of both of its pages, above the headline, and in the browser tab." }),
+    overviewTab: text('Overview tab', { max: 30, hint: 'The first page: the story, the round, and the contact form.' }),
+    documentsTab: text('Documents tab', { max: 30 }),
+    headline: text('Headline', { max: 120, headline: true }),
+    intro: text('Introduction', { max: 240, multiline: true }),
+    rootLabel: text('Top of the room', { max: 40, hint: 'The name of the top level, above every folder.' }),
+    foldersLabel: text('Folder list name', { max: 40, hint: 'Names the list of folders for screen readers.' }),
+    folderWord: text('Folder, one', { max: 30 }),
+    folderWordPlural: text('Folders, several', { max: 30 }),
+    documentWord: text('Document, one', { max: 30 }),
+    documentWordPlural: text('Documents, several', { max: 30 }),
+    openLabel: text('Open button', { max: 30, hint: 'On PDFs and images, which open in the browser.' }),
+    downloadLabel: text('Download button', { max: 30 }),
+    addedLabel: text('Added label', { max: 30, hint: 'Before the date a document was added.' }),
+    emptyMessage: text('Empty message', { max: 200, hint: 'In a folder with nothing in it, and in the room before anything is shared.' }),
+    trackingNote: text('Recording note', {
+      optional: true,
+      max: 200,
+      hint: 'Optional. A quiet line under the documents saying that opening and downloading them is recorded.',
+    }),
+    metaDescription: text('Share description', { max: 200, multiline: true, hint: 'The page is never indexed; this only fills a link preview.' }),
+  },
+  seed: {
+    label: 'Data Room',
+    overviewTab: 'Overview',
+    documentsTab: 'Documents',
+    headline: 'The *documents*.',
+    intro: 'Everything shared with investors, in one place: decks, updates, and the materials behind the round.',
+    rootLabel: 'All documents',
+    foldersLabel: 'Folders',
+    folderWord: 'folder',
+    folderWordPlural: 'folders',
+    documentWord: 'document',
+    documentWordPlural: 'documents',
+    openLabel: 'Open',
+    downloadLabel: 'Download',
+    addedLabel: 'Added',
+    emptyMessage: 'Nothing has been shared here yet.',
+    trackingNote: 'Opening and downloading documents here is recorded.',
+    metaDescription: 'Documents shared with the investors of Opero.',
+  },
+});
+
 /* ------------------------------------------------------------------------ */
 
 export const pages = {
@@ -1142,9 +1198,10 @@ export const pages = {
     sections: { intro: partnersIntro, gets: partnersGets, asks: partnersAsks, selection: partnersSelection, apply: partnersApply },
   },
   investors: {
-    label: 'Investor Hub',
-    description: "The founder's story for investors, and a way to get in touch. Only guests who came through the front door and signed-in admins see it.",
-    path: INVESTOR_HUB_PATH,
+    label: 'Data Room: Overview',
+    description:
+      "The Data Room's first page: the founder's story for investors, what runs today, the round, and a way to get in touch. Only guests invited as investors and signed-in admins see it; the documents are arranged under Data Room in the admin, and the words around them under Data Room: Documents.",
+    path: DATA_ROOM_PATH,
     sections: {
       intro: investorsIntro,
       letter: investorsLetter,
@@ -1167,10 +1224,16 @@ export const pages = {
     path: null,
     sections: { header, footer, demoForm, maintenance, notFound },
   },
+  dataRoom: {
+    label: 'Data Room: Documents',
+    description: 'The words around the folders and documents in the Data Room. The folders and documents themselves are arranged under Data Room in the admin.',
+    path: DATA_ROOM_FILES_PATH,
+    sections: { room: dataRoomDocuments },
+  },
   founder: {
     label: 'Founder page',
     description:
-      "The founder's introduction and story, for everyone. The headline, photo, name, role, and LinkedIn are edited under Investor Hub, Introduction, and the story under Investor Hub, The story.",
+      "The founder's introduction and story, for everyone. The headline, photo, name, role, and LinkedIn are edited under Data Room: Overview, Introduction, and the story under Data Room: Overview, The story.",
     path: FOUNDER_PATH,
     sections: { page: founderPage },
   },

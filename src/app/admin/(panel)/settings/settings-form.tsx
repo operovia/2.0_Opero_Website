@@ -139,7 +139,7 @@ export function SettingsForm({ values, images }: { values: SettingsFormValues; i
             name="privateSite"
             defaultChecked={v.privateSite === 'on'}
             label="Private site"
-            description="Everyone enters through the front door with an address on the guest list, and search engines are kept out. Off, the site is public, and the door only opens the Investor Hub for guests invited as investors."
+            description="Everyone enters through the front door with an address on the guest list, and search engines are kept out. Off, the site is public, and the door only opens the Data Room for guests invited as investors."
           />
         </CardBody>
       </Card>

@@ -9,7 +9,7 @@ import { SiteHeader } from '@/components/site/site-header';
 import { openGraph } from '@/content/metadata';
 import { getPage, getPublicSettings, isPreview } from '@/content/store';
 import { requireEntry } from '@/server/entry';
-import { investorHubHidden, withVisibleLinks } from '@/server/investor-hub';
+import { dataRoomHidden, withVisibleLinks } from '@/server/data-room-access';
 import { siteUrl } from '@/server/env';
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -30,7 +30,7 @@ export default async function SiteLayout({ children }: LayoutProps<'/'>) {
 
   if (settings.maintenanceMode && !access.admin) return <MaintenancePage content={site.maintenance} />;
 
-  const hubHidden = investorHubHidden(access);
+  const hubHidden = dataRoomHidden(access);
   const header = withVisibleLinks(site.header, hubHidden, siteUrl());
   const footer = withVisibleLinks(site.footer, hubHidden, siteUrl());
 

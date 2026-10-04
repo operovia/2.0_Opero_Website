@@ -3,7 +3,7 @@ import { getPage, getPublicSettings } from '@/content/store';
 import { plainHeadline } from '@/lib/headline';
 
 /**
- * A page in the site's frame that is not there, such as the Investor Hub
+ * A page in the site's frame that is not there, such as the Data Room overview
  * while it is hidden. The frame already has the header and footer, so this is
  * only the message; addresses that match no page get src/app/not-found.tsx.
  */

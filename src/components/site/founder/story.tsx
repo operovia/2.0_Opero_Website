@@ -11,7 +11,7 @@ const nodes = ['bg-line-strong', 'jewel-build'];
 /**
  * The founder's story in two columns across a line: the problem, over a cloud
  * of disconnected apps, and the solution, under the Opero mark. Shown on the
- * Investor Hub and the public Founder page.
+ * Data Room overview and the public Founder page.
  */
 export function FounderStory({ story }: { story: SectionData<'investors', 'story'> }) {
   const steps = [

@@ -10,7 +10,7 @@ import type { SectionData } from '@/content/registry';
 import { idleState } from '@/lib/forms';
 import { SpamTraps, stampElapsed } from './spam-traps';
 
-/** The Investor Hub's contact form. It stays on the page and thanks the sender in place. */
+/** The Data Room overview's contact form. It stays on the page and thanks the sender in place. */
 export function InvestorInquiryForm({ content }: { content: SectionData<'investors', 'contact'> }) {
   const [state, action] = useActionState(sendInvestorInquiry, idleState);
   const thanks = useRef<HTMLHeadingElement>(null);

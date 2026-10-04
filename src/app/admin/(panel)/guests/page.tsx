@@ -8,6 +8,7 @@ import { Time } from '@/components/ui/time';
 import { DOOR_PATH, GREETING_MAX, GUEST_ROLE_LABELS } from '@/content/constants';
 import { requireAdmin } from '@/server/auth/session';
 import { siteUrl } from '@/server/env';
+import { guestDocumentCounts } from '@/server/data-room';
 import { guestLink, guestLinkPath, listGuests } from '@/server/guests';
 import { getSettings } from '@/server/settings';
 import { makeGuestLinkAction, removeGuestAction, setGuestGreetingAction, setGuestRoleAction } from './actions';
@@ -18,7 +19,7 @@ export const metadata: Metadata = { title: 'Guests' };
 
 export default async function GuestsPage() {
   await requireAdmin();
-  const [guests, settings] = await Promise.all([listGuests(), getSettings()]);
+  const [guests, settings, documentCounts] = await Promise.all([listGuests(), getSettings(), guestDocumentCounts()]);
   const doorLink = `${siteUrl()}${DOOR_PATH}`;
   const suggestedNote = [
     `Here is the link to the Opero site: ${doorLink}`,
@@ -32,8 +33,8 @@ export default async function GuestsPage() {
         title="Guests"
         description={
           settings.privateSite
-            ? 'Who can come in. The site is private: a guest gives their address at the front door once, and it opens for them on that browser until you remove the address. Visitors see the site; investors see the Investor Hub too.'
-            : 'Who can open the Investor Hub. The site itself is public; a guest invited as an investor gives their address at the front door once, and the Investor Hub opens for them on that browser until you remove the address.'
+            ? 'Who can come in. The site is private: a guest gives their address at the front door once, and it opens for them on that browser until you remove the address. Visitors see the site; investors see the Data Room too.'
+            : 'Who can open the Data Room. The site itself is public; a guest invited as an investor gives their address at the front door once, and the Data Room opens for them on that browser until you remove the address.'
         }
       />
 
@@ -87,6 +88,11 @@ export default async function GuestsPage() {
                       ) : (
                         <span>Has not entered yet</span>
                       )}
+                      {documentCounts.get(guest.id) ? (
+                        <span>
+                          Opened {documentCounts.get(guest.id)} {documentCounts.get(guest.id) === 1 ? 'document' : 'documents'}
+                        </span>
+                      ) : null}
                       {(guest.lastSeenAt ?? guest.lastEnteredAt) ? (
                         <span>
                           Last visited <Time value={guest.lastSeenAt ?? guest.lastEnteredAt!} format="relative" />
@@ -138,7 +144,7 @@ export default async function GuestsPage() {
                       <ConfirmSubmit
                         variant="ghost"
                         size="sm"
-                        confirm={`Remove ${guest.email} from the list? ${settings.privateSite ? 'The site' : 'The Investor Hub'} closes for them at once.`}
+                        confirm={`Remove ${guest.email} from the list? ${settings.privateSite ? 'The site' : 'The Data Room'} closes for them at once.`}
                       >
                         Remove
                       </ConfirmSubmit>

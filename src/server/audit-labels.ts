@@ -27,6 +27,12 @@ export const auditLabels: Record<AuditAction, string> = {
   'guest.remove': 'Removed a guest',
   'guest.greeting': 'Changed the name a guest is welcomed by',
   'guest.link': 'Made a personal link for a guest',
+  'room.folder.add': 'Added a Data Room folder',
+  'room.folder.rename': 'Renamed a Data Room folder',
+  'room.folder.remove': 'Deleted a Data Room folder',
+  'room.document.add': 'Added a document to the Data Room',
+  'room.document.rename': 'Renamed a Data Room document',
+  'room.document.remove': 'Deleted a Data Room document',
   'door.enter': 'A guest entered through the door',
 };
 
@@ -40,6 +46,10 @@ export const auditFilters = {
   },
   surveys: { label: 'Surveys', actions: ['survey.create', 'survey.status', 'survey.delete', 'survey.send', 'survey.export', 'survey.responses.delete'] },
   guests: { label: 'Guests', actions: ['guest.add', 'guest.role', 'guest.remove', 'guest.greeting', 'guest.link', 'door.enter'] },
+  room: {
+    label: 'Data Room',
+    actions: ['room.folder.add', 'room.folder.rename', 'room.folder.remove', 'room.document.add', 'room.document.rename', 'room.document.remove'],
+  },
 } as const satisfies Record<string, { label: string; actions: readonly AuditAction[] | null }>;
 
 export type AuditFilter = keyof typeof auditFilters;

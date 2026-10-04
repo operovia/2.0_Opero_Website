@@ -8,13 +8,13 @@ import { getPage, getPublicSettings } from '@/content/store';
 import { plainHeadline } from '@/lib/headline';
 import { requireEntry } from '@/server/entry';
 import { siteUrl } from '@/server/env';
-import { investorHubHidden, withVisibleLinks } from '@/server/investor-hub';
+import { dataRoomHidden, withVisibleLinks } from '@/server/data-room-access';
 
 /** An address that matches no page. It has no site frame around it, so it brings its own header and footer, and the site's gate. */
 export default async function NotFound() {
   const [site, { settings }, access] = await Promise.all([getPage('site'), getPublicSettings(), requireEntry()]);
   if (settings.maintenanceMode && !access.admin) return <MaintenancePage content={site.maintenance} />;
-  const hubHidden = investorHubHidden(access);
+  const hubHidden = dataRoomHidden(access);
   return (
     <>
       {/* Not-found pages take no metadata export; React moves this title into the head. */}

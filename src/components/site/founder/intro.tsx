@@ -8,7 +8,7 @@ import { renderHeadline } from '@/lib/headline';
 import { FounderLetter } from './letter';
 
 type Props = {
-  /** The Investor Hub's introduction: headline, name, role, and LinkedIn profile. */
+  /** The Data Room overview's introduction: headline, name, role, and LinkedIn profile. */
   intro: SectionData<'investors', 'intro'>;
   /** The founder's letter, opened by the button under the headline. */
   letter: SectionData<'investors', 'letter'>;
@@ -21,7 +21,7 @@ type Props = {
 /**
  * The founder's introduction: the headline in the founder's voice, with the
  * button to his letter under it, beside the portrait, signed with name, role,
- * and the LinkedIn icon. The top of both the Investor Hub and the public
+ * and the LinkedIn icon. The top of both the Data Room overview and the public
  * Founder page.
  */
 export function FounderIntro({ intro, letter, eyebrow, titleId }: Props) {

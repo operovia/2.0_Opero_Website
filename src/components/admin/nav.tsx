@@ -4,6 +4,7 @@ import {
   Activity,
   DoorOpen,
   FileText,
+  FolderLock,
   Image as ImageIcon,
   Inbox,
   LayoutDashboard,
@@ -17,12 +18,13 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/cn';
 
-export type NavKey = 'dashboard' | 'inquiries' | 'guests' | 'content' | 'console' | 'surveys' | 'media' | 'settings' | 'team' | 'activity';
+export type NavKey = 'dashboard' | 'inquiries' | 'guests' | 'room' | 'content' | 'console' | 'surveys' | 'media' | 'settings' | 'team' | 'activity';
 
 const items: { key: NavKey; href: string; label: string; icon: LucideIcon }[] = [
   { key: 'dashboard', href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
   { key: 'inquiries', href: '/admin/inquiries', label: 'Inquiries', icon: Inbox },
   { key: 'guests', href: '/admin/guests', label: 'Guests', icon: DoorOpen },
+  { key: 'room', href: '/admin/data-room', label: 'Data Room', icon: FolderLock },
   { key: 'content', href: '/admin/content', label: 'Content', icon: FileText },
   { key: 'console', href: '/admin/console', label: 'Oppie console', icon: MessageSquareText },
   { key: 'surveys', href: '/admin/surveys', label: 'Surveys', icon: ListChecks },

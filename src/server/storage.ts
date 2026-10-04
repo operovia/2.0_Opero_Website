@@ -5,21 +5,25 @@ import { DeleteObjectCommand, GetObjectCommand, PutObjectCommand, S3Client } fro
 import { storageConfig, type StorageConfig } from '@/server/env';
 
 /**
- * Where uploaded media lives. One small interface with two drivers: a local
- * folder for development, and any S3-compatible bucket (AWS S3, Cloudflare
- * R2, and others) for production. Chosen by environment variables.
+ * Where uploaded files live: the media library's images and the Data Room's
+ * documents. One small interface with two drivers: a local folder for
+ * development, and any S3-compatible bucket (AWS S3, Cloudflare R2, and
+ * others) for production. Chosen by environment variables.
  */
 export interface Storage {
-  put(key: string, body: Buffer, contentType: string): Promise<void>;
+  /** `cache` says how the object may be cached: images are public and never change, documents are private. */
+  put(key: string, body: Buffer, contentType: string, cache?: 'public' | 'private'): Promise<void>;
   get(key: string): Promise<Buffer | null>;
   remove(key: string): Promise<void>;
 }
 
-/** Keys look like 2026/09/<uuid>.jpg; anything else is refused, so paths can never escape the store. */
+/** Image keys look like 2026/09/<uuid>.jpg; anything else is refused, so paths can never escape the store. */
 export const MEDIA_KEY = /^\d{4}\/\d{2}\/[0-9a-f-]{36}\.(jpg|png|webp|gif|avif)$/;
+/** Data Room documents sit apart, under docs/, with the extension the room accepted (src/lib/documents.ts). */
+export const DOCUMENT_KEY = /^docs\/\d{4}\/\d{2}\/[0-9a-f-]{36}\.[a-z0-9]{1,8}$/;
 
 function assertKey(key: string) {
-  if (!MEDIA_KEY.test(key)) throw new Error(`Invalid media key: ${key}`);
+  if (!MEDIA_KEY.test(key) && !DOCUMENT_KEY.test(key)) throw new Error(`Invalid storage key: ${key}`);
 }
 
 function localStorage(directory: string): Storage {
@@ -56,7 +60,7 @@ function s3Storage(config: Extract<StorageConfig, { driver: 's3' }>): Storage {
     credentials: { accessKeyId: config.accessKeyId, secretAccessKey: config.secretAccessKey },
   });
   return {
-    async put(key, body, contentType) {
+    async put(key, body, contentType, cache = 'public') {
       assertKey(key);
       await client.send(
         new PutObjectCommand({
@@ -64,7 +68,7 @@ function s3Storage(config: Extract<StorageConfig, { driver: 's3' }>): Storage {
           Key: key,
           Body: body,
           ContentType: contentType,
-          CacheControl: 'public, max-age=31536000, immutable',
+          CacheControl: cache === 'public' ? 'public, max-age=31536000, immutable' : 'private, no-store',
         }),
       );
     },

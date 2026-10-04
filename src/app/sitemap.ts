@@ -18,14 +18,14 @@ type Entry = {
 const pages: Entry[] = [
   { page: 'home', path: '/', priority: 1 },
   { page: 'partners', path: '/partners', priority: 0.8 },
-  // The Founder page shows the Investor Hub's introduction and story sections.
+  // The Founder page shows the Data Room overview's introduction and story sections.
   { page: 'founder', path: FOUNDER_PATH, priority: 0.6, alsoFrom: ['investors'] },
   { page: 'privacy', path: '/privacy', priority: 0.3 },
 ];
 
 /**
  * The public pages at the site's own address. Surveys, the admin, the front
- * door, and the Investor Hub (investors and admins only) are left out on
+ * door, and the Data Room (investors and admins only) are left out on
  * purpose, and a private site lists nothing.
  */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

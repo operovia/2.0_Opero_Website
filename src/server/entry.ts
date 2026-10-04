@@ -6,7 +6,7 @@ import { DOOR_PATH } from '@/content/constants';
 import { getPublicSettings } from '@/content/store';
 import { getSession } from '@/server/auth/session';
 import { getGuest } from '@/server/guests';
-import { siteClosed, type Access } from '@/server/investor-hub';
+import { siteClosed, type Access } from '@/server/data-room-access';
 import { VISITOR_VIEW_COOKIE } from '@/server/visitor-view';
 
 /**

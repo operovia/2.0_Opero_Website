@@ -8,7 +8,7 @@ import { adminPill } from './admin-pill';
 
 /**
  * The switch beside the Admin pill: see the site as a visitor does (the
- * Founder page in the header, the Investor Hub hidden), and back again. While
+ * Founder page in the header, the Data Room hidden), and back again. While
  * it is on, the pill is edged in the warning color so the view is not
  * mistaken for the admin's own.
  */

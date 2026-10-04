@@ -28,6 +28,12 @@ export type AuditAction =
   | 'guest.remove'
   | 'guest.greeting'
   | 'guest.link'
+  | 'room.folder.add'
+  | 'room.folder.rename'
+  | 'room.folder.remove'
+  | 'room.document.add'
+  | 'room.document.rename'
+  | 'room.document.remove'
   /** Written with no actor; the target is the address that came in. */
   | 'door.enter';
 

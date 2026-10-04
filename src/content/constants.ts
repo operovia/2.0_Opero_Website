@@ -10,6 +10,10 @@ export const DEMO_TARGET = '#book-demo';
 /** Where the Investor Hub lives. Only guests who came through the front door and signed-in admins see it. */
 export const INVESTOR_HUB_PATH = '/investors';
 
+/** The Data Room, for invited investors and admins: its Overview (the former Investor Hub's pages) and, under /files, its documents. */
+export const DATA_ROOM_PATH = '/data-room';
+export const DATA_ROOM_FILES_PATH = '/data-room/files';
+
 /** The public Founder page: the founder's introduction and story from the Investor Hub, for everyone. */
 export const FOUNDER_PATH = '/founder';
 
@@ -60,7 +64,7 @@ export const GUEST_ROLES = ['visitor', 'investor'] as const;
 export type GuestRole = (typeof GUEST_ROLES)[number];
 export const GUEST_ROLE_LABELS: Record<GuestRole, { label: string; sees: string }> = {
   visitor: { label: 'Visitor', sees: 'the site' },
-  investor: { label: 'Investor', sees: 'the site and the Investor Hub' },
+  investor: { label: 'Investor', sees: 'the site and the Data Room' },
 };
 
 /** The modules by their bare names, in brand order, for browser code (the registry's options are server-only). */

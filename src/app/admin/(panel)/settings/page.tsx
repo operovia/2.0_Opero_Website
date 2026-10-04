@@ -41,7 +41,7 @@ export default async function SettingsPage() {
       <Card>
         <CardHeader
           title="Guests"
-          description="The guest list says who may come in through the front door and what they see: a visitor the site, an investor the site and the Investor Hub. You see everything on any browser where you are signed in."
+          description="The guest list says who may come in through the front door and what they see: a visitor the site, an investor the site and the Data Room. You see everything on any browser where you are signed in."
         />
         <CardBody>
           <ButtonLink href="/admin/guests" variant="secondary" size="sm">

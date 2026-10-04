@@ -21,7 +21,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 /**
  * The public Founder page: the founder's introduction and story, read from
- * the Investor Hub's sections so both pages always say the same thing.
+ * the Data Room overview's sections so both pages always say the same thing.
  */
 export default async function FounderPage() {
   await requireEntry();

@@ -85,9 +85,9 @@ export function investorInquiryNotification(inquiry: InquiryForEmail, adminUrl: 
   return {
     subject,
     ...renderEmail({
-      preheader: `${who} wrote from the Investor Hub.`,
+      preheader: `${who} wrote from the Data Room.`,
       heading: 'New investor inquiry',
-      body: [`${who} wrote from the Investor Hub. Reply to this email to write back to them directly.`],
+      body: [`${who} wrote from the Data Room. Reply to this email to write back to them directly.`],
       details: [
         ['Name', inquiry.name],
         ['Firm or fund', inquiry.firm],

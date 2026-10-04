@@ -6,7 +6,7 @@ import { FOUNDER_PATH } from '@/content/constants';
 import { publicPath } from '@/content/paths';
 import { requireAdmin } from '@/server/auth/session';
 import { siteUrl } from '@/server/env';
-import { linksToInvestorHub } from '@/server/investor-hub';
+import { linksToDataRoom } from '@/server/data-room-access';
 import { isHttps } from '@/server/request';
 import { VISITOR_VIEW_COOKIE } from '@/server/visitor-view';
 
@@ -23,5 +23,5 @@ export async function setVisitorView(formData: FormData): Promise<void> {
   if (on) store.set(VISITOR_VIEW_COOKIE, '1', { httpOnly: true, secure: await isHttps(), sameSite: 'lax', path: '/' });
   else store.delete(VISITOR_VIEW_COOKIE);
   const path = publicPath(String(formData.get('path') ?? '/'));
-  redirect(on && linksToInvestorHub(path, siteUrl()) ? FOUNDER_PATH : path);
+  redirect(on && linksToDataRoom(path, siteUrl()) ? FOUNDER_PATH : path);
 }

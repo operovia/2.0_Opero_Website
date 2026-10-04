@@ -33,7 +33,7 @@ export function AddGuestsForm() {
       <Field
         name="role"
         label="They may see"
-        hint="A visitor sees the site. An investor sees the site and the Investor Hub. You can change this later from the list."
+        hint="A visitor sees the site. An investor sees the site and the Data Room. You can change this later from the list."
         error={state.fieldErrors?.role}
         required
       >

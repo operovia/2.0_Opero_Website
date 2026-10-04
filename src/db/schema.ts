@@ -1,5 +1,5 @@
 import { sql } from 'drizzle-orm';
-import { bigint, boolean, check, index, integer, jsonb, pgTable, text, timestamp, uniqueIndex, uuid } from 'drizzle-orm/pg-core';
+import { type AnyPgColumn, bigint, boolean, check, index, integer, jsonb, pgTable, text, timestamp, uniqueIndex, uuid } from 'drizzle-orm/pg-core';
 import type { SceneTable } from '../content/scene-table';
 import type { RichDoc } from '../lib/rich-text/types';
 import { questionTypes, surveyStatuses, type SurveyAnswers, type SurveyOption } from '../surveys/types';
@@ -260,6 +260,69 @@ export const media = pgTable('media', {
   uploadedBy: uuid('uploaded_by').references(() => adminUsers.id, { onDelete: 'set null' }),
   createdAt: createdAt(),
 });
+
+/* ------------------------------------------------------------------------ */
+/* Data Room: folders and documents shared with invited investors           */
+/* ------------------------------------------------------------------------ */
+
+export const dataRoomFolders = pgTable(
+  'data_room_folders',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    /** The folder this one sits in, or null at the top of the room. */
+    parentId: uuid('parent_id').references((): AnyPgColumn => dataRoomFolders.id, { onDelete: 'cascade' }),
+    name: text('name').notNull(),
+    /** Its place among its siblings; the room numbers folders first, then documents (src/lib/data-room.ts). */
+    position: integer('position').notNull().default(0),
+    createdBy: uuid('created_by').references(() => adminUsers.id, { onDelete: 'set null' }),
+    createdAt: createdAt(),
+    updatedAt: updatedAt(),
+  },
+  (t) => [index('data_room_folders_parent_idx').on(t.parentId)],
+);
+
+export const dataRoomDocuments = pgTable(
+  'data_room_documents',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    /** The folder it sits in, or null at the top of the room. */
+    folderId: uuid('folder_id').references(() => dataRoomFolders.id, { onDelete: 'cascade' }),
+    /** The name the room shows; starts as the file's name without its extension. */
+    title: text('title').notNull(),
+    filename: text('filename').notNull(),
+    /** Where the file is in storage: docs/<year>/<month>/<uuid>.<ext>. */
+    storageKey: text('storage_key').notNull().unique(),
+    contentType: text('content_type').notNull(),
+    size: integer('size').notNull(),
+    position: integer('position').notNull().default(0),
+    uploadedBy: uuid('uploaded_by').references(() => adminUsers.id, { onDelete: 'set null' }),
+    createdAt: createdAt(),
+    updatedAt: updatedAt(),
+  },
+  (t) => [index('data_room_documents_folder_idx').on(t.folderId)],
+);
+
+export const dataRoomEventActions = ['open', 'download'] as const;
+export type DataRoomEventAction = (typeof dataRoomEventActions)[number];
+
+/** A guest opening or downloading a document. Admins' own visits are not recorded. */
+export const dataRoomEvents = pgTable(
+  'data_room_events',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    documentId: uuid('document_id')
+      .notNull()
+      .references(() => dataRoomDocuments.id, { onDelete: 'cascade' }),
+    /** The guest, or null once they are taken off the list. */
+    inviteId: uuid('invite_id').references(() => guestInvites.id, { onDelete: 'set null' }),
+    /** Their address at the time, so the record outlives their place on the list. */
+    email: text('email').notNull().default(''),
+    action: text('action', { enum: dataRoomEventActions }).notNull(),
+    ip: text('ip').notNull().default(''),
+    createdAt: createdAt(),
+  },
+  (t) => [index('data_room_events_document_idx').on(t.documentId), index('data_room_events_invite_idx').on(t.inviteId)],
+);
 
 /* ------------------------------------------------------------------------ */
 /* Inquiries: demo requests, partner applications, investor inquiries       */

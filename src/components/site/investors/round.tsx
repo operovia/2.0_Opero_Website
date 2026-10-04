@@ -7,7 +7,7 @@ import { cn } from '@/lib/cn';
 import { clampAmount, formatCount, formatMoney, formatPercent, formatPrice, roundModel, type CapRow } from '@/lib/round';
 
 type Props = {
-  /** The round section of the Investor Hub: the copy and the figures, from the server page. */
+  /** The round section of the Data Room overview: the copy and the figures, from the server page. */
   content: SectionData<'investors', 'round'>;
 };
 

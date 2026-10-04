@@ -11,7 +11,7 @@ import { newInquiryCount } from '@/server/inquiries-admin';
 import { DatabaseNotice } from './database-notice';
 
 /** Admin sections that exist so far; the list grows as each section ships. */
-const enabled: NavKey[] = ['dashboard', 'inquiries', 'guests', 'content', 'console', 'surveys', 'media', 'settings', 'team', 'activity'];
+const enabled: NavKey[] = ['dashboard', 'inquiries', 'guests', 'room', 'content', 'console', 'surveys', 'media', 'settings', 'team', 'activity'];
 
 export default async function PanelLayout({ children }: LayoutProps<'/admin'>) {
   const { user } = await requireAdmin();

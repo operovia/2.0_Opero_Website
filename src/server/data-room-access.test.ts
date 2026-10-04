@@ -1,10 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { investorHubHidden, linksToFounder, linksToInvestorHub, siteClosed, visibleLinks, withVisibleLinks } from './investor-hub';
+import { dataRoomHidden, linksToFounder, linksToDataRoom, siteClosed, visibleLinks, withVisibleLinks } from './data-room-access';
 
 const site = 'https://opero.example';
 
 const founder = { label: 'Founder', href: '/founder' };
-const hub = { label: 'Investor Hub', href: '/investors' };
+const hub = { label: 'Data Room', href: '/data-room' };
+const oldHub = { label: 'Investor Hub', href: '/investors' };
+const files = { label: 'Documents', href: '/data-room/files' };
 const partners = { label: 'Design partners', href: '/partners' };
 const absoluteFounder = { label: 'Founder', href: 'https://opero.example/founder/' };
 const absoluteHub = { label: 'Investor Hub', href: 'https://opero.example/investors?from=nav' };
@@ -14,21 +16,21 @@ const visitor = { admin: false, role: 'visitor' } as const;
 const investor = { admin: false, role: 'investor' } as const;
 const admin = { admin: true, role: null } as const;
 
-describe('Investor Hub visibility', () => {
+describe('Data Room visibility', () => {
   it('is hidden from people without a key and from guests invited as visitors', () => {
-    expect(investorHubHidden(nobody)).toBe(true);
-    expect(investorHubHidden(visitor)).toBe(true);
+    expect(dataRoomHidden(nobody)).toBe(true);
+    expect(dataRoomHidden(visitor)).toBe(true);
   });
 
   it('shows to guests invited as investors and to signed-in admins', () => {
-    expect(investorHubHidden(investor)).toBe(false);
-    expect(investorHubHidden(admin)).toBe(false);
-    expect(investorHubHidden({ admin: true, role: 'visitor' })).toBe(false);
+    expect(dataRoomHidden(investor)).toBe(false);
+    expect(dataRoomHidden(admin)).toBe(false);
+    expect(dataRoomHidden({ admin: true, role: 'visitor' })).toBe(false);
   });
 
   it('is hidden from an admin viewing the site as a visitor', () => {
-    expect(investorHubHidden({ ...admin, asVisitor: true })).toBe(true);
-    expect(investorHubHidden({ ...admin, asVisitor: false })).toBe(false);
+    expect(dataRoomHidden({ ...admin, asVisitor: true })).toBe(true);
+    expect(dataRoomHidden({ ...admin, asVisitor: false })).toBe(false);
   });
 });
 
@@ -49,15 +51,27 @@ describe('a private site', () => {
   });
 });
 
-describe('the Investor Hub tab', () => {
-  it.each(['/investors', '/investors/', '/investors#talk', '/investors?from=nav', 'https://opero.example/investors'])('recognizes the hub at %j', (href) => {
-    expect(linksToInvestorHub(href, site)).toBe(true);
+describe('the Data Room tab', () => {
+  it.each([
+    '/data-room',
+    '/data-room/',
+    '/data-room/files',
+    '/data-room/files?folder=abc',
+    '/data-room#talk',
+    'https://opero.example/data-room',
+    '/investors',
+    '/investors/',
+    '/investors#talk',
+    '/investors?from=nav',
+    'https://opero.example/investors',
+  ])('recognizes the room, and the old Investor Hub address, at %j', (href) => {
+    expect(linksToDataRoom(href, site)).toBe(true);
     expect(linksToFounder(href, site)).toBe(false);
   });
 
   it.each(['/founder', '/founder/', '/founder#story', '/founder?from=nav', 'https://opero.example/founder'])('recognizes the Founder page at %j', (href) => {
     expect(linksToFounder(href, site)).toBe(true);
-    expect(linksToInvestorHub(href, site)).toBe(false);
+    expect(linksToDataRoom(href, site)).toBe(false);
   });
 
   it.each([
@@ -65,18 +79,21 @@ describe('the Investor Hub tab', () => {
     '/#platform',
     '#book-demo',
     '/investors-old',
+    '/data-rooms',
+    '/data-roomy/files',
     '/founders',
     'https://elsewhere.example/investors',
     'https://elsewhere.example/founder',
     'mailto:hello@operovia.com',
     'not a url at all ://',
   ])('leaves %j alone', (href) => {
-    expect(linksToInvestorHub(href, site)).toBe(false);
+    expect(linksToDataRoom(href, site)).toBe(false);
     expect(linksToFounder(href, site)).toBe(false);
   });
 
   it('shows the Founder tab and hides the hub tab while the hub is hidden', () => {
     expect(visibleLinks([partners, founder, hub], true, site)).toEqual([partners, founder]);
+    expect(visibleLinks([partners, oldHub, files, founder], true, site)).toEqual([partners, founder]);
   });
 
   it('shows the hub tab and hides the Founder tab while the hub is shown', () => {

@@ -5,7 +5,7 @@ import { LetterDialog } from './letter-dialog';
 
 /**
  * The founder's letter, behind the Read My Story button under the headline at
- * the top of the Investor Hub and the Founder page: the title, the letter, and
+ * the top of the Data Room overview and the Founder page: the title, the letter, and
  * the close, signed by hand in the signature face above the name and role,
  * with the Operovia logo beneath, as on the company's letterhead.
  */
