@@ -12,6 +12,7 @@ import { Container, Eyebrow } from '../layout-parts';
 import { SiteLink } from '../site-link';
 import { GoLightbox } from './go-lightbox';
 import { PhoneFrame } from './phone-frame';
+import { SwipeRow } from './swipe-row';
 
 const storeBadge = 'inline-flex h-14 min-w-44 flex-col justify-center rounded-xl border border-line-strong bg-surface px-5 text-left shadow-sm';
 
@@ -40,7 +41,7 @@ function StoreBadge({ href, label, platform }: { href: string; label: string; pl
  * OperoGo, the mobile app: the icon and the words, the two stores, the drawn
  * phone screens (scripts/go-shots) in iPhones, and what the app does. The
  * phones stand in a row on wide screens, two by two on tablets, and scroll
- * sideways on phones, snapping one at a time. Pressing a phone opens its
+ * sideways on phones, snapping one at a time; the features do the same. Pressing a phone opens its
  * screen large in the lightbox, where it can be zoomed.
  */
 export function Go({ content }: { content: SectionData<'home', 'go'> }) {
@@ -107,14 +108,21 @@ export function Go({ content }: { content: SectionData<'home', 'go'> }) {
           ))}
         </RevealGroup>
 
-        <RevealGroup as="ul" className="mt-20 grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
-          {content.features.map((feature, index) => (
-            <RevealItem as="li" key={`${feature.title}-${index}`} className="border-t border-line-strong pt-6">
-              <h3 className="text-base font-semibold text-fg">{feature.title}</h3>
-              <p className="mt-2 text-sm text-fg-muted">{feature.body}</p>
-            </RevealItem>
-          ))}
-        </RevealGroup>
+        {/* On phones the features stand in a row that scrolls sideways; from sm they take a grid. */}
+        <SwipeRow className="mt-20">
+          <RevealGroup as="ul" className="flex gap-6 max-sm:w-max sm:grid sm:grid-cols-2 sm:gap-x-8 sm:gap-y-10 lg:grid-cols-3">
+            {content.features.map((feature, index) => (
+              <RevealItem
+                as="li"
+                key={`${feature.title}-${index}`}
+                className="w-[72vw] max-w-72 shrink-0 snap-center border-t border-line-strong pt-6 sm:w-auto sm:max-w-none"
+              >
+                <h3 className="text-base font-semibold text-fg">{feature.title}</h3>
+                <p className="mt-2 text-sm text-fg-muted">{feature.body}</p>
+              </RevealItem>
+            ))}
+          </RevealGroup>
+        </SwipeRow>
       </Container>
       <GoLightbox screens={content.screens} />
     </section>

@@ -87,13 +87,13 @@ export function Platform({ content }: { content: SectionData<'home', 'platform'>
 
             <PlatformNetwork modules={content.modules.map((item) => item.module)} title={content.oppieTitle} detail={content.oppieDetail} />
 
-            {/* Stacked on phones, the cards hang on one line that shows in the gaps between them. */}
+            {/* On phones the cards stand in a row that scrolls sideways, edge to edge of the frame; from sm they take a grid. */}
             <RevealGroup
               as="ul"
-              className="relative isolate grid grid-cols-1 gap-4 max-sm:before:absolute max-sm:before:inset-y-0 max-sm:before:left-1/2 max-sm:before:-z-10 max-sm:before:w-px max-sm:before:bg-fg-subtle/40 sm:grid-cols-2 lg:grid-cols-5"
+              className="swipe-row flex snap-x snap-mandatory gap-4 overflow-x-auto max-sm:-mx-[var(--frame-pad)] max-sm:px-[var(--frame-pad)] max-sm:pb-2 sm:grid sm:grid-cols-2 sm:overflow-visible lg:grid-cols-5"
             >
               {content.modules.map((item) => (
-                <RevealItem as="li" key={item.module}>
+                <RevealItem as="li" key={item.module} className="w-[72vw] max-w-72 shrink-0 snap-center sm:w-auto sm:max-w-none">
                   {/* The whole card shows its module in the tour below (tour.tsx takes the press); without JavaScript the link still leads there. */}
                   <a
                     href={`#${TOUR_ID}`}
