@@ -55,11 +55,6 @@ const hero = section({
   description: 'The first screen: headline, button, and the Oppie console. Console questions and answers are edited under Oppie console.',
   fields: {
     headline: text('Headline', { max: 160, headline: true }),
-    accent: text('Word in the jewel colors', {
-      optional: true,
-      max: 30,
-      hint: 'One word of the headline set in the five jewel colors, left to right as under the wordmark. It must appear in the headline exactly as written here. Leave it empty for none.',
-    }),
     points: list(
       'Points',
       'Point',
@@ -80,7 +75,6 @@ const hero = section({
   },
   seed: {
     headline: 'Integrated Intelligent Property Management',
-    accent: 'Intelligent',
     points: [
       { text: 'One unified system to replace the patchwork of disconnected apps your teams run every day.' },
       { text: 'Anchored by a purpose-built property management core CRM.' },

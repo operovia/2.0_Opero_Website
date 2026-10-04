@@ -44,7 +44,7 @@ export function Hero({
           </div>
         ) : null}
         <h1 id="hero-title" className="hero-rise order-1 text-display-hero font-medium text-metal lg:col-start-1">
-          {renderHeadline(content.headline, content.accent)}
+          {renderHeadline(content.headline)}
         </h1>
         {/* After the headline on phones; beside the whole left column from lg, where it takes the four rows the column fills. */}
         <div data-testid="hero-oppie-card" className="hero-fade order-2 mt-4 lg:col-start-2 lg:row-span-4 lg:mt-0 [animation-delay:240ms]">
