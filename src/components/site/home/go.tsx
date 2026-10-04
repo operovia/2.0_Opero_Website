@@ -79,7 +79,7 @@ export function Go({ content }: { content: SectionData<'home', 'go'> }) {
         {/* The phones. On wide screens every other one stands a little lower, so the row reads as a hand of cards rather than a shelf. */}
         <RevealGroup
           as="ul"
-          className="go-phones mt-20 flex snap-x snap-mandatory gap-6 overflow-x-auto pb-4 max-sm:-mx-gutter max-sm:px-gutter sm:grid sm:grid-cols-2 sm:gap-8 sm:overflow-visible sm:pb-0 lg:grid-cols-4 lg:gap-6"
+          className="swipe-row mt-20 flex snap-x snap-mandatory gap-6 overflow-x-auto pb-4 max-sm:-mx-gutter max-sm:px-gutter sm:grid sm:grid-cols-2 sm:gap-8 sm:overflow-visible sm:pb-0 lg:grid-cols-4 lg:gap-6"
           stagger={0.1}
         >
           {content.screens.map((item, index) => (

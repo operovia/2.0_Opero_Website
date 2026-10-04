@@ -1284,10 +1284,11 @@
   outline: 2px solid var(--o-focus-ring);
   outline-offset: 4px;
 }
-.go-phones {
+/* A row that scrolls sideways on phones (the OperoGo phones, the tour's tabs and screens): no scrollbar; the snap points and the edges say where it goes. */
+.swipe-row {
   scrollbar-width: none;
 }
-.go-phones::-webkit-scrollbar {
+.swipe-row::-webkit-scrollbar {
   display: none;
 }
 

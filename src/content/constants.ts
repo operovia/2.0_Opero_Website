@@ -76,3 +76,13 @@ export const GO_SCREEN_LABELS = { home: 'Home', oppie: 'Oppie', inspection: 'Gui
 export type GoScreenName = keyof typeof GO_SCREEN_LABELS;
 /** The OperoGo section's anchor on the home page. */
 export const GO_PATH = '/#operogo';
+
+/**
+ * The product tour under the platform diagram: its anchor on the home page,
+ * and the key and name of its Core tab, which shows once a core screenshot
+ * exists (src/content/module-shots.ts).
+ */
+export const TOUR_ID = 'tour';
+export const TOUR_CORE_KEY = 'core';
+export const TOUR_CORE_LABEL = 'Core';
+export type TourKey = ModuleName | typeof TOUR_CORE_KEY;

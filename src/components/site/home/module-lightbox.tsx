@@ -4,19 +4,16 @@ import { ChevronLeft, ChevronRight, X, ZoomIn, ZoomOut } from 'lucide-react';
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import { BrandMark } from '@/components/brand/brand-mark';
-import { MODULE_LABELS, type ModuleName } from '@/content/constants';
-import { MODULE_SHOTS } from '@/content/module-shots';
 import { cn } from '@/lib/cn';
 import { closeButton as closeButtonClass, OUT, pillButton, useZoom } from './lightbox';
+import type { TourItem } from './tour';
 
-export type ModuleShot = { module: ModuleName; description: string; inside: string };
-
-type Props = { modules: ModuleShot[] };
+type Props = { items: TourItem[] };
 
 /**
- * The screenshots behind the module cards, in one native modal dialog: a link
- * with data-module-shot opens it on that module, the arrows, the dots and the
- * keyboard move between modules, Escape closes. The links point at the image
+ * The tour's screens large, in one native modal dialog: a link with
+ * data-module-shot (the tour's pictures) opens it on that screen, the arrows,
+ * the dots and the keyboard move between screens, Escape closes. The links point at the image
  * files themselves, so without JavaScript they still show the picture. The
  * dialog traps focus and returns it to the link afterwards.
  *
@@ -27,15 +24,15 @@ type Props = { modules: ModuleShot[] };
  * or the arrow keys; another click, the magnifying glass or Escape zooms out
  * (useZoom in lightbox.ts, shared with the OperoGo screens).
  */
-export function ModuleLightbox({ modules }: Props) {
+export function ModuleLightbox({ items }: Props) {
   const dialog = useRef<HTMLDialogElement>(null);
   const closeButton = useRef<HTMLButtonElement>(null);
   const [active, setActive] = useState(0);
   // Once opened, every screenshot is fetched, so moving between modules is instant.
   const [opened, setOpened] = useState(false);
-  const current = modules[active];
+  const current = items[active];
   const frame = useRef<HTMLDivElement>(null);
-  const zoomer = useZoom(frame, current ? MODULE_SHOTS[current.module].width / 2 : 0);
+  const zoomer = useZoom(frame, current ? current.shot.width / 2 : 0);
   const { zoom, setZoom } = zoomer;
 
   useEffect(() => {
@@ -43,7 +40,7 @@ export function ModuleLightbox({ modules }: Props) {
       if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
       const link = (event.target as Element | null)?.closest?.('a[data-module-shot]');
       if (!link) return;
-      const index = modules.findIndex((item) => item.module === link.getAttribute('data-module-shot'));
+      const index = items.findIndex((item) => item.key === link.getAttribute('data-module-shot'));
       if (index === -1) return;
       event.preventDefault();
       setActive(index);
@@ -54,9 +51,9 @@ export function ModuleLightbox({ modules }: Props) {
     };
     document.addEventListener('click', onClick);
     return () => document.removeEventListener('click', onClick);
-  }, [modules, setZoom]);
+  }, [items, setZoom]);
 
-  const count = modules.length;
+  const count = items.length;
   if (!current) return null;
 
   function show(index: number): void {
@@ -90,19 +87,19 @@ export function ModuleLightbox({ modules }: Props) {
           {/* The Opero logo is the heading. Sighted visitors read the module's name in the picture itself; screen readers hear it here. */}
           <h2 id="module-shot-title" className="flex min-w-0 items-center">
             <BrandMark name="opero" decorative className="h-7 sm:h-8" />
-            <span className="sr-only">{MODULE_LABELS[current.module]}</span>
+            <span className="sr-only">{current.label}</span>
           </h2>
           {count > 1 ? (
             <ol className="absolute top-1/2 left-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center gap-2" aria-label="Modules">
-              {modules.map((item, index) => (
-                <li key={item.module}>
+              {items.map((item, index) => (
+                <li key={item.key}>
                   <button
                     type="button"
                     onClick={() => show(index)}
                     aria-current={index === active ? 'true' : undefined}
                     className={cn('block size-2.5 rounded-full transition-colors', index === active ? 'bg-fg' : 'bg-fg-subtle/50 hover:bg-fg-muted')}
                   >
-                    <span className="sr-only">{MODULE_LABELS[item.module]}</span>
+                    <span className="sr-only">{item.label}</span>
                   </button>
                 </li>
               ))}
@@ -129,14 +126,14 @@ export function ModuleLightbox({ modules }: Props) {
               {...zoomer.frameProps}
             >
               {opened
-                ? modules.map((item, index) => {
+                ? items.map((item, index) => {
                     const shown = index === active;
                     const zoomed = shown && zoom.on;
                     return (
                       <Image
-                        key={item.module}
-                        src={MODULE_SHOTS[item.module]}
-                        alt={`A screen from ${MODULE_LABELS[item.module]}.`}
+                        key={item.key}
+                        src={item.shot}
+                        alt={`A screen from ${item.label}.`}
                         sizes={zoomer.sizes(zoomed)}
                         quality={85}
                         priority={shown}
@@ -156,7 +153,8 @@ export function ModuleLightbox({ modules }: Props) {
               id="module-shot-caption"
               className="col-start-2 row-start-1 text-center text-sm text-fg-muted shot-wide:col-span-2 shot-wide:col-start-1 shot-wide:text-left shot-wide:text-base"
             >
-              <span className="font-medium text-fg">{current.description}</span> {current.inside}
+              {current.description ? <span className="font-medium text-fg">{current.description} </span> : null}
+              {current.inside}
             </p>
             {count > 1 ? (
               <>
@@ -168,7 +166,7 @@ export function ModuleLightbox({ modules }: Props) {
                   <ChevronLeft className="size-4" aria-hidden />
                   <span>
                     <span className="sr-only">Previous module: </span>
-                    <span className="max-sm:sr-only">{MODULE_LABELS[modules[(active - 1 + count) % count]!.module]}</span>
+                    <span className="max-sm:sr-only">{items[(active - 1 + count) % count]!.label}</span>
                   </span>
                 </button>
                 <button
@@ -178,7 +176,7 @@ export function ModuleLightbox({ modules }: Props) {
                 >
                   <span>
                     <span className="sr-only">Next module: </span>
-                    <span className="max-sm:sr-only">{MODULE_LABELS[modules[(active + 1) % count]!.module]}</span>
+                    <span className="max-sm:sr-only">{items[(active + 1) % count]!.label}</span>
                   </span>
                   <ChevronRight className="size-4" aria-hidden />
                 </button>

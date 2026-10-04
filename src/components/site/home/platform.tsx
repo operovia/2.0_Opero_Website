@@ -1,29 +1,16 @@
+import { ArrowRight } from 'lucide-react';
 import { Reveal, RevealGroup, RevealItem } from '@/components/motion/reveal';
 import { BrandMark } from '@/components/brand/brand-mark';
-import { MODULE_LABELS } from '@/content/constants';
-import { MODULE_SHOTS } from '@/content/module-shots';
+import { MODULE_LABELS, TOUR_CORE_KEY, TOUR_CORE_LABEL, TOUR_ID } from '@/content/constants';
+import { CORE_SHOT, MODULE_SHOTS } from '@/content/module-shots';
 import type { SectionData } from '@/content/registry';
 import { cn } from '@/lib/cn';
 import { Container, Eyebrow, SectionIntro } from '../layout-parts';
 import { CoreJoin } from './core-join';
 import { ModuleLightbox } from './module-lightbox';
+import { moduleGlow, moduleJewel } from './module-style';
 import { PlatformNetwork } from './platform-network';
-
-const jewel = {
-  build: 'jewel-build',
-  studios: 'jewel-studios',
-  playbook: 'jewel-playbook',
-  university: 'jewel-university',
-  compass: 'jewel-compass',
-} as const;
-
-const glow = {
-  build: 'module-glow-build',
-  studios: 'module-glow-studios',
-  playbook: 'module-glow-playbook',
-  university: 'module-glow-university',
-  compass: 'module-glow-compass',
-} as const;
+import { Tour, type TourItem } from './tour';
 
 /** The lines of a multiline field, blank ones left out. */
 const lines = (text: string) =>
@@ -33,6 +20,23 @@ const lines = (text: string) =>
     .filter(Boolean);
 
 export function Platform({ content }: { content: SectionData<'home', 'platform'> }) {
+  // The tour's screens: the core first, once its screenshot exists, then the modules in the diagram's order. The lightbox shows the same list.
+  const core: TourItem[] = CORE_SHOT
+    ? [{ key: TOUR_CORE_KEY, label: TOUR_CORE_LABEL, shot: CORE_SHOT, description: '', inside: content.coreInside, video: '' }]
+    : [];
+  const items: TourItem[] = [
+    ...core,
+    ...content.modules.map((item) => ({
+      key: item.module,
+      label: MODULE_LABELS[item.module],
+      shot: MODULE_SHOTS[item.module],
+      jewel: moduleJewel[item.module],
+      description: item.description,
+      inside: item.inside,
+      video: item.video,
+    })),
+  ];
+
   return (
     <section id="platform" aria-labelledby="platform-title" className="scroll-mt-18 py-section">
       <Container>
@@ -90,23 +94,25 @@ export function Platform({ content }: { content: SectionData<'home', 'platform'>
             >
               {content.modules.map((item) => (
                 <RevealItem as="li" key={item.module}>
-                  {/* The whole card opens the module's screen in the lightbox, or, without JavaScript, the picture itself. */}
+                  {/* The whole card shows its module in the tour below (tour.tsx takes the press); without JavaScript the link still leads there. */}
                   <a
-                    href={MODULE_SHOTS[item.module].src}
-                    data-module-shot={item.module}
-                    title={content.lookInsideLabel}
+                    href={`#${TOUR_ID}`}
+                    data-tour={item.module}
                     className={cn(
-                      'module-card relative flex h-full flex-col overflow-hidden rounded-2xl border border-line bg-surface p-6 focus-visible:ring-2 focus-visible:ring-focus-ring focus-visible:ring-offset-2 focus-visible:ring-offset-canvas focus-visible:outline-none',
-                      glow[item.module],
+                      'module-card group relative flex h-full flex-col overflow-hidden rounded-2xl border border-line bg-surface p-6 focus-visible:ring-2 focus-visible:ring-focus-ring focus-visible:ring-offset-2 focus-visible:ring-offset-canvas focus-visible:outline-none',
+                      moduleGlow[item.module],
                     )}
                   >
-                    <span aria-hidden className={cn('relative block size-8 rounded-full shadow-md', jewel[item.module])} />
+                    <span aria-hidden className={cn('relative block size-8 rounded-full shadow-md', moduleJewel[item.module])} />
                     <h3 className="mt-7">
                       <BrandMark name={`module-${item.module}`} className="h-6" />
                     </h3>
                     <p className="mt-3 text-sm text-fg-muted">{item.description}</p>
-                    <span className="sr-only">
-                      {content.lookInsideLabel}: {MODULE_LABELS[item.module]}
+                    {/* The cue: sighted visitors read it, screen readers hear which module it shows. */}
+                    <span className="mt-auto flex items-center gap-1 pt-5 text-sm font-medium text-fg">
+                      {content.seeItLabel}
+                      <span className="sr-only">: {MODULE_LABELS[item.module]}</span>
+                      <ArrowRight aria-hidden className="size-4 transition-transform duration-200 group-hover:translate-x-0.5" />
                     </span>
                   </a>
                 </RevealItem>
@@ -114,7 +120,12 @@ export function Platform({ content }: { content: SectionData<'home', 'platform'>
             </RevealGroup>
           </div>
         </Reveal>
-        <ModuleLightbox modules={content.modules} />
+
+        {/* The tour: every screen large, one tab per module, under the diagram whose cards point at it. */}
+        <Reveal className="mt-14 sm:mt-20">
+          <Tour items={items} lookInsideLabel={content.lookInsideLabel} />
+        </Reveal>
+        <ModuleLightbox items={items} />
       </Container>
     </section>
   );

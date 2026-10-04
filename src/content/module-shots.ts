@@ -14,3 +14,12 @@ import type { ModuleName } from './constants';
  * the old one. Drawn at 1440 x 900 CSS pixels; the files are twice that.
  */
 export const MODULE_SHOTS: Record<ModuleName, StaticImageData> = { build, studios, playbook, university, compass };
+
+/**
+ * The core CRM screen for the tour's Core tab: a property, lease or rent roll
+ * screen drawn like the module screens, 2880 x 1800. None exists yet, so the
+ * tab stays hidden. Render one to src/assets/modules/core.png, import it here
+ * in place of null, and the tab shows, captioned from Content, Home, Platform
+ * (Core screenshot caption).
+ */
+export const CORE_SHOT: StaticImageData | null = null;

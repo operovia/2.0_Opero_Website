@@ -83,7 +83,8 @@ describe('content saved before a field existed', () => {
 
   it('keeps every saved value, empty ones included', () => {
     const merged = withSeed(def.fields, seed, { ...saved, modules: [{ module: 'compass', description: 'EOS.', inside: '' }] });
-    expect(merged.modules).toEqual([{ module: 'compass', description: 'EOS.', inside: '' }]);
+    // The empty caption stays empty; only the field the save predates (the recording link) comes from the seed.
+    expect(merged.modules).toEqual([{ module: 'compass', description: 'EOS.', inside: '', video: '' }]);
   });
 
   it('matches by place in a list without a choice', () => {
