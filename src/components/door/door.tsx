@@ -410,11 +410,19 @@ export function Door({ content, contactEmail, alreadyIn, publicSite, prefill, gr
           )}
         </div>
 
+        {/* The logo stands alone, centered like the rest of the door, unless the public site's line shares the row. */}
         <m.div
           {...gone}
-          className="door-fade flex w-full flex-col items-center gap-3 py-10 text-center [animation-delay:700ms] sm:flex-row sm:items-end sm:justify-between sm:text-left"
+          className={cn(
+            'door-fade flex w-full flex-col items-center gap-3 py-10 text-center [animation-delay:700ms] sm:flex-row sm:items-end sm:text-left',
+            publicSite ? 'sm:justify-between' : 'sm:justify-center',
+          )}
         >
-          <p className="text-micro font-semibold text-fg-subtle uppercase">{content.companyLine}</p>
+          {/* The company: the Operovia logo on a soft pool of light, read aloud as the company line. */}
+          <p className="door-maker">
+            <BrandMark name="operovia" decorative className="h-6 sm:h-7" />
+            <span className="sr-only">{content.companyLine}</span>
+          </p>
           {publicSite ? (
             <p className="text-sm text-fg-subtle">
               {content.publicLine}{' '}

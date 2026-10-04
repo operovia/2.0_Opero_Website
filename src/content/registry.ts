@@ -1090,7 +1090,7 @@ const door = section({
     helpLinkLabel: text('Lost invitation link', { max: 40, hint: 'Opens an email to the contact address in Settings.' }),
     publicLine: text('Public site line', { max: 80 }),
     publicLinkLabel: text('Public site link', { max: 40, hint: 'Goes to the home page.' }),
-    companyLine: text('Company line', { max: 80 }),
+    companyLine: text('Company line', { max: 80, hint: 'Not shown: the Operovia logo stands at the foot of the door, and screen readers read this in its place.' }),
     alreadyInTitle: text('Already in: title', { max: 120, headline: true, hint: 'Shown to a guest whose browser already holds the key.' }),
     alreadyInIntro: text('Already in: line', { max: 200 }),
     alreadyInButton: text('Already in: button', { max: 40 }),

@@ -266,6 +266,8 @@ export const tokens = {
     door: {
       glow: 14,
       band: 40,
+      /** The soft pool of light behind the Operovia logo at the foot of the door. */
+      makerGlow: 18,
     },
     /**
      * The iPhone the OperoGo screens stand in (src/components/site/home/phone-frame.tsx):

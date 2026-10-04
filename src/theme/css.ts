@@ -112,6 +112,7 @@ function sharedDeclarations(): string {
   vars['door-iris-scale'] = tokens.motion.door.irisScale;
   vars['door-glow'] = `${tokens.brand.door.glow}%`;
   vars['door-band'] = `${tokens.brand.door.band}%`;
+  vars['door-maker-glow'] = `${tokens.brand.door.makerGlow}%`;
   // The red carpet (src/components/site/carpet.tsx): how long it waits and unrolls, on the door and under the home page's greeting.
   for (const [key, value] of Object.entries(tokens.motion.carpet)) vars[`carpet-${kebab(key)}`] = `${value}ms`;
   // The OperoGo phone (src/components/site/home/phone-frame.tsx): its glass and its camera, the same on both themes.

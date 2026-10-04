@@ -890,6 +890,20 @@
     animation-delay: 0ms !important;
   }
 }
+/* The Operovia logo at the foot of the door, on a soft pool of light so it stands out from the canvas. */
+.door-maker {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+}
+.door-maker::before {
+  content: '';
+  position: absolute;
+  inset: -150% -45%;
+  z-index: -1;
+  border-radius: var(--o-radius-full);
+  background: radial-gradient(closest-side, color-mix(in oklab, var(--o-fg) var(--o-door-maker-glow), transparent), transparent);
+}
 /* The box-less field keeps an edge in high contrast, and the point stays lit. */
 @media (forced-colors: active) {
   .door-input {
