@@ -890,7 +890,12 @@
     animation-delay: 0ms !important;
   }
 }
-/* The Operovia logo at the foot of the door, on a soft pool of light so it stands out from the canvas. */
+/*
+ * The Operovia logo at the foot of the door, on a soft pool of light so it
+ * stands out from the canvas: an ellipse centered on the logo, as wide as a
+ * phone allows and no wider than on a desktop, fading out gently in steps.
+ * The door's frame clips it at the bottom edge, so the page never grows.
+ */
 .door-maker {
   position: relative;
   isolation: isolate;
@@ -899,10 +904,21 @@
 .door-maker::before {
   content: '';
   position: absolute;
-  inset: -150% -45%;
+  top: 50%;
+  left: 50%;
   z-index: -1;
-  border-radius: var(--o-radius-full);
-  background: radial-gradient(closest-side, color-mix(in oklab, var(--o-fg) var(--o-door-maker-glow), transparent), transparent);
+  width: min(calc(var(--o-space-unit) * 120), 92vw);
+  aspect-ratio: 12 / 5;
+  translate: -50% -50%;
+  background: radial-gradient(
+    closest-side,
+    color-mix(in oklab, var(--o-fg) var(--o-door-maker-glow), transparent) 0%,
+    color-mix(in oklab, var(--o-fg) calc(var(--o-door-maker-glow) * 0.75), transparent) 22%,
+    color-mix(in oklab, var(--o-fg) calc(var(--o-door-maker-glow) * 0.45), transparent) 45%,
+    color-mix(in oklab, var(--o-fg) calc(var(--o-door-maker-glow) * 0.2), transparent) 68%,
+    color-mix(in oklab, var(--o-fg) calc(var(--o-door-maker-glow) * 0.06), transparent) 86%,
+    transparent 100%
+  );
 }
 /* The box-less field keeps an edge in high contrast, and the point stays lit. */
 @media (forced-colors: active) {
