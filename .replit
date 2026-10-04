@@ -16,3 +16,19 @@ run = ["npm", "run", "start"]
 [[ports]]
 localPort = 3000
 externalPort = 80
+
+# The Run button: the dev server, the same as `npm run dev` in the Shell.
+# Newer Replit workspaces show a Run button only for a workflow. Do not press
+# it while a Claude Code session is serving the site (see CLAUDE.md).
+[workflows]
+runButton = "Site"
+
+[[workflows.workflow]]
+name = "Site"
+mode = "sequential"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run dev"
+waitForPort = 3000
