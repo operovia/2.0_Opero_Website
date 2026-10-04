@@ -52,7 +52,8 @@ export const moduleOptions = [
 
 const hero = section({
   label: 'Hero',
-  description: 'The first screen: headline, button, and the Oppie console. Console questions and answers are edited under Oppie console.',
+  description:
+    'The first screen: the headline, the points, the figures (the proof stats with a strip label) and the Oppie console. Console questions and answers are edited under Oppie console.',
   fields: {
     headline: text('Headline', { max: 160, headline: true }),
     points: list(
@@ -61,9 +62,6 @@ const hero = section({
       { text: text('Line', { max: 160 }) },
       { min: 1, max: 4, hint: 'A short list under the headline, in place of a paragraph.' },
     ),
-    buttonLabel: text('Button label', { max: 40 }),
-    buttonTarget: link('Button link', { hint: buttonTargetHint }),
-    supportingLine: text('Line under the button', { max: 200 }),
     consoleFooterLeft: text('Console footer, first line', { max: 60, hint: 'Shown in capitals.' }),
     consoleFooterRight: text('Console footer, second line', { max: 60, hint: 'Shown in capitals.' }),
     consoleNote: text('Console note', { optional: true, max: 80, hint: 'Small print under the console. Leave empty to hide it.' }),
@@ -80,9 +78,6 @@ const hero = section({
       { text: 'Anchored by a purpose-built property management core CRM.' },
       { text: 'Harnessed AI, built in from the ground up, with Oppie, your AI assistant.' },
     ],
-    buttonLabel: 'Book a demo',
-    buttonTarget: DEMO_TARGET,
-    supportingLine: 'Built by operators inside a working commercial property management firm. Not a software lab.',
     consoleFooterLeft: 'Ask in plain English',
     consoleFooterRight: 'Answers from your live data',
     consoleNote: 'Illustrative data. You decide what Oppie can see and do.',
@@ -332,10 +327,10 @@ const proof = section({
       {
         value: text('Value', { max: 30, hint: 'The figure, shown large: 100+, for example.' }),
         label: text('Label', { max: 80, hint: 'What the figure counts, shown small under it: People work in it daily, for example.' }),
-        short: text('Strip label', {
+        short: text('Hero label', {
           optional: true,
           max: 40,
-          hint: 'A few words after the figure in the strip under the headline on the home page: daily users, for example. Leave it empty to keep this stat out of the strip.',
+          hint: 'A few words under the figure where it stands in the hero, two by two under the points: daily users, for example. Leave it empty to keep this stat out of the hero.',
         }),
       },
       { min: 1, max: 6 },

@@ -2,7 +2,7 @@
 /**
  * The website review's layout check (dev only): the hero and the page at the
  * review's seven viewports. For each it reports whether the headline, the
- * bullets, the Book a demo button and the whole Oppie card fit on the first
+ * bullets, the figures and the whole Oppie card fit on the first
  * screen, whether anything scrolls sideways, and how tall the platform and
  * OperoGo sections and the page are, and saves a first-frame and a settled
  * screenshot.
@@ -78,7 +78,7 @@ for (const [width, height] of SIZES) {
       hscroll: document.documentElement.scrollWidth > window.innerWidth,
       h1: box('#hero-title'),
       bullets: box('[data-testid="hero-bullets"]'),
-      cta: box('[data-testid="hero-cta"]'),
+      stats: box('[data-testid="hero-stats"]'),
       card: box('[data-testid="hero-oppie-card"]'),
       platformH: height('#platform'),
       operogoH: height('#operogo'),
@@ -90,7 +90,7 @@ for (const [width, height] of SIZES) {
   console.log(`${width}x${height}`, {
     h1: fits('h1'),
     bullets: fits('bullets'),
-    cta: fits('cta'),
+    stats: fits('stats'),
     card: fits('card'),
     cardTop: m.card ? m.card.top : null,
     cardBottom: m.card ? m.card.bottom : null,

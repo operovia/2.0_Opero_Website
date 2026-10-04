@@ -5,19 +5,19 @@ import { fillName } from '@/lib/greeting';
 import { renderHeadline } from '@/lib/headline';
 import { Aurora } from '../aurora';
 import { Carpet } from '../carpet';
-import { Container, SiteButton } from '../layout-parts';
+import { Container } from '../layout-parts';
 import { OppieConsole } from '../oppie-console';
 
 /**
- * The first screen: the headline, the points, the button, and the Oppie
+ * The first screen: the headline, the points, the figures, and the Oppie
  * console. One grid in two orders: on phones the headline, then the card,
- * then the points and the button, so the headline and the whole card share
+ * then the points and the figures, so the headline and the whole card share
  * the first screen; from lg the card stands in a second column beside the
  * whole left stack. The data-testid hooks are for the layout checks
  * (scripts/check-layout.mjs). `greeting`: the welcome name of the guest
  * looking, from the guest list, or empty for everyone else. `stats`: the
- * proof section's stats, of which those with a strip label make the slim
- * strip under the hero, so the two never drift apart.
+ * proof section's stats, of which those with a strip label stand two by two
+ * under the points, so the two never drift apart.
  */
 export function Hero({
   content,
@@ -30,7 +30,7 @@ export function Hero({
   greeting: string;
   stats: SectionData<'home', 'proof'>['stats'];
 }) {
-  const strip = stats.filter((stat) => stat.short);
+  const figures = stats.filter((stat) => stat.short);
   return (
     <section aria-labelledby="hero-title" data-door-hero className="relative isolate -mt-18 overflow-hidden pt-18">
       {/* A guest arriving through the front door lands here; the veil holds this first frame until the hero has mounted. */}
@@ -46,8 +46,8 @@ export function Hero({
         <h1 id="hero-title" className="hero-rise order-1 text-display-hero font-medium text-metal lg:col-start-1">
           {renderHeadline(content.headline)}
         </h1>
-        {/* After the headline on phones; beside the whole left column from lg, where it takes the four rows the column fills. */}
-        <div data-testid="hero-oppie-card" className="hero-fade order-2 mt-4 lg:col-start-2 lg:row-span-4 lg:mt-0 [animation-delay:240ms]">
+        {/* After the headline on phones; beside the whole left column from lg, where it takes the three rows the column fills. */}
+        <div data-testid="hero-oppie-card" className="hero-fade order-2 mt-4 lg:col-start-2 lg:row-span-3 lg:mt-0 [animation-delay:240ms]">
           <OppieConsole
             scenes={scenes}
             labels={{
@@ -65,29 +65,18 @@ export function Hero({
             </li>
           ))}
         </ul>
-        <div className="hero-fade order-4 mt-8 lg:col-start-1 [animation-delay:120ms]">
-          <SiteButton href={content.buttonTarget} size="lg" testId="hero-cta">
-            {content.buttonLabel}
-          </SiteButton>
-        </div>
-        <p className="hero-fade order-5 mt-5 max-w-md text-sm text-fg-subtle lg:col-start-1 [animation-delay:180ms]">{content.supportingLine}</p>
-      </Container>
-      {strip.length ? (
-        <Container className="hero-fade pb-10 lg:pb-14 [animation-delay:300ms]">
-          {/* The proof strip: the same figures as the proof section, one slim row on wide screens, two by two on phones, where each label stands under its figure. */}
-          <ul
-            data-testid="proof-strip"
-            className="grid grid-cols-2 gap-x-6 gap-y-3 border-t border-line pt-6 sm:flex sm:flex-wrap sm:divide-x sm:divide-line sm:gap-y-2"
-          >
-            {strip.map((stat, i) => (
-              <li key={i} className="flex flex-col gap-0.5 text-sm text-fg-muted sm:flex-row sm:items-baseline sm:gap-2 sm:px-6 sm:first:pl-0">
-                <span className="text-base font-semibold text-fg tabular-nums">{stat.value}</span>
-                <span>{stat.short}</span>
+        {/* The figures: the same as the proof section's, two by two, each label under its figure. */}
+        {figures.length ? (
+          <ul data-testid="hero-stats" className="hero-fade order-4 mt-8 grid max-w-xl grid-cols-2 gap-x-6 gap-y-5 lg:col-start-1 [animation-delay:120ms]">
+            {figures.map((stat, i) => (
+              <li key={i} className="border-t border-line pt-4">
+                <p className="text-2xl font-semibold text-fg tabular-nums">{stat.value}</p>
+                <p className="mt-1 text-sm text-fg-muted">{stat.short}</p>
               </li>
             ))}
           </ul>
-        </Container>
-      ) : null}
+        ) : null}
+      </Container>
     </section>
   );
 }
