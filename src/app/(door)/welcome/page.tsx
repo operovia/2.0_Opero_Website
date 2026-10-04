@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Door } from '@/components/door/door';
 import { DOOR_EMAIL_PARAM, DOOR_INVITE_PARAM } from '@/content/constants';
+import { openGraph } from '@/content/metadata';
 import { getPage, getPublicSettings } from '@/content/store';
 import { getAccess } from '@/server/entry';
 import { siteUrl } from '@/server/env';
@@ -13,6 +14,9 @@ export async function generateMetadata(): Promise<Metadata> {
     metadataBase: new URL(siteUrl()),
     title: `${door.metaTitle} | ${settings.siteName}`,
     description: door.metaDescription,
+    // A shared link to the site opens on the door while the site is private, so the preview shows the site's own title, description and picture.
+    openGraph: await openGraph({ title: settings.homeMetaTitle, description: settings.homeMetaDescription, url: '/' }),
+    twitter: { card: 'summary_large_image' },
     robots: { index: false, follow: false },
   };
 }
@@ -35,7 +39,16 @@ export async function generateMetadata(): Promise<Metadata> {
  * greeting.
  */
 export default async function WelcomePage({ searchParams }: PageProps<'/welcome'>) {
-  const [{ door }, { settings }, access, guest, params] = await Promise.all([getPage('welcome'), getPublicSettings(), getAccess(), getGuest(), searchParams]);
+  const [{ door }, { footer }, { settings }, access, guest, params] = await Promise.all([
+    getPage('welcome'),
+    getPage('site'),
+    getPublicSettings(),
+    getAccess(),
+    getGuest(),
+    searchParams,
+  ]);
+  // The privacy notice's link, as the site's footer has it; the notice is open to everyone.
+  const privacy = footer.links.find((link) => link.href === '/privacy') ?? null;
   const token = params[DOOR_INVITE_PARAM];
   const invited = await findInviteByLink(token);
   const preview = access.admin && invited !== null;
@@ -46,6 +59,7 @@ export default async function WelcomePage({ searchParams }: PageProps<'/welcome'
     <Door
       content={door}
       contactEmail={settings.contactEmail}
+      privacy={privacy}
       alreadyIn={alreadyIn}
       publicSite={!settings.privateSite}
       prefill={invited?.email ?? doorPrefill(params[DOOR_EMAIL_PARAM])}

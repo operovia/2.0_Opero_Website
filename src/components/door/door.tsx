@@ -74,6 +74,8 @@ const dissolve = { duration: seconds(duration.slow), ease: ease.standard };
 type Props = {
   content: Content;
   contactEmail: string;
+  /** The privacy notice's link from the site's footer, for the foot of the door; none when the footer has none. */
+  privacy: { label: string; href: string } | null;
   alreadyIn: boolean;
   publicSite: boolean;
   prefill: string;
@@ -92,7 +94,7 @@ type Props = {
  * canvas, and the veil (src/components/door/door-veil.tsx) takes over at the
  * exact spot of the mark before the home page is pushed.
  */
-export function Door({ content, contactEmail, alreadyIn, publicSite, prefill, greeting, preview, destination }: Props) {
+export function Door({ content, contactEmail, privacy, alreadyIn, publicSite, prefill, greeting, preview, destination }: Props) {
   const [state, formAction] = useActionState(enterDoor, idleState);
   // Read once: the action's cookie write re-renders the page, and nothing on screen may change under the guest mid-choreography.
   const [inside] = useState(alreadyIn);
@@ -410,12 +412,12 @@ export function Door({ content, contactEmail, alreadyIn, publicSite, prefill, gr
           )}
         </div>
 
-        {/* The logo stands alone, centered like the rest of the door, unless the public site's line shares the row. */}
+        {/* The logo stands alone, centered like the rest of the door, unless the public site's line or the privacy link shares the row. */}
         <m.div
           {...gone}
           className={cn(
             'door-fade flex w-full flex-col items-center gap-3 py-10 text-center [animation-delay:700ms] sm:flex-row sm:items-end sm:text-left',
-            publicSite ? 'sm:justify-between' : 'sm:justify-center',
+            publicSite || privacy ? 'sm:justify-between' : 'sm:justify-center',
           )}
         >
           {/* The company: the Operovia logo on a soft pool of light, read aloud as the company line. */}
@@ -423,13 +425,24 @@ export function Door({ content, contactEmail, alreadyIn, publicSite, prefill, gr
             <BrandMark name="operovia" decorative className="h-6 sm:h-7" />
             <span className="sr-only">{content.companyLine}</span>
           </p>
-          {publicSite ? (
-            <p className="text-sm text-fg-subtle">
-              {content.publicLine}{' '}
-              <Link href="/" prefetch={false} className={linkStyle}>
-                {content.publicLinkLabel}
-              </Link>
-            </p>
+          {publicSite || privacy ? (
+            <div className="flex flex-col items-center gap-1 text-sm text-fg-subtle sm:items-end">
+              {publicSite ? (
+                <p>
+                  {content.publicLine}{' '}
+                  <Link href="/" prefetch={false} className={linkStyle}>
+                    {content.publicLinkLabel}
+                  </Link>
+                </p>
+              ) : null}
+              {privacy ? (
+                <p>
+                  <a href="/privacy" className={linkStyle}>
+                    {privacy.label}
+                  </a>
+                </p>
+              ) : null}
+            </div>
           ) : null}
         </m.div>
       </div>

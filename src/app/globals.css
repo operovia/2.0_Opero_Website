@@ -992,6 +992,8 @@
 }
 .door-maker::before {
   content: '';
+  /* A light only: on phones it falls over the lines under the logo, which must stay pressable. */
+  pointer-events: none;
   position: absolute;
   top: 50%;
   left: 50%;
