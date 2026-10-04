@@ -318,6 +318,11 @@ const proof = section({
       {
         value: text('Value', { max: 30, hint: 'The figure, shown large: 100+, for example.' }),
         label: text('Label', { max: 80, hint: 'What the figure counts, shown small under it: People work in it daily, for example.' }),
+        short: text('Strip label', {
+          optional: true,
+          max: 40,
+          hint: 'A few words after the figure in the strip under the headline on the home page: daily users, for example. Leave it empty to keep this stat out of the strip.',
+        }),
       },
       { min: 1, max: 6 },
     ),
@@ -329,9 +334,10 @@ const proof = section({
       "Opero was built inside the founder's former company, a commercial and residential property management firm, where it runs the business every day: leasing, property management, facilities, projects, training, meetings. Seventy-plus people work in it. Six figures of annual software spend, replaced. Every feature exists because an operator needed it.",
     ),
     stats: [
-      { value: '70+', label: 'People work in it daily' },
-      { value: 'Six figures', label: 'Annual software spend replaced' },
-      { value: 'Every day', label: 'Running a real portfolio, live' },
+      { value: '100+', label: 'People work in it daily', short: 'daily users' },
+      { value: '2.5M+', label: 'Square feet live', short: 'sq ft live' },
+      { value: '850+', label: 'Residential units live', short: 'residential units' },
+      { value: '$100K+', label: 'Licensing fees saved each year', short: 'a year in licensing fees replaced' },
     ],
   },
 });

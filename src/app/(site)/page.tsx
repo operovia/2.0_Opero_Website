@@ -31,7 +31,7 @@ export default async function HomePage({ searchParams }: PageProps<'/'>) {
   ]);
   return (
     <>
-      <Hero content={home.hero} scenes={scenes} greeting={greeting} />
+      <Hero content={home.hero} scenes={scenes} greeting={greeting} stats={home.proof.stats} />
       <Problem content={home.problem} />
       <Platform content={home.platform} />
       <OppieSection content={home.oppie} />
