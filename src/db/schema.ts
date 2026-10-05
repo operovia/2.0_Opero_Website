@@ -95,6 +95,30 @@ export const rateLimits = pgTable('rate_limits', {
 /* Guests: the addresses the front door lets in, and their sessions        */
 /* ------------------------------------------------------------------------ */
 
+/**
+ * Companies on the guest list: everyone with an address at the domain may
+ * come in, after confirming that address by email (guestConfirmations). Each
+ * person who does becomes a guest of their own, with the company's role and
+ * welcome name; removing the company removes them all.
+ */
+export const guestDomains = pgTable(
+  'guest_domains',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    /** The company's email domain: lowercase, without the @, like example.com. */
+    domain: text('domain').notNull(),
+    /** The owner's own note about who this is. */
+    note: text('note').notNull().default(''),
+    /** What everyone who comes in through it may see; its people follow a change at once. */
+    role: text('role', { enum: GUEST_ROLES }).notNull().default('visitor'),
+    /** The name the door and the home page welcome its people by, or empty. */
+    greeting: text('greeting').notNull().default(''),
+    invitedBy: uuid('invited_by').references(() => adminUsers.id, { onDelete: 'set null' }),
+    createdAt: createdAt(),
+  },
+  (t) => [uniqueIndex('guest_domains_domain_key').on(t.domain)],
+);
+
 export const guestInvites = pgTable(
   'guest_invites',
   {
@@ -113,9 +137,37 @@ export const guestInvites = pgTable(
     greeting: text('greeting').notNull().default(''),
     /** The secret in their personal link (/welcome?invite=): 32 random bytes. The link fills in their address and greets them; null until made. */
     linkToken: text('link_token'),
+    /** The company they came in through, or null for an address the owner added. Their role and welcome name follow the company's. */
+    domainId: uuid('domain_id').references(() => guestDomains.id, { onDelete: 'cascade' }),
     createdAt: createdAt(),
   },
-  (t) => [uniqueIndex('guest_invites_email_key').on(t.email), uniqueIndex('guest_invites_link_token_key').on(t.linkToken)],
+  (t) => [
+    uniqueIndex('guest_invites_email_key').on(t.email),
+    uniqueIndex('guest_invites_link_token_key').on(t.linkToken),
+    index('guest_invites_domain_idx').on(t.domainId),
+  ],
+);
+
+/**
+ * The one-time links the door emails to someone at a company on the list.
+ * Opening one fills in their address at the door, and entering it there lets
+ * them in, once, within a day; the guest they become is made then.
+ */
+export const guestConfirmations = pgTable(
+  'guest_confirmations',
+  {
+    /** SHA-256 of the secret in the emailed link; the secret itself only goes to the mailbox. */
+    id: text('id').primaryKey(),
+    /** The address the link was sent to, lowercase: only it can come in with the link. */
+    email: text('email').notNull(),
+    domainId: uuid('domain_id')
+      .notNull()
+      .references(() => guestDomains.id, { onDelete: 'cascade' }),
+    expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
+    usedAt: timestamp('used_at', { withTimezone: true }),
+    createdAt: createdAt(),
+  },
+  (t) => [index('guest_confirmations_domain_idx').on(t.domainId)],
 );
 
 export const guestSessions = pgTable(

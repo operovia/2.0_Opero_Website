@@ -40,6 +40,17 @@ export const DOOR_EMAIL_PARAM = 'email';
  */
 export const DOOR_INVITE_PARAM = 'invite';
 
+/**
+ * The query parameter of the one-time link the door emails to someone at a
+ * company on the guest list: /welcome?confirm= and a secret of 32 random
+ * bytes. The door fills in the address it was sent to, and the secret rides
+ * along in a hidden field of the same name, so entering there lets them in.
+ */
+export const DOOR_CONFIRM_PARAM = 'confirm';
+
+/** What the door answers, in FormState.message of a success, when it emailed a link instead of opening. */
+export const DOOR_SENT = 'sent';
+
 /** The longest welcome name the guest list takes. */
 export const GREETING_MAX = 60;
 

@@ -13,7 +13,7 @@ import { Eyebrow, SiteButton } from '@/components/site/layout-parts';
 import { Light } from '@/components/site/light';
 import { SpamTraps, stampElapsed } from '@/components/site/spam-traps';
 import { Input } from '@/components/ui/field';
-import { DOOR_ANSWERS, DOOR_ENHANCED_FIELD, DOOR_MIN_FILL_MS, type DoorAnswer } from '@/content/constants';
+import { DOOR_ANSWERS, DOOR_CONFIRM_PARAM, DOOR_ENHANCED_FIELD, DOOR_MIN_FILL_MS, DOOR_SENT, type DoorAnswer } from '@/content/constants';
 import type { SectionData } from '@/content/registry';
 import { cn } from '@/lib/cn';
 import { idleState, type FormState } from '@/lib/forms';
@@ -31,7 +31,7 @@ const WARMTH_HOLD = 0.5;
 
 type Content = SectionData<'welcome', 'door'>;
 type Phase = 'idle' | 'checking' | 'open' | 'gone';
-type Status = '' | 'checking' | 'still' | 'welcome';
+type Status = '' | 'checking' | 'still' | 'welcome' | 'sent';
 type Answer = { code: DoorAnswer; wait: string };
 
 const isAnswer = (code: string): code is DoorAnswer => (DOOR_ANSWERS as readonly string[]).includes(code);
@@ -40,6 +40,11 @@ const isAnswer = (code: string): code is DoorAnswer => (DOOR_ANSWERS as readonly
 function answerFrom(state: FormState): Answer | null {
   if (state.status !== 'error' || !state.message) return null;
   return { code: isAnswer(state.message) ? state.message : 'trouble', wait: state.values?.wait ?? '' };
+}
+
+/** The address the door emailed a link to, if that is what a returned state says; otherwise empty. */
+function sentFrom(state: FormState): string {
+  return state.status === 'success' && state.message === DOOR_SENT ? (state.values?.email ?? '').trim() : '';
 }
 
 /** Whether the value has the shape of an address: an @ with a dot somewhere after it. No claim of validity. */
@@ -69,7 +74,9 @@ const dissolve = { duration: seconds(duration.slow), ease: ease.standard };
  * `greeting`: the welcome name of the guest whose personal link this is, or empty; with one the door
  * greets them by it and rolls out the red carpet. `preview`: a signed-in admin is looking at a guest's
  * personal link, and entering plays the door without counting as the guest's visit. `destination`:
- * where the door opens onto.
+ * where the door opens onto. `confirm`: the secret of the link the door emailed to someone at a
+ * company on the list, sent back with the address it filled in; `expired`: the page was opened from
+ * such a link that no longer works.
  */
 type Props = {
   content: Content;
@@ -80,6 +87,8 @@ type Props = {
   publicSite: boolean;
   prefill: string;
   greeting: string;
+  confirm: string;
+  expired: boolean;
   preview: boolean;
   destination: string;
 };
@@ -92,14 +101,19 @@ type Props = {
  * while the list is checked, a miss settles calmly onto the status row, and
  * a yes turns the key: the line flashes, the door dissolves on its own
  * canvas, and the veil (src/components/door/door-veil.tsx) takes over at the
- * exact spot of the mark before the home page is pushed.
+ * exact spot of the mark before the home page is pushed. For someone at a
+ * company on the list the action emails a link instead, and the light
+ * settles on a calm line that says where it went.
  */
-export function Door({ content, contactEmail, privacy, alreadyIn, publicSite, prefill, greeting, preview, destination }: Props) {
+export function Door({ content, contactEmail, privacy, alreadyIn, publicSite, prefill, greeting, confirm, expired, preview, destination }: Props) {
   const [state, formAction] = useActionState(enterDoor, idleState);
   // Read once: the action's cookie write re-renders the page, and nothing on screen may change under the guest mid-choreography.
   const [inside] = useState(alreadyIn);
   const [phase, setPhase] = useState<Phase>('idle');
-  const [status, setStatus] = useState<Status>('');
+  const [status, setStatus] = useState<Status>(() => (sentFrom(state) ? 'sent' : ''));
+  const [sentTo, setSentTo] = useState(() => sentFrom(state));
+  // A used link's note stands until the first send.
+  const [stale, setStale] = useState(() => expired && state.status === 'idle');
   const [value, setValue] = useState(() => state.values?.email ?? prefill);
   const [answer, setAnswer] = useState<Answer | null>(() => answerFrom(state));
   const [tinted, setTinted] = useState(() => answerFrom(state) !== null);
@@ -139,10 +153,18 @@ export function Door({ content, contactEmail, privacy, alreadyIn, publicSite, pr
   const ready = phase === 'idle' && looksLikeAddress(value);
   const warmth = opened ? 1 : checking ? (reduced || held ? WARMTH_HOLD : 0) : Math.min(1, value.length * WARMTH_PER_CHARACTER);
   const statusText =
-    status === 'checking' ? content.checkingStatus : status === 'still' ? content.stillCheckingStatus : status === 'welcome' ? content.welcomeStatus : '';
+    status === 'checking'
+      ? content.checkingStatus
+      : status === 'still'
+        ? content.stillCheckingStatus
+        : status === 'welcome'
+          ? content.welcomeStatus
+          : status === 'sent'
+            ? content.sentMessage.split('{address}').join(sentTo)
+            : '';
   const shown = answer ? copyFor(content, answer) : null;
-  const title = greeting ? fillName(content.personalTitle, greeting) : inside ? content.alreadyInTitle : content.title;
-  const intro = inside ? content.alreadyInIntro : greeting ? content.personalIntro : content.intro;
+  const title = greeting ? fillName(content.personalTitle, greeting) : inside ? content.alreadyInTitle : confirm ? content.confirmTitle : content.title;
+  const intro = inside ? content.alreadyInIntro : greeting ? content.personalIntro : confirm ? content.confirmIntro : content.intro;
   const gone = { initial: false as const, animate: opened ? { opacity: 0, y: door.lift } : { opacity: 1, y: 0 }, transition: dissolve };
 
   /** One run of the light along the line, or the same time standing still under reduced motion. */
@@ -171,8 +193,19 @@ export function Door({ content, contactEmail, privacy, alreadyIn, publicSite, pr
       arrival.state = await answered;
       if (!alive.current) return;
     }
-    if (arrival.state.status === 'success') await open();
-    else miss(arrival.state);
+    if (arrival.state.status !== 'success') miss(arrival.state);
+    else if (arrival.state.message === DOOR_SENT) sent(arrival.state);
+    else await open();
+  }
+
+  /** The door emailed a link instead of opening: the light settles, and the status row says where the link went. */
+  function sent(result: FormState): void {
+    flushSync(() => {
+      setPhase('idle');
+      setHeld(false);
+      setSentTo(sentFrom(result) || value.trim());
+      setStatus('sent');
+    });
   }
 
   function miss(result: FormState): void {
@@ -238,6 +271,7 @@ export function Door({ content, contactEmail, privacy, alreadyIn, publicSite, pr
     setStatus('checking');
     setAnswer(null);
     setTinted(false);
+    setStale(false);
     void check(answered);
     // An address a link filled in can be sent at once, sooner than the action accepts from a person: the light
     // runs, and the send waits until then (with a little room).
@@ -311,6 +345,7 @@ export function Door({ content, contactEmail, privacy, alreadyIn, publicSite, pr
             >
               <SpamTraps />
               <input ref={enhanced} type="hidden" name={DOOR_ENHANCED_FIELD} defaultValue="" />
+              {confirm ? <input type="hidden" name={DOOR_CONFIRM_PARAM} value={confirm} /> : null}
               <div className="door-rise [animation-delay:520ms]">
                 <label htmlFor={inputId} className="door-label block text-sm font-medium text-fg-subtle">
                   {content.emailLabel}
@@ -378,15 +413,21 @@ export function Door({ content, contactEmail, privacy, alreadyIn, publicSite, pr
               </div>
               {/* Room for the longest answer (two lines and its help line) from first paint, so nothing above it moves when one appears. */}
               <div className="mt-4 min-h-12 sm:min-h-20">
-                {/* Announced always; shown when the light has stopped, and under reduced motion (a CSS variant, so the server and the client agree). */}
+                {/* Announced always; shown when the light has stopped or a link went out, and under reduced motion (a CSS variant, so the server and the client agree). */}
                 <p
                   id={statusId}
                   role="status"
                   aria-live="polite"
-                  className={cn('text-sm text-fg-muted', status !== 'still' && 'sr-only motion-reduce:not-sr-only')}
+                  className={cn(
+                    'text-sm',
+                    status === 'sent' ? 'door-message-in text-fg' : 'text-fg-muted',
+                    status !== 'still' && status !== 'sent' && 'sr-only motion-reduce:not-sr-only',
+                  )}
                 >
                   {statusText}
                 </p>
+                {status === 'sent' && content.sentHelp ? <p className="door-message-in mt-1 text-sm text-fg-subtle">{content.sentHelp}</p> : null}
+                {stale ? <p className="text-sm text-fg-muted">{content.expiredMessage}</p> : null}
                 {shown ? (
                   <div key={answers} className="door-message-in">
                     <p id={errorId} role="alert" className="text-sm text-danger">

@@ -162,6 +162,13 @@
       "when": 1791133869283,
       "tag": "0022_data_room_tabs",
       "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1791203255320,
+      "tag": "0023_company_invites",
+      "breakpoints": true
     }
   ]
 }

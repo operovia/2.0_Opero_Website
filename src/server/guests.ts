@@ -1,15 +1,16 @@
 import 'server-only';
-import { and, asc, eq, gt, max, sql } from 'drizzle-orm';
+import { and, asc, count, eq, gt, isNull, lt, max, sql } from 'drizzle-orm';
 import { cookies } from 'next/headers';
 import { cache } from 'react';
 import { z } from 'zod';
-import { DOOR_INVITE_PARAM, DOOR_PATH, GUEST_ROLES, type GuestRole } from '@/content/constants';
+import { DOOR_CONFIRM_PARAM, DOOR_INVITE_PARAM, DOOR_PATH, GUEST_ROLES, type GuestRole } from '@/content/constants';
 import { db } from '@/db/client';
-import { guestInvites, guestSessions } from '@/db/schema';
+import { guestConfirmations, guestDomains, guestInvites, guestSessions } from '@/db/schema';
+import { isPublicEmailDomain, normalizeDomain } from '@/lib/guest-domains';
 import { GUEST_COOKIE, GUEST_COOKIE_INSECURE, GUEST_TTL_SECONDS } from '@/server/auth/constants';
 import { randomToken, sha256 } from '@/server/crypto';
-import { sendEmails } from '@/server/email/send';
-import { guestEnteredNotification } from '@/server/email/templates';
+import { sendEmail, sendEmails } from '@/server/email/send';
+import { guestConfirmLinkEmail, guestEnteredNotification } from '@/server/email/templates';
 import { siteUrl } from '@/server/env';
 import { clientIp, isHttps, userAgent } from '@/server/request';
 import { getSettings, notificationRecipients } from '@/server/settings';
@@ -29,8 +30,21 @@ const GUEST_TTL_MS = GUEST_TTL_SECONDS * 1000;
 /** Extend a session's expiry at most this often. */
 const TOUCH_INTERVAL_MS = 60 * 60 * 1000;
 
-/** Rate limits for the door: every try per caller, and the misses per address (the address key holds a hash, never the address). */
-export const DOOR_LIMITS = { ip: { limit: 30, windowSeconds: 900 }, address: { limit: 5, windowSeconds: 900 } } as const;
+/**
+ * Rate limits for the door: every try per caller, the misses per address (the
+ * address key holds a hash, never the address), and the links it emails, per
+ * address and per company, so nobody can make it send mail at will.
+ */
+export const DOOR_LIMITS = {
+  ip: { limit: 30, windowSeconds: 900 },
+  address: { limit: 5, windowSeconds: 900 },
+  link: { limit: 3, windowSeconds: 3600 },
+  company: { limit: 20, windowSeconds: 3600 },
+} as const;
+
+/** How long a link the door emails keeps working, once. */
+export const CONFIRM_TTL_HOURS = 24;
+const CONFIRM_TTL_MS = CONFIRM_TTL_HOURS * 60 * 60 * 1000;
 
 /** Every answer from the door waits until at least this long after it started, hit or miss, so timing gives nothing away. */
 export const DOOR_FLOOR_MS = 350;
@@ -82,11 +96,24 @@ export const getGuest = cache(async (): Promise<Guest | null> => {
   return { inviteId: row.inviteId, email: row.email, role: row.role, greeting: row.greeting, sessionId: id };
 });
 
+/** A guest the door found: `company` is the domain they came in through, or null for an address the owner added. */
+export type InviteMatch = { id: string; email: string; role: GuestRole; firstEnteredAt: Date | null; companyId: string | null; company: string | null };
+
+const inviteMatch = {
+  id: guestInvites.id,
+  email: guestInvites.email,
+  role: guestInvites.role,
+  firstEnteredAt: guestInvites.firstEnteredAt,
+  companyId: guestInvites.domainId,
+  company: guestDomains.domain,
+};
+
 /** The invite for an already-normalized address: one indexed lookup, the same cost whether or not it matches. */
-export async function findInvite(email: string): Promise<{ id: string; email: string; role: GuestRole; firstEnteredAt: Date | null } | null> {
+export async function findInvite(email: string): Promise<InviteMatch | null> {
   const [row] = await db
-    .select({ id: guestInvites.id, email: guestInvites.email, role: guestInvites.role, firstEnteredAt: guestInvites.firstEnteredAt })
+    .select(inviteMatch)
     .from(guestInvites)
+    .leftJoin(guestDomains, eq(guestInvites.domainId, guestDomains.id))
     .where(eq(guestInvites.email, email))
     .limit(1);
   return row ?? null;
@@ -128,10 +155,10 @@ export async function recordGuestEntry(inviteId: string): Promise<{ firstTime: b
 }
 
 /** Tells the notification recipients that a guest entered for the first time. Failures are logged, never thrown. */
-export async function notifyGuestEntered(invite: { email: string; role: GuestRole }, ip: string): Promise<void> {
+export async function notifyGuestEntered(invite: { email: string; role: GuestRole; company?: string | null }, ip: string): Promise<void> {
   try {
     const settings = await getSettings();
-    const message = guestEnteredNotification({ email: invite.email, role: invite.role, ip }, `${siteUrl()}/admin/guests`);
+    const message = guestEnteredNotification({ email: invite.email, role: invite.role, ip, company: invite.company }, `${siteUrl()}/admin/guests`);
     const results = await sendEmails(notificationRecipients(settings).map((to) => ({ to, ...message })));
     for (const result of results) if (!result.ok) console.error('[opero] Could not send a guest entry notification:', result.error);
   } catch (error) {
@@ -153,6 +180,8 @@ export type GuestRow = {
   greeting: string;
   /** The secret in their personal link, or null until one is made. */
   linkToken: string | null;
+  /** The company they came in through, or null for an address the owner added. */
+  company: string | null;
 };
 
 /** Every guest on the list, oldest first. */
@@ -169,10 +198,12 @@ export async function listGuests(): Promise<GuestRow[]> {
       lastSeenAt: max(guestSessions.lastSeenAt),
       greeting: guestInvites.greeting,
       linkToken: guestInvites.linkToken,
+      company: guestDomains.domain,
     })
     .from(guestInvites)
     .leftJoin(guestSessions, eq(guestSessions.inviteId, guestInvites.id))
-    .groupBy(guestInvites.id)
+    .leftJoin(guestDomains, eq(guestInvites.domainId, guestDomains.id))
+    .groupBy(guestInvites.id, guestDomains.id)
     .orderBy(asc(guestInvites.createdAt), asc(guestInvites.email));
 }
 
@@ -291,4 +322,183 @@ export async function removeGuest(id: string): Promise<{ email: string } | null>
   if (!isUuid(id)) return null;
   const [row] = await db.delete(guestInvites).where(eq(guestInvites.id, id)).returning({ email: guestInvites.email });
   return row ?? null;
+}
+
+/* ------------------------------------------------------------------------ */
+/* Companies: everyone at a domain, confirmed by email                      */
+/* ------------------------------------------------------------------------ */
+
+/** A company on the list: its domain, what its people may see, and the name they are welcomed by. */
+export type Company = { id: string; domain: string; role: GuestRole; greeting: string };
+
+const companyColumns = { id: guestDomains.id, domain: guestDomains.domain, role: guestDomains.role, greeting: guestDomains.greeting };
+
+/** The company on the list with this domain, or null. */
+export async function findCompany(domain: string): Promise<Company | null> {
+  const [row] = await db.select(companyColumns).from(guestDomains).where(eq(guestDomains.domain, domain)).limit(1);
+  return row ?? null;
+}
+
+/** The company with this id, or null. */
+export async function findCompanyById(id: string): Promise<Company | null> {
+  if (!isUuid(id)) return null;
+  const [row] = await db.select(companyColumns).from(guestDomains).where(eq(guestDomains.id, id)).limit(1);
+  return row ?? null;
+}
+
+/** The link the door emails: the front door with the secret, which fills in the address it was sent to. */
+export function confirmLink(token: string): string {
+  return `${siteUrl()}${DOOR_PATH}?${DOOR_CONFIRM_PARAM}=${token}`;
+}
+
+/**
+ * Makes a one-time link for someone at a company on the list and returns its
+ * secret; only its fingerprint is kept. Links that ran out a week ago go.
+ */
+export async function startConfirmation(email: string, companyId: string): Promise<string> {
+  const token = randomToken();
+  await db.delete(guestConfirmations).where(lt(guestConfirmations.expiresAt, new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)));
+  await db.insert(guestConfirmations).values({ id: sha256(token), email, domainId: companyId, expiresAt: new Date(Date.now() + CONFIRM_TTL_MS) });
+  return token;
+}
+
+/** Emails the link to the address it is for. Failures are logged, never thrown: the door has answered already. */
+export async function sendConfirmLink(email: string, token: string): Promise<void> {
+  try {
+    const result = await sendEmail({ to: email, ...guestConfirmLinkEmail({ email, url: confirmLink(token), hours: CONFIRM_TTL_HOURS }) });
+    if (!result.ok) console.error('[opero] Could not email a link to the door:', result.error);
+  } catch (error) {
+    console.error('[opero] Could not email a link to the door:', error);
+  }
+}
+
+/**
+ * An emailed link by its secret: the address it was sent to, the company's
+ * welcome name, and whether it still works (unused, and in time); null when
+ * it names nothing. Only the door asks, to fill in the address; coming in
+ * still takes the door's own action.
+ */
+export async function findConfirmation(token: unknown): Promise<{ email: string; greeting: string; works: boolean } | null> {
+  if (typeof token !== 'string' || !LINK_TOKEN.test(token)) return null;
+  const [row] = await db
+    .select({ email: guestConfirmations.email, greeting: guestDomains.greeting, usedAt: guestConfirmations.usedAt, expiresAt: guestConfirmations.expiresAt })
+    .from(guestConfirmations)
+    .innerJoin(guestDomains, eq(guestConfirmations.domainId, guestDomains.id))
+    .where(eq(guestConfirmations.id, sha256(token)))
+    .limit(1);
+  if (!row) return null;
+  return { email: row.email, greeting: row.greeting, works: row.usedAt === null && row.expiresAt.getTime() > Date.now() };
+}
+
+/**
+ * Spends an emailed link given at the door with the address it was sent to,
+ * and returns the guest it lets in: made now if they are new, with the
+ * company's role and welcome name, noted as having come in through it. Null
+ * for a link that is spent, ran out, or was sent to another address. One
+ * statement spends it, so a link lets in once however often it is pressed.
+ */
+export async function spendConfirmation(token: string, email: string): Promise<InviteMatch | null> {
+  if (!LINK_TOKEN.test(token)) return null;
+  return db.transaction(async (tx) => {
+    const [spent] = await tx
+      .update(guestConfirmations)
+      .set({ usedAt: new Date() })
+      .where(
+        and(
+          eq(guestConfirmations.id, sha256(token)),
+          eq(guestConfirmations.email, email),
+          isNull(guestConfirmations.usedAt),
+          gt(guestConfirmations.expiresAt, new Date()),
+        ),
+      )
+      .returning({ companyId: guestConfirmations.domainId });
+    if (!spent) return null;
+    const [company] = await tx.select().from(guestDomains).where(eq(guestDomains.id, spent.companyId)).limit(1);
+    if (!company) return null;
+    await tx
+      .insert(guestInvites)
+      .values({
+        email,
+        role: company.role,
+        greeting: company.greeting,
+        invitedBy: company.invitedBy,
+        domainId: company.id,
+      })
+      .onConflictDoNothing({ target: guestInvites.email });
+    const [invite] = await tx
+      .select(inviteMatch)
+      .from(guestInvites)
+      .leftJoin(guestDomains, eq(guestInvites.domainId, guestDomains.id))
+      .where(eq(guestInvites.email, email))
+      .limit(1);
+    return invite ?? null;
+  });
+}
+
+export type CompanyRow = Company & { note: string; createdAt: Date; members: number };
+
+/** Every company on the list, oldest first, with how many of its people have come in. */
+export async function listCompanies(): Promise<CompanyRow[]> {
+  return db
+    .select({ ...companyColumns, note: guestDomains.note, createdAt: guestDomains.createdAt, members: count(guestInvites.id) })
+    .from(guestDomains)
+    .leftJoin(guestInvites, eq(guestInvites.domainId, guestDomains.id))
+    .groupBy(guestDomains.id)
+    .orderBy(asc(guestDomains.createdAt), asc(guestDomains.domain));
+}
+
+/**
+ * Adds a company by its domain, typed any way the owner likes (example.com,
+ * @example.com, or someone's address there). Refuses what is not a domain, and
+ * the email services anyone can sign up for; one already on the list is kept
+ * as it is.
+ */
+export async function addCompany(
+  input: string,
+  role: GuestRole,
+  note: string,
+  greeting: string,
+  adminId: string | null,
+): Promise<{ status: 'added' | 'existing' | 'invalid' | 'public'; domain: string }> {
+  const domain = normalizeDomain(input);
+  if (!domain) return { status: 'invalid', domain: input.trim() };
+  if (isPublicEmailDomain(domain)) return { status: 'public', domain };
+  const inserted = await db
+    .insert(guestDomains)
+    .values({ domain, role, note: note.trim(), greeting, invitedBy: adminId })
+    .onConflictDoNothing({ target: guestDomains.domain })
+    .returning({ id: guestDomains.id });
+  return { status: inserted.length ? 'added' : 'existing', domain };
+}
+
+/** Changes what a company's people may see, theirs too: their open sessions follow at once. */
+export async function setCompanyRole(id: string, role: GuestRole): Promise<{ domain: string; changed: boolean } | null> {
+  const company = await findCompanyById(id);
+  if (!company) return null;
+  if (company.role === role) return { domain: company.domain, changed: false };
+  await db.transaction(async (tx) => {
+    await tx.update(guestDomains).set({ role }).where(eq(guestDomains.id, id));
+    await tx.update(guestInvites).set({ role }).where(eq(guestInvites.domainId, id));
+  });
+  return { domain: company.domain, changed: true };
+}
+
+/** Sets the name a company's people are welcomed by (empty for none), theirs too. */
+export async function setCompanyGreeting(id: string, greeting: string): Promise<{ domain: string; changed: boolean } | null> {
+  const company = await findCompanyById(id);
+  if (!company) return null;
+  if (company.greeting === greeting) return { domain: company.domain, changed: false };
+  await db.transaction(async (tx) => {
+    await tx.update(guestDomains).set({ greeting }).where(eq(guestDomains.id, id));
+    await tx.update(guestInvites).set({ greeting }).where(eq(guestInvites.domainId, id));
+  });
+  return { domain: company.domain, changed: true };
+}
+
+/** Takes a company off the list, with everyone who came in through it and their unused links: their keys stop working at once. */
+export async function removeCompany(id: string): Promise<{ domain: string; members: number } | null> {
+  if (!isUuid(id)) return null;
+  const [members] = await db.select({ n: count() }).from(guestInvites).where(eq(guestInvites.domainId, id));
+  const [row] = await db.delete(guestDomains).where(eq(guestDomains.id, id)).returning({ domain: guestDomains.domain });
+  return row ? { domain: row.domain, members: members?.n ?? 0 } : null;
 }

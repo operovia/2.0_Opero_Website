@@ -1,11 +1,11 @@
 import type { Metadata } from 'next';
 import { Door } from '@/components/door/door';
-import { DOOR_EMAIL_PARAM, DOOR_INVITE_PARAM } from '@/content/constants';
+import { DOOR_CONFIRM_PARAM, DOOR_EMAIL_PARAM, DOOR_INVITE_PARAM } from '@/content/constants';
 import { openGraph } from '@/content/metadata';
 import { getPage, getPublicSettings } from '@/content/store';
 import { getAccess } from '@/server/entry';
 import { siteUrl } from '@/server/env';
-import { findInviteByLink, getGuest } from '@/server/guests';
+import { findConfirmation, findInviteByLink, getGuest } from '@/server/guests';
 import { doorPrefill } from './prefill';
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -37,6 +37,13 @@ export async function generateMetadata(): Promise<Metadata> {
  * the guest will (enterDoor never gives an admin a guest key, so the guest's
  * first visit stays theirs) and lands on the home page with the guest's
  * greeting.
+ *
+ * The one-time link the door emails to someone at a company on the list
+ * (?confirm=) fills in the address it went to and carries its secret back
+ * in a hidden field, so entering there lets them in; with a welcome name on
+ * the company, the door greets them by it. A link that is spent, ran out, or
+ * names nothing says so, with the address filled in if it still names one,
+ * so entering sends a new link.
  */
 export default async function WelcomePage({ searchParams }: PageProps<'/welcome'>) {
   const [{ door }, { footer }, { settings }, access, guest, params] = await Promise.all([
@@ -53,8 +60,12 @@ export default async function WelcomePage({ searchParams }: PageProps<'/welcome'
   const invited = await findInviteByLink(token);
   const preview = access.admin && invited !== null;
   const alreadyIn = !preview && (access.admin || access.role !== null);
-  // A guest already in hears the greeting only on their own link.
-  const greeting = invited && (!alreadyIn || guest?.inviteId === invited.id) ? invited.greeting : '';
+  const confirmToken = params[DOOR_CONFIRM_PARAM];
+  const confirmation = invited || confirmToken === undefined ? null : await findConfirmation(confirmToken);
+  const confirm = confirmation?.works && typeof confirmToken === 'string' ? confirmToken : '';
+  // A guest already in hears the greeting only on their own link. An emailed link greets by the company's welcome name.
+  const personal = invited && (!alreadyIn || guest?.inviteId === invited.id) ? invited.greeting : '';
+  const greeting = personal || (confirm && !alreadyIn ? (confirmation?.greeting ?? '') : '');
   return (
     <Door
       content={door}
@@ -62,8 +73,10 @@ export default async function WelcomePage({ searchParams }: PageProps<'/welcome'
       privacy={privacy}
       alreadyIn={alreadyIn}
       publicSite={!settings.privateSite}
-      prefill={invited?.email ?? doorPrefill(params[DOOR_EMAIL_PARAM])}
+      prefill={invited?.email ?? confirmation?.email ?? doorPrefill(params[DOOR_EMAIL_PARAM])}
       greeting={greeting}
+      confirm={confirm}
+      expired={!invited && confirmToken !== undefined && !confirm}
       preview={preview}
       destination={preview && greeting && typeof token === 'string' ? `/?${DOOR_INVITE_PARAM}=${token}` : '/'}
     />

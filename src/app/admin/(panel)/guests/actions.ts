@@ -6,7 +6,18 @@ import { failure, formValues, success, type FormState } from '@/lib/forms';
 import { audit } from '@/server/audit';
 import { requireAdmin } from '@/server/auth/session';
 import { normalizeGreeting } from '@/lib/greeting';
-import { addGuests, isGuestRole, makeGuestLink, removeGuest, setGuestGreeting, setGuestRole } from '@/server/guests';
+import {
+  addCompany,
+  addGuests,
+  isGuestRole,
+  makeGuestLink,
+  removeCompany,
+  removeGuest,
+  setCompanyGreeting,
+  setCompanyRole,
+  setGuestGreeting,
+  setGuestRole,
+} from '@/server/guests';
 import { clientIp } from '@/server/request';
 import { MAX_RECIPIENTS_PER_PASTE, parseRecipients } from '@/surveys/recipients';
 
@@ -102,5 +113,82 @@ export async function removeGuestAction(formData: FormData): Promise<void> {
   const removed = await removeGuest(String(formData.get('id') ?? ''));
   if (!removed) return;
   await audit({ id: user.id, email: user.email }, 'guest.remove', { target: removed.email, ip: await clientIp() });
+  revalidatePath('/admin/guests');
+}
+
+/**
+ * Adds a company by its email domain: anyone with an address there may come
+ * in, once the link the door emails them proves the address is theirs.
+ */
+export async function addCompanyAction(_prev: FormState, formData: FormData): Promise<FormState> {
+  const { user } = await requireAdmin();
+  const values = formValues(formData, ['domain', 'companyRole', 'companyGreeting', 'companyNote']);
+  const typed = (values.domain ?? '').trim();
+  const role = values.companyRole;
+  const greeting = normalizeGreeting(values.companyGreeting ?? '');
+  const note = (values.companyNote ?? '').trim();
+  if (!typed) return failure('Add the company email domain.', { fieldErrors: { domain: 'Add the part after the @, such as example.com.' }, values });
+  if (!isGuestRole(role)) return failure('Choose what they may see.', { fieldErrors: { companyRole: 'Choose visitor or investor.' }, values });
+  if (note.length > MAX_NOTE_LENGTH) {
+    return failure('Keep the note short.', { fieldErrors: { companyNote: `Keep the note under ${MAX_NOTE_LENGTH} characters.` }, values });
+  }
+
+  const result = await addCompany(typed, role, note, greeting, user.id);
+  if (result.status === 'invalid') {
+    return failure('That is not an email domain.', { fieldErrors: { domain: 'Type the part after the @, such as example.com.' }, values });
+  }
+  if (result.status === 'public') {
+    return failure(`Anyone can make an address at ${result.domain}, so it cannot be added as a company. Add people there one by one instead.`, {
+      fieldErrors: { domain: 'Email services anyone can sign up for cannot be added as a company.' },
+      values,
+    });
+  }
+  if (result.status === 'existing') return failure(`@${result.domain} is already on the list, and was kept as it was.`, { values });
+
+  await audit({ id: user.id, email: user.email }, 'guest.company.add', {
+    target: result.domain,
+    details: { role, ...(greeting ? { greeting } : {}), ...(note ? { note } : {}) },
+    ip: await clientIp(),
+  });
+  revalidatePath('/admin/guests');
+  return success(
+    `Added @${result.domain}. Anyone with an address there can come in as ${GUEST_ROLE_LABELS[role].label.toLowerCase()}s: the door emails them a link to confirm it.`,
+    { values: { domain: '', companyRole: role, companyGreeting: '', companyNote: '' } },
+  );
+}
+
+/** Changes what a company's people may see, everyone who came in through it included. Takes effect on their next request. */
+export async function setCompanyRoleAction(formData: FormData): Promise<void> {
+  const { user } = await requireAdmin();
+  const role = formData.get('role');
+  if (!isGuestRole(role)) return;
+  const result = await setCompanyRole(String(formData.get('id') ?? ''), role);
+  if (!result?.changed) return;
+  await audit({ id: user.id, email: user.email }, 'guest.company.role', { target: result.domain, details: { role }, ip: await clientIp() });
+  revalidatePath('/admin/guests');
+}
+
+/** Sets the name a company's people are welcomed by, or clears it, for everyone who came in through it too. */
+export async function setCompanyGreetingAction(formData: FormData): Promise<void> {
+  const { user } = await requireAdmin();
+  const greeting = normalizeGreeting(String(formData.get('greeting') ?? ''));
+  const result = await setCompanyGreeting(String(formData.get('id') ?? ''), greeting);
+  if (!result) return;
+  if (result.changed) {
+    await audit({ id: user.id, email: user.email }, 'guest.company.greeting', { target: result.domain, details: { greeting }, ip: await clientIp() });
+  }
+  revalidatePath('/admin/guests');
+}
+
+/** Takes a company off the list, with everyone who came in through it. Their keys stop working on the next request. */
+export async function removeCompanyAction(formData: FormData): Promise<void> {
+  const { user } = await requireAdmin();
+  const removed = await removeCompany(String(formData.get('id') ?? ''));
+  if (!removed) return;
+  await audit({ id: user.id, email: user.email }, 'guest.company.remove', {
+    target: removed.domain,
+    details: { members: removed.members },
+    ip: await clientIp(),
+  });
   revalidatePath('/admin/guests');
 }

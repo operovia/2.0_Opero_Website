@@ -27,6 +27,10 @@ export const auditLabels: Record<AuditAction, string> = {
   'guest.remove': 'Removed a guest',
   'guest.greeting': 'Changed the name a guest is welcomed by',
   'guest.link': 'Made a personal link for a guest',
+  'guest.company.add': 'Added a company',
+  'guest.company.role': 'Changed what a company may see',
+  'guest.company.greeting': 'Changed the name a company is welcomed by',
+  'guest.company.remove': 'Removed a company',
   'room.folder.add': 'Added a Data Room folder',
   'room.folder.rename': 'Renamed a Data Room folder',
   'room.folder.remove': 'Deleted a Data Room folder',
@@ -34,6 +38,7 @@ export const auditLabels: Record<AuditAction, string> = {
   'room.document.rename': 'Renamed a Data Room document',
   'room.document.remove': 'Deleted a Data Room document',
   'door.enter': 'A guest entered through the door',
+  'door.link': 'The door emailed a link to someone at a company',
 };
 
 export const auditFilters = {
@@ -45,7 +50,22 @@ export const auditFilters = {
     actions: ['password.change', 'admin.invite', 'admin.invite.revoke', 'admin.invite.accept', 'admin.remove', 'settings.update', 'database.update'],
   },
   surveys: { label: 'Surveys', actions: ['survey.create', 'survey.status', 'survey.delete', 'survey.send', 'survey.export', 'survey.responses.delete'] },
-  guests: { label: 'Guests', actions: ['guest.add', 'guest.role', 'guest.remove', 'guest.greeting', 'guest.link', 'door.enter'] },
+  guests: {
+    label: 'Guests',
+    actions: [
+      'guest.add',
+      'guest.role',
+      'guest.remove',
+      'guest.greeting',
+      'guest.link',
+      'guest.company.add',
+      'guest.company.role',
+      'guest.company.greeting',
+      'guest.company.remove',
+      'door.enter',
+      'door.link',
+    ],
+  },
   room: {
     label: 'Data Room',
     actions: ['room.folder.add', 'room.folder.rename', 'room.folder.remove', 'room.document.add', 'room.document.rename', 'room.document.remove'],

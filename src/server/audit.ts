@@ -28,6 +28,10 @@ export type AuditAction =
   | 'guest.remove'
   | 'guest.greeting'
   | 'guest.link'
+  | 'guest.company.add'
+  | 'guest.company.role'
+  | 'guest.company.greeting'
+  | 'guest.company.remove'
   | 'room.folder.add'
   | 'room.folder.rename'
   | 'room.folder.remove'
@@ -35,7 +39,9 @@ export type AuditAction =
   | 'room.document.rename'
   | 'room.document.remove'
   /** Written with no actor; the target is the address that came in. */
-  | 'door.enter';
+  | 'door.enter'
+  /** Written with no actor; the target is the address the door emailed a link to. */
+  | 'door.link';
 
 type Actor = { id: string; email: string } | null;
 
