@@ -1801,10 +1801,10 @@ html:has(dialog[open]) {
 
 /*
  * Gold with a soft light sweeping across it, left to right, every few
- * seconds, from Claude Design's handoff: the hero's four figures
- * (src/components/site/home/hero.tsx), one after another in reading order,
- * and the words the problem section's closing line names
- * (src/components/site/home/problem.tsx). The gold of the dot in the Opero
+ * seconds, from Claude Design's handoff: the figures in the hero and in the
+ * proof section (src/components/site/home/hero.tsx, proof.tsx), one after
+ * another in reading order, and the words the problem section's closing
+ * line and the platform section's headline name (problem.tsx, platform.tsx). The gold of the dot in the Opero
  * logo. A text gradient clipped to the glyphs, moved by its background
  * position, so the element is inline-block and the gradient only as wide as
  * the text. Plain gold for a visitor who prefers reduced motion, and the
@@ -1849,6 +1849,12 @@ html:has(dialog[open]) {
   }
   li:nth-child(4) > * > .gold-shimmer {
     animation-delay: calc(var(--o-shimmer-stagger) * 3);
+  }
+  li:nth-child(5) > * > .gold-shimmer {
+    animation-delay: calc(var(--o-shimmer-stagger) * 4);
+  }
+  li:nth-child(6) > * > .gold-shimmer {
+    animation-delay: calc(var(--o-shimmer-stagger) * 5);
   }
 }
 @media (prefers-reduced-motion: reduce) {

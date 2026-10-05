@@ -263,8 +263,8 @@ export const tokens = {
       opacity: { dark: 0.5, light: 0.16 },
     },
     /**
-     * The shimmering gold (gold-shimmer in globals.css) of the hero's four figures and the problem
-     * section's named words, from Claude Design's handoff: the gold of the dot in the Opero logo,
+     * The shimmering gold (gold-shimmer in globals.css) of the figures in the hero and the proof
+     * section, and the words the problem and platform sections name, from Claude Design's handoff: the gold of the dot in the Opero logo,
      * and the light that sweeps across it.
      */
     shimmerGold: { base: '#C9A43A', highlight: '#FFF3C4' },

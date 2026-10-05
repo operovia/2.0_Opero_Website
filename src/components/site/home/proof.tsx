@@ -14,7 +14,10 @@ export function Proof({ content }: { content: SectionData<'home', 'proof'> }) {
         <RevealGroup as="ul" className={cn('mt-16 grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-2', wideColumns[content.stats.length] ?? 'lg:grid-cols-3')}>
           {content.stats.map((stat) => (
             <RevealItem as="li" key={stat.value + stat.label} className="border-t border-line-strong pt-6">
-              <p className="text-3xl font-medium text-balance text-metal xl:text-display-sm">{stat.value}</p>
+              {/* The figure in gold, with a light sweeping across it as across the hero's (gold-shimmer in globals.css), one after another in reading order. */}
+              <p className="text-3xl font-medium text-balance text-metal xl:text-display-sm">
+                <span className="gold-shimmer">{stat.value}</span>
+              </p>
               <p className="mt-2 text-base text-fg-muted">{stat.label}</p>
             </RevealItem>
           ))}
