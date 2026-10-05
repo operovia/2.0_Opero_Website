@@ -93,8 +93,12 @@ describe('the rest of the table', () => {
     expect(view.split).toBe(40);
   });
 
-  it('works out the illustrative price exactly', () => {
-    expect(view.price).toBe('$0.925');
+  it('never shows the price per share, or the rounded total, at any position', () => {
+    for (const step of golden.steps) {
+      const shown = JSON.stringify(capTableView(config, step.investment));
+      expect(shown).not.toContain('0.925');
+      expect(shown).not.toContain('10,810,811');
+    }
   });
 
   it('keeps the holders in order, with their names and classes', () => {

@@ -307,10 +307,8 @@ export function CapTableSection({ content }: Props) {
 
       {/* The notes the table and the slider refer to, then the small print. */}
       <div id={notesId} className="mt-6 max-w-3xl space-y-3 text-sm">
-        <p className="text-fg-muted">
-          {content.priceLabel}: <span className="font-medium text-fg tabular-nums">{view.price}</span>
-        </p>
         <p className="text-fg-subtle">{content.capNote}</p>
+        <p className="text-fg-subtle">{content.roundingNote}</p>
         <p className="pt-3 text-fg-subtle">{content.disclaimer}</p>
       </div>
     </Reveal>

@@ -8,7 +8,7 @@
  *
  * A post-money SAFE converts at a price of (cap - round) / shares today, so
  * an amount X converts into X * today / (cap - round) shares, rounded down
- * to whole shares. A converting investor owns X / cap; a holder already on
+ * to whole shares. The price itself is never shown. A converting investor owns X / cap; a holder already on
  * the table owns shares * (cap - round) / (today * cap), which is their
  * shares over the company's exact, unrounded capitalization after the round.
  *
@@ -94,8 +94,6 @@ export type CapTableView = {
   minimumAt: number;
   /** Where the reader's part of the round ends, as a percentage of its length. */
   split: number;
-  /** The illustrative price per share the round converts at, (cap - round) / shares today: $0.925. */
-  price: string;
 };
 
 /** num / den as a percentage with `decimals` places, from the exact fraction, rounded half up. */
@@ -124,15 +122,6 @@ function count(value: bigint): string {
 /** Whole dollars with thousands separators: $300,000. */
 export function money(dollars: number | bigint): string {
   return `$${wholeNumber.format(Number(dollars))}`;
-}
-
-/** Dollars to the tenth of a cent, rounded half up, with at least two decimals: $0.925, $1.00. */
-function price(num: bigint, den: bigint): string {
-  const scaled = num * BigInt(1000);
-  let mills = scaled / den;
-  if ((scaled % den) * TWO >= den) mills += ONE;
-  const fraction = (mills % BigInt(1000)).toString().padStart(3, '0');
-  return `$${wholeNumber.format(Number(mills / BigInt(1000)))}.${fraction.endsWith('0') ? fraction.slice(0, 2) : fraction}`;
 }
 
 /** The investment the figures are for: whole dollars, no less than the minimum and no more than the round. Anything unreadable is the minimum. */
@@ -193,7 +182,6 @@ export function capTableView(config: CapTableConfig, investment: number): CapTab
     totalAfter: { percent: percent(ONE, ONE, 2), shares: count(today + youShares + othersShares) },
     minimumAt: width(BigInt(config.minimum), raise),
     split: width(inv, raise),
-    price: price(net, today),
   };
 }
 

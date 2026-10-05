@@ -803,7 +803,6 @@ const investorsRound = section({
     afterColumn: text('Column: after the round', { max: 30 }),
     sharesUnit: text('Unit after share counts', { max: 20, hint: 'Shown after each count, like 7,000,000 shares.' }),
     totalLabel: text('Total row: label', { max: 30 }),
-    priceLabel: text('Price per share: label', { max: 120, hint: 'Worked out from the cap and the full round, so it is an illustration.' }),
     bandEyebrow: text('This round: eyebrow', { max: 40, hint: 'Small capitals at the head of the round, inside the table.' }),
     bandLine: text('This round: line', {
       max: 120,
@@ -832,6 +831,7 @@ const investorsRound = section({
     youLabel: text('Label for the reader in the table', { max: 40 }),
     othersLabel: text('Label for the rest of the round in the table', { max: 60 }),
     capNote: text('Note under the table', { max: 800, multiline: true }),
+    roundingNote: text('Note on rounding', { max: 200, hint: 'Under the note, above the small print.' }),
     disclaimer: text('Small print', {
       max: 600,
       multiline: true,
@@ -864,7 +864,6 @@ const investorsRound = section({
     afterColumn: 'After the round',
     sharesUnit: 'shares',
     totalLabel: 'Total',
-    priceLabel: 'Illustrative price per share, if the full round converts',
     bandEyebrow: 'This round',
     bandLine: '{round}, converting to {percent} of the company',
     bandHint: 'Drag to model your investment',
@@ -883,6 +882,7 @@ const investorsRound = section({
     othersLabel: 'Other pre-seed investors',
     capNote:
       "The flagship operator's position was purchased at formation and is not part of this round. The dilution from the round falls on the holders already on the table. Your ownership is your investment divided by the cap, so it does not change if the round grows. Share counts after the round assume the full round is raised and are illustrative; the percentages are the terms.",
+    roundingNote: 'Percentages are rounded, so a column may not add to exactly 100%.',
     disclaimer:
       'This page is a summary for discussion purposes only. It is not an offer to sell, or a solicitation of an offer to buy, any security. Any offering will be made only to qualified investors through definitive documents.',
   },
