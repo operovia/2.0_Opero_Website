@@ -263,10 +263,11 @@ export const tokens = {
       opacity: { dark: 0.5, light: 0.16 },
     },
     /**
-     * The gold of the hero's four figures (src/components/site/home/hero.tsx), from Claude Design's
-     * handoff: the gold of the dot in the Opero logo, and the light that sweeps across it.
+     * The shimmering gold (gold-shimmer in globals.css) of the hero's four figures and the problem
+     * section's named words, from Claude Design's handoff: the gold of the dot in the Opero logo,
+     * and the light that sweeps across it.
      */
-    metricGold: { base: '#C9A43A', highlight: '#FFF3C4' },
+    shimmerGold: { base: '#C9A43A', highlight: '#FFF3C4' },
     /** The front door (src/components/door): how much of the text color lights the point's soft glow and the veil's ring of light, in percent. */
     door: {
       glow: 14,
@@ -481,7 +482,7 @@ export const tokens = {
       greeting: 1000,
     },
     /**
-     * The light that sweeps across the hero's four figures (Claude Design's handoff): one
+     * The light that sweeps across the shimmering gold (Claude Design's handoff): one
      * `cycle` each, the sweep taking its first 55%, each figure `stagger` after the one
      * before it in reading order, eased in and out as CSS's own ease-in-out.
      */

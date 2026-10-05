@@ -70,9 +70,9 @@ export function Hero({
           <ul data-testid="hero-stats" className="hero-fade order-4 mt-8 grid max-w-xl grid-cols-2 gap-x-6 gap-y-5 lg:col-start-1 [animation-delay:120ms]">
             {figures.map((stat, i) => (
               <li key={i} className="border-t border-line pt-4">
-                {/* The number in gold, with a light sweeping across it (metric-gold in globals.css); the span keeps the gradient as wide as the text. */}
+                {/* The number in gold, with a light sweeping across it (gold-shimmer in globals.css); the span keeps the gradient as wide as the text. */}
                 <p className="text-2xl font-semibold text-fg tabular-nums">
-                  <span className="metric-gold">{stat.value}</span>
+                  <span className="gold-shimmer">{stat.value}</span>
                 </p>
                 <p className="mt-1 text-sm text-fg-muted">{stat.short}</p>
               </li>

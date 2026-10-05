@@ -119,9 +119,9 @@ function sharedDeclarations(): string {
   vars['phone-glass'] = tokens.brand.phone.glass;
   vars['phone-lens'] = tokens.brand.phone.lens;
   vars['phone-glint'] = tokens.brand.phone.glint;
-  // The hero's four figures (src/components/site/home/hero.tsx): their gold, and the light that sweeps across them.
-  vars['metric-gold'] = tokens.brand.metricGold.base;
-  vars['metric-gold-highlight'] = tokens.brand.metricGold.highlight;
+  // The shimmering gold (gold-shimmer in globals.css): the gold, and the light that sweeps across it.
+  vars['shimmer-gold'] = tokens.brand.shimmerGold.base;
+  vars['shimmer-gold-highlight'] = tokens.brand.shimmerGold.highlight;
   vars['shimmer-cycle'] = `${tokens.motion.shimmer.cycle}ms`;
   vars['shimmer-stagger'] = `${tokens.motion.shimmer.stagger}ms`;
   vars['shimmer-ease'] = cubic(tokens.motion.shimmer.ease);

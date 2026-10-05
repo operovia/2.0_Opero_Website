@@ -93,6 +93,11 @@ const problem = section({
     body: rich('Body'),
     apps: list('App chips', 'Chip', { label: text('Label', { max: 60 }) }, { min: 1, max: 10, hint: 'Shown struck through, one after another.' }),
     closing: text('Closing line', { max: 200 }),
+    closingGold: text('Words in gold', {
+      optional: true,
+      max: 60,
+      hint: 'Words of the closing line to set in shimmering gold, written as they appear there: one platform, for example. Leave it empty for none.',
+    }),
   },
   seed: {
     eyebrow: 'The status quo.',
@@ -109,6 +114,7 @@ const problem = section({
       { label: 'Every login that comes with them' },
     ],
     closing: 'Opero replaces the patchwork with one platform built around your portfolio.',
+    closingGold: 'one platform',
   },
 });
 
