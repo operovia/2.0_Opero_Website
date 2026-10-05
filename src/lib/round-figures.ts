@@ -37,9 +37,12 @@ export function fillRoundFigures(text: string, { raise, cap, minimum }: RoundFig
   });
 }
 
-/** The tokens in a piece of copy that are neither a round figure nor one of the site's own ({partner}, {email} and the like). */
+/** The placeholders in a piece of copy that are neither among `known` nor one of the site's own ({partner}, {email} and the like). */
+export function unknownPlaceholders(text: string, known: readonly string[]): string[] {
+  return (text.match(/\{[^{}]*\}/g) ?? []).filter((token) => !known.includes(token) && !/^\{(partners?|Partners?|email)\}$/.test(token));
+}
+
+/** The tokens in a piece of The Raise's copy that are neither a round figure nor one of the site's own. */
 export function unknownTokens(text: string): string[] {
-  return (text.match(/\{[^{}]*\}/g) ?? []).filter(
-    (token) => !(ROUND_FIGURE_TOKENS as readonly string[]).includes(token) && !/^\{(partners?|Partners?|email)\}$/.test(token),
-  );
+  return unknownPlaceholders(text, ROUND_FIGURE_TOKENS);
 }

@@ -1,5 +1,6 @@
 import { textToRich } from '@/lib/rich-text';
-import { unknownTokens } from '@/lib/round-figures';
+import { CAP_TABLE_PLACEHOLDERS } from '@/lib/cap-table-math';
+import { unknownPlaceholders, unknownTokens } from '@/lib/round-figures';
 import { choice, link, list, number, rich, text, type Fields, type SectionCheck, type Values } from './fields';
 import { tokenHelp } from './tokens';
 import { DATA_ROOM_FILES_PATH, DATA_ROOM_PATH, DEMO_TARGET, DOOR_PATH, FOUNDER_PATH, GO_PATH, GO_SCREEN_LABELS, type GoScreenName } from './constants';
@@ -746,7 +747,7 @@ const investorsPlatform = section({
 const investorsRound = section({
   label: 'The round',
   description:
-    'The terms of the current round, the investment model, and the capitalization table. Shown to guests who came through the front door and to signed-in admins only, never on a public page. The figures come from the signed documents and the owner; the model works out every percentage from them.',
+    'The terms of the current round (The Raise) and the capitalization table with its investment slider (the Cap Table). Shown to guests who came through the front door and to signed-in admins only, never on a public page. The figures come from the signed documents and the owner; the cap table works out every percentage from them.',
   draftCopy: true,
   withhold: 'The cap table is hidden on the site until these are fixed.',
   fields: {
@@ -770,11 +771,6 @@ const investorsRound = section({
       multiline: true,
       hint: '{cap in millions} shows the saved cap the way a sentence says it, like $10 million. {round}, {cap} and {minimum} work here too.',
     }),
-    modelHeading: text('Model: heading', { max: 60 }),
-    sliderLabel: text('Slider label', { max: 40 }),
-    shareLabel: text('Share of round: label', { max: 40 }),
-    ownershipLabel: text('Ownership: label', { max: 40 }),
-    remainingLabel: text('Allocation remaining: label', { max: 40 }),
     raise: number('The round, in dollars', {
       min: 1,
       integer: true,
@@ -788,18 +784,13 @@ const investorsRound = section({
     minimum: number('Minimum investment, in dollars', {
       min: 1,
       integer: true,
-      hint: "The smallest investment, and the slider's lower end. The Raise shows it wherever its text says {minimum}.",
+      hint: 'The smallest investment, a whole number of slider steps: the slider runs from nothing to the round, and anything below this reads as this. The Raise shows it wherever its text says {minimum}.',
     }),
-    maximum: number('Largest investment on the slider, in dollars', { min: 1, integer: true, hint: 'No more than the round.' }),
-    step: number('Slider step, in dollars', {
-      min: 1,
-      integer: true,
-      hint: 'Must fit a whole number of times between the minimum and the largest investment.',
-    }),
+    step: number('Slider step, in dollars', { min: 1, integer: true, hint: 'Must fit a whole number of times into the round.' }),
     start: number('Starting amount, in dollars', {
       min: 1,
       integer: true,
-      hint: 'The amount the cap table opens on, before the visitor moves the slider. Between the minimum and the largest investment, and no more than the round.',
+      hint: 'The amount the cap table opens on, before the visitor moves the slider: from the minimum to the round, a whole number of slider steps.',
     }),
     capHeading: text('Capitalization: heading', { max: 120 }),
     withheldMessage: text('Capitalization: message while the figures are fixed', {
@@ -813,6 +804,21 @@ const investorsRound = section({
     sharesUnit: text('Unit after share counts', { max: 20, hint: 'Shown after each count, like 7,000,000 shares.' }),
     totalLabel: text('Total row: label', { max: 30 }),
     priceLabel: text('Price per share: label', { max: 120, hint: 'Worked out from the cap and the full round, so it is an illustration.' }),
+    bandEyebrow: text('This round: eyebrow', { max: 40, hint: 'Small capitals at the head of the round, inside the table.' }),
+    bandLine: text('This round: line', {
+      max: 120,
+      hint: 'Beside the eyebrow. {round} becomes the round and {percent} the share of the company it converts to.',
+    }),
+    bandHint: text('This round: slider hint', { max: 60, hint: 'Beside it on wider screens, pointing out the slider.' }),
+    sliderLabel: text('Slider: name for screen readers', { max: 40 }),
+    sliderValueText: text('Slider: value for screen readers', {
+      max: 120,
+      hint: 'Read out as the slider moves. {amount} becomes the investment and {ownership} the ownership after conversion.',
+    }),
+    youShare: text('Your share of the round', { max: 60, hint: 'Under the slider, after your amount. {share} becomes the share, like 40%.' }),
+    othersRemaining: text('What the round has left', { max: 40, hint: 'Under the slider, after the amount the other investors have left.' }),
+    fullyAllocated: text('Round fully allocated', { max: 60, hint: 'In place of the other investors once the slider takes the whole round.' }),
+    minimumLabel: text('Minimum on the scale', { max: 60, hint: 'Under the slider, at the minimum. {minimum} becomes the minimum.' }),
     capTable: list(
       'Capitalization today',
       'Holder',
@@ -845,15 +851,9 @@ const investorsRound = section({
     getsHeading: 'What the investor gets',
     getsBody:
       'The SAFE converts to preferred stock at the next priced equity round, at the lower of the cap or the round price. The cap is what does the work: a $100,000 check today converts as if the company were worth no more than {cap in millions}, regardless of the price later investors pay.',
-    modelHeading: 'Model your investment',
-    sliderLabel: 'Your investment',
-    shareLabel: 'Share of round',
-    ownershipLabel: 'Your ownership',
-    remainingLabel: 'Allocation remaining',
     raise: 750000,
     cap: 10000000,
     minimum: 50000,
-    maximum: 750000,
     step: 25000,
     start: 300000,
     capHeading: 'Capitalization, today and after the round converts',
@@ -865,6 +865,15 @@ const investorsRound = section({
     sharesUnit: 'shares',
     totalLabel: 'Total',
     priceLabel: 'Illustrative price per share, if the full round converts',
+    bandEyebrow: 'This round',
+    bandLine: '{round}, converting to {percent} of the company',
+    bandHint: 'Drag to model your investment',
+    sliderLabel: 'Your investment',
+    sliderValueText: '{amount}, {ownership} ownership after conversion',
+    youShare: '{share} of the round',
+    othersRemaining: 'remaining',
+    fullyAllocated: 'Round fully allocated to you',
+    minimumLabel: '{minimum} minimum',
     capTable: [
       { holder: 'Founder', class: 'Common', shares: 7000000 },
       { holder: 'Flagship operator', class: 'Common', shares: 1500000 },
@@ -879,34 +888,40 @@ const investorsRound = section({
   },
   // The figures must agree with each other, or the cap table's sums (src/lib/cap-table-math.ts) cannot be worked out. Figures that
   // fail here are refused in the admin; stored ones that fail (saved before a check existed) hide the cap table until they are fixed.
-  check: ({ raise, cap, minimum, maximum, step, start, capTable, terms, getsBody }) => {
+  check: ({ raise, cap, minimum, step, start, capTable, terms, getsBody, bandLine, sliderValueText, youShare, minimumLabel }) => {
     const issues = [];
-    // The Raise names the saved figures by token; one it does not know would show its braces to investors.
-    const copy: [string, string][] = [
+    // The copy names figures by token; one it does not know would show its braces to investors.
+    const raiseCopy: [string, string][] = [
       ...terms.flatMap((term) => [term.value, term.label].map((text): [string, string] => ['terms', text])),
       ['getsBody', getsBody],
     ];
-    for (const [field, text] of copy) {
+    for (const [field, text] of raiseCopy) {
       const unknown = unknownTokens(text);
       if (unknown.length) {
         issues.push({ field, message: `${unknown.join(', ')} is not a figure: use {round}, {cap}, {minimum} or {cap in millions}.` });
       }
     }
-    if (![raise, cap, minimum, maximum, step, start].every(Number.isFinite)) return issues;
+    const capCopy: [string, string][] = [
+      ['bandLine', bandLine],
+      ['sliderValueText', sliderValueText],
+      ['youShare', youShare],
+      ['minimumLabel', minimumLabel],
+    ];
+    for (const [field, text] of capCopy) {
+      const unknown = unknownPlaceholders(text, CAP_TABLE_PLACEHOLDERS);
+      if (unknown.length) issues.push({ field, message: `${unknown.join(', ')} is not a figure: use ${CAP_TABLE_PLACEHOLDERS.join(', ')}.` });
+    }
+    if (![raise, cap, minimum, step, start].every(Number.isFinite)) return issues;
     if (raise >= cap) issues.push({ field: 'raise', message: 'The round must be smaller than the valuation cap.' });
     if (capTable.reduce((sum, row) => sum + row.shares, 0) <= 0) {
       issues.push({ field: 'capTable', message: 'At least one holder needs shares, or no percentage can be worked out.' });
     }
+    // The slider runs from nothing to the round in steps, so the round, the minimum and the starting amount must each land on a step.
+    if (raise % step !== 0) issues.push({ field: 'step', message: 'The slider step must fit a whole number of times into the round.' });
     if (minimum > raise) issues.push({ field: 'minimum', message: 'The minimum investment cannot be more than the round.' });
-    else if (minimum > maximum) {
-      issues.push({ field: 'minimum', message: 'The minimum investment cannot be more than the largest investment on the slider.' });
-    }
-    if (maximum > raise) issues.push({ field: 'maximum', message: 'The largest investment on the slider cannot be more than the round.' });
+    else if (minimum % step !== 0) issues.push({ field: 'minimum', message: 'The minimum investment must be a whole number of slider steps.' });
     if (start < minimum || start > raise) issues.push({ field: 'start', message: 'The starting amount must be between the minimum investment and the round.' });
-    else if (start > maximum) issues.push({ field: 'start', message: 'The starting amount cannot be more than the largest investment on the slider.' });
-    if (maximum >= minimum && (maximum - minimum) % step !== 0) {
-      issues.push({ field: 'step', message: 'The slider step must fit a whole number of times between the minimum and the largest investment.' });
-    }
+    else if (start % step !== 0) issues.push({ field: 'start', message: 'The starting amount must be a whole number of slider steps.' });
     return issues;
   },
 });

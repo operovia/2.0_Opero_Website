@@ -81,6 +81,8 @@ export type CapTableView = {
   roundAmount: string;
   /** The share of the company the whole round converts to, one decimal: 7.5%. */
   roundPercent: string;
+  /** The smallest investment: $50,000. */
+  minimumAmount: string;
   /** Today's share for the holders the round brings in: 0.0%. */
   todayNone: string;
   existing: HolderRow[];
@@ -181,6 +183,7 @@ export function capTableView(config: CapTableConfig, investment: number): CapTab
     othersAmount: othersInv > ZERO ? money(othersInv) : null,
     roundAmount: money(raise),
     roundPercent: percent(raise, cap, 1),
+    minimumAmount: money(config.minimum),
     todayNone: percent(ZERO, ONE, 1),
     existing,
     you: { after: percent(inv, cap, 2), shares: count(youShares), bar: width(inv, cap) },
@@ -192,4 +195,27 @@ export function capTableView(config: CapTableConfig, investment: number): CapTab
     split: width(inv, raise),
     price: price(net, today),
   };
+}
+
+/**
+ * The placeholders the cap table's copy may use (Content, Data Room, The
+ * round), each filled from the figures above, so no figure is ever typed into
+ * the copy: {round} the round ($750,000), {percent} the share of the company
+ * it converts to (7.5%), {minimum} the smallest investment ($50,000),
+ * {amount} the reader's investment ($300,000), {share} their share of the
+ * round (40%), and {ownership} their ownership after conversion (3.00%).
+ */
+export const CAP_TABLE_PLACEHOLDERS = ['{round}', '{percent}', '{minimum}', '{amount}', '{share}', '{ownership}'] as const;
+
+/** The copy with each placeholder filled for this view. Text without placeholders comes back as it was. */
+export function capTableCopy(text: string, view: CapTableView): string {
+  const values: Record<string, string> = {
+    round: view.roundAmount,
+    percent: view.roundPercent,
+    minimum: view.minimumAmount,
+    amount: view.youAmount,
+    share: view.shareOfRound,
+    ownership: view.you.after,
+  };
+  return text.replace(/\{(round|percent|minimum|amount|share|ownership)\}/g, (_, name: string) => values[name]!);
 }

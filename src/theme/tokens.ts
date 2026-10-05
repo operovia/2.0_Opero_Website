@@ -54,6 +54,8 @@ export type ThemeColors = {
   overlay: string;
   /** The "in" of the LinkedIn icon: LinkedIn's blue on light, a lighter tint of it on dark so it stays clear on a dark tile. */
   linkedin: string;
+  /** The teal jewel as text: the reader's own figure on the cap table. The jewel's highlight on dark, its base on light, so it meets 4.5:1 on both. */
+  tealInk: string;
 };
 
 /** A jewel's radial gradient stops, lightest to deepest, as drawn in the Opero mark. */
@@ -113,6 +115,7 @@ export const tokens = {
       dangerSoft: '#D2696C24',
       overlay: '#08090BCC',
       linkedin: '#378FE9',
+      tealInk: jewels.teal.dark[0],
     },
     light: {
       canvas: '#FFFFFF',
@@ -138,6 +141,7 @@ export const tokens = {
       dangerSoft: '#841C2814',
       overlay: '#25272E66',
       linkedin: '#0A66C2',
+      tealInk: jewels.teal.light[1],
     },
   } satisfies Record<ThemeName, ThemeColors>,
 
@@ -338,6 +342,10 @@ export const tokens = {
     'display-hero': { size: 'clamp(2.25rem, 1.6rem + 2.9vw, 3.375rem)', lineHeight: '1.12', tracking: '0.006em' },
     /** A single figure set very large, such as the founder's years on the Investor Hub. */
     numeral: { size: 'clamp(5.5rem, 3.4rem + 7vw, 9.5rem)', lineHeight: '1', tracking: '0.01em' },
+    /** Figures in a table, such as the cap table's holders and percentages: the base size, set tighter so rows stay compact. */
+    figure: { size: '1rem', lineHeight: '1.5', tracking: '0em' },
+    /** A table figure that stands out, such as the reader's own share on the cap table. */
+    'figure-lg': { size: '1.375rem', lineHeight: '1.1', tracking: '0em' },
     /** Small uppercase labels: eyebrows, console tags. */
     eyebrow: { size: '0.8125rem', lineHeight: '1.4', tracking: '0.16em' },
     /** The smallest uppercase labels, such as the console's badge and footer. */

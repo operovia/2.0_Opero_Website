@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { pages } from '@/content/registry';
-import { capTableView, percent, snapAmount, type CapTableConfig } from './cap-table-math';
+import { capTableCopy, capTableView, percent, snapAmount, type CapTableConfig } from './cap-table-math';
 import golden from './cap-table-golden.json';
 
 /* The cap table handoff's inputs (its math spec), and the golden values it checked at every slider position (its Appendix A). */
@@ -108,6 +108,22 @@ describe('the rest of the table', () => {
   it('refuses a round at or above the cap, or a table without shares', () => {
     expect(() => capTableView({ ...config, cap: 750_000 }, 300_000)).toThrow();
     expect(() => capTableView({ ...config, holders: [{ holder: 'Founder', class: 'Common', shares: 0 }] }, 300_000)).toThrow();
+  });
+});
+
+describe('capTableCopy', () => {
+  it("fills the cap table's copy, as the Copy Deck words it", () => {
+    const seed = pages.investors.sections.round.seed;
+    const view = capTableView(config, 300_000);
+    expect(capTableCopy(seed.bandLine, view)).toBe('$750,000, converting to 7.5% of the company');
+    expect(capTableCopy(seed.youShare, view)).toBe('40% of the round');
+    expect(capTableCopy(seed.minimumLabel, view)).toBe('$50,000 minimum');
+    expect(capTableCopy(seed.sliderValueText, view)).toBe('$300,000, 3.00% ownership after conversion');
+    expect(capTableCopy(seed.youShare, capTableView(config, 50_000))).toBe('6.7% of the round');
+  });
+
+  it('leaves text without placeholders as it was', () => {
+    expect(capTableCopy('Drag to model your investment', capTableView(config, 300_000))).toBe('Drag to model your investment');
   });
 });
 

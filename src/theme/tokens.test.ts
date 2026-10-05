@@ -25,6 +25,8 @@ const requiredPairs: [keyof ThemeColors, keyof ThemeColors, number][] = [
   ['lineInput', 'canvas', 3],
   ['focusRing', 'canvas', 3],
   ['focusRing', 'surface', 3],
+  ['tealInk', 'surface', 4.5],
+  ['tealInk', 'surfaceRaised', 4.5],
 ];
 
 describe.each(['dark', 'light'] as ThemeName[])('%s theme contrast', (theme) => {

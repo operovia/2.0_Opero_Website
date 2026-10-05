@@ -1,10 +1,11 @@
 'use client';
 
+import { MoveHorizontal } from 'lucide-react';
 import { useId, useState, type CSSProperties } from 'react';
 import { Reveal } from '@/components/motion/reveal';
 import type { SectionData } from '@/content/registry';
+import { capTableCopy, capTableView, type CapTableConfig } from '@/lib/cap-table-math';
 import { cn } from '@/lib/cn';
-import { capTableView, money, type CapTableConfig } from '@/lib/cap-table-math';
 
 type Props = {
   /** The round section of the Data Room: the copy and the figures, from the server page. */
@@ -25,23 +26,8 @@ const jewels = {
 } as const;
 type JewelName = keyof typeof jewels;
 const existingJewels: JewelName[] = ['crimson', 'violet', 'gold'];
-
-/** One row of the table: a holder already on it, the reader, or the rest of the round, with its figures as the math returns them. */
-type Row = {
-  key: string;
-  holder: string;
-  class: string;
-  jewel: JewelName;
-  you: boolean;
-  today: string;
-  /** Share count today, shown under today's percentage; empty for the holders the round brings in. */
-  sharesToday: string;
-  after: string;
-  sharesAfter: string;
-  bar: number;
-};
-
-const after = (row: { after: string; shares: string; bar: number }) => ({ after: row.after, sharesAfter: row.shares, bar: row.bar });
+/** The test hooks of the first three holders' after-the-round figures, as the cap table handoff names them. */
+const existingHooks = ['founder', 'flagship', 'pool'];
 
 /** The bar's colors, read by .round-bar in globals.css; its width is the exact ownership, as a percentage. */
 const barStyle = (jewel: JewelName, width: number) =>
@@ -51,17 +37,73 @@ const barStyle = (jewel: JewelName, width: number) =>
     width: `${Math.min(100, Math.max(0, width))}%`,
   }) as CSSProperties;
 
+function Dot({ jewel }: { jewel: JewelName }) {
+  return <span aria-hidden className={cn('cap-dot', jewels[jewel])} />;
+}
+
+/** A holder's name with its jewel; on phones, where the Today column is hidden, today's share sits under the name. */
+function Holder({ jewel, name, today }: { jewel: JewelName; name: string; today: string }) {
+  return (
+    <span className="cap-holder">
+      <Dot jewel={jewel} />
+      <span>
+        {name}
+        <span className="cap-today-m">{today}</span>
+      </span>
+    </span>
+  );
+}
+
+/** A share of the company after the round: the percentage and the share count on one line, the bar below. */
+function After({
+  jewel,
+  percent,
+  shares,
+  bar,
+  you,
+  hooks,
+}: {
+  jewel: JewelName;
+  percent: string;
+  shares: string;
+  bar: number;
+  you?: boolean;
+  hooks?: { percent: string; shares?: string };
+}) {
+  return (
+    <>
+      <span className="cap-line">
+        <span className={cn('cap-pct', you && 'cap-pct-you')} data-testid={hooks?.percent}>
+          {percent}
+        </span>
+        <span className="cap-shares" data-testid={hooks?.shares}>
+          {shares}
+        </span>
+      </span>
+      <span aria-hidden className={cn('cap-bar', you && 'cap-bar-you')}>
+        <span className="round-bar block h-full rounded-full" style={barStyle(jewel, bar)} />
+      </span>
+    </>
+  );
+}
+
 /**
  * The Cap Table tab: the capitalization table today and after the round
- * converts, then the investment model (a slider and three figures), whose
- * amount is the reader's row in the table, and the small print. Every
- * figure comes from the section's stored numbers through
- * src/lib/cap-table-math.ts, in exact whole-number arithmetic; the slider
- * only chooses the amount. Shown to guests and admins only; the round's
- * terms stand on The Raise tab (raise-terms.tsx).
+ * converts, with the round inside it. A band at the head of the round says
+ * what it is, and its bar is the investment slider: the teal part is the
+ * reader's share of the round, the green the rest, and the hatching marks
+ * the minimum. The reader's row and the rest of the round follow the slider,
+ * and the notes and the small print stand under the table. Every figure
+ * comes from the section's stored numbers through src/lib/cap-table-math.ts,
+ * in exact whole-number arithmetic; the slider only chooses the amount. The
+ * reference is the cap table handoff's mockup
+ * (docs/reference/Cap_Table_Slider_Mockup.html). On phones the Class and
+ * Today columns give way, and today's share sits under each holder's name.
+ * Shown to guests and admins only; the round's terms stand on The Raise tab
+ * (raise-terms.tsx).
  */
 export function CapTableSection({ content }: Props) {
-  const sliderId = useId();
+  const notesId = useId();
   const config: CapTableConfig = {
     holders: content.capTable,
     raise: content.raise,
@@ -70,181 +112,207 @@ export function CapTableSection({ content }: Props) {
     step: content.step,
     start: content.start,
   };
-  const bounds = { min: content.minimum, max: content.maximum, step: content.step };
   const [chosen, setChosen] = useState(content.start);
-  // Every figure comes from the math, for the amount it settles on; never from the raw slider value.
+  // Every figure comes from the math, for the amount it settles on (anything below the minimum is the minimum); never from the raw slider value.
   const view = capTableView(config, chosen);
-  const amount = view.amount;
-  const fill = bounds.max > bounds.min ? ((amount - bounds.min) / (bounds.max - bounds.min)) * 100 : 0;
-
-  const rows: Row[] = [
-    ...view.existing.map((row, i) => ({
-      key: `existing-${i}`,
-      holder: row.holder,
-      class: row.class,
-      jewel: existingJewels[i % existingJewels.length]!,
-      you: false,
-      today: row.today,
-      sharesToday: row.shares,
-      after: row.after,
-      sharesAfter: row.shares,
-      bar: row.bar,
-    })),
-    { key: 'you', holder: content.youLabel, class: '', jewel: 'teal', you: true, today: view.todayNone, sharesToday: '', ...after(view.you) },
-    { key: 'others', holder: content.othersLabel, class: '', jewel: 'green', you: false, today: view.todayNone, sharesToday: '', ...after(view.others) },
-  ];
-
-  const stats = [
-    { label: content.shareLabel, value: view.shareOfRound },
-    { label: content.ownershipLabel, value: view.you.after },
-    { label: content.remainingLabel, value: view.remaining },
-  ];
+  const copy = (text: string) => capTableCopy(text, view);
+  const units = (count: string) => `${count} ${content.sharesUnit}`;
+  const today = (percent: string) => `${content.todayColumn} ${percent}`;
 
   return (
-    <>
-      {/* The capitalization table, today and after the round converts. */}
-      <Reveal className="mt-10">
-        <div className="mt-6 rounded-2xl border border-line bg-surface px-5 py-2 sm:px-6">
-          {/* Explicit roles: on phones the rows and cells are shown as blocks, and WebKit drops the table's roles unless they are stated. */}
-          <table role="table" className="w-full border-collapse text-left">
-            <caption className="sr-only">{content.capHeading}</caption>
-            {/* On phones each row stacks and carries its own labels, so the header row is not needed there. */}
-            <thead role="rowgroup" className="hidden sm:table-header-group">
-              <tr role="row" className="text-micro font-semibold text-fg-subtle uppercase">
-                <th role="columnheader" scope="col" className="py-3 pr-4 font-semibold">
-                  {content.holderColumn}
-                </th>
-                <th role="columnheader" scope="col" className="py-3 pr-4 font-semibold">
-                  {content.classColumn}
-                </th>
-                <th role="columnheader" scope="col" className="py-3 pr-4 font-semibold">
-                  {content.todayColumn}
-                </th>
-                <th role="columnheader" scope="col" className="w-2/5 py-3 font-semibold">
-                  {content.afterColumn}
-                </th>
-              </tr>
-            </thead>
-            <tbody role="rowgroup">
-              {rows.map((row) => {
-                const { jewel, you } = row;
-                return (
-                  <tr role="row" key={row.key} className={cn('block border-t border-line py-4 sm:table-row sm:py-0', you && 'font-semibold')}>
-                    <th role="rowheader" scope="row" className="block pr-4 sm:table-cell sm:py-4 sm:align-top">
-                      <span className="flex items-center gap-2.5">
-                        <span aria-hidden className={cn('size-2.5 shrink-0 rounded-full', jewels[jewel])} />
-                        <span className={cn('text-base text-fg', you ? 'font-semibold' : 'font-medium')}>{row.holder}</span>
-                      </span>
-                      {row.class ? <span className="mt-0.5 block pl-5 text-sm font-normal text-fg-muted sm:hidden">{row.class}</span> : null}
-                    </th>
-                    <td role="cell" className="hidden pr-4 text-sm text-fg-muted sm:table-cell sm:py-4 sm:align-top">
-                      {row.class}
-                    </td>
-                    <td role="cell" className="mt-3 flex items-baseline justify-between gap-4 pl-5 sm:mt-0 sm:table-cell sm:pr-4 sm:pl-0 sm:py-4 sm:align-top">
-                      <span className="text-sm text-fg-subtle sm:hidden">{content.todayColumn}</span>
-                      <span className="text-right sm:text-left">
-                        <span className="block text-base text-fg tabular-nums">{row.today}</span>
-                        {row.sharesToday ? (
-                          <span className="block text-sm font-normal text-fg-subtle tabular-nums">
-                            {row.sharesToday} {content.sharesUnit}
-                          </span>
-                        ) : null}
-                      </span>
-                    </td>
-                    <td role="cell" className="mt-2 block pl-5 sm:mt-0 sm:table-cell sm:py-4 sm:pl-0 sm:align-top">
-                      <span className="flex items-baseline justify-between gap-4 sm:block">
-                        <span className="text-sm text-fg-subtle sm:hidden">{content.afterColumn}</span>
-                        <span className="text-right sm:text-left">
-                          <span className="block text-base text-fg tabular-nums">{row.after}</span>
-                          <span className="block text-sm font-normal text-fg-subtle tabular-nums">
-                            {row.sharesAfter} {content.sharesUnit}
-                          </span>
+    <Reveal className="mt-6">
+      <div data-testid="cap-card" className="cap-card">
+        <table className="cap-table" aria-describedby={notesId}>
+          <caption className="sr-only">{content.capHeading}</caption>
+          <colgroup>
+            <col className="cap-col-holder" />
+            <col className="cap-col-class" />
+            <col className="cap-col-today" />
+            <col className="cap-col-after" />
+          </colgroup>
+          <thead>
+            <tr>
+              <th scope="col">{content.holderColumn}</th>
+              <th scope="col" className="cap-class">
+                {content.classColumn}
+              </th>
+              <th scope="col" className="cap-today">
+                {content.todayColumn}
+              </th>
+              <th scope="col">{content.afterColumn}</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {view.existing.map((row, i) => {
+              const jewel = existingJewels[i % existingJewels.length]!;
+              const hook = existingHooks[i];
+              return (
+                <tr key={`${row.holder}-${i}`}>
+                  <th scope="row">
+                    <Holder jewel={jewel} name={row.holder} today={today(row.today)} />
+                  </th>
+                  <td className="cap-class">{row.class}</td>
+                  <td className="cap-today">
+                    <span className="cap-pct">{row.today}</span>
+                  </td>
+                  <td>
+                    <After
+                      jewel={jewel}
+                      percent={row.after}
+                      shares={units(row.shares)}
+                      bar={row.bar}
+                      hooks={hook ? { percent: `cap-after-pct-${hook}` } : undefined}
+                    />
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+
+          {/* The round: the band with the slider, then the reader and the rest of the round, on a tinted panel. */}
+          <tbody className="cap-round">
+            <tr className="cap-band">
+              <td colSpan={4}>
+                <div className="cap-band-top">
+                  <p className="cap-band-title">
+                    <span className="cap-eyebrow">{content.bandEyebrow}</span>
+                    <span className="cap-band-size">{copy(content.bandLine)}</span>
+                  </p>
+                  <p aria-hidden className="cap-hint">
+                    <MoveHorizontal className="size-4" />
+                    <span>{content.bandHint}</span>
+                  </p>
+                </div>
+
+                <div className="cap-split-labels">
+                  <p className="cap-lab">
+                    <Dot jewel="teal" />
+                    <span>
+                      {content.youLabel} <b data-testid="cap-you-amount">{view.youAmount}</b>
+                    </span>
+                    <span className="cap-sub" data-testid="cap-share-of-round">
+                      {copy(content.youShare)}
+                    </span>
+                  </p>
+                  <p className="cap-lab cap-lab-right">
+                    {view.othersAmount ? (
+                      <>
+                        <span className="cap-lab-main">
+                          {content.othersLabel} <b data-testid="cap-others-amount">{view.othersAmount}</b>
                         </span>
+                        <span className="cap-sub">{content.othersRemaining}</span>
+                      </>
+                    ) : (
+                      <span className="cap-lab-main">
+                        <b>{content.fullyAllocated}</b>
                       </span>
-                      <span aria-hidden className="mt-2 block h-1.5 w-full overflow-hidden rounded-full bg-line">
-                        <span className="round-bar block h-full rounded-full" style={barStyle(jewel, row.bar)} />
-                      </span>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-            <tfoot role="rowgroup">
-              <tr role="row" className="block border-t border-line-strong py-4 text-sm text-fg-muted sm:table-row sm:py-0">
-                <th role="rowheader" scope="row" className="block pr-4 text-left font-semibold text-fg sm:table-cell sm:py-4">
-                  {content.totalLabel}
-                </th>
-                <td role="cell" className="hidden sm:table-cell sm:py-4" />
-                <td role="cell" className="mt-2 flex items-baseline justify-between gap-4 sm:mt-0 sm:table-cell sm:py-4 sm:pr-4">
-                  <span className="text-fg-subtle sm:hidden">{content.todayColumn}</span>
-                  <span className="text-right tabular-nums sm:text-left">
-                    {view.totalToday.percent}
-                    <span className="block text-fg-subtle">
-                      {view.totalToday.shares} {content.sharesUnit}
-                    </span>
+                    )}
+                    <Dot jewel="green" />
+                  </p>
+                </div>
+
+                <div className="cap-split">
+                  <span aria-hidden className="cap-track">
+                    <span className="cap-track-you" style={{ width: `${view.split}%` }} />
+                    <span className="cap-minzone" style={{ width: `${view.minimumAt}%` }} />
                   </span>
-                </td>
-                <td role="cell" className="mt-2 flex items-baseline justify-between gap-4 sm:mt-0 sm:table-cell sm:py-4">
-                  <span className="text-fg-subtle sm:hidden">{content.afterColumn}</span>
-                  <span className="text-right tabular-nums sm:text-left">
-                    {view.totalAfter.percent}
-                    <span className="block text-fg-subtle">
-                      {view.totalAfter.shares} {content.sharesUnit}
-                    </span>
+                  {/* A native range input over the bar, one thumb wider than it and shifted back by half a thumb, so the thumb's centre sits on the split at every value. */}
+                  <input
+                    type="range"
+                    className="cap-range"
+                    data-testid="cap-slider"
+                    min={0}
+                    max={content.raise}
+                    step={content.step}
+                    value={view.amount}
+                    aria-label={content.sliderLabel}
+                    aria-valuetext={copy(content.sliderValueText)}
+                    aria-describedby={notesId}
+                    onChange={(event) => setChosen(Number(event.target.value))}
+                  />
+                </div>
+                <p className="cap-scale">
+                  <span className="cap-tick" style={{ left: `${view.minimumAt}%` }}>
+                    {copy(content.minimumLabel)}
                   </span>
-                </td>
-              </tr>
-            </tfoot>
-          </table>
-        </div>
-        <p className="mt-4 text-sm text-fg-muted">
+                  <span className="cap-end">{view.roundAmount}</span>
+                </p>
+              </td>
+            </tr>
+
+            <tr className="cap-you">
+              <th scope="row">
+                <Holder jewel="teal" name={content.youLabel} today={today(view.todayNone)} />
+              </th>
+              <td className="cap-class" />
+              <td className="cap-today">
+                <span className="cap-pct">{view.todayNone}</span>
+              </td>
+              <td aria-live="polite">
+                <After
+                  jewel="teal"
+                  percent={view.you.after}
+                  shares={units(view.you.shares)}
+                  bar={view.you.bar}
+                  you
+                  hooks={{ percent: 'cap-you-pct', shares: 'cap-you-shares' }}
+                />
+              </td>
+            </tr>
+            <tr className="cap-others">
+              <th scope="row">
+                <Holder jewel="green" name={content.othersLabel} today={today(view.todayNone)} />
+              </th>
+              <td className="cap-class" />
+              <td className="cap-today">
+                <span className="cap-pct">{view.todayNone}</span>
+              </td>
+              <td>
+                <After
+                  jewel="green"
+                  percent={view.others.after}
+                  shares={units(view.others.shares)}
+                  bar={view.others.bar}
+                  hooks={{ percent: 'cap-others-pct', shares: 'cap-others-shares' }}
+                />
+              </td>
+            </tr>
+          </tbody>
+
+          <tfoot>
+            <tr>
+              <th scope="row" className="cap-total">
+                {content.totalLabel}
+              </th>
+              <td className="cap-class" />
+              <td className="cap-today">
+                <span className="cap-line">
+                  <span className="cap-pct">{view.totalToday.percent}</span>
+                  <span className="cap-shares">{units(view.totalToday.shares)}</span>
+                </span>
+              </td>
+              <td>
+                <span className="cap-line">
+                  <span className="cap-pct">{view.totalAfter.percent}</span>
+                  <span className="cap-shares" data-testid="cap-total-after-shares">
+                    {units(view.totalAfter.shares)}
+                  </span>
+                </span>
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      {/* The notes the table and the slider refer to, then the small print. */}
+      <div id={notesId} className="mt-6 max-w-3xl space-y-3 text-sm">
+        <p className="text-fg-muted">
           {content.priceLabel}: <span className="font-medium text-fg tabular-nums">{view.price}</span>
         </p>
-        <p className="mt-3 max-w-3xl text-sm text-fg-subtle">{content.capNote}</p>
-      </Reveal>
-      {/* The model: the slider chooses the amount, the three figures follow. */}
-      <Reveal className="investor-glass mt-12 rounded-2xl p-6 sm:p-10">
-        <h2 className="text-xl font-semibold text-fg">{content.modelHeading}</h2>
-        <div className="mt-8 grid grid-cols-1 gap-x-10 gap-y-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:items-end">
-          <div>
-            <label htmlFor={sliderId} className="block text-eyebrow font-semibold text-fg-subtle uppercase">
-              {content.sliderLabel}
-            </label>
-            <p className="mt-3 text-display-sm font-semibold text-fg tabular-nums">{view.youAmount}</p>
-          </div>
-          <div>
-            <input
-              id={sliderId}
-              type="range"
-              className="round-range block h-11 w-full"
-              min={bounds.min}
-              max={bounds.max}
-              step={bounds.step}
-              value={amount}
-              aria-valuetext={view.youAmount}
-              onChange={(e) => setChosen(Number(e.target.value))}
-              style={{ '--round-fill': `${fill}%` } as CSSProperties}
-            />
-            <div aria-hidden className="flex justify-between text-sm text-fg-subtle tabular-nums">
-              <span>{money(bounds.min)}</span>
-              <span>{money(bounds.max)}</span>
-            </div>
-          </div>
-        </div>
-        <dl className="mt-8 grid grid-cols-1 gap-6 border-t border-line pt-8 sm:grid-cols-3">
-          {stats.map((stat) => (
-            <div key={stat.label}>
-              <dt className="text-micro font-semibold text-fg-subtle uppercase">{stat.label}</dt>
-              <dd className="mt-2 text-2xl font-semibold text-fg tabular-nums sm:text-3xl">{stat.value}</dd>
-            </div>
-          ))}
-        </dl>
-      </Reveal>
-
-      {/* The small print, under the model as under The Raise. */}
-      <Reveal className="mt-12 max-w-3xl">
-        <p className="text-sm text-fg-subtle">{content.disclaimer}</p>
-      </Reveal>
-    </>
+        <p className="text-fg-subtle">{content.capNote}</p>
+        <p className="pt-3 text-fg-subtle">{content.disclaimer}</p>
+      </div>
+    </Reveal>
   );
 }

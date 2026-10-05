@@ -40,10 +40,13 @@ describe('seed content', () => {
       ['raise', { raise: 12_000_000 }],
       ['capTable', { capTable: [{ holder: 'Founder', class: 'Common', shares: 0 }] }],
       ['minimum', { minimum: 800_000 }],
-      ['maximum', { maximum: 1_000_000 }],
+      // The slider runs from nothing to the round in steps: the round, the minimum and the starting amount each land on one.
+      ['step', { step: 40_000 }],
+      ['minimum', { minimum: 60_000 }],
       ['start', { start: 25_000 }],
       ['start', { start: 800_000 }],
-      ['step', { step: 30_000 }],
+      ['start', { start: 310_000 }],
+      ['bandLine', { bandLine: '{round}, converting to {percnt} of the company' }],
       // The Raise names figures by token; a misspelt one would show its braces.
       ['terms', { terms: [{ value: '{cpa}', label: 'valuation cap' }] }],
       ['getsBody', { getsBody: 'Worth no more than {cap in milions}.' }],

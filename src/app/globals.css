@@ -35,6 +35,7 @@
   --color-canvas-raised: var(--o-canvas-raised);
   --color-surface: var(--o-surface);
   --color-surface-raised: var(--o-surface-raised);
+  --color-teal-ink: var(--o-teal-ink);
   --color-line: var(--o-line);
   --color-line-strong: var(--o-line-strong);
   --color-line-input: var(--o-line-input);
@@ -110,6 +111,12 @@
   --text-numeral: var(--o-text-numeral);
   --text-numeral--line-height: var(--o-text-numeral-lh);
   --text-numeral--letter-spacing: var(--o-text-numeral-tracking);
+  --text-figure: var(--o-text-figure);
+  --text-figure--line-height: var(--o-text-figure-lh);
+  --text-figure--letter-spacing: var(--o-text-figure-tracking);
+  --text-figure-lg: var(--o-text-figure-lg);
+  --text-figure-lg--line-height: var(--o-text-figure-lg-lh);
+  --text-figure-lg--letter-spacing: var(--o-text-figure-lg-tracking);
   --text-eyebrow: var(--o-text-eyebrow);
   --text-eyebrow--line-height: var(--o-text-eyebrow-lh);
   --text-eyebrow--letter-spacing: var(--o-text-eyebrow-tracking);
@@ -1535,57 +1542,416 @@
 }
 
 /*
- * The round (src/components/site/investors/round.tsx). The investment
- * slider: a hairline track, filled in teal up to the thumb (the component
- * sets --round-fill), with a teal jewel for a thumb, big enough to take a
- * finger. Keyboard focus rings the thumb, not the whole track.
+ * The cap table (src/components/site/investors/cap-table.tsx), after the cap
+ * table handoff's mockup (docs/reference/Cap_Table_Slider_Mockup.html): a
+ * card holding a fixed-layout table, the round on a tinted panel inside it,
+ * and the investment slider laid over the round's bar. Below 45rem (720px,
+ * the handoff's phone width) the Class and Today columns give way and
+ * today's share sits under each holder's name.
  */
-.round-range {
+.cap-card {
+  border: 1px solid var(--o-line);
+  border-radius: var(--o-radius-xl);
+  background: var(--o-surface);
+  padding: calc(var(--o-space-unit) * 1.5) calc(var(--o-space-unit) * 6.5) var(--o-space-unit);
+}
+.cap-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+.cap-col-holder {
+  width: 27%;
+}
+.cap-col-class {
+  width: 14%;
+}
+.cap-col-today {
+  width: 19%;
+}
+.cap-col-after {
+  width: 40%;
+}
+.cap-table thead th {
+  padding: calc(var(--o-space-unit) * 3.5) 0 calc(var(--o-space-unit) * 2.75);
+  border-bottom: 1px solid var(--o-line);
+  color: var(--o-fg-subtle);
+  font-size: var(--o-text-micro);
+  font-weight: var(--o-weight-semibold);
+  letter-spacing: var(--o-text-micro-tracking);
+  line-height: var(--o-text-micro-lh);
+  text-align: left;
+  text-transform: uppercase;
+}
+.cap-table tbody > tr > *,
+.cap-table tfoot > tr > * {
+  padding: calc(var(--o-space-unit) * 2.5) calc(var(--o-space-unit) * 4) calc(var(--o-space-unit) * 2.5) 0;
+  border-bottom: 1px solid var(--o-line);
+  text-align: left;
+  vertical-align: top;
+}
+.cap-table tr > :last-child {
+  padding-right: 0;
+}
+.cap-holder {
+  display: flex;
+  align-items: flex-start;
+  gap: calc(var(--o-space-unit) * 3);
+  color: var(--o-fg);
+  font-size: var(--o-text-figure);
+  font-weight: var(--o-weight-medium);
+  line-height: var(--o-text-figure-lh);
+}
+.cap-dot {
+  flex: none;
+  width: calc(var(--o-space-unit) * 2.25);
+  height: calc(var(--o-space-unit) * 2.25);
+  margin-top: calc(var(--o-space-unit) * 1.875);
+  border-radius: var(--o-radius-full);
+}
+.cap-today-m {
+  display: none;
+}
+.cap-class {
+  color: var(--o-fg-muted);
+  font-size: var(--o-text-sm);
+  line-height: calc(var(--o-space-unit) * 6);
+}
+.cap-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: calc(var(--o-space-unit) * 2.5);
+}
+.cap-pct {
+  color: var(--o-fg);
+  font-size: var(--o-text-figure);
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--o-weight-medium);
+  line-height: var(--o-text-figure-lh);
+}
+.cap-shares {
+  color: var(--o-fg-subtle);
+  font-size: var(--o-text-sm);
+  font-variant-numeric: tabular-nums;
+}
+.cap-bar {
+  display: block;
+  height: calc(var(--o-space-unit) * 1.25);
+  margin-top: calc(var(--o-space-unit) * 1.75);
+  overflow: hidden;
+  border-radius: var(--o-radius-full);
+  background: var(--o-line);
+}
+
+/* The round's panel: the band, then the reader and the rest of the round, washed in their two jewels. */
+.cap-round > .cap-band > td,
+.cap-round > .cap-you,
+.cap-round > .cap-others {
+  background:
+    radial-gradient(120% 140% at 0% 0%, color-mix(in oklab, var(--o-jewel-teal-base) 10%, transparent), transparent 55%),
+    radial-gradient(120% 140% at 100% 100%, color-mix(in oklab, var(--o-jewel-green-base) 7%, transparent), transparent 55%),
+    var(--o-surface-raised);
+}
+.cap-round > .cap-band > td {
+  padding: calc(var(--o-space-unit) * 3) calc(var(--o-space-unit) * 4.5) calc(var(--o-space-unit) * 2.5);
+}
+.cap-band-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: calc(var(--o-space-unit) * 1) calc(var(--o-space-unit) * 4);
+  margin-bottom: calc(var(--o-space-unit) * 2);
+}
+.cap-band-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: calc(var(--o-space-unit) * 3);
+}
+.cap-eyebrow {
+  color: var(--o-fg);
+  font-size: var(--o-text-eyebrow);
+  font-weight: var(--o-weight-semibold);
+  letter-spacing: var(--o-text-eyebrow-tracking);
+  line-height: var(--o-text-eyebrow-lh);
+  text-transform: uppercase;
+}
+.cap-band-size {
+  color: var(--o-fg-muted);
+  font-size: var(--o-text-sm);
+  font-variant-numeric: tabular-nums;
+}
+.cap-hint {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--o-space-unit) * 2);
+  color: var(--o-fg-subtle);
+  font-size: var(--o-text-xs);
+}
+.cap-split-labels {
+  display: flex;
+  justify-content: space-between;
+  gap: calc(var(--o-space-unit) * 4);
+  margin-bottom: calc(var(--o-space-unit) * 1.5);
+  font-size: var(--o-text-sm);
+}
+.cap-lab {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--o-space-unit) * 2);
+  color: var(--o-fg-muted);
+}
+.cap-lab .cap-dot {
+  margin-top: 0;
+}
+.cap-lab b {
+  color: var(--o-fg);
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--o-weight-semibold);
+}
+.cap-sub {
+  color: var(--o-fg-subtle);
+  font-variant-numeric: tabular-nums;
+}
+.cap-lab-right {
+  justify-content: flex-end;
+  text-align: right;
+}
+
+/* The bar the slider runs along: teal for the reader's part of the round, green for the rest, hatched up to the minimum. */
+.cap-split {
+  --cap-thumb: calc(var(--o-space-unit) * 6.5);
+  --cap-track: calc(var(--o-space-unit) * 3);
+  position: relative;
+  height: var(--cap-thumb);
+  margin: 0 calc(var(--o-space-unit) * 0.5);
+}
+.cap-track {
+  position: absolute;
+  inset-inline: 0;
+  top: calc((var(--cap-thumb) - var(--cap-track)) / 2);
+  height: var(--cap-track);
+  overflow: hidden;
+  border-radius: var(--o-radius-full);
+  background: linear-gradient(90deg, var(--o-jewel-green-base), var(--o-jewel-green-highlight));
+}
+.cap-track-you,
+.cap-minzone {
+  position: absolute;
+  inset-block: 0;
+  left: 0;
+}
+.cap-track-you {
+  background: linear-gradient(90deg, var(--o-jewel-teal-base), var(--o-jewel-teal-highlight));
+}
+.cap-minzone {
+  background: repeating-linear-gradient(
+    135deg,
+    color-mix(in oklab, var(--o-canvas) 45%, transparent) 0 calc(var(--o-space-unit) * 0.75),
+    transparent calc(var(--o-space-unit) * 0.75) calc(var(--o-space-unit) * 1.75)
+  );
+}
+/* A native range input over the bar, one thumb wider than it and shifted back by half a thumb, so the thumb's centre sits on the split. */
+.cap-range {
+  position: absolute;
+  top: 0;
+  left: calc(var(--cap-thumb) / -2);
+  width: calc(100% + var(--cap-thumb));
+  height: var(--cap-thumb);
+  margin: 0;
   appearance: none;
   background: transparent;
-  cursor: pointer;
+  cursor: grab;
   touch-action: pan-y;
-  --round-track: linear-gradient(to right, var(--o-jewel-teal-base) var(--round-fill, 0%), var(--o-line-strong) var(--round-fill, 0%));
-  --round-thumb: calc(var(--o-space-unit) * 7);
 }
-.round-range::-webkit-slider-runnable-track {
-  height: var(--o-space-unit);
-  border-radius: var(--o-radius-full);
-  background: var(--round-track);
+.cap-range:active {
+  cursor: grabbing;
 }
-.round-range::-moz-range-track {
-  height: var(--o-space-unit);
-  border-radius: var(--o-radius-full);
-  background: var(--round-track);
+.cap-range::-webkit-slider-runnable-track {
+  height: var(--cap-thumb);
+  background: transparent;
 }
-.round-range::-webkit-slider-thumb {
+.cap-range::-moz-range-track {
+  height: var(--cap-thumb);
+  background: transparent;
+}
+.cap-range::-webkit-slider-thumb {
+  width: var(--cap-thumb);
+  height: var(--cap-thumb);
   appearance: none;
-  width: var(--round-thumb);
-  height: var(--round-thumb);
-  margin-top: calc((var(--o-space-unit) - var(--round-thumb)) / 2);
-  border: calc(var(--o-space-unit) / 2) solid var(--o-canvas);
+  border: 1px solid color-mix(in oklab, var(--o-fg) 35%, transparent);
   border-radius: var(--o-radius-full);
   background-image: var(--o-jewel-teal);
-  box-shadow: var(--o-shadow-md);
+  box-shadow:
+    0 0 0 var(--o-space-unit) color-mix(in oklab, var(--o-jewel-teal-base) 22%, transparent),
+    var(--o-shadow-md);
 }
-.round-range::-moz-range-thumb {
-  width: var(--round-thumb);
-  height: var(--round-thumb);
-  border: calc(var(--o-space-unit) / 2) solid var(--o-canvas);
+.cap-range::-moz-range-thumb {
+  width: var(--cap-thumb);
+  height: var(--cap-thumb);
+  border: 1px solid color-mix(in oklab, var(--o-fg) 35%, transparent);
   border-radius: var(--o-radius-full);
   background-image: var(--o-jewel-teal);
-  box-shadow: var(--o-shadow-md);
+  box-shadow:
+    0 0 0 var(--o-space-unit) color-mix(in oklab, var(--o-jewel-teal-base) 22%, transparent),
+    var(--o-shadow-md);
 }
-.round-range:focus-visible {
+.cap-range:focus-visible {
   outline: none;
 }
-.round-range:focus-visible::-webkit-slider-thumb {
-  outline: 2px solid var(--o-focus-ring);
-  outline-offset: 3px;
+.cap-range:focus-visible::-webkit-slider-thumb {
+  box-shadow:
+    0 0 0 var(--o-space-unit) var(--o-focus-ring),
+    var(--o-shadow-md);
 }
-.round-range:focus-visible::-moz-range-thumb {
-  outline: 2px solid var(--o-focus-ring);
-  outline-offset: 3px;
+.cap-range:focus-visible::-moz-range-thumb {
+  box-shadow:
+    0 0 0 var(--o-space-unit) var(--o-focus-ring),
+    var(--o-shadow-md);
+}
+.cap-scale {
+  position: relative;
+  height: calc(var(--o-space-unit) * 4.5);
+  margin: var(--o-space-unit) calc(var(--o-space-unit) * 0.5) 0;
+  color: var(--o-fg-subtle);
+  font-size: var(--o-text-xs);
+  font-variant-numeric: tabular-nums;
+  line-height: calc(var(--o-space-unit) * 4.5);
+}
+.cap-tick {
+  position: absolute;
+  top: 0;
+  white-space: nowrap;
+}
+.cap-tick::before {
+  content: '';
+  position: absolute;
+  top: calc(var(--o-space-unit) * -1.5);
+  left: 0;
+  width: 1px;
+  height: calc(var(--o-space-unit) * 1.25);
+  background: var(--o-fg-subtle);
+}
+.cap-end {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+/* The reader's row: a teal wash, a teal rule at its edge, and their share set larger, in teal. */
+.cap-round > .cap-you > * {
+  background: color-mix(in oklab, var(--o-jewel-teal-base) 7%, transparent);
+}
+.cap-round > .cap-you > :first-child {
+  box-shadow: inset calc(var(--o-space-unit) * 0.75) 0 0 var(--o-jewel-teal-base);
+}
+.cap-round .cap-holder {
+  padding-left: calc(var(--o-space-unit) * 3.5);
+}
+.cap-pct-you {
+  color: var(--o-teal-ink);
+  font-size: var(--o-text-figure-lg);
+  font-weight: var(--o-weight-semibold);
+  line-height: var(--o-text-figure-lg-lh);
+}
+.cap-bar-you {
+  height: calc(var(--o-space-unit) * 1.5);
+}
+.cap-table tfoot > tr > * {
+  padding-block: calc(var(--o-space-unit) * 3);
+  border-bottom: 0;
+}
+.cap-total {
+  color: var(--o-fg);
+  font-size: var(--o-text-figure);
+  font-weight: var(--o-weight-semibold);
+  line-height: var(--o-text-figure-lh);
+}
+.cap-table tfoot .cap-pct {
+  color: var(--o-fg-muted);
+  font-weight: var(--o-weight-normal);
+}
+
+@media (max-width: 44.99rem) {
+  .cap-card {
+    padding: calc(var(--o-space-unit) * 0.5) calc(var(--o-space-unit) * 4);
+  }
+  .cap-col-class,
+  .cap-col-today,
+  .cap-class,
+  .cap-today,
+  .cap-hint {
+    display: none;
+  }
+  .cap-col-holder,
+  .cap-col-after {
+    width: 50%;
+  }
+  .cap-table tbody > tr > *,
+  .cap-table tfoot > tr > * {
+    padding-right: calc(var(--o-space-unit) * 2.5);
+  }
+  .cap-line,
+  .cap-shares {
+    display: block;
+  }
+  .cap-today-m {
+    display: block;
+    color: var(--o-fg-muted);
+    font-size: var(--o-text-xs);
+    font-weight: var(--o-weight-normal);
+    line-height: var(--o-text-xs-lh);
+  }
+  .cap-holder {
+    gap: calc(var(--o-space-unit) * 2.25);
+  }
+  .cap-round .cap-holder {
+    padding-left: calc(var(--o-space-unit) * 2.5);
+  }
+  .cap-shares {
+    font-size: var(--o-text-xs);
+  }
+  .cap-pct-you {
+    font-size: var(--o-text-xl);
+  }
+  .cap-round > .cap-band > td {
+    padding-inline: calc(var(--o-space-unit) * 3.5);
+  }
+  /* Each split label on two short lines, its dot kept beside the first. */
+  .cap-split-labels {
+    font-size: var(--o-text-xs);
+  }
+  .cap-lab {
+    display: grid;
+    flex: 1 1 0;
+    align-content: start;
+    align-items: center;
+    column-gap: calc(var(--o-space-unit) * 1.75);
+    min-width: 0;
+  }
+  .cap-lab:first-child {
+    grid-template-columns: auto 1fr;
+  }
+  .cap-lab:first-child .cap-sub {
+    grid-column: 2;
+  }
+  .cap-lab-right {
+    grid-template-columns: 1fr auto;
+  }
+  .cap-lab-right .cap-lab-main {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .cap-lab-right .cap-dot {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .cap-lab-right .cap-sub {
+    grid-column: 1;
+    grid-row: 2;
+  }
 }
 
 /* The table's bars: a jewel tone (set per row by the component), sliding to the new share as the slider moves. */
