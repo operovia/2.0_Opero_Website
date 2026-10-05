@@ -1798,3 +1798,68 @@ html:has(dialog[open]) {
     transform: rotate(360deg);
   }
 }
+
+/*
+ * The hero's four figures (src/components/site/home/hero.tsx), from Claude
+ * Design's handoff: gold, the gold of the dot in the Opero logo, with a soft
+ * light that sweeps across each number, left to right, every few seconds,
+ * one figure after another in reading order. A text gradient clipped to the
+ * glyphs, moved by its background position, so the number is inline-block
+ * and the gradient only as wide as the text. Plain gold for a visitor who
+ * prefers reduced motion, and the system's text color in forced colors.
+ */
+@keyframes metric-shimmer {
+  0% {
+    background-position: 150% 0;
+  }
+  55% {
+    background-position: -50% 0;
+  }
+  100% {
+    background-position: -50% 0;
+  }
+}
+.metric-gold {
+  display: inline-block;
+  color: var(--o-metric-gold);
+}
+@supports (background-clip: text) or (-webkit-background-clip: text) {
+  .metric-gold {
+    color: transparent;
+    background-image: linear-gradient(
+      100deg,
+      var(--o-metric-gold) 0%,
+      var(--o-metric-gold) 38%,
+      var(--o-metric-gold-highlight) 50%,
+      var(--o-metric-gold) 62%,
+      var(--o-metric-gold) 100%
+    );
+    background-size: 250% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    animation: metric-shimmer var(--o-shimmer-cycle) var(--o-shimmer-ease) infinite;
+  }
+  li:nth-child(2) > * > .metric-gold {
+    animation-delay: var(--o-shimmer-stagger);
+  }
+  li:nth-child(3) > * > .metric-gold {
+    animation-delay: calc(var(--o-shimmer-stagger) * 2);
+  }
+  li:nth-child(4) > * > .metric-gold {
+    animation-delay: calc(var(--o-shimmer-stagger) * 3);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .metric-gold {
+    animation: none;
+    background: none;
+    color: var(--o-metric-gold);
+  }
+}
+@media (forced-colors: active) {
+  .metric-gold {
+    animation: none;
+    background: none;
+    color: CanvasText;
+  }
+}

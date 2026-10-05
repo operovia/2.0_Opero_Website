@@ -262,6 +262,11 @@ export const tokens = {
       colors: [jewels.violet.dark[1], jewels.teal.dark[1], jewels.crimson.dark[1], jewels.green.dark[1], jewels.gold.dark[1]],
       opacity: { dark: 0.5, light: 0.16 },
     },
+    /**
+     * The gold of the hero's four figures (src/components/site/home/hero.tsx), from Claude Design's
+     * handoff: the gold of the dot in the Opero logo, and the light that sweeps across it.
+     */
+    metricGold: { base: '#C9A43A', highlight: '#FFF3C4' },
     /** The front door (src/components/door): how much of the text color lights the point's soft glow and the veil's ring of light, in percent. */
     door: {
       glow: 14,
@@ -474,6 +479,16 @@ export const tokens = {
       door: 1600,
       greetingDelay: 400,
       greeting: 1000,
+    },
+    /**
+     * The light that sweeps across the hero's four figures (Claude Design's handoff): one
+     * `cycle` each, the sweep taking its first 55%, each figure `stagger` after the one
+     * before it in reading order, eased in and out as CSS's own ease-in-out.
+     */
+    shimmer: {
+      cycle: 4000,
+      stagger: 150,
+      ease: [0.42, 0, 0.58, 1],
     },
   },
 } as const;
