@@ -28,6 +28,7 @@ export function SectionIntro({
   eyebrow,
   headline,
   headingId,
+  gold,
   body,
   align = 'left',
   className,
@@ -36,6 +37,8 @@ export function SectionIntro({
   headline: string;
   /** Lets the section name itself after its headline (aria-labelledby). */
   headingId?: string;
+  /** Words of the headline to set in shimmering gold. */
+  gold?: string;
   body?: RichDoc;
   align?: 'left' | 'center';
   className?: string;
@@ -50,7 +53,7 @@ export function SectionIntro({
       ) : null}
       <Reveal delay={0.05}>
         <h2 id={headingId} className={cn('text-display-md font-medium text-metal', eyebrow && 'mt-5')}>
-          {renderHeadline(headline)}
+          {renderHeadline(headline, gold)}
         </h2>
       </Reveal>
       {body ? (

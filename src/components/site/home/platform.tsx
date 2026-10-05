@@ -40,7 +40,7 @@ export function Platform({ content }: { content: SectionData<'home', 'platform'>
   return (
     <section id="platform" aria-labelledby="platform-title" className="scroll-mt-18 py-section">
       <Container>
-        <SectionIntro headingId="platform-title" eyebrow={content.eyebrow} headline={content.headline} body={content.body} />
+        <SectionIntro headingId="platform-title" eyebrow={content.eyebrow} headline={content.headline} gold={content.headlineGold} body={content.body} />
 
         {/* Opero around everything: the core and every module in one frame, all linked, with Oppie in the middle knowing all of it. */}
         <Reveal className="mt-20">

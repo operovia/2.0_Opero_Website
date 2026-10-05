@@ -26,6 +26,17 @@ describe('headlines', () => {
     expect(html('*Across\nlines*')).toBe('*Across<br/>lines*');
   });
 
+  it('sets the named words in shimmering gold, as whole words, inside emphasis too', () => {
+    const gold = (words: string) => `<span class="gold-shimmer">${words}</span>`;
+    const withGold = (text: string, words: string) => renderToStaticMarkup(createElement(Fragment, null, renderHeadline(text, words)));
+    expect(withGold('One platform.\nEverything and\neveryone connected.', 'connected')).toBe(
+      `One platform.<br/>Everything and<br/>everyone ${gold('connected')}.`,
+    );
+    expect(withGold('*Connected* teams', 'connected')).toBe(`${em(gold('Connected'))} teams`);
+    expect(withGold('Disconnected apps', 'connected')).toBe('Disconnected apps');
+    expect(withGold('Plain', '')).toBe('Plain');
+  });
+
   it('shows plain text on one line, without the asterisks', () => {
     expect(plainHeadline('I lived with the problem.\nThen I built *the* solution.')).toBe('I lived with the problem. Then I built the solution.');
     expect(plainHeadline('*The* AI-driven operating platform for property management.')).toBe('The AI-driven operating platform for property management.');

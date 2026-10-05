@@ -123,6 +123,11 @@ const platform = section({
   fields: {
     eyebrow: text('Eyebrow', { optional: true, max: 60 }),
     headline: text('Headline', { max: 160, headline: true }),
+    headlineGold: text('Words in gold', {
+      optional: true,
+      max: 60,
+      hint: 'Words of the headline to set in shimmering gold, written as they appear there: connected, for example. Leave it empty for none.',
+    }),
     body: rich('Body'),
     coreLabel: text('Core panel label', { max: 40, hint: 'On the border of the panel that holds the core data and the areas of work.' }),
     coreDataLabel: text('Core data label', { max: 40, hint: 'Under the stack of core records.' }),
@@ -168,6 +173,7 @@ const platform = section({
   seed: {
     eyebrow: 'The platform.',
     headline: 'One platform. Every department.',
+    headlineGold: 'connected',
     body: textToRich(
       'At the core is a CRM built for property management: every property, suite, tenant, and prospect in one place, driving leasing, property management, and facilities. Around it, five modules run how you work. Studios for project canvases and workflows. Playbook for your SOPs. University for training your team. Compass for your operating rhythm: priorities, scorecards and meetings. And Build, where your own people create custom apps with AI, no developers required.',
     ),
