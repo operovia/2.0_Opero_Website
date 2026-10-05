@@ -3,11 +3,12 @@
   "marks": {
     "opero": {
       "label": "Opero",
-      "about": "The lockup with the jewels centered under the wordmark, supplied as 4800 x 2638 PNGs (public/brand/opero/centered, untouched); these web copies are cut to the artwork and exported by scripts/brand/export-lockup.mjs.",
+      "about": "The lockup with the jewels centered under the wordmark, supplied as 4800 x 2638 PNGs (public/brand/opero/centered, untouched); these web copies hold the artwork 1200 px wide inside a transparent margin, exported by scripts/brand/export-lockup.mjs, so the soft outer edges of the letters survive at small sizes.",
       "dark": "/brand/opero/opero-centered-dark.webp",
       "light": "/brand/opero/opero-centered-light.webp",
-      "viewBox": [0, 0, 1200, 424],
-      "bounds": [0, 0, 1200, 424]
+      "viewBox": [0, 0, 1240, 464],
+      "bounds": [20.03, 20.04, 1199.93, 423.92],
+      "bleed": true
     },
     "operogo": {
       "label": "OperoGo",

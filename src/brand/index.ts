@@ -15,6 +15,11 @@ export type BrandMark = {
   light: string | null;
   viewBox: Box;
   bounds: Box;
+  /**
+   * The file holds nothing past the bounds but the artwork's own soft edge, which may show past them: the mark keeps the
+   * size of its bounds, and the edge is not cut flat. Marks whose files carry other artwork past their bounds leave it off.
+   */
+  bleed?: boolean;
 };
 
 export type MarkName = keyof typeof manifest.marks;

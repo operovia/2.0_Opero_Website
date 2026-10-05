@@ -24,7 +24,8 @@ type Props = {
 /**
  * Renders a brand mark from public/brand/manifest.json. The file is placed
  * inside an SVG whose viewBox is the mark's visible bounds, which trims built-in
- * clear space without editing the artwork.
+ * clear space without editing the artwork. A mark marked `bleed` lets its
+ * soft outer edge show past those bounds instead of having it cut flat.
  */
 export function BrandMark({ name, on = 'dark', className, decorative, untrimmed, priority }: Props) {
   if (on === 'auto') {
@@ -57,7 +58,7 @@ export function BrandMark({ name, on = 'dark', className, decorative, untrimmed,
   return (
     <svg
       viewBox={box.join(' ')}
-      className={cn('w-auto shrink-0', className)}
+      className={cn('w-auto shrink-0', mark.bleed && !untrimmed && 'overflow-visible', className)}
       style={{ aspectRatio: `${box[2]} / ${box[3]}` }}
       focusable="false"
       {...a11y}
