@@ -169,6 +169,13 @@
       "when": 1791203255320,
       "tag": "0023_company_invites",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1791204814867,
+      "tag": "0024_door_your_address",
+      "breakpoints": true
     }
   ]
 }
