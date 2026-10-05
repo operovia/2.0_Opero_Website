@@ -4,7 +4,7 @@ import { useId, useState, type CSSProperties } from 'react';
 import { Reveal } from '@/components/motion/reveal';
 import type { SectionData } from '@/content/registry';
 import { cn } from '@/lib/cn';
-import { clampAmount, formatCount, formatMoney, formatPercent, formatPrice, roundModel, type CapRow } from '@/lib/round';
+import { capTableView, money, type CapTableConfig } from '@/lib/cap-table-math';
 
 type Props = {
   /** The round section of the Data Room: the copy and the figures, from the server page. */
@@ -26,49 +26,78 @@ const jewels = {
 type JewelName = keyof typeof jewels;
 const existingJewels: JewelName[] = ['crimson', 'violet', 'gold'];
 
-function jewelFor(row: CapRow, index: number): JewelName {
-  if (row.kind === 'you') return 'teal';
-  if (row.kind === 'others') return 'green';
-  return existingJewels[index % existingJewels.length]!;
-}
+/** One row of the table: a holder already on it, the reader, or the rest of the round, with its figures as the math returns them. */
+type Row = {
+  key: string;
+  holder: string;
+  class: string;
+  jewel: JewelName;
+  you: boolean;
+  today: string;
+  /** Share count today, shown under today's percentage; empty for the holders the round brings in. */
+  sharesToday: string;
+  after: string;
+  sharesAfter: string;
+  bar: number;
+};
 
-/** The bar's colors, read by .round-bar in globals.css. */
-const barStyle = (jewel: JewelName, share: number) =>
+const after = (row: { after: string; shares: string; bar: number }) => ({ after: row.after, sharesAfter: row.shares, bar: row.bar });
+
+/** The bar's colors, read by .round-bar in globals.css; its width is the exact ownership, as a percentage. */
+const barStyle = (jewel: JewelName, width: number) =>
   ({
     '--round-jewel': `var(--o-jewel-${jewel}-base)`,
     '--round-jewel-highlight': `var(--o-jewel-${jewel}-highlight)`,
-    width: `${Math.min(100, Math.max(0, share * 100))}%`,
+    width: `${Math.min(100, Math.max(0, width))}%`,
   }) as CSSProperties;
 
 /**
  * The Cap Table tab: the capitalization table today and after the round
  * converts, then the investment model (a slider and three figures), whose
  * amount is the reader's row in the table, and the small print. Every
- * figure comes from the section's stored numbers through src/lib/round.ts;
- * the slider only chooses the amount. Shown to guests and admins only; the
- * round's terms stand on The Raise tab (raise-terms.tsx).
+ * figure comes from the section's stored numbers through
+ * src/lib/cap-table-math.ts, in exact whole-number arithmetic; the slider
+ * only chooses the amount. Shown to guests and admins only; the round's
+ * terms stand on The Raise tab (raise-terms.tsx).
  */
 export function CapTableSection({ content }: Props) {
   const sliderId = useId();
-  const bounds = { min: content.minimum, max: content.maximum, step: content.step };
-  const [chosen, setChosen] = useState(content.start);
-  // The clamped figure drives everything, never the raw state.
-  const amount = clampAmount(chosen, bounds);
-  const model = roundModel({
-    amount,
+  const config: CapTableConfig = {
+    holders: content.capTable,
     raise: content.raise,
     cap: content.cap,
-    holders: content.capTable,
-    youLabel: content.youLabel,
-    othersLabel: content.othersLabel,
-  });
+    minimum: content.minimum,
+    step: content.step,
+    start: content.start,
+  };
+  const bounds = { min: content.minimum, max: content.maximum, step: content.step };
+  const [chosen, setChosen] = useState(content.start);
+  // Every figure comes from the math, for the amount it settles on; never from the raw slider value.
+  const view = capTableView(config, chosen);
+  const amount = view.amount;
   const fill = bounds.max > bounds.min ? ((amount - bounds.min) / (bounds.max - bounds.min)) * 100 : 0;
-  const totalAfter = model.totalToday + model.safeShares;
+
+  const rows: Row[] = [
+    ...view.existing.map((row, i) => ({
+      key: `existing-${i}`,
+      holder: row.holder,
+      class: row.class,
+      jewel: existingJewels[i % existingJewels.length]!,
+      you: false,
+      today: row.today,
+      sharesToday: row.shares,
+      after: row.after,
+      sharesAfter: row.shares,
+      bar: row.bar,
+    })),
+    { key: 'you', holder: content.youLabel, class: '', jewel: 'teal', you: true, today: view.todayNone, sharesToday: '', ...after(view.you) },
+    { key: 'others', holder: content.othersLabel, class: '', jewel: 'green', you: false, today: view.todayNone, sharesToday: '', ...after(view.others) },
+  ];
 
   const stats = [
-    { label: content.shareLabel, value: formatPercent(model.shareOfRound, 2) },
-    { label: content.ownershipLabel, value: formatPercent(model.ownership, 2) },
-    { label: content.remainingLabel, value: formatMoney(model.remaining) },
+    { label: content.shareLabel, value: view.shareOfRound },
+    { label: content.ownershipLabel, value: view.you.after },
+    { label: content.remainingLabel, value: view.remaining },
   ];
 
   return (
@@ -97,11 +126,10 @@ export function CapTableSection({ content }: Props) {
               </tr>
             </thead>
             <tbody role="rowgroup">
-              {model.rows.map((row, i) => {
-                const jewel = jewelFor(row, i);
-                const you = row.kind === 'you';
+              {rows.map((row) => {
+                const { jewel, you } = row;
                 return (
-                  <tr role="row" key={row.kind + row.holder + i} className={cn('block border-t border-line py-4 sm:table-row sm:py-0', you && 'font-semibold')}>
+                  <tr role="row" key={row.key} className={cn('block border-t border-line py-4 sm:table-row sm:py-0', you && 'font-semibold')}>
                     <th role="rowheader" scope="row" className="block pr-4 sm:table-cell sm:py-4 sm:align-top">
                       <span className="flex items-center gap-2.5">
                         <span aria-hidden className={cn('size-2.5 shrink-0 rounded-full', jewels[jewel])} />
@@ -115,10 +143,10 @@ export function CapTableSection({ content }: Props) {
                     <td role="cell" className="mt-3 flex items-baseline justify-between gap-4 pl-5 sm:mt-0 sm:table-cell sm:pr-4 sm:pl-0 sm:py-4 sm:align-top">
                       <span className="text-sm text-fg-subtle sm:hidden">{content.todayColumn}</span>
                       <span className="text-right sm:text-left">
-                        <span className="block text-base text-fg tabular-nums">{formatPercent(row.today, 1)}</span>
-                        {row.shares > 0 ? (
+                        <span className="block text-base text-fg tabular-nums">{row.today}</span>
+                        {row.sharesToday ? (
                           <span className="block text-sm font-normal text-fg-subtle tabular-nums">
-                            {formatCount(row.shares)} {content.sharesUnit}
+                            {row.sharesToday} {content.sharesUnit}
                           </span>
                         ) : null}
                       </span>
@@ -127,14 +155,14 @@ export function CapTableSection({ content }: Props) {
                       <span className="flex items-baseline justify-between gap-4 sm:block">
                         <span className="text-sm text-fg-subtle sm:hidden">{content.afterColumn}</span>
                         <span className="text-right sm:text-left">
-                          <span className="block text-base text-fg tabular-nums">{formatPercent(row.after, 1)}</span>
+                          <span className="block text-base text-fg tabular-nums">{row.after}</span>
                           <span className="block text-sm font-normal text-fg-subtle tabular-nums">
-                            {formatCount(row.sharesAfter)} {content.sharesUnit}
+                            {row.sharesAfter} {content.sharesUnit}
                           </span>
                         </span>
                       </span>
                       <span aria-hidden className="mt-2 block h-1.5 w-full overflow-hidden rounded-full bg-line">
-                        <span className="round-bar block h-full rounded-full" style={barStyle(jewel, row.after)} />
+                        <span className="round-bar block h-full rounded-full" style={barStyle(jewel, row.bar)} />
                       </span>
                     </td>
                   </tr>
@@ -150,18 +178,18 @@ export function CapTableSection({ content }: Props) {
                 <td role="cell" className="mt-2 flex items-baseline justify-between gap-4 sm:mt-0 sm:table-cell sm:py-4 sm:pr-4">
                   <span className="text-fg-subtle sm:hidden">{content.todayColumn}</span>
                   <span className="text-right tabular-nums sm:text-left">
-                    {formatPercent(1, 1)}
+                    {view.totalToday.percent}
                     <span className="block text-fg-subtle">
-                      {formatCount(model.totalToday)} {content.sharesUnit}
+                      {view.totalToday.shares} {content.sharesUnit}
                     </span>
                   </span>
                 </td>
                 <td role="cell" className="mt-2 flex items-baseline justify-between gap-4 sm:mt-0 sm:table-cell sm:py-4">
                   <span className="text-fg-subtle sm:hidden">{content.afterColumn}</span>
                   <span className="text-right tabular-nums sm:text-left">
-                    {formatPercent(1, 1)}
+                    {view.totalAfter.percent}
                     <span className="block text-fg-subtle">
-                      {formatCount(totalAfter)} {content.sharesUnit}
+                      {view.totalAfter.shares} {content.sharesUnit}
                     </span>
                   </span>
                 </td>
@@ -170,7 +198,7 @@ export function CapTableSection({ content }: Props) {
           </table>
         </div>
         <p className="mt-4 text-sm text-fg-muted">
-          {content.priceLabel}: <span className="font-medium text-fg tabular-nums">{formatPrice(model.price)}</span>
+          {content.priceLabel}: <span className="font-medium text-fg tabular-nums">{view.price}</span>
         </p>
         <p className="mt-3 max-w-3xl text-sm text-fg-subtle">{content.capNote}</p>
       </Reveal>
@@ -182,7 +210,7 @@ export function CapTableSection({ content }: Props) {
             <label htmlFor={sliderId} className="block text-eyebrow font-semibold text-fg-subtle uppercase">
               {content.sliderLabel}
             </label>
-            <p className="mt-3 text-display-sm font-semibold text-fg tabular-nums">{formatMoney(amount)}</p>
+            <p className="mt-3 text-display-sm font-semibold text-fg tabular-nums">{view.youAmount}</p>
           </div>
           <div>
             <input
@@ -193,13 +221,13 @@ export function CapTableSection({ content }: Props) {
               max={bounds.max}
               step={bounds.step}
               value={amount}
-              aria-valuetext={formatMoney(amount)}
+              aria-valuetext={view.youAmount}
               onChange={(e) => setChosen(Number(e.target.value))}
               style={{ '--round-fill': `${fill}%` } as CSSProperties}
             />
             <div aria-hidden className="flex justify-between text-sm text-fg-subtle tabular-nums">
-              <span>{formatMoney(bounds.min)}</span>
-              <span>{formatMoney(bounds.max)}</span>
+              <span>{money(bounds.min)}</span>
+              <span>{money(bounds.max)}</span>
             </div>
           </div>
         </div>

@@ -176,6 +176,13 @@
       "when": 1791204814867,
       "tag": "0024_door_your_address",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1791208171988,
+      "tag": "0025_cap_table_start",
+      "breakpoints": true
     }
   ]
 }

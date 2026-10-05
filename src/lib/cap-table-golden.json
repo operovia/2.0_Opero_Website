@@ -1,0 +1,328 @@
+{
+  "static": {
+    "cap-after-pct-founder": "64.75%",
+    "cap-after-pct-flagship": "13.88%",
+    "cap-after-pct-pool": "13.88%"
+  },
+  "steps": [
+    {
+      "investment": 50000,
+      "you_amount": "$50,000",
+      "share_of_round": "6.7%",
+      "you_pct": "0.50%",
+      "you_shares": "54,054",
+      "others_pct": "7.00%",
+      "others_shares": "756,756",
+      "others_amount": "$700,000",
+      "total_after_shares": "10,810,810"
+    },
+    {
+      "investment": 75000,
+      "you_amount": "$75,000",
+      "share_of_round": "10%",
+      "you_pct": "0.75%",
+      "you_shares": "81,081",
+      "others_pct": "6.75%",
+      "others_shares": "729,729",
+      "others_amount": "$675,000",
+      "total_after_shares": "10,810,810"
+    },
+    {
+      "investment": 100000,
+      "you_amount": "$100,000",
+      "share_of_round": "13.3%",
+      "you_pct": "1.00%",
+      "you_shares": "108,108",
+      "others_pct": "6.50%",
+      "others_shares": "702,702",
+      "others_amount": "$650,000",
+      "total_after_shares": "10,810,810"
+    },
+    {
+      "investment": 125000,
+      "you_amount": "$125,000",
+      "share_of_round": "16.7%",
+      "you_pct": "1.25%",
+      "you_shares": "135,135",
+      "others_pct": "6.25%",
+      "others_shares": "675,675",
+      "others_amount": "$625,000",
+      "total_after_shares": "10,810,810"
+    },
+    {
+      "investment": 150000,
+      "you_amount": "$150,000",
+      "share_of_round": "20%",
+      "you_pct": "1.50%",
+      "you_shares": "162,162",
+      "others_pct": "6.00%",
+      "others_shares": "648,648",
+      "others_amount": "$600,000",
+      "total_after_shares": "10,810,810"
+    },
+    {
+      "investment": 175000,
+      "you_amount": "$175,000",
+      "share_of_round": "23.3%",
+      "you_pct": "1.75%",
+      "you_shares": "189,189",
+      "others_pct": "5.75%",
+      "others_shares": "621,621",
+      "others_amount": "$575,000",
+      "total_after_shares": "10,810,810"
+    },
+    {
+      "investment": 200000,
+      "you_amount": "$200,000",
+      "share_of_round": "26.7%",
+      "you_pct": "2.00%",
+      "you_shares": "216,216",
+      "others_pct": "5.50%",
+      "others_shares": "594,594",
+      "others_amount": "$550,000",
+      "total_after_shares": "10,810,810"
+    },
+    {
+      "investment": 225000,
+      "you_amount": "$225,000",
+      "share_of_round": "30%",
+      "you_pct": "2.25%",
+      "you_shares": "243,243",
+      "others_pct": "5.25%",
+      "others_shares": "567,567",
+      "others_amount": "$525,000",
+      "total_after_shares": "10,810,810"
+    },
+    {
+      "investment": 250000,
+      "you_amount": "$250,000",
+      "share_of_round": "33.3%",
+      "you_pct": "2.50%",
+      "you_shares": "270,270",
+      "others_pct": "5.00%",
+      "others_shares": "540,540",
+      "others_amount": "$500,000",
+      "total_after_shares": "10,810,810"
+    },
+    {
+      "investment": 275000,
+      "you_amount": "$275,000",
+      "share_of_round": "36.7%",
+      "you_pct": "2.75%",
+      "you_shares": "297,297",
+      "others_pct": "4.75%",
+      "others_shares": "513,513",
+      "others_amount": "$475,000",
+      "total_after_shares": "10,810,810"
+    },
+    {
+      "investment": 300000,
+      "you_amount": "$300,000",
+      "share_of_round": "40%",
+      "you_pct": "3.00%",
+      "you_shares": "324,324",
+      "others_pct": "4.50%",
+      "others_shares": "486,486",
+      "others_amount": "$450,000",
+      "total_after_shares": "10,810,810"
+    },
+    {
+      "investment": 325000,
+      "you_amount": "$325,000",
+      "share_of_round": "43.3%",
+      "you_pct": "3.25%",
+      "you_shares": "351,351",
+      "others_pct": "4.25%",
+      "others_shares": "459,459",
+      "others_amount": "$425,000",
+      "total_after_shares": "10,810,810"
+    },
+    {
+      "investment": 350000,
+      "you_amount": "$350,000",
+      "share_of_round": "46.7%",
+      "you_pct": "3.50%",
+      "you_shares": "378,378",
+      "others_pct": "4.00%",
+      "others_shares": "432,432",
+      "others_amount": "$400,000",
+      "total_after_shares": "10,810,810"
+    },
+    {
+      "investment": 375000,
+      "you_amount": "$375,000",
+      "share_of_round": "50%",
+      "you_pct": "3.75%",
+      "you_shares": "405,405",
+      "others_pct": "3.75%",
+      "others_shares": "405,405",
+      "others_amount": "$375,000",
+      "total_after_shares": "10,810,810"
+    },
+    {
+      "investment": 400000,
+      "you_amount": "$400,000",
+      "share_of_round": "53.3%",
+      "you_pct": "4.00%",
+      "you_shares": "432,432",
+      "others_pct": "3.50%",
+      "others_shares": "378,378",
+      "others_amount": "$350,000",
+      "total_after_shares": "10,810,810"
+    },
+    {
+      "investment": 425000,
+      "you_amount": "$425,000",
+      "share_of_round": "56.7%",
+      "you_pct": "4.25%",
+      "you_shares": "459,459",
+      "others_pct": "3.25%",
+      "others_shares": "351,351",
+      "others_amount": "$325,000",
+      "total_after_shares": "10,810,810"
+    },
+    {
+      "investment": 450000,
+      "you_amount": "$450,000",
+      "share_of_round": "60%",
+      "you_pct": "4.50%",
+      "you_shares": "486,486",
+      "others_pct": "3.00%",
+      "others_shares": "324,324",
+      "others_amount": "$300,000",
+      "total_after_shares": "10,810,810"
+    },
+    {
+      "investment": 475000,
+      "you_amount": "$475,000",
+      "share_of_round": "63.3%",
+      "you_pct": "4.75%",
+      "you_shares": "513,513",
+      "others_pct": "2.75%",
+      "others_shares": "297,297",
+      "others_amount": "$275,000",
+      "total_after_shares": "10,810,810"
+    },
+    {
+      "investment": 500000,
+      "you_amount": "$500,000",
+      "share_of_round": "66.7%",
+      "you_pct": "5.00%",
+      "you_shares": "540,540",
+      "others_pct": "2.50%",
+      "others_shares": "270,270",
+      "others_amount": "$250,000",
+      "total_after_shares": "10,810,810"
+    },
+    {
+      "investment": 525000,
+      "you_amount": "$525,000",
+      "share_of_round": "70%",
+      "you_pct": "5.25%",
+      "you_shares": "567,567",
+      "others_pct": "2.25%",
+      "others_shares": "243,243",
+      "others_amount": "$225,000",
+      "total_after_shares": "10,810,810"
+    },
+    {
+      "investment": 550000,
+      "you_amount": "$550,000",
+      "share_of_round": "73.3%",
+      "you_pct": "5.50%",
+      "you_shares": "594,594",
+      "others_pct": "2.00%",
+      "others_shares": "216,216",
+      "others_amount": "$200,000",
+      "total_after_shares": "10,810,810"
+    },
+    {
+      "investment": 575000,
+      "you_amount": "$575,000",
+      "share_of_round": "76.7%",
+      "you_pct": "5.75%",
+      "you_shares": "621,621",
+      "others_pct": "1.75%",
+      "others_shares": "189,189",
+      "others_amount": "$175,000",
+      "total_after_shares": "10,810,810"
+    },
+    {
+      "investment": 600000,
+      "you_amount": "$600,000",
+      "share_of_round": "80%",
+      "you_pct": "6.00%",
+      "you_shares": "648,648",
+      "others_pct": "1.50%",
+      "others_shares": "162,162",
+      "others_amount": "$150,000",
+      "total_after_shares": "10,810,810"
+    },
+    {
+      "investment": 625000,
+      "you_amount": "$625,000",
+      "share_of_round": "83.3%",
+      "you_pct": "6.25%",
+      "you_shares": "675,675",
+      "others_pct": "1.25%",
+      "others_shares": "135,135",
+      "others_amount": "$125,000",
+      "total_after_shares": "10,810,810"
+    },
+    {
+      "investment": 650000,
+      "you_amount": "$650,000",
+      "share_of_round": "86.7%",
+      "you_pct": "6.50%",
+      "you_shares": "702,702",
+      "others_pct": "1.00%",
+      "others_shares": "108,108",
+      "others_amount": "$100,000",
+      "total_after_shares": "10,810,810"
+    },
+    {
+      "investment": 675000,
+      "you_amount": "$675,000",
+      "share_of_round": "90%",
+      "you_pct": "6.75%",
+      "you_shares": "729,729",
+      "others_pct": "0.75%",
+      "others_shares": "81,081",
+      "others_amount": "$75,000",
+      "total_after_shares": "10,810,810"
+    },
+    {
+      "investment": 700000,
+      "you_amount": "$700,000",
+      "share_of_round": "93.3%",
+      "you_pct": "7.00%",
+      "you_shares": "756,756",
+      "others_pct": "0.50%",
+      "others_shares": "54,054",
+      "others_amount": "$50,000",
+      "total_after_shares": "10,810,810"
+    },
+    {
+      "investment": 725000,
+      "you_amount": "$725,000",
+      "share_of_round": "96.7%",
+      "you_pct": "7.25%",
+      "you_shares": "783,783",
+      "others_pct": "0.25%",
+      "others_shares": "27,027",
+      "others_amount": "$25,000",
+      "total_after_shares": "10,810,810"
+    },
+    {
+      "investment": 750000,
+      "you_amount": "$750,000",
+      "share_of_round": "100%",
+      "you_pct": "7.50%",
+      "you_shares": "810,810",
+      "others_pct": "0.00%",
+      "others_shares": "0",
+      "others_amount": null,
+      "total_after_shares": "10,810,810"
+    }
+  ]
+}

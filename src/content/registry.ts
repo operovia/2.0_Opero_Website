@@ -758,8 +758,16 @@ const investorsRound = section({
     shareLabel: text('Share of round: label', { max: 40 }),
     ownershipLabel: text('Ownership: label', { max: 40 }),
     remainingLabel: text('Allocation remaining: label', { max: 40 }),
-    raise: number('The round, in dollars', { min: 1, integer: true, hint: 'The amount being raised. The share of round and the dilution come from it.' }),
-    cap: number('Valuation cap, in dollars', { min: 1, integer: true, hint: 'The post-money cap. Ownership is the investment divided by it.' }),
+    raise: number('The round, in dollars', {
+      min: 1,
+      integer: true,
+      hint: 'The amount being raised, smaller than the valuation cap. The share of round and the dilution come from it.',
+    }),
+    cap: number('Valuation cap, in dollars', {
+      min: 1,
+      integer: true,
+      hint: 'The post-money cap, used by the cap table but never shown on it. Ownership is the investment divided by it. The cap shown on The Raise is the Terms text above; edit it to match.',
+    }),
     minimum: number('Minimum investment, in dollars', {
       min: 1,
       integer: true,
@@ -774,7 +782,7 @@ const investorsRound = section({
     start: number('Starting amount, in dollars', {
       min: 1,
       integer: true,
-      hint: 'The amount shown before the visitor moves the slider. Between the minimum and the largest investment.',
+      hint: 'The amount the cap table opens on, before the visitor moves the slider. Between the minimum and the largest investment, and no more than the round.',
     }),
     capHeading: text('Capitalization: heading', { max: 120 }),
     holderColumn: text('Column: holder', { max: 30 }),
@@ -826,7 +834,7 @@ const investorsRound = section({
     minimum: 50000,
     maximum: 750000,
     step: 25000,
-    start: 50000,
+    start: 300000,
     capHeading: 'Capitalization, today and after the round converts',
     holderColumn: 'Holder',
     classColumn: 'Class',
@@ -847,14 +855,22 @@ const investorsRound = section({
     disclaimer:
       'This page is a summary for discussion purposes only. It is not an offer to sell, or a solicitation of an offer to buy, any security. Any offering will be made only to qualified investors through definitive documents.',
   },
-  // The slider's figures must agree with each other, or the model's sums no longer add up.
-  check: ({ raise, minimum, maximum, step, start }) => {
-    if (![raise, minimum, maximum, step, start].every(Number.isFinite)) return [];
+  // The figures must agree with each other, or the cap table's sums (src/lib/cap-table-math.ts) cannot be worked out. Stored figures
+  // that fail here are refused in the admin, and the page shows the shipped figures instead.
+  check: ({ raise, cap, minimum, maximum, step, start, capTable }) => {
+    if (![raise, cap, minimum, maximum, step, start].every(Number.isFinite)) return [];
     const issues = [];
+    if (raise >= cap) issues.push({ field: 'raise', message: 'The round must be smaller than the valuation cap.' });
+    if (capTable.reduce((sum, row) => sum + row.shares, 0) <= 0) {
+      issues.push({ field: 'capTable', message: 'At least one holder needs shares, or no percentage can be worked out.' });
+    }
+    if (minimum > raise) issues.push({ field: 'minimum', message: 'The minimum investment cannot be more than the round.' });
+    else if (minimum > maximum) {
+      issues.push({ field: 'minimum', message: 'The minimum investment cannot be more than the largest investment on the slider.' });
+    }
     if (maximum > raise) issues.push({ field: 'maximum', message: 'The largest investment on the slider cannot be more than the round.' });
-    if (minimum > maximum) issues.push({ field: 'minimum', message: 'The minimum investment cannot be more than the largest investment on the slider.' });
-    if (start < minimum || start > maximum)
-      issues.push({ field: 'start', message: 'The starting amount must be between the minimum and the largest investment.' });
+    if (start < minimum || start > raise) issues.push({ field: 'start', message: 'The starting amount must be between the minimum investment and the round.' });
+    else if (start > maximum) issues.push({ field: 'start', message: 'The starting amount cannot be more than the largest investment on the slider.' });
     if (maximum >= minimum && (maximum - minimum) % step !== 0) {
       issues.push({ field: 'step', message: 'The slider step must fit a whole number of times between the minimum and the largest investment.' });
     }

@@ -29,14 +29,18 @@ describe('seed content', () => {
     expect(copy).not.toMatch(/real estate/i);
   });
 
-  it('refuses slider bounds that disagree with each other', () => {
+  it('refuses figures the cap table cannot work with, and slider bounds that disagree with each other', () => {
     const def = pages.investors.sections.round;
     const schema = schemaFor(def.fields, def.check);
     const parse = (changes: Partial<typeof def.seed>) => schema.safeParse({ ...def.seed, ...changes });
     expect(parse({}).success).toBe(true);
     const failing: [string, Partial<typeof def.seed>][] = [
-      ['maximum', { maximum: 1_000_000 }],
+      // A round at or above the cap leaves nothing to convert at.
+      ['raise', { raise: 10_000_000 }],
+      ['raise', { raise: 12_000_000 }],
+      ['capTable', { capTable: [{ holder: 'Founder', class: 'Common', shares: 0 }] }],
       ['minimum', { minimum: 800_000 }],
+      ['maximum', { maximum: 1_000_000 }],
       ['start', { start: 25_000 }],
       ['start', { start: 800_000 }],
       ['step', { step: 30_000 }],

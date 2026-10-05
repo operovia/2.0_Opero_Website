@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cap Table Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #111318;
+    --card: #16181e;
+    --panel: #1a1d25;
+    --line: #262a33;
+    --track: #2a2e38;
+    --fg: #eceef2;
+    --fg-2: #c9ccd3;
+    --muted: #9ba1ac;
+    --dim: #6f7580;
+    --red: #cf4655;
+    --purple: #8d52cc;
+    --amber: #d6a033;
+    --teal: #3f93b4;
+    --teal-hi: #6cc0de;
+    --green: #43b475;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--fg); }
+  body {
+    font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size: 15px;
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 24px 32px 48px; }
+  .eyebrow {
+    margin: 0 0 10px;
+    font-size: 12px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--muted);
+  }
+  h2 {
+    margin: 0 0 20px;
+    font-weight: 400; letter-spacing: -0.02em; line-height: 1.08;
+    font-size: clamp(30px, 4vw, 52px);
+    color: var(--fg-2);
+    max-width: 15em;
+  }
+
+  /* ---------- Table card ---------- */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 24px;
+    padding: 6px 26px 4px;
+    overflow: hidden;
+  }
+  table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+  col.c-holder { width: 27%; }
+  col.c-class { width: 17%; }
+  col.c-today { width: 16%; }
+  col.c-after { width: 40%; }
+  th {
+    text-align: left; font-weight: 600;
+    font-size: 11.5px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--muted);
+    padding: 14px 0 11px;
+    border-bottom: 1px solid var(--line);
+  }
+  td {
+    vertical-align: top;
+    padding: 13px 16px 12px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .line { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+  td:last-child, th:last-child { padding-right: 0; }
+  .holder { display: flex; align-items: center; gap: 12px; font-size: 16.5px; font-weight: 500; color: var(--fg); line-height: 24px; }
+  .dot {
+    width: 9px; height: 9px; border-radius: 50%; flex: none;
+    box-shadow: inset -1px -1px 2px rgba(0,0,0,.35), inset 1px 1px 2px rgba(255,255,255,.35);
+  }
+  .holder { align-items: flex-start; }
+  .holder .dot { margin-top: 7.5px; }
+  .today-m { display: none; }
+  .line { row-gap: 0; }
+  .class { color: var(--muted); font-size: 15px; line-height: 24px; }
+  .pct { font-size: 16.5px; font-weight: 500; color: var(--fg); font-variant-numeric: tabular-nums; line-height: 24px; }
+  .shares { color: var(--muted); font-size: 14.5px; font-variant-numeric: tabular-nums; }
+  .bar { height: 5px; border-radius: 99px; background: var(--track); margin-top: 7px; overflow: hidden; }
+  .bar > span { display: block; height: 100%; border-radius: 99px; transition: width .18s ease; }
+
+  /* ---------- The round group ---------- */
+  tbody.round td { border-bottom-color: rgba(255,255,255,.06); }
+  tbody.round tr.round-head td {
+    padding: 15px 0 12px;
+    border-bottom: 1px solid rgba(255,255,255,.06);
+  }
+  tbody.round tr > td:first-child { padding-left: 0; }
+  .round-panel-bg {
+    background:
+      radial-gradient(120% 140% at 0% 0%, rgba(63,147,180,.10), transparent 55%),
+      radial-gradient(120% 140% at 100% 100%, rgba(67,180,117,.07), transparent 55%),
+      var(--panel);
+  }
+  .round-top {
+    display: flex; justify-content: space-between; align-items: baseline; gap: 16px; flex-wrap: wrap;
+    margin-bottom: 10px;
+  }
+  .round-title { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+  .round-title .eyebrow { margin: 0; color: var(--fg-2); }
+  .round-title .size { font-size: 15px; color: var(--muted); }
+  .hint { font-size: 13px; color: var(--dim); display: flex; align-items: center; gap: 8px; }
+  .hint svg { opacity: .8; }
+
+  .split-labels {
+    display: flex; justify-content: space-between; gap: 16px;
+    font-size: 14.5px; margin-bottom: 6px;
+  }
+  .split-labels .lab { display: flex; align-items: center; gap: 8px; color: var(--fg-2); }
+  .split-labels .lab b { font-weight: 600; color: var(--fg); font-variant-numeric: tabular-nums; }
+  .split-labels .lab .sub { color: var(--muted); font-variant-numeric: tabular-nums; }
+  .split-labels .right { text-align: right; justify-content: flex-end; }
+
+  .split { position: relative; height: 26px; margin: 0 2px; }
+  .split .track {
+    position: absolute; left: 0; right: 0; top: 7px; height: 12px; border-radius: 99px;
+    background: linear-gradient(90deg, #2f8a58, var(--green));
+    overflow: hidden;
+  }
+  .split .you {
+    position: absolute; left: 0; top: 0; bottom: 0;
+    background: linear-gradient(90deg, #2d7393, var(--teal) 60%, #55aacb);
+    transition: width .12s ease;
+  }
+  .split .minzone {
+    position: absolute; left: 0; top: 0; bottom: 0;
+    background: repeating-linear-gradient(135deg, rgba(0,0,0,.28) 0 3px, transparent 3px 7px);
+  }
+  /* Native range input sits over the bar; it is widened by one thumb so the thumb centre lines up with the split. */
+  .split input[type=range] {
+    --thumb: 26px;
+    position: absolute; top: 0; height: 26px;
+    left: calc(var(--thumb) / -2);
+    width: calc(100% + var(--thumb));
+    margin: 0; background: transparent; cursor: grab;
+    -webkit-appearance: none; appearance: none;
+  }
+  .split input[type=range]:active { cursor: grabbing; }
+  .split input[type=range]::-webkit-slider-runnable-track { height: 26px; background: transparent; }
+  .split input[type=range]::-moz-range-track { height: 26px; background: transparent; }
+  .split input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none;
+    width: var(--thumb); height: var(--thumb); border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #a9e2f5 0%, #4fa7c8 35%, #22607b 80%);
+    border: 1px solid rgba(255,255,255,.35);
+    box-shadow: 0 0 0 4px rgba(63,147,180,.22), 0 4px 10px rgba(0,0,0,.5);
+  }
+  .split input[type=range]::-moz-range-thumb {
+    width: var(--thumb); height: var(--thumb); border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #a9e2f5 0%, #4fa7c8 35%, #22607b 80%);
+    border: 1px solid rgba(255,255,255,.35);
+    box-shadow: 0 0 0 4px rgba(63,147,180,.22), 0 4px 10px rgba(0,0,0,.5);
+  }
+  .split input[type=range]:focus-visible { outline: none; }
+  .split input[type=range]:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 4px rgba(108,192,222,.6), 0 4px 10px rgba(0,0,0,.5); }
+  .split input[type=range]:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 4px rgba(108,192,222,.6), 0 4px 10px rgba(0,0,0,.5); }
+
+  .scale { position: relative; height: 18px; margin: 4px 2px 0; font-size: 12.5px; color: var(--dim); font-variant-numeric: tabular-nums; }
+  .scale .tick { position: absolute; top: 0; white-space: nowrap; }
+  .scale .tick::before { content: ""; position: absolute; left: 0; top: -6px; width: 1px; height: 5px; background: var(--dim); }
+  .scale .end { position: absolute; right: 0; top: 0; }
+
+  tr.you-row td { background: rgba(63,147,180,.07); }
+  tr.you-row td:first-child { box-shadow: inset 3px 0 0 var(--teal); }
+  tr.you-row .holder { padding-left: 14px; }
+  tr.others-row .holder { padding-left: 14px; }
+  tr.you-row .pct.after { font-size: 22px; font-weight: 600; color: var(--teal-hi); line-height: 24px; }
+  tr.you-row .bar { height: 6px; }
+
+  tfoot td { border-bottom: 0; padding: 14px 16px 14px 0; }
+  tfoot .total { font-weight: 600; font-size: 15.5px; line-height: 24px; }
+  tfoot .pct { font-size: 15px; font-weight: 400; color: var(--fg-2); }
+
+  .notes { margin-top: 18px; max-width: 860px; }
+  .notes .price { color: var(--fg-2); font-size: 15px; margin: 0 0 10px; }
+  .notes .price b { color: var(--fg); }
+  .notes p { color: var(--muted); font-size: 14.5px; margin: 0 0 12px; }
+  .disclaimer { color: var(--dim) !important; font-size: 13.5px !important; margin-top: 18px !important; }
+
+  /* ---------- Phones ---------- */
+  @media (max-width: 720px) {
+    .wrap { padding: 20px 16px 40px; }
+    .card { padding: 2px 16px 2px; border-radius: 20px; }
+    col.c-class, th.h-class, td.class { display: none; }
+    col.c-today, thead th:nth-child(3), tbody td:nth-child(3), tfoot td:nth-child(3) { display: none; }
+    col.c-holder { width: 50%; }
+    col.c-after { width: 50%; }
+    .line { display: block; }
+    .line .shares { display: block; }
+    .today-m { display: block; font-size: 12.5px; font-weight: 400; color: var(--muted); line-height: 18px; }
+    td { padding: 12px 10px 12px 0; }
+    .holder { font-size: 15px; gap: 9px; }
+    .pct { font-size: 15px; }
+    .shares { font-size: 12.5px; }
+    tr.you-row .pct.after { font-size: 19px; }
+    tr.you-row .holder, tr.others-row .holder { padding-left: 10px; }
+    .split-labels { font-size: 13px; }
+    .split-labels .lab { display: grid; column-gap: 7px; row-gap: 0; align-items: center; align-content: start; }
+    .split-labels .lab:first-child { grid-template-columns: auto 1fr; }
+    .split-labels .lab:first-child .sub { grid-column: 2; }
+    .split-labels .right { grid-template-columns: 1fr auto; text-align: right; }
+    .split-labels .right #others-label { grid-column: 1; grid-row: 1; }
+    .split-labels .right .dot { grid-column: 2; grid-row: 1; }
+    .split-labels .right .sub { grid-column: 1; grid-row: 2; }
+    .hint { display: none; }
+  }
+</style>
+</head>
+<body>
+<main class="wrap">
+  <p class="eyebrow">The round</p>
+  <h2>Capitalization, today and after the round converts</h2>
+
+  <div class="card" data-testid="cap-card">
+    <table aria-describedby="cap-notes">
+      <colgroup><col class="c-holder"><col class="c-class"><col class="c-today"><col class="c-after"></colgroup>
+      <thead>
+        <tr><th scope="col">Holder</th><th scope="col" class="h-class">Class</th><th scope="col">Today</th><th scope="col">After the round</th></tr>
+      </thead>
+
+      <tbody>
+        <tr>
+          <td><span class="holder"><span class="dot" style="background:var(--red)"></span><span class="nm">Founder<span class="today-m">Today 70.0%</span></span></span></td>
+          <td class="class">Common</td>
+          <td><div class="pct">70.0%</div></td>
+          <td><div class="line"><span class="pct" data-after="7000000" data-testid="cap-after-pct-founder"></span><span class="shares">7,000,000 shares</span></div><div class="bar"><span style="background:var(--red)" data-bar="7000000"></span></div></td>
+        </tr>
+        <tr>
+          <td><span class="holder"><span class="dot" style="background:var(--purple)"></span><span class="nm">Flagship operator<span class="today-m">Today 15.0%</span></span></span></td>
+          <td class="class">Common</td>
+          <td><div class="pct">15.0%</div></td>
+          <td><div class="line"><span class="pct" data-after="1500000" data-testid="cap-after-pct-flagship"></span><span class="shares">1,500,000 shares</span></div><div class="bar"><span style="background:var(--purple)" data-bar="1500000"></span></div></td>
+        </tr>
+        <tr>
+          <td><span class="holder"><span class="dot" style="background:var(--amber)"></span><span class="nm">Employee pool<span class="today-m">Today 15.0%</span></span></span></td>
+          <td class="class">Reserved, unissued</td>
+          <td><div class="pct">15.0%</div></td>
+          <td><div class="line"><span class="pct" data-after="1500000" data-testid="cap-after-pct-pool"></span><span class="shares">1,500,000 shares</span></div><div class="bar"><span style="background:var(--amber)" data-bar="1500000"></span></div></td>
+        </tr>
+      </tbody>
+
+      <tbody class="round">
+        <tr class="round-head">
+          <td colspan="4" class="round-panel-bg" style="padding-left:18px;padding-right:18px">
+            <div class="round-top">
+              <div class="round-title">
+                <p class="eyebrow">This round</p>
+                <span class="size">$750,000, converting to 7.5% of the company</span>
+              </div>
+              <div class="hint" aria-hidden="true">
+                <svg width="22" height="10" viewBox="0 0 22 10" fill="none"><path d="M1 5h20M1 5l4-4M1 5l4 4M21 5l-4-4M21 5l-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span>Drag to model your investment</span>
+              </div>
+            </div>
+
+            <div class="split-labels">
+              <div class="lab"><span class="dot" style="background:var(--teal)"></span><span>You <b id="you-amt" data-testid="cap-you-amount">$300,000</b></span><span class="sub" id="you-share" data-testid="cap-share-of-round">40% of the round</span></div>
+              <div class="lab right"><span id="others-label">Other pre-seed investors <b id="others-amt" data-testid="cap-others-amount">$450,000</b></span><span class="sub" id="others-sub">remaining</span><span class="dot" style="background:var(--green)"></span></div>
+            </div>
+
+            <div class="split">
+              <div class="track">
+                <div class="you" id="split-you"></div>
+                <div class="minzone" id="minzone"></div>
+              </div>
+              <input type="range" id="inv" data-testid="cap-slider" min="0" max="750000" step="25000" value="300000"
+                     aria-label="Your investment" aria-describedby="cap-notes">
+            </div>
+            <div class="scale">
+              <span class="tick" id="min-tick">$50,000 minimum</span>
+              <span class="end">$750,000</span>
+            </div>
+          </td>
+        </tr>
+
+        <tr class="you-row round-panel-bg">
+          <td><span class="holder"><span class="dot" style="background:var(--teal)"></span><span class="nm">You<span class="today-m">Today 0.0%</span></span></span></td>
+          <td class="class"></td>
+          <td><div class="pct">0.0%</div></td>
+          <td aria-live="polite"><div class="line"><span class="pct after" id="you-pct" data-testid="cap-you-pct">3.00%</span><span class="shares" id="you-shares" data-testid="cap-you-shares">324,324 shares</span></div><div class="bar"><span style="background:var(--teal)" id="you-bar"></span></div></td>
+        </tr>
+        <tr class="others-row round-panel-bg">
+          <td><span class="holder"><span class="dot" style="background:var(--green)"></span><span class="nm">Other pre-seed investors<span class="today-m">Today 0.0%</span></span></span></td>
+          <td class="class"></td>
+          <td><div class="pct">0.0%</div></td>
+          <td><div class="line"><span class="pct" id="others-pct" data-testid="cap-others-pct">4.50%</span><span class="shares" id="others-shares" data-testid="cap-others-shares">486,486 shares</span></div><div class="bar"><span style="background:var(--green)" id="others-bar"></span></div></td>
+        </tr>
+      </tbody>
+
+      <tfoot>
+        <tr>
+          <td class="total">Total</td>
+          <td class="class"></td>
+          <td><div class="line"><span class="pct">100.0%</span><span class="shares">10,000,000 shares</span></div></td>
+          <td><div class="line"><span class="pct">100.00%</span><span class="shares" id="total-shares" data-testid="cap-total-after-shares">10,810,810 shares</span></div></td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <div class="notes" id="cap-notes">
+    <p>The flagship operator's position was purchased at formation and is not part of this round. The dilution from the round falls on the holders already on the table. Your ownership is your investment divided by the cap, so it does not change if the round grows. Share counts after the round assume the full round is raised and are illustrative; the percentages are the terms.</p>
+    <p>Percentages are rounded, so a column may not add to exactly 100%.</p>
+    <p class="disclaimer">This page is a summary for discussion purposes only. It is not an offer to sell, or a solicitation of an offer to buy, any security. Any offering will be made only to qualified investors through definitive documents.</p>
+  </div>
+</main>
+
+<script>
+  // Inputs taken from the live page: 10,000,000 fully diluted shares today, a $750,000 round,
+  // ownership = investment / cap, and $300,000 = 3.0%, which puts the post-money cap at $10,000,000.
+  // All math is exact integer (BigInt) arithmetic: no floating point touches a displayed number.
+  const SHARES_TODAY = 10000000n;
+  const ROUND = 750000n;
+  const CAP = 10000000n;
+  const MIN = 50000;
+
+  // Post-money SAFE mechanics, full round raised:
+  //   company capitalization CC = SHARES_TODAY * CAP / (CAP - ROUND)   (10,810,810.81...)
+  //   conversion price          = CAP / CC = (CAP - ROUND) / SHARES_TODAY  ($0.925)
+  //   shares for $X             = X / price = X * SHARES_TODAY / (CAP - ROUND), rounded down to whole shares
+  //   ownership                 = X / CAP for converting investors; shares / CC for existing holders
+  const NET = CAP - ROUND;
+
+  const $ = (id) => document.getElementById(id);
+  const money = (n) => "$" + Number(n).toLocaleString("en-US");
+  const int = (n) => Number(n).toLocaleString("en-US");
+
+  // Half-up rounding of the exact fraction num/den, shown as a percentage with dp decimals.
+  function pct(num, den, dp) {
+    const scale = 10n ** BigInt(dp);
+    const scaled = num * 100n * scale;
+    let q = scaled / den;
+    if ((scaled % den) * 2n >= den) q += 1n;
+    const whole = q / scale, frac = (q % scale).toString().padStart(dp, "0");
+    return whole.toString() + (dp ? "." + frac : "") + "%";
+  }
+  const sharesFor = (dollars) => (dollars * SHARES_TODAY) / NET;            // BigInt division rounds down
+  const existingPct = (shares) => pct(shares * NET, SHARES_TODAY * CAP, 2);  // shares / CC, exact
+  const barWidth = (shares) => Number(shares * NET * 10000n / (SHARES_TODAY * CAP)) / 100 + "%";
+
+  // Existing holders: after-round percentages and bars.
+  document.querySelectorAll("[data-after]").forEach((el) => { el.textContent = existingPct(BigInt(el.dataset.after)); });
+  document.querySelectorAll("[data-bar]").forEach((el) => { el.style.width = barWidth(BigInt(el.dataset.bar)); });
+  $("min-tick").style.left = (MIN / Number(ROUND) * 100) + "%";
+  $("minzone").style.width = (MIN / Number(ROUND) * 100) + "%";
+
+  const input = $("inv");
+
+  function render() {
+    let invNum = +input.value;
+    if (invNum < MIN) { invNum = MIN; input.value = MIN; }
+    const inv = BigInt(invNum);
+    const others = ROUND - inv;
+
+    const youShares = sharesFor(inv);
+    const othersShares = sharesFor(others);
+    const totalShares = SHARES_TODAY + youShares + othersShares;            // sum of whole-share holdings
+
+    $("you-amt").textContent = money(inv);
+    $("you-share").textContent = pct(inv, ROUND, (inv * 100n) % ROUND === 0n ? 0 : 1) + " of the round";
+    $("split-you").style.width = (invNum / Number(ROUND) * 100) + "%";
+
+    if (others > 0n) {
+      $("others-label").innerHTML = 'Other pre-seed investors <b id="others-amt" data-testid="cap-others-amount">' + money(others) + "</b>";
+      $("others-sub").textContent = "remaining";
+    } else {
+      $("others-label").innerHTML = "<b>Round fully allocated to you</b>";
+      $("others-sub").textContent = "";
+    }
+
+    $("you-pct").textContent = pct(inv, CAP, 2);
+    $("you-shares").textContent = int(youShares) + " shares";
+    $("you-bar").style.width = barWidth(youShares);
+
+    $("others-pct").textContent = pct(others, CAP, 2);
+    $("others-shares").textContent = int(othersShares) + " shares";
+    $("others-bar").style.width = barWidth(othersShares);
+
+    $("total-shares").textContent = int(totalShares) + " shares";
+    input.setAttribute("aria-valuetext", money(inv) + ", " + pct(inv, CAP, 2) + " ownership after conversion");
+  }
+
+  input.addEventListener("input", render);
+  render();
+</script>
+</body>
+</html>
