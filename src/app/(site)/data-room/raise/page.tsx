@@ -6,7 +6,7 @@ import { BuildPlan } from '@/components/site/investors/build-plan';
 import { RaiseTerms } from '@/components/site/investors/raise-terms';
 import { Container, Eyebrow } from '@/components/site/layout-parts';
 import { DATA_ROOM_RAISE_PATH } from '@/content/constants';
-import { getPage } from '@/content/store';
+import { getPage, getSectionProblems } from '@/content/store';
 import { cn } from '@/lib/cn';
 import { renderHeadline } from '@/lib/headline';
 import { dataRoomHidden } from '@/server/data-room-access';
@@ -33,7 +33,13 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function DataRoomRaisePage() {
   const access = await requireEntry();
   if (dataRoomHidden(access)) notFound();
-  const [{ next, platform, round }, { room }] = await Promise.all([getPage('investors'), getPage('dataRoom')]);
+  const [{ next, platform, round }, { room }, problems] = await Promise.all([
+    getPage('investors'),
+    getPage('dataRoom'),
+    getSectionProblems('investors', 'round'),
+  ]);
+  // Saved figures that cannot even be read are never replaced by the shipped ones: the terms wait until they are fixed.
+  const unreadable = problems.some((problem) => problem.kind === 'fields');
   return (
     <>
       <RoomNav room={room} />
@@ -49,7 +55,7 @@ export default async function DataRoomRaisePage() {
               {renderHeadline(round.termsHeading)}
             </h1>
           </Reveal>
-          <RaiseTerms content={round} />
+          {unreadable ? null : <RaiseTerms content={round} />}
         </Container>
       </section>
       <BuildPlan next={next} platform={platform} />

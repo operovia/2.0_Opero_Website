@@ -8,8 +8,9 @@ import { consoleScenes, contentSections, media, siteState } from '@/db/schema';
 import { getSession } from '@/server/auth/session';
 import { onContentChange } from '@/server/content-version';
 import { getSettings, type SiteSettings } from '@/server/settings';
-import { schemaFor, withSeed } from './fields';
+import { schemaFor } from './fields';
 import { getSectionDef, pages, type PageData, type PageKey, type SectionDef } from './registry';
+import { resolveStored, type SectionProblem } from './resolve';
 import type { SceneTable } from './scene-table';
 import { contentTokens, fillTokensDeep } from './tokens';
 
@@ -164,14 +165,27 @@ const snapshotForRequest = cache(async (): Promise<Snapshot> => {
 });
 
 function resolveSection(snapshot: Snapshot, page: PageKey, key: string, def: SectionDef): unknown {
-  const stored = snapshot.sections.get(`${page}.${key}`);
-  const merged = withSeed(def.fields, def.seed as Record<string, unknown>, stored);
-  const parsed = schemaFor(def.fields, def.check).safeParse(merged);
-  if (!parsed.success) {
-    console.error(`[opero] Stored content for ${page}.${key} is invalid; showing the default copy.`, parsed.error.issues);
-    return def.seed;
+  const { data, problems } = resolveStored(def, snapshot.sections.get(`${page}.${key}`));
+  if (problems.length) {
+    const shown = def.withhold ? 'holding back what depends on it' : 'showing the default copy';
+    console.error(`[opero] Stored content for ${page}.${key} is invalid; ${shown}.`, problems);
   }
-  return parsed.data;
+  return data;
+}
+
+function problemsIn(snapshot: Snapshot, page: string, key: string): SectionProblem[] {
+  const def = getSectionDef(page, key);
+  return def ? resolveStored(def, snapshot.sections.get(`${page}.${key}`)).problems : [];
+}
+
+/** What is wrong with a section's stored content, as this request sees it (drafts, for an admin previewing them); empty when nothing is. */
+export async function getSectionProblems(page: PageKey, key: string): Promise<SectionProblem[]> {
+  return problemsIn(await snapshotForRequest(), page, key);
+}
+
+/** What is wrong with a section's published content, for the admin. */
+export async function publishedSectionProblems(page: string, key: string): Promise<SectionProblem[]> {
+  return problemsIn(await publishedSnapshot(), page, key);
 }
 
 /** A page's content: every section validated, with {partner} and {email} filled in. */

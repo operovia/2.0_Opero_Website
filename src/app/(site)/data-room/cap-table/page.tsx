@@ -5,7 +5,7 @@ import { RoomNav } from '@/components/site/data-room/room-nav';
 import { CapTableSection } from '@/components/site/investors/cap-table';
 import { Container, Eyebrow } from '@/components/site/layout-parts';
 import { DATA_ROOM_CAP_TABLE_PATH } from '@/content/constants';
-import { getPage } from '@/content/store';
+import { getPage, getSectionProblems } from '@/content/store';
 import { cn } from '@/lib/cn';
 import { dataRoomHidden } from '@/server/data-room-access';
 import { getAccess, requireEntry } from '@/server/entry';
@@ -23,11 +23,17 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-/** The Cap Table: the capitalization table today and after the round converts, with the investment model under it, and the small print. */
+/**
+ * The Cap Table: the capitalization table today and after the round
+ * converts, with the investment model under it, and the small print. If the
+ * saved figures fail the checks (src/content/resolve.ts), the table is held
+ * back, never shown with the shipped figures: a short message stands in its
+ * place, and the admin says what to fix.
+ */
 export default async function DataRoomCapTablePage() {
   const access = await requireEntry();
   if (dataRoomHidden(access)) notFound();
-  const [{ round }, { room }] = await Promise.all([getPage('investors'), getPage('dataRoom')]);
+  const [{ round }, { room }, problems] = await Promise.all([getPage('investors'), getPage('dataRoom'), getSectionProblems('investors', 'round')]);
   return (
     <>
       <RoomNav room={room} />
@@ -43,7 +49,16 @@ export default async function DataRoomCapTablePage() {
               {round.capHeading}
             </h1>
           </Reveal>
-          <CapTableSection content={round} />
+          {problems.length ? (
+            <Reveal className="mt-10">
+              <p data-testid="cap-withheld" className="mt-6 rounded-2xl border border-line bg-surface px-6 py-8 text-base text-fg-muted">
+                {round.withheldMessage}
+              </p>
+              <p className="mt-12 max-w-3xl text-sm text-fg-subtle">{round.disclaimer}</p>
+            </Reveal>
+          ) : (
+            <CapTableSection content={round} />
+          )}
         </Container>
       </section>
     </>

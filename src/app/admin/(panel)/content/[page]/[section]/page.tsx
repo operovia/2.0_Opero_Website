@@ -2,9 +2,11 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { SectionEditor } from '@/components/admin/content/section-editor';
+import { Notice } from '@/components/ui/notice';
 import { PageHeader } from '@/components/ui/page-header';
 import { withSeed } from '@/content/fields';
 import { getPageDef, getSectionDef } from '@/content/registry';
+import { publishedSectionProblems } from '@/content/store';
 import { requireAdmin } from '@/server/auth/session';
 import { sectionForEdit } from '@/server/content-admin';
 
@@ -29,6 +31,8 @@ export default async function EditSectionPage({ params }: PageProps<'/admin/cont
   };
   const draft = current(row?.draft);
   const published = current(row?.published);
+  // A section that withholds says here what the site is holding back, and why.
+  const problems = def.withhold ? await publishedSectionProblems(page, section) : [];
 
   return (
     <div className="space-y-8">
@@ -42,6 +46,17 @@ export default async function EditSectionPage({ params }: PageProps<'/admin/cont
         </Link>
       </nav>
       <PageHeader title={def.label} description={def.description} />
+      {problems.length ? (
+        <Notice tone="danger" title={def.withhold}>
+          <ul className="mt-1 list-disc space-y-1 pl-5">
+            {problems.map((problem, i) => (
+              <li key={i}>
+                {problem.label}: {problem.message}
+              </li>
+            ))}
+          </ul>
+        </Notice>
+      ) : null}
       <SectionEditor
         page={page}
         section={section}

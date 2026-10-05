@@ -23,6 +23,14 @@ export type SectionDef<F extends Fields = Fields> = {
   draftCopy?: boolean;
   /** Runs after every field has passed its own validation, for figures that must agree with each other. */
   check?: SectionCheck<F>;
+  /**
+   * For a section whose figures must never be replaced by the shipped ones:
+   * when its stored content fails validation, the page keeps the stored
+   * values and holds back what depends on them (src/content/resolve.ts), and
+   * the admin shows this line, with the reasons, on the section and on the
+   * Dashboard.
+   */
+  withhold?: string;
 };
 
 export type PageDef = {
@@ -740,6 +748,7 @@ const investorsRound = section({
   description:
     'The terms of the current round, the investment model, and the capitalization table. Shown to guests who came through the front door and to signed-in admins only, never on a public page. The figures come from the signed documents and the owner; the model works out every percentage from them.',
   draftCopy: true,
+  withhold: 'The cap table is hidden on the site until these are fixed.',
   fields: {
     eyebrow: text('Eyebrow', { optional: true, max: 60 }),
     termsHeading: text('Headline', { max: 120, headline: true }),
@@ -793,6 +802,10 @@ const investorsRound = section({
       hint: 'The amount the cap table opens on, before the visitor moves the slider. Between the minimum and the largest investment, and no more than the round.',
     }),
     capHeading: text('Capitalization: heading', { max: 120 }),
+    withheldMessage: text('Capitalization: message while the figures are fixed', {
+      max: 120,
+      hint: 'Shown in place of the cap table if the figures saved here ever fail the checks. This page then says what to fix.',
+    }),
     holderColumn: text('Column: holder', { max: 30 }),
     classColumn: text('Column: class', { max: 30 }),
     todayColumn: text('Column: today', { max: 30 }),
@@ -844,6 +857,7 @@ const investorsRound = section({
     step: 25000,
     start: 300000,
     capHeading: 'Capitalization, today and after the round converts',
+    withheldMessage: 'The cap table is being updated.',
     holderColumn: 'Holder',
     classColumn: 'Class',
     todayColumn: 'Today',
@@ -863,8 +877,8 @@ const investorsRound = section({
     disclaimer:
       'This page is a summary for discussion purposes only. It is not an offer to sell, or a solicitation of an offer to buy, any security. Any offering will be made only to qualified investors through definitive documents.',
   },
-  // The figures must agree with each other, or the cap table's sums (src/lib/cap-table-math.ts) cannot be worked out. Stored figures
-  // that fail here are refused in the admin, and the page shows the shipped figures instead.
+  // The figures must agree with each other, or the cap table's sums (src/lib/cap-table-math.ts) cannot be worked out. Figures that
+  // fail here are refused in the admin; stored ones that fail (saved before a check existed) hide the cap table until they are fixed.
   check: ({ raise, cap, minimum, maximum, step, start, capTable, terms, getsBody }) => {
     const issues = [];
     // The Raise names the saved figures by token; one it does not know would show its braces to investors.

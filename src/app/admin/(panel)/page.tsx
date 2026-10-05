@@ -5,7 +5,8 @@ import { Card, CardHeader } from '@/components/ui/card';
 import { Notice } from '@/components/ui/notice';
 import { PageHeader } from '@/components/ui/page-header';
 import { Time } from '@/components/ui/time';
-import { getPageDef, getSectionDef } from '@/content/registry';
+import { allSections, getPageDef, getSectionDef } from '@/content/registry';
+import { publishedSectionProblems } from '@/content/store';
 import { requireAdmin } from '@/server/auth/session';
 import { allPagesStatus, recentPublishes } from '@/server/content-admin';
 import { databaseStatus } from '@/server/database-status';
@@ -31,6 +32,20 @@ export default async function DashboardPage() {
     databaseStatus(),
   ]);
   const errors = recentRequestErrors();
+  // Sections whose figures are held back on the site until they are fixed, with the reasons.
+  const withheld = (
+    await Promise.all(
+      allSections()
+        .filter(({ def }) => def.withhold)
+        .map(async ({ page, section: key, def }) => ({
+          page,
+          key,
+          pageLabel: getPageDef(page)?.label ?? page,
+          def,
+          problems: await publishedSectionProblems(page, key),
+        })),
+    )
+  ).filter((item) => item.problems.length);
   const email = emailHealth();
   const { apiKey, from } = emailConfig();
   const firstName = user.name.split(' ')[0];
@@ -39,6 +54,24 @@ export default async function DashboardPage() {
   return (
     <div className="space-y-8">
       <PageHeader title={firstName ? `Welcome, ${firstName}` : 'Welcome'} description="What is new on the Opero site." />
+
+      {withheld.map(({ page, key, pageLabel, def, problems }) => (
+        <Notice key={`${page}.${key}`} tone="danger" title={def.withhold}>
+          <ul className="mt-1 list-disc space-y-1 pl-5">
+            {problems.map((problem, i) => (
+              <li key={i}>
+                {problem.label}: {problem.message}
+              </li>
+            ))}
+          </ul>
+          <p className="mt-2">
+            <Link href={`/admin/content/${page}/${key}`} className="font-medium text-fg underline underline-offset-4">
+              Fix them in Content, {pageLabel}, {def.label}
+            </Link>
+            .
+          </p>
+        </Notice>
+      ))}
 
       {settings.maintenanceMode ? (
         <Notice tone="warning" title="Maintenance mode is on">
