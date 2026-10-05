@@ -183,6 +183,13 @@
       "when": 1791208171988,
       "tag": "0025_cap_table_start",
       "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1791208831830,
+      "tag": "0026_raise_figures",
+      "breakpoints": true
     }
   ]
 }

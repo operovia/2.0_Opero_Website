@@ -44,6 +44,9 @@ describe('seed content', () => {
       ['start', { start: 25_000 }],
       ['start', { start: 800_000 }],
       ['step', { step: 30_000 }],
+      // The Raise names figures by token; a misspelt one would show its braces.
+      ['terms', { terms: [{ value: '{cpa}', label: 'valuation cap' }] }],
+      ['getsBody', { getsBody: 'Worth no more than {cap in milions}.' }],
     ];
     for (const [field, changes] of failing) {
       const result = parse(changes);

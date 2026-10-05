@@ -1,4 +1,5 @@
 import { textToRich } from '@/lib/rich-text';
+import { unknownTokens } from '@/lib/round-figures';
 import { choice, link, list, number, rich, text, type Fields, type SectionCheck, type Values } from './fields';
 import { tokenHelp } from './tokens';
 import { DATA_ROOM_FILES_PATH, DATA_ROOM_PATH, DEMO_TARGET, DOOR_PATH, FOUNDER_PATH, GO_PATH, GO_SCREEN_LABELS, type GoScreenName } from './constants';
@@ -746,13 +747,20 @@ const investorsRound = section({
       'Terms',
       'Term',
       {
-        value: text('Figure', { max: 30, hint: 'Shown large, like $750,000 or 180 days.' }),
+        value: text('Figure', {
+          max: 30,
+          hint: 'Shown large, like 180 days. {round}, {cap} and {minimum} show the figures saved below, so The Raise and the cap table always agree.',
+        }),
         label: text('What it is', { max: 120 }),
       },
       { min: 1, max: 8 },
     ),
     getsHeading: text('What the investor gets: heading', { max: 60 }),
-    getsBody: text('What the investor gets: text', { max: 600, multiline: true }),
+    getsBody: text('What the investor gets: text', {
+      max: 600,
+      multiline: true,
+      hint: '{cap in millions} shows the saved cap the way a sentence says it, like $10 million. {round}, {cap} and {minimum} work here too.',
+    }),
     modelHeading: text('Model: heading', { max: 60 }),
     sliderLabel: text('Slider label', { max: 40 }),
     shareLabel: text('Share of round: label', { max: 40 }),
@@ -766,12 +774,12 @@ const investorsRound = section({
     cap: number('Valuation cap, in dollars', {
       min: 1,
       integer: true,
-      hint: 'The post-money cap, used by the cap table but never shown on it. Ownership is the investment divided by it. The cap shown on The Raise is the Terms text above; edit it to match.',
+      hint: 'The post-money cap, used by the cap table but never shown on it. Ownership is the investment divided by it. The Raise shows it wherever its text says {cap} or {cap in millions}.',
     }),
     minimum: number('Minimum investment, in dollars', {
       min: 1,
       integer: true,
-      hint: "The smallest investment, and the slider's lower end. The minimum shown in the terms above is its own text; edit it to match.",
+      hint: "The smallest investment, and the slider's lower end. The Raise shows it wherever its text says {minimum}.",
     }),
     maximum: number('Largest investment on the slider, in dollars', { min: 1, integer: true, hint: 'No more than the round.' }),
     step: number('Slider step, in dollars', {
@@ -815,15 +823,15 @@ const investorsRound = section({
     eyebrow: 'The round',
     termsHeading: 'The raise',
     terms: [
-      { value: '$750,000', label: 'on a standard post-money SAFE' },
-      { value: '$10,000,000', label: 'valuation cap, no discount' },
-      { value: '$50,000', label: 'minimum investment' },
+      { value: '{round}', label: 'on a standard post-money SAFE' },
+      { value: '{cap}', label: 'valuation cap, no discount' },
+      { value: '{minimum}', label: 'minimum investment' },
       { value: '$250,000', label: 'and above receives pro-rata rights via side letter' },
       { value: '180 days', label: 'the round remains open, from company formation' },
     ],
     getsHeading: 'What the investor gets',
     getsBody:
-      'The SAFE converts to preferred stock at the next priced equity round, at the lower of the cap or the round price. The cap is what does the work: a $100,000 check today converts as if the company were worth no more than $10 million, regardless of the price later investors pay.',
+      'The SAFE converts to preferred stock at the next priced equity round, at the lower of the cap or the round price. The cap is what does the work: a $100,000 check today converts as if the company were worth no more than {cap in millions}, regardless of the price later investors pay.',
     modelHeading: 'Model your investment',
     sliderLabel: 'Your investment',
     shareLabel: 'Share of round',
@@ -857,9 +865,20 @@ const investorsRound = section({
   },
   // The figures must agree with each other, or the cap table's sums (src/lib/cap-table-math.ts) cannot be worked out. Stored figures
   // that fail here are refused in the admin, and the page shows the shipped figures instead.
-  check: ({ raise, cap, minimum, maximum, step, start, capTable }) => {
-    if (![raise, cap, minimum, maximum, step, start].every(Number.isFinite)) return [];
+  check: ({ raise, cap, minimum, maximum, step, start, capTable, terms, getsBody }) => {
     const issues = [];
+    // The Raise names the saved figures by token; one it does not know would show its braces to investors.
+    const copy: [string, string][] = [
+      ...terms.flatMap((term) => [term.value, term.label].map((text): [string, string] => ['terms', text])),
+      ['getsBody', getsBody],
+    ];
+    for (const [field, text] of copy) {
+      const unknown = unknownTokens(text);
+      if (unknown.length) {
+        issues.push({ field, message: `${unknown.join(', ')} is not a figure: use {round}, {cap}, {minimum} or {cap in millions}.` });
+      }
+    }
+    if (![raise, cap, minimum, maximum, step, start].every(Number.isFinite)) return issues;
     if (raise >= cap) issues.push({ field: 'raise', message: 'The round must be smaller than the valuation cap.' });
     if (capTable.reduce((sum, row) => sum + row.shares, 0) <= 0) {
       issues.push({ field: 'capTable', message: 'At least one holder needs shares, or no percentage can be worked out.' });
