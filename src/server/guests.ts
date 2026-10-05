@@ -11,7 +11,7 @@ import { GUEST_COOKIE, GUEST_COOKIE_INSECURE, GUEST_TTL_SECONDS } from '@/server
 import { randomToken, sha256 } from '@/server/crypto';
 import { sendEmail, sendEmails } from '@/server/email/send';
 import { guestConfirmLinkEmail, guestEnteredNotification } from '@/server/email/templates';
-import { siteUrl } from '@/server/env';
+import { emailConfig, isProduction, siteUrl } from '@/server/env';
 import { clientIp, isHttps, userAgent } from '@/server/request';
 import { getSettings, notificationRecipients } from '@/server/settings';
 
@@ -362,13 +362,25 @@ export async function startConfirmation(email: string, companyId: string): Promi
   return token;
 }
 
-/** Emails the link to the address it is for. Failures are logged, never thrown: the door has answered already. */
-export async function sendConfirmLink(email: string, token: string): Promise<void> {
+/**
+ * Emails the link to the address it is for, and says whether the email
+ * service took it, so the door never tells anyone to check an inbox nothing
+ * reached. On the published site without RESEND_API_KEY the email would only
+ * be written to the log, so that counts as not sent. Failures are logged,
+ * never thrown; the Site health card on the Dashboard shows the last ones.
+ */
+export async function sendConfirmLink(email: string, token: string): Promise<boolean> {
+  if (isProduction && !emailConfig().apiKey) {
+    console.error('[opero] Could not email a link to the door: email is not set up (RESEND_API_KEY is missing).');
+    return false;
+  }
   try {
     const result = await sendEmail({ to: email, ...guestConfirmLinkEmail({ email, url: confirmLink(token), hours: CONFIRM_TTL_HOURS }) });
     if (!result.ok) console.error('[opero] Could not email a link to the door:', result.error);
+    return result.ok;
   } catch (error) {
     console.error('[opero] Could not email a link to the door:', error);
+    return false;
   }
 }
 

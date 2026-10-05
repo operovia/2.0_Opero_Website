@@ -9,7 +9,8 @@ import { getPageDef, getSectionDef } from '@/content/registry';
 import { requireAdmin } from '@/server/auth/session';
 import { allPagesStatus, recentPublishes } from '@/server/content-admin';
 import { databaseStatus } from '@/server/database-status';
-import { recentRequestErrors } from '@/server/health';
+import { emailConfig } from '@/server/env';
+import { emailHealth, recentRequestErrors } from '@/server/health';
 import { inquirerName, newInquiryCount, recentNewInquiries, typeLabel } from '@/server/inquiries-admin';
 import { getSettings } from '@/server/settings';
 import { surveysWithRecentResponses } from '@/server/surveys';
@@ -30,6 +31,8 @@ export default async function DashboardPage() {
     databaseStatus(),
   ]);
   const errors = recentRequestErrors();
+  const email = emailHealth();
+  const { apiKey, from } = emailConfig();
   const firstName = user.name.split(' ')[0];
   const toReview = pages.reduce((sum, page) => sum + page.needsReview, 0);
 
@@ -182,6 +185,34 @@ export default async function DashboardPage() {
               ) : (
                 ' This server has not prepared it yet.'
               )}
+            </HealthRow>
+            <HealthRow label="Email">
+              {apiKey ? (
+                <>
+                  Sending as {from}.{' '}
+                  {email.lastSentAt ? (
+                    <>
+                      Last sent <Time value={email.lastSentAt} format="relative" />.
+                    </>
+                  ) : (
+                    'Nothing sent yet.'
+                  )}
+                </>
+              ) : (
+                'Not set up: RESEND_API_KEY is missing, so emails are written to the server log instead of being sent.'
+              )}
+              {email.failures.length ? (
+                <ul className="mt-2 space-y-2">
+                  {email.failures.map((failure, index) => (
+                    <li key={index}>
+                      <p className="text-fg">
+                        Not sent <Time value={failure.at} format="relative" />, to {failure.to}: {failure.subject}
+                      </p>
+                      <p className="break-words">{failure.message}</p>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
             </HealthRow>
             <HealthRow label="Page errors">
               {errors.length ? (

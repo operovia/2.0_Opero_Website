@@ -60,8 +60,8 @@ async function sendLink(address: string, companyId: string, ip: string): Promise
   const byCompany = await hit(`door:company:${companyId}`, DOOR_LIMITS.company.limit, DOOR_LIMITS.company.windowSeconds);
   if (!byCompany.ok) return limited(byCompany);
   const token = await startConfirmation(address, companyId);
-  // Sent once the answer is on its way, like the owner's notice.
-  after(() => sendConfirmLink(address, token));
+  // Sent before the door answers, so it only says to check the inbox once the email service has the email.
+  if (!(await sendConfirmLink(address, token))) return miss('trouble');
   await audit(null, 'door.link', { target: address, ip });
   return SENT;
 }

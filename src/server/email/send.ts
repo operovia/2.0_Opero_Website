@@ -1,5 +1,6 @@
 import { Resend } from 'resend';
 import { emailConfig, isProduction } from '@/server/env';
+import { recordEmailFailure, recordEmailSent } from '@/server/health';
 import type { RenderedEmail } from './layout';
 
 export type OutgoingEmail = RenderedEmail & {
@@ -22,10 +23,22 @@ function logInstead(email: OutgoingEmail): SendResult {
   return { ok: true, id: 'logged' };
 }
 
+/** Notes how an email went, for the Site health card on the Dashboard. */
+function track(email: OutgoingEmail, result: SendResult): SendResult {
+  if (result.ok) recordEmailSent();
+  else recordEmailFailure({ at: new Date(), to: email.to, subject: email.subject, message: result.error });
+  return result;
+}
+
 /** Sends one email through Resend, or prints it to the server log when no API key is configured. */
 export async function sendEmail(email: OutgoingEmail): Promise<SendResult> {
-  const { apiKey, from, replyTo } = emailConfig();
+  const { apiKey } = emailConfig();
   if (!apiKey) return logInstead(email);
+  return track(email, await sendThroughResend(email, apiKey));
+}
+
+async function sendThroughResend(email: OutgoingEmail, apiKey: string): Promise<SendResult> {
+  const { from, replyTo } = emailConfig();
   try {
     const { data, error } = await resend(apiKey).emails.send({
       from,
@@ -81,5 +94,5 @@ export async function sendEmails(emails: OutgoingEmail[]): Promise<SendResult[]>
       results.push(...chunk.map(() => ({ ok: false as const, error: message })));
     }
   }
-  return results;
+  return results.map((result, index) => track(emails[index]!, result));
 }
