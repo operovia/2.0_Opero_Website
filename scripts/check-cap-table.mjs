@@ -1,13 +1,16 @@
 // scripts/check-cap-table.mjs: the cap table handoff's browser check (its Appendix B), dev only, never part of the site.
 // Changed from the handoff only where this project differs: it imports playwright-core (the project's dev dependency) with an
-// optional CHROME_PATH for the browser, and reads the golden values from src/lib/cap-table-golden.json, which the unit tests share.
+// optional CHROME_PATH for the browser, and reads the golden values the unit tests share: by default those of the shipped round
+// ($1,000,000, src/lib/cap-table-golden-round.json, all 39 positions); GOLDEN="src/lib/cap-table-golden.json" checks a page
+// saved with the handoff's own $750,000 round against its Appendix A.
 // Usage: PAGE_URL="http://localhost:3000/<investor page path>" SESSION_COOKIE="name=value" node scripts/check-cap-table.mjs
 import { chromium } from "playwright-core";
 import fs from "fs";
 
 const PAGE_URL = process.env.PAGE_URL;
 const COOKIE = process.env.SESSION_COOKIE || "";
-const golden = JSON.parse(fs.readFileSync(new URL("../src/lib/cap-table-golden.json", import.meta.url), "utf8"));
+const goldenFile = process.env.GOLDEN ? new URL(process.env.GOLDEN, new URL("../", import.meta.url)) : new URL("../src/lib/cap-table-golden-round.json", import.meta.url);
+const golden = JSON.parse(fs.readFileSync(goldenFile, "utf8"));
 
 const browser = await chromium.launch(process.env.CHROME_PATH ? { executablePath: process.env.CHROME_PATH } : {});
 const ctx = await browser.newContext({ viewport: { width: 1440, height: 790 } });

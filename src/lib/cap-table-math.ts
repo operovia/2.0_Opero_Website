@@ -4,7 +4,9 @@
  * figures the admin keeps for the round (Content, Data Room, The round) and
  * the reader's investment, returning every figure the table shows, already
  * formatted. The reference is the cap table handoff's math spec and its
- * mockup (docs/reference/Cap_Table_Slider_Mockup.html).
+ * mockup (docs/reference/Cap_Table_Slider_Mockup.html). The examples in these
+ * comments are the handoff's, for its $750,000 round; the shipped round is
+ * $1,000,000 (src/lib/cap-table-golden-round.json).
  *
  * A post-money SAFE converts at a price of (cap - round) / shares today, so
  * an amount X converts into X * today / (cap - round) shares, rounded down

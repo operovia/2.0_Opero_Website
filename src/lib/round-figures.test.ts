@@ -41,8 +41,8 @@ describe('unknownTokens', () => {
 describe('The Raise as shipped', () => {
   const seed = pages.investors.sections.round.seed;
 
-  it('reads exactly as it did when the figures were typed', () => {
-    expect(seed.terms.map((term) => fillRoundFigures(term.value, seed))).toEqual(['$750,000', '$10,000,000', '$50,000', '$250,000', '180 days']);
+  it('reads the saved figures, worded exactly as it was when they were typed', () => {
+    expect(seed.terms.map((term) => fillRoundFigures(term.value, seed))).toEqual(['$1,000,000', '$10,000,000', '$50,000', '$250,000', '180 days']);
     expect(fillRoundFigures(seed.getsBody, seed)).toBe(
       'The SAFE converts to preferred stock at the next priced equity round, at the lower of the cap or the round price. The cap is what does the work: a $100,000 check today converts as if the company were worth no more than $10 million, regardless of the price later investors pay.',
     );

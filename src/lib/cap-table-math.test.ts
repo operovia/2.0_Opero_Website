@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { pages } from '@/content/registry';
 import { capTableCopy, capTableView, percent, snapAmount, type CapTableConfig } from './cap-table-math';
 import golden from './cap-table-golden.json';
+import roundGolden from './cap-table-golden-round.json';
 
 /* The cap table handoff's inputs (its math spec), and the golden values it checked at every slider position (its Appendix A). */
 const config: CapTableConfig = {
@@ -143,8 +144,47 @@ describe('percent', () => {
   });
 });
 
+/*
+ * The shipped round: $1,000,000, sized by the owner from the budget, with the handoff's other figures. Its golden values
+ * (cap-table-golden-round.json) were worked out apart from this code, in exact fractions, by a calculation that reproduces the
+ * handoff's own golden values above to the character.
+ */
+const round: CapTableConfig = { ...config, raise: 1_000_000 };
+const roundStatic = [roundGolden.static['cap-after-pct-founder'], roundGolden.static['cap-after-pct-flagship'], roundGolden.static['cap-after-pct-pool']];
+
+describe('the shipped round, at every slider position', () => {
+  it('has all 39 positions, $50,000 to $1,000,000 in $25,000 steps', () => {
+    expect(roundGolden.steps.map((step) => step.investment)).toEqual(Array.from({ length: 39 }, (_, i) => 50_000 + i * 25_000));
+  });
+
+  for (const step of roundGolden.steps) {
+    it(`at ${step.you_amount}`, () => {
+      const view = capTableView(round, step.investment);
+      expect(view.youAmount).toBe(step.you_amount);
+      expect(view.shareOfRound).toBe(step.share_of_round);
+      expect(view.you.after).toBe(step.you_pct);
+      expect(view.you.shares).toBe(step.you_shares);
+      expect(view.others.after).toBe(step.others_pct);
+      expect(view.others.shares).toBe(step.others_shares);
+      expect(view.othersAmount).toBe(step.others_amount);
+      expect(view.totalAfter.shares).toBe(step.total_after_shares);
+      expect(view.existing.map((row) => row.after)).toEqual(roundStatic);
+    });
+  }
+
+  it('totals the whole share counts, so the column always adds up: 11,111,110 or 11,111,111, as the counts round down', () => {
+    const totals = new Set(roundGolden.steps.map((step) => capTableView(round, step.investment).totalAfter.shares));
+    expect([...totals].sort()).toEqual(['11,111,110', '11,111,111']);
+  });
+
+  it('describes the round: $1,000,000, converting to 10.0% of the company', () => {
+    const view = capTableView(round, 300_000);
+    expect([view.roundAmount, view.roundPercent]).toEqual(['$1,000,000', '10.0%']);
+  });
+});
+
 describe('the shipped figures', () => {
-  it('match the handoff, so a fresh site shows the golden values', () => {
+  it('are the round the site shows, so a fresh site matches its golden values', () => {
     const seed = pages.investors.sections.round.seed;
     expect({
       holders: seed.capTable,
@@ -153,6 +193,6 @@ describe('the shipped figures', () => {
       minimum: seed.minimum,
       step: seed.step,
       start: seed.start,
-    }).toEqual(config);
+    }).toEqual(round);
   });
 });

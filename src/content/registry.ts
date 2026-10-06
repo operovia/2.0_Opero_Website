@@ -851,7 +851,7 @@ const investorsRound = section({
     getsHeading: 'What the investor gets',
     getsBody:
       'The SAFE converts to preferred stock at the next priced equity round, at the lower of the cap or the round price. The cap is what does the work: a $100,000 check today converts as if the company were worth no more than {cap in millions}, regardless of the price later investors pay.',
-    raise: 750000,
+    raise: 1000000,
     cap: 10000000,
     minimum: 50000,
     step: 25000,
