@@ -58,3 +58,6 @@ dist/
 
 # the website review's layout check screenshots (scripts/check-layout.mjs)
 /layout-check/
+
+# Database backups hold real guests' emails and password hashes: never commit them
+*.dump
