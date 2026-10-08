@@ -14,6 +14,11 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     // Claude Code's own install and settings (see ./cc), not project code.
     ".claude-tools/**",
+    // Replit's workspace files (Replit Agent's skills live in .local), not project code.
+    ".local/**",
+    ".cache/**",
+    ".config/**",
+    ".upm/**",
   ]),
 ]);
 
