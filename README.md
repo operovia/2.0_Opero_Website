@@ -85,7 +85,7 @@ The Email row of the Site health card on the Dashboard says whether email is set
 In Replit, open Publishing. The build and run commands are already configured (`npm run build`, then `npm run start`). The published app takes its secrets from the workspace's one Secrets tab; a value meant only for the published app goes under Publishing, Adjust settings, Production app secrets. It needs:
 
 - `DATABASE_URL`: the production database
-- `SITE_URL`: the public address of the site, `https://operovia.com`. It can go in the Secrets tab: the published app uses it, while the development site always links to its own address. Without it, the published app's links, personal links on the Guests page included, use its Replit address (`operowebsite.replit.app`).
+- `SITE_URL`: the public address of the site, `https://operovia.com`. It can go in the Secrets tab: the published app uses it, while the development site always links to its own address. Without it, the published app's links, personal links on the Guests page included, use its Replit address (the one ending in `.replit.app`).
 - `ADMIN_EMAIL`, `ADMIN_PASSWORD`, `ADMIN_NAME`
 - `RESEND_API_KEY`, `EMAIL_FROM`
 - For images uploaded in the admin: `S3_BUCKET`, `S3_REGION`, `S3_ENDPOINT`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY`. Published apps do not keep uploaded files, so they need an S3-compatible bucket. Cloudflare R2 works well and is inexpensive.
