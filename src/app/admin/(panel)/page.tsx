@@ -15,6 +15,7 @@ import { emailHealth, recentRequestErrors } from '@/server/health';
 import { inquirerName, newInquiryCount, recentNewInquiries, typeLabel } from '@/server/inquiries-admin';
 import { getSettings } from '@/server/settings';
 import { surveysWithRecentResponses } from '@/server/surveys';
+import { visitSummary, type VisitTotals } from '@/server/visits';
 
 export const metadata: Metadata = { title: 'Dashboard' };
 
@@ -22,7 +23,7 @@ const linkClass = 'text-sm font-medium text-fg underline underline-offset-4 hove
 
 export default async function DashboardPage() {
   const { user } = await requireAdmin();
-  const [settings, newCount, inquiries, publishes, pages, surveys, database] = await Promise.all([
+  const [settings, newCount, inquiries, publishes, pages, surveys, database, visits] = await Promise.all([
     getSettings(),
     newInquiryCount(),
     recentNewInquiries(5),
@@ -30,6 +31,7 @@ export default async function DashboardPage() {
     allPagesStatus(),
     surveysWithRecentResponses(30, 5),
     databaseStatus(),
+    visitSummary(),
   ]);
   const errors = recentRequestErrors();
   // Sections whose figures are held back on the site until they are fixed, with the reasons.
@@ -135,6 +137,23 @@ export default async function DashboardPage() {
           ) : (
             <p className="px-6 py-5 text-sm text-fg-muted">Demo requests and partner applications appear here as they arrive.</p>
           )}
+        </Card>
+
+        <Card>
+          <CardHeader
+            title="Visitors"
+            description="People on the site, with crawlers and your own visits left out. A visitor is counted once a day."
+            actions={
+              <Link href="/admin/visitors" className={linkClass}>
+                All visitors
+              </Link>
+            }
+          />
+          <dl className="divide-y divide-line">
+            <HealthRow label="Today">{visitLine(visits.today)}</HealthRow>
+            <HealthRow label="Last 7 days">{visitLine(visits.week)}</HealthRow>
+            <HealthRow label="Last 30 days">{visitLine(visits.month)}</HealthRow>
+          </dl>
         </Card>
 
         <Card>
@@ -269,6 +288,16 @@ export default async function DashboardPage() {
       </div>
     </div>
   );
+}
+
+const n = (value: number) => value.toLocaleString('en-US');
+
+/** "12 views, 7 visitors, 2 by guests" for a period, or that nobody came. */
+function visitLine(totals: VisitTotals): string {
+  if (!totals.views) return 'No visits.';
+  const parts = [`${n(totals.views)} ${totals.views === 1 ? 'view' : 'views'}`, `${n(totals.visitors)} ${totals.visitors === 1 ? 'visitor' : 'visitors'}`];
+  if (totals.guests) parts.push(`${n(totals.guests)} by guests`);
+  return parts.join(', ');
 }
 
 function HealthRow({ label, children }: { label: string; children: ReactNode }) {

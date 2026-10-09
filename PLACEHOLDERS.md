@@ -13,7 +13,7 @@ Everything on this list is a stand-in that needs a real answer or real asset. Cl
 Review each in Admin, Content. Publishing a section clears its flag.
 
 - **Partners page:** all five sections (introduction, what you get, what we ask, limited seats, application form wording).
-- **Privacy page:** the whole notice. Worth a legal review; it makes plain statements such as "We do not sell your information".
+- **Privacy page:** the whole notice. Worth a legal review; it makes plain statements such as "We do not sell your information". Its Analytics section describes the site's own count of visits (what each record holds, that guests are named, 180 days); on an existing site the published section is brought up to date by migration 0029 only where it still reads as shipped, so a reworded notice needs the sentences added by hand.
 - **Demo request form:** heading, introduction, labels, button, and thank-you message.
 - **Header:** navigation labels (Platform, Oppie, the partner label linking to the partners page, Founder, and Data Room; visitors see Founder, investors and admins see Data Room in its place).
 - **Founder page:** the eyebrow ("Founder") and the search description, which repeats the Data Room's. The headline, photo, name, role, LinkedIn, and story are the Data Room's own sections, listed below.

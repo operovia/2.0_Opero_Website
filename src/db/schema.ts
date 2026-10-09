@@ -4,6 +4,7 @@ import type { SceneTable } from '../content/scene-table';
 import type { RichDoc } from '../lib/rich-text/types';
 import { questionTypes, surveyStatuses, type SurveyAnswers, type SurveyOption } from '../surveys/types';
 import { GUEST_ROLES } from '@/content/constants';
+import { VISIT_DEVICES, VISIT_KINDS } from '@/lib/visits';
 
 const createdAt = () => timestamp('created_at', { withTimezone: true }).notNull().defaultNow();
 const updatedAt = () =>
@@ -374,6 +375,42 @@ export const dataRoomEvents = pgTable(
     createdAt: createdAt(),
   },
   (t) => [index('data_room_events_document_idx').on(t.documentId), index('data_room_events_invite_idx').on(t.inviteId)],
+);
+
+/* ------------------------------------------------------------------------ */
+/* Visits: every page view on the public site, for the Visitors page        */
+/* ------------------------------------------------------------------------ */
+
+/**
+ * One row per page view by the public or by a guest (src/server/visits.ts).
+ * Admins' own visits are never recorded. No address is kept: `visitor` is a
+ * code made from the day, the address and the browser with a secret salt,
+ * so people are counted once a day and no code links one day to the next.
+ * Crawlers are kept but marked, so the counts can leave them out. Rows older
+ * than VISIT_RETENTION_DAYS are deleted as new ones arrive.
+ */
+export const pageViews = pgTable(
+  'page_views',
+  {
+    id: bigint('id', { mode: 'number' }).primaryKey().generatedAlwaysAsIdentity(),
+    /** The page, as the site names it: /, /partners, /data-room/raise. Never a query string. */
+    path: text('path').notNull(),
+    /** The host of the site the visit came from, or '' for a direct visit or a link from this site. */
+    referrer: text('referrer').notNull().default(''),
+    visitor: text('visitor').notNull(),
+    kind: text('kind', { enum: VISIT_KINDS }).notNull().default('public'),
+    /** The guest, or null for the public and once a guest is taken off the list. */
+    inviteId: uuid('invite_id').references(() => guestInvites.id, { onDelete: 'set null' }),
+    /** A guest's address at the time, so the record outlives their place on the list; '' for the public. */
+    email: text('email').notNull().default(''),
+    device: text('device', { enum: VISIT_DEVICES }).notNull().default('desktop'),
+    /** A two-letter country code when the hosting platform reports one, else ''. */
+    country: text('country').notNull().default(''),
+    /** A crawler, a link preview or a script, by the name the browser gave; worked out when the view is recorded, since the name itself is not kept. */
+    bot: boolean('bot').notNull().default(false),
+    createdAt: createdAt(),
+  },
+  (t) => [index('page_views_created_idx').on(t.createdAt.desc()), index('page_views_path_idx').on(t.path, t.createdAt)],
 );
 
 /* ------------------------------------------------------------------------ */

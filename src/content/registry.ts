@@ -964,7 +964,7 @@ const privacyNotice = section({
       {
         heading: 'Analytics',
         body: textToRich(
-          'We may use an analytics service to understand, in aggregate, how visitors use this website. Where we do, it may set cookies or collect the standard information your browser sends, such as the pages you visit, the site that referred you, and your type of device.',
+          'This website keeps its own count of visits. For each page you view it records the page, the time, the site that referred you, your type of device, the country the request came from when the network reports it, and a code made from your network address and browser that changes every day, so it cannot identify you or follow you from one day to the next. If you came in through the front door as an invited guest, the record also notes which guest you are. These records are kept for 180 days and shared with nobody. We may also use an analytics service to understand, in aggregate, how visitors use this website. Where we do, it may set cookies or collect the standard information your browser sends, such as the pages you visit, the site that referred you, and your type of device.',
         ),
       },
       {

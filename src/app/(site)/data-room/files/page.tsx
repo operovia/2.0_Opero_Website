@@ -14,6 +14,7 @@ import { renderHeadline } from '@/lib/headline';
 import { dataRoomHidden } from '@/server/data-room-access';
 import { getRoom } from '@/server/data-room';
 import { getAccess, requireEntry } from '@/server/entry';
+import { noteVisit } from '@/server/visits';
 
 export async function generateMetadata(): Promise<Metadata> {
   const [{ room }, access] = await Promise.all([getPage('dataRoom'), getAccess()]);
@@ -41,6 +42,7 @@ const action =
 export default async function DataRoomFilesPage({ searchParams }: PageProps<'/data-room/files'>) {
   const access = await requireEntry();
   if (dataRoomHidden(access)) notFound();
+  await noteVisit(DATA_ROOM_FILES_PATH);
   const [{ room: copy }, room, params] = await Promise.all([getPage('dataRoom'), getRoom(), searchParams]);
   const folderParam = typeof params.folder === 'string' ? params.folder : null;
   const current = folderParam ? findFolder(room, folderParam) : null;

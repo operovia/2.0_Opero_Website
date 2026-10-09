@@ -8,6 +8,7 @@ import { openGraph } from '@/content/metadata';
 import { getPage } from '@/content/store';
 import { dataRoomHidden } from '@/server/data-room-access';
 import { getAccess, requireEntry } from '@/server/entry';
+import { noteVisit } from '@/server/visits';
 
 export async function generateMetadata(): Promise<Metadata> {
   const [{ intro }, { room }, access] = await Promise.all([getPage('investors'), getPage('dataRoom'), getAccess()]);
@@ -31,6 +32,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function DataRoomFounderPage() {
   const access = await requireEntry();
   if (dataRoomHidden(access)) notFound();
+  await noteVisit(DATA_ROOM_PATH);
   const [{ intro, letter, story }, { room }] = await Promise.all([getPage('investors'), getPage('dataRoom')]);
   return (
     <>

@@ -11,6 +11,7 @@ import { cn } from '@/lib/cn';
 import { renderHeadline } from '@/lib/headline';
 import { dataRoomHidden } from '@/server/data-room-access';
 import { getAccess, requireEntry } from '@/server/entry';
+import { noteVisit } from '@/server/visits';
 
 export async function generateMetadata(): Promise<Metadata> {
   const [{ room }, access] = await Promise.all([getPage('dataRoom'), getAccess()]);
@@ -33,6 +34,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function DataRoomRaisePage() {
   const access = await requireEntry();
   if (dataRoomHidden(access)) notFound();
+  await noteVisit(DATA_ROOM_RAISE_PATH);
   const [{ next, platform, round }, { room }, problems] = await Promise.all([
     getPage('investors'),
     getPage('dataRoom'),

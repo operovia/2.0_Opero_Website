@@ -6,6 +6,7 @@ import { openGraph } from '@/content/metadata';
 import { getPage } from '@/content/store';
 import { plainHeadline } from '@/lib/headline';
 import { requireEntry } from '@/server/entry';
+import { noteVisit } from '@/server/visits';
 
 export async function generateMetadata(): Promise<Metadata> {
   const [{ page }, { intro }] = await Promise.all([getPage('founder'), getPage('investors')]);
@@ -25,6 +26,7 @@ export async function generateMetadata(): Promise<Metadata> {
  */
 export default async function FounderPage() {
   await requireEntry();
+  await noteVisit(FOUNDER_PATH);
   const [{ page }, { intro, letter, story }] = await Promise.all([getPage('founder'), getPage('investors')]);
   return (
     <>

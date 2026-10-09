@@ -9,6 +9,7 @@ import { getPage } from '@/content/store';
 import { cn } from '@/lib/cn';
 import { plainHeadline, renderHeadline } from '@/lib/headline';
 import { requireEntry } from '@/server/entry';
+import { noteVisit } from '@/server/visits';
 
 export async function generateMetadata(): Promise<Metadata> {
   const { intro } = await getPage('partners');
@@ -20,6 +21,7 @@ const jewels = ['jewel-crimson', 'jewel-violet', 'jewel-gold', 'jewel-green', 'j
 
 export default async function PartnersPage() {
   await requireEntry();
+  await noteVisit('/partners');
   const { intro, gets, asks, selection, apply } = await getPage('partners');
   return (
     <>

@@ -9,6 +9,7 @@ import { getPage, getSectionProblems } from '@/content/store';
 import { cn } from '@/lib/cn';
 import { dataRoomHidden } from '@/server/data-room-access';
 import { getAccess, requireEntry } from '@/server/entry';
+import { noteVisit } from '@/server/visits';
 
 export async function generateMetadata(): Promise<Metadata> {
   const [{ room }, access] = await Promise.all([getPage('dataRoom'), getAccess()]);
@@ -33,6 +34,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function DataRoomCapTablePage() {
   const access = await requireEntry();
   if (dataRoomHidden(access)) notFound();
+  await noteVisit(DATA_ROOM_CAP_TABLE_PATH);
   const [{ round }, { room }, problems] = await Promise.all([getPage('investors'), getPage('dataRoom'), getSectionProblems('investors', 'round')]);
   return (
     <>

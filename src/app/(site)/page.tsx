@@ -12,6 +12,7 @@ import { openGraph } from '@/content/metadata';
 import { getPage, getPublicSettings, getScenes } from '@/content/store';
 import { requireEntry } from '@/server/entry';
 import { greetingFor } from '@/server/guests';
+import { noteVisit } from '@/server/visits';
 
 export async function generateMetadata(): Promise<Metadata> {
   const { settings } = await getPublicSettings();
@@ -24,6 +25,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function HomePage({ searchParams }: PageProps<'/'>) {
   const access = await requireEntry();
+  await noteVisit('/');
   const [home, scenes, greeting] = await Promise.all([
     getPage('home'),
     getScenes(),

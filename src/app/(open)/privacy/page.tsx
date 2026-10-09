@@ -4,6 +4,7 @@ import { Container } from '@/components/site/layout-parts';
 import { openGraph } from '@/content/metadata';
 import { getPage } from '@/content/store';
 import { plainHeadline, renderHeadline } from '@/lib/headline';
+import { noteVisit } from '@/server/visits';
 
 export async function generateMetadata(): Promise<Metadata> {
   const { notice } = await getPage('privacy');
@@ -13,6 +14,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 /** The privacy notice, open to everyone: a visitor without a key may read what the site does with what they give it. */
 export default async function PrivacyPage() {
+  await noteVisit('/privacy');
   const { notice } = await getPage('privacy');
   return (
     <Container size="3xl" className="py-section">

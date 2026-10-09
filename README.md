@@ -52,6 +52,10 @@ The Data Room (`/data-room`) is the private area for investors, in place of the 
 
 You arrange the room under Data Room in the admin: add folders, and folders inside them; drop documents into the folder on screen (PDF, Word, Excel, PowerPoint, CSV, text, images, or ZIP, up to 25 MB each); rename, move up or down, and delete. PDFs and images open in the browser and everything can be downloaded. Each time a guest opens or downloads a document it is recorded: the document's row shows how often and by whom, the Activity list at the foot of the page shows every visit newest first, and the Guests page counts the documents each guest opened. Your own visits are not recorded. The words around the documents are edited in Content, Data Room: Documents.
 
+## Who is visiting
+
+The admin counts every page view on the site by itself: the Dashboard's Visitors card shows today, the last 7 days and the last 30 days, and Visitors in the admin menu shows the days one by one, the pages people viewed, the sites they followed a link from, and the latest visits, with guests named and the public anonymous. Search engines, link previews and scripts are counted separately and left out of the figures; your own visits while signed in are never counted. No address is kept: a visitor is a code made from the day, the address and the browser, which changes every day. Records are deleted after 180 days, and the privacy notice says so. A third-party analytics service can still be added under Settings, Analytics.
+
 ## Surveys
 
 In the admin, open Surveys.
